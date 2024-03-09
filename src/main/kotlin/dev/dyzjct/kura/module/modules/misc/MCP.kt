@@ -6,14 +6,14 @@ import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
-import melon.events.input.MouseClickEvent
-import melon.system.event.SafeClientEvent
-import melon.system.event.safeEventListener
-import melon.utils.chat.ChatUtil
-import melon.utils.inventory.slot.allSlots
-import melon.utils.inventory.slot.firstItem
-import melon.utils.inventory.slot.hotbarSlots
-import melon.utils.screen.ScreenUtils.safeReturn
+import base.events.input.MouseClickEvent
+import base.system.event.SafeClientEvent
+import base.system.event.safeEventListener
+import base.utils.chat.ChatUtil
+import base.utils.inventory.slot.allSlots
+import base.utils.inventory.slot.firstItem
+import base.utils.inventory.slot.hotbarSlots
+import base.utils.screen.ScreenUtils.safeReturn
 import net.minecraft.item.Items
 import net.minecraft.util.Hand
 

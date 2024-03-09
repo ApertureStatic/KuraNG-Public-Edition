@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.utils.math
 
 import dev.dyzjct.kura.utils.animations.toDegree
-import melon.system.event.SafeClientEvent
-import melon.utils.entity.EntityUtils.eyePosition
-import melon.utils.world.getMiningSide
+import base.system.event.SafeClientEvent
+import base.utils.entity.EntityUtils.eyePosition
+import base.utils.world.getMiningSide
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.Entity
 import net.minecraft.util.math.Direction

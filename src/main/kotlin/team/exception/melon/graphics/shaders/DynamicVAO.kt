@@ -2,11 +2,11 @@ package team.exception.melon.graphics.shaders
 
 import com.mojang.blaze3d.platform.GlStateManager
 import dev.dyzjct.kura.utils.extension.ceilToInt
-import melon.events.TickEvent
-import melon.system.event.AlwaysListening
-import melon.system.event.listener
-import melon.utils.TickTimer
-import melon.utils.TimeUnit
+import base.events.TickEvent
+import base.system.event.AlwaysListening
+import base.system.event.listener
+import base.utils.TickTimer
+import base.utils.TimeUnit
 import org.lwjgl.opengl.GL11.GL_FLOAT
 import org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE
 import org.lwjgl.opengl.GL15.*

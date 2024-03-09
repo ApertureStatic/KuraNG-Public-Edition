@@ -9,11 +9,11 @@ import dev.dyzjct.kura.utils.math.path.TeleportPath.teleportTo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import melon.system.event.SafeClientEvent
-import melon.utils.combat.getEntityTarget
-import melon.utils.concurrent.threads.runSafe
-import melon.utils.inventory.slot.firstItem
-import melon.utils.inventory.slot.hotbarSlots
+import base.system.event.SafeClientEvent
+import base.utils.combat.getEntityTarget
+import base.utils.concurrent.threads.runSafe
+import base.utils.inventory.slot.firstItem
+import base.utils.inventory.slot.hotbarSlots
 import net.minecraft.entity.Entity
 import net.minecraft.item.ShieldItem
 import net.minecraft.item.SwordItem

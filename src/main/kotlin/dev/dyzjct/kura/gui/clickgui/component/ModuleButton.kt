@@ -3,15 +3,13 @@ package dev.dyzjct.kura.gui.clickgui.component
 import dev.dyzjct.kura.setting.*
 import dev.dyzjct.kura.gui.clickgui.Panel
 import dev.dyzjct.kura.gui.clickgui.Panel.Companion.toIsVisibleList
-import dev.dyzjct.kura.module.AbstractModule
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.client.ClickGui
 import dev.dyzjct.kura.module.modules.client.Colors
-import dev.dyzjct.kura.setting.*
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
-import melon.system.render.graphic.Render2DEngine
-import melon.system.render.newfont.FontRenderers
+import base.system.render.graphic.Render2DEngine
+import base.system.render.newfont.FontRenderers
 import net.minecraft.client.gui.DrawContext
 import java.awt.Color
 

@@ -1,8 +1,8 @@
 package dev.dyzjct.kura.mixin.input;
 
 import dev.dyzjct.kura.module.ModuleManager;
-import melon.events.chat.CharTypedEvent;
-import melon.utils.screen.ScreenUtils;
+import base.events.chat.CharTypedEvent;
+import base.utils.screen.ScreenUtils;
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
 import org.spongepowered.asm.mixin.Final;

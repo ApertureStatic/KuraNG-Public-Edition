@@ -1,8 +1,8 @@
 package dev.dyzjct.kura.utils.inventory
 
-import melon.system.event.SafeClientEvent
-import melon.utils.concurrent.threads.runSafe
-import melon.utils.extension.packetClick
+import base.system.event.SafeClientEvent
+import base.utils.concurrent.threads.runSafe
+import base.utils.extension.packetClick
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items

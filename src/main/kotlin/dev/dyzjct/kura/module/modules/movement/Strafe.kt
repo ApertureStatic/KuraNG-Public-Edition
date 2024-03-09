@@ -5,11 +5,11 @@ import dev.dyzjct.kura.manager.MovementManager.boostSpeed
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.player.Freecam
-import melon.events.player.PlayerMoveEvent
-import melon.system.event.safeEventListener
-import melon.utils.entity.EntityUtils
-import melon.utils.entity.EntityUtils.baseMoveSpeed
-import melon.utils.entity.EntityUtils.isInBurrow
+import base.events.player.PlayerMoveEvent
+import base.system.event.safeEventListener
+import base.utils.entity.EntityUtils
+import base.utils.entity.EntityUtils.baseMoveSpeed
+import base.utils.entity.EntityUtils.isInBurrow
 import net.minecraft.entity.effect.StatusEffects
 import kotlin.math.cos
 import kotlin.math.sin

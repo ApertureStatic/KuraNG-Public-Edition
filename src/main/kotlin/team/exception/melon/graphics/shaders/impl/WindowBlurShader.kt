@@ -2,10 +2,10 @@ package team.exception.melon.graphics.shaders.impl
 
 import com.mojang.blaze3d.platform.GlConst
 import com.mojang.blaze3d.platform.GlStateManager
-import melon.events.screen.ResolutionUpdateEvent
-import melon.system.event.AlwaysListening
-import melon.system.event.listener
-import melon.system.util.interfaces.MinecraftWrapper
+import base.events.screen.ResolutionUpdateEvent
+import base.system.event.AlwaysListening
+import base.system.event.listener
+import base.system.util.interfaces.MinecraftWrapper
 import net.minecraft.client.render.BufferRenderer
 import net.minecraft.client.render.Tessellator
 import net.minecraft.client.render.VertexFormat

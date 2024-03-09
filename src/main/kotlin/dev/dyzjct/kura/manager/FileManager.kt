@@ -18,7 +18,7 @@ import dev.dyzjct.kura.module.ModuleManager.hUDModules
 import dev.dyzjct.kura.module.modules.client.NullHUD
 import dev.dyzjct.kura.setting.*
 import kotlinx.coroutines.launch
-import melon.utils.concurrent.threads.IOScope
+import base.utils.concurrent.threads.IOScope
 import java.awt.Color
 import java.io.*
 import java.nio.charset.StandardCharsets

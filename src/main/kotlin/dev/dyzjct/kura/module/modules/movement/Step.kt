@@ -4,7 +4,7 @@ import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils
-import melon.utils.concurrent.threads.runSafe
+import base.utils.concurrent.threads.runSafe
 import net.minecraft.entity.Entity
 import net.minecraft.entity.passive.HorseEntity
 import net.minecraft.entity.passive.LlamaEntity

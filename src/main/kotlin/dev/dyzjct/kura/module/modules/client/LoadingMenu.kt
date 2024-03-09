@@ -2,7 +2,7 @@ package dev.dyzjct.kura.module.modules.client
 
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import melon.system.util.interfaces.DisplayEnum
+import base.system.util.interfaces.DisplayEnum
 
 object LoadingMenu: Module(
     name = "LoadingMenu",

@@ -2,7 +2,7 @@ package dev.dyzjct.kura.module.modules.combat
 
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import melon.utils.concurrent.threads.runSafe
+import base.utils.concurrent.threads.runSafe
 import net.minecraft.item.BowItem
 import net.minecraft.item.Items
 

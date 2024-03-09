@@ -3,7 +3,7 @@ package dev.dyzjct.kura.module.modules.movement
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import melon.utils.concurrent.threads.runSafe
+import base.utils.concurrent.threads.runSafe
 import net.minecraft.block.CobwebBlock
 
 object FastWeb : Module(name = "FastWeb", "防蜘蛛网", category = Category.MOVEMENT) {

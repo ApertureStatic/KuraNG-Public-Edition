@@ -29,6 +29,6 @@ object Cape : Module(
     }
 
     fun getCape(): Identifier {
-        return Identifier("melon", "cape/${(capeEnum as Cape).path}")
+        return Identifier("base", "cape/${(capeEnum as Cape).path}")
     }
 }

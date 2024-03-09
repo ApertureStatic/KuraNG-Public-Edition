@@ -3,9 +3,9 @@ package team.exception.melon.graphics.shaders
 import com.mojang.blaze3d.platform.GlStateManager
 import com.mojang.blaze3d.systems.RenderSystem
 import dev.dyzjct.kura.Kura
-import melon.system.util.color.ColorRGB
-import melon.system.util.io.readText
-import melon.utils.interfaces.Helper
+import base.system.util.color.ColorRGB
+import base.system.util.io.readText
+import base.utils.interfaces.Helper
 import org.joml.Matrix4f
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL20.*

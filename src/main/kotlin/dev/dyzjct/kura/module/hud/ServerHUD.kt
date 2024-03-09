@@ -1,12 +1,10 @@
 package dev.dyzjct.kura.module.hud
 
-import dev.dyzjct.kura.gui.rewrite.gui.render.DrawDelegate
-import dev.dyzjct.kura.gui.rewrite.gui.render.DrawScope
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.client.Colors
-import melon.system.render.newfont.FontRenderers
-import melon.utils.concurrent.threads.runSafe
+import base.system.render.newfont.FontRenderers
+import base.utils.concurrent.threads.runSafe
 import net.minecraft.client.gui.DrawContext
 
 object ServerHUD : HUDModule(

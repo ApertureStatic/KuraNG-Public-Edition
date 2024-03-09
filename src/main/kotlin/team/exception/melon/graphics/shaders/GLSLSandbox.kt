@@ -1,6 +1,6 @@
 package team.exception.melon.graphics.shaders
 
-import melon.system.render.graphic.Render2DEngine
+import base.system.render.graphic.Render2DEngine
 import net.minecraft.client.render.BufferRenderer
 import net.minecraft.client.render.Tessellator
 import net.minecraft.client.render.VertexFormat

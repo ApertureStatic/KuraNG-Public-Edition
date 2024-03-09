@@ -1,12 +1,12 @@
 package dev.dyzjct.kura.manager
 
-import melon.events.ConnectionEvent
-import melon.events.TickEvent
-import melon.events.WorldEvent
-import melon.system.event.AlwaysListening
-import melon.system.event.listener
-import melon.system.event.safeParallelListener
-import melon.utils.entity.EntityUtils.preventEntitySpawning
+import base.events.ConnectionEvent
+import base.events.TickEvent
+import base.events.WorldEvent
+import base.system.event.AlwaysListening
+import base.system.event.listener
+import base.system.event.safeParallelListener
+import base.utils.entity.EntityUtils.preventEntitySpawning
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity

@@ -4,8 +4,8 @@ import dev.dyzjct.kura.mixins.IHeldItemRenderer
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils
-import melon.events.render.ItemRenderEvent
-import melon.system.event.safeEventListener
+import base.events.render.ItemRenderEvent
+import base.system.event.safeEventListener
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.util.Hand
 

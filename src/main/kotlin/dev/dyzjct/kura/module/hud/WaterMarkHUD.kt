@@ -4,8 +4,8 @@ import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.client.Colors
-import melon.system.render.graphic.Render2DEngine
-import melon.system.render.newfont.FontRenderers
+import base.system.render.graphic.Render2DEngine
+import base.system.render.newfont.FontRenderers
 import net.minecraft.client.gui.DrawContext
 
 object WaterMarkHUD :

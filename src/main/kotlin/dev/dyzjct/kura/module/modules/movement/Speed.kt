@@ -4,12 +4,12 @@ import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.manager.MovementManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import melon.events.player.PlayerMoveEvent
-import melon.system.event.safeEventListener
-import melon.utils.entity.EntityUtils
-import melon.utils.entity.EntityUtils.baseMoveSpeed
-import melon.utils.entity.EntityUtils.isInBurrow
-import melon.utils.entity.EntityUtils.jumpSpeed
+import base.events.player.PlayerMoveEvent
+import base.system.event.safeEventListener
+import base.utils.entity.EntityUtils
+import base.utils.entity.EntityUtils.baseMoveSpeed
+import base.utils.entity.EntityUtils.isInBurrow
+import base.utils.entity.EntityUtils.jumpSpeed
 import net.minecraft.entity.effect.StatusEffects
 
 object Speed :

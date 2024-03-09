@@ -3,7 +3,7 @@ package dev.dyzjct.kura.module.modules.render
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.animations.Easing
-import melon.utils.graphics.ESPRenderer
+import base.utils.graphics.ESPRenderer
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import team.exception.melon.util.math.scale

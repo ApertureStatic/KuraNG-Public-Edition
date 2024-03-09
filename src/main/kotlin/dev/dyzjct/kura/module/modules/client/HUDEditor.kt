@@ -7,7 +7,7 @@ import dev.dyzjct.kura.manager.FileManager.saveAll
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.hud.Image
-import melon.utils.Wrapper
+import base.utils.Wrapper
 
 object HUDEditor : Module(name = "HUDEditor", langName = "HUD编辑器", category = Category.CLIENT, visible = false) {
     var screen: HUDEditorScreen = HUDEditorScreen()

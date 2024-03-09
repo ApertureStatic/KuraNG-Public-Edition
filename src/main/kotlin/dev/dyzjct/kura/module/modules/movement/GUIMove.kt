@@ -3,7 +3,7 @@ package dev.dyzjct.kura.module.modules.movement
 import dev.dyzjct.kura.gui.rewrite.gui.MelonClickGui
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import melon.utils.screen.ScreenUtils.notWhiteListScreen
+import base.utils.screen.ScreenUtils.notWhiteListScreen
 import net.minecraft.client.util.InputUtil
 
 object GUIMove : Module(

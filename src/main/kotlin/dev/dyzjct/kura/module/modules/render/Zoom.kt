@@ -3,7 +3,7 @@ package dev.dyzjct.kura.module.modules.render
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.animations.Easing
-import melon.utils.concurrent.threads.runSafe
+import base.utils.concurrent.threads.runSafe
 
 object Zoom : Module(
     name = "Zoom",

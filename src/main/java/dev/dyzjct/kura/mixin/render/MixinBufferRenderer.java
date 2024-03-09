@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.mixin.render;
 
-import melon.events.client.VerificationEvent;
+import base.events.client.VerificationEvent;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
 import org.spongepowered.asm.mixin.Mixin;

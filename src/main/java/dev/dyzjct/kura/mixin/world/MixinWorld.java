@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.mixin.world;
 
-import melon.events.WorldEvent;
+import base.events.WorldEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.server.world.ChunkLevelType;

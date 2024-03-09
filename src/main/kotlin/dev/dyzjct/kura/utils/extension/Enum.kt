@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.utils.extension
 
-import melon.system.util.interfaces.DisplayEnum
+import base.system.util.interfaces.DisplayEnum
 
 fun <E : Enum<E>> E.next(): E = declaringJavaClass.enumConstants.run { get((ordinal + 1) % size) }
 

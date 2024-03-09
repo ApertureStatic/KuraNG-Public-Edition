@@ -2,10 +2,10 @@ package dev.dyzjct.kura.gui.clickgui.component
 
 import dev.dyzjct.kura.gui.clickgui.Panel
 import dev.dyzjct.kura.setting.StringSetting
-import melon.system.render.graphic.Render2DEngine
-import melon.system.render.newfont.FontRenderers
-import melon.utils.concurrent.threads.runSafe
-import melon.utils.keyboard.KeyboardUtils
+import base.system.render.graphic.Render2DEngine
+import base.system.render.newfont.FontRenderers
+import base.utils.concurrent.threads.runSafe
+import base.utils.keyboard.KeyboardUtils
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.util.InputUtil
 import org.lwjgl.glfw.GLFW

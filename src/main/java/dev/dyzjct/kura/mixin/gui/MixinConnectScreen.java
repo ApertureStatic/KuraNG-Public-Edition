@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.mixin.gui;
 
-import melon.events.ConnectionEvent;
+import base.events.ConnectionEvent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConnectScreen;
 import net.minecraft.client.gui.screen.Screen;

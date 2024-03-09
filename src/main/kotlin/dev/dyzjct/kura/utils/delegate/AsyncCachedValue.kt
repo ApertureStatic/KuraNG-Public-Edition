@@ -3,7 +3,7 @@ package dev.dyzjct.kura.utils.delegate
 import dev.dyzjct.kura.utils.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import melon.utils.concurrent.threads.defaultScope
+import base.utils.concurrent.threads.defaultScope
 import kotlin.coroutines.CoroutineContext
 import kotlin.properties.ReadWriteProperty
 

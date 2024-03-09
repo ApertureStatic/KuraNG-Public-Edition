@@ -8,11 +8,11 @@ import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.sq
 import dev.dyzjct.kura.utils.inventory.InventoryUtil
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.findEmptySlots
-import melon.system.event.SafeClientEvent
-import melon.utils.concurrent.threads.runSafe
-import melon.utils.entity.EntityUtils
-import melon.utils.extension.sendSequencedPacket
-import melon.utils.extension.synchronized
+import base.system.event.SafeClientEvent
+import base.utils.concurrent.threads.runSafe
+import base.utils.entity.EntityUtils
+import base.utils.extension.sendSequencedPacket
+import base.utils.extension.synchronized
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket

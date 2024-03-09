@@ -3,11 +3,11 @@ package dev.dyzjct.kura.module.modules.movement
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils
-import melon.events.player.PlayerMoveEvent
-import melon.system.event.SafeClientEvent
-import melon.system.event.safeEventListener
-import melon.system.util.interfaces.DisplayEnum
-import melon.utils.world.noCollision
+import base.events.player.PlayerMoveEvent
+import base.system.event.SafeClientEvent
+import base.system.event.safeEventListener
+import base.system.util.interfaces.DisplayEnum
+import base.utils.world.noCollision
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.Full
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket
 import net.minecraft.util.math.Box

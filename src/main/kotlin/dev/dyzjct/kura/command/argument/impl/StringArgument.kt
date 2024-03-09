@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.command.argument.impl
 
 import dev.dyzjct.kura.command.argument.Argument
-import melon.system.util.interfaces.Alias
+import base.system.util.interfaces.Alias
 
 class StringArgument(
     index: Int,

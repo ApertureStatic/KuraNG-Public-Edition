@@ -2,9 +2,9 @@ package dev.dyzjct.kura.module.modules.movement
 
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import melon.events.player.PlayerMotionEvent
-import melon.system.event.safeEventListener
-import melon.utils.entity.EntityUtils
+import base.events.player.PlayerMotionEvent
+import base.system.event.safeEventListener
+import base.utils.entity.EntityUtils
 
 object Sprint : Module(
     name = "Sprint",

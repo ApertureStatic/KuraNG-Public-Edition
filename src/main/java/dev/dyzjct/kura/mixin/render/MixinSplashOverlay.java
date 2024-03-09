@@ -2,7 +2,7 @@ package dev.dyzjct.kura.mixin.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.dyzjct.kura.module.modules.client.LoadingMenu;
-import melon.utils.Wrapper;
+import base.utils.Wrapper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.SplashOverlay;

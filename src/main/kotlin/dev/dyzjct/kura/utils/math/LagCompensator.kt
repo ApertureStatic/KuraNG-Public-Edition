@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.utils.math
 
-import melon.events.PacketEvents
-import melon.system.event.AlwaysListening
-import melon.system.event.SafeClientEvent
-import melon.system.event.safeConcurrentListener
+import base.events.PacketEvents
+import base.system.event.AlwaysListening
+import base.system.event.SafeClientEvent
+import base.system.event.safeConcurrentListener
 import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket
 import java.util.*
 

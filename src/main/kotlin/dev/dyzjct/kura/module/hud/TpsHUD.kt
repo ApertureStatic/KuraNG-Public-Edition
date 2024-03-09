@@ -4,8 +4,8 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.client.Colors
 import dev.dyzjct.kura.utils.math.LagCompensator
-import melon.system.render.newfont.FontRenderers
-import melon.utils.chat.ChatUtil
+import base.system.render.newfont.FontRenderers
+import base.utils.chat.ChatUtil
 import net.minecraft.client.gui.DrawContext
 
 object TpsHUD : HUDModule(name = "TpsHUD", langName = "TPS显示", x = 160f, y = 160f, category = Category.HUD) {

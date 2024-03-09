@@ -1,8 +1,7 @@
 package dev.dyzjct.kura.command.impl
 
 import dev.dyzjct.kura.command.Command
-import dev.dyzjct.kura.command.CommandManager
-import melon.utils.chat.ChatUtil
+import base.utils.chat.ChatUtil
 
 object HelpCommand : Command("help", description = "Print commands description and usage.") {
     init {

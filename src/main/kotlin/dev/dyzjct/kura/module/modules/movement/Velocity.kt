@@ -2,8 +2,8 @@ package dev.dyzjct.kura.module.modules.movement
 
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import melon.events.PacketEvents
-import melon.system.event.safeEventListener
+import base.events.PacketEvents
+import base.system.event.safeEventListener
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket
 import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket
 

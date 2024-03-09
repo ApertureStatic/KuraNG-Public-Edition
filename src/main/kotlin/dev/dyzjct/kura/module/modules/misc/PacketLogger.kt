@@ -2,7 +2,7 @@ package dev.dyzjct.kura.module.modules.misc
 
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import melon.utils.chat.ChatUtil
+import base.utils.chat.ChatUtil
 import net.minecraft.network.packet.c2s.play.*
 
 object PacketLogger : Module("PacketLogger", langName = "抓包", category = Category.MISC) {

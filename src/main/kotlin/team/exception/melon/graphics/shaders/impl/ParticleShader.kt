@@ -1,8 +1,8 @@
 package team.exception.melon.graphics.shaders.impl
 
-import melon.events.TickEvent
-import melon.system.event.AlwaysListening
-import melon.system.event.listener
+import base.events.TickEvent
+import base.system.event.AlwaysListening
+import base.system.event.listener
 import team.exception.melon.MelonIdentifier
 import team.exception.melon.graphics.shaders.GLSLSandbox
 

@@ -1,12 +1,10 @@
 package dev.dyzjct.kura.module.hud
 
-import dev.dyzjct.kura.gui.rewrite.gui.render.DrawDelegate
-import dev.dyzjct.kura.gui.rewrite.gui.render.DrawScope
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.client.Colors
-import melon.system.render.newfont.FontRenderers
-import melon.utils.chat.ChatUtil.SECTIONSIGN
+import base.system.render.newfont.FontRenderers
+import base.utils.chat.ChatUtil.SECTIONSIGN
 import net.minecraft.client.gui.DrawContext
 
 object RamHUD : HUDModule(name = "Ram", langName = "内存显示", x = 160f, y = 160f, category = Category.HUD) {

@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.module.hud
 
 import dev.dyzjct.kura.module.HUDModule
-import melon.notification.NotificationManager
-import melon.system.render.graphic.Render2DEngine
-import melon.system.render.newfont.FontRenderers
+import base.notification.NotificationManager
+import base.system.render.graphic.Render2DEngine
+import base.system.render.newfont.FontRenderers
 import net.minecraft.client.gui.DrawContext
 import java.awt.Color
 

@@ -1,12 +1,11 @@
 package dev.dyzjct.kura.module.modules.crystal
 
 import dev.dyzjct.kura.utils.animations.fastFloor
-import melon.system.event.AlwaysListening
-import melon.system.event.SafeClientEvent
-import melon.utils.chat.ChatUtil
-import melon.utils.combat.CrystalUtils
-import melon.utils.world.FastRayTraceAction
-import melon.utils.world.fastRaytrace
+import base.system.event.AlwaysListening
+import base.system.event.SafeClientEvent
+import base.utils.combat.CrystalUtils
+import base.utils.world.FastRayTraceAction
+import base.utils.world.fastRaytrace
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.entity.DamageUtil

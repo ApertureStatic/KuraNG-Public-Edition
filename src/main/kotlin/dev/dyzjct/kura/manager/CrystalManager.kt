@@ -1,10 +1,10 @@
 package dev.dyzjct.kura.manager
 
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator
-import melon.events.PacketEvents
-import melon.events.RunGameLoopEvent
-import melon.system.event.AlwaysListening
-import melon.system.event.safeEventListener
+import base.events.PacketEvents
+import base.events.RunGameLoopEvent
+import base.system.event.AlwaysListening
+import base.system.event.safeEventListener
 import net.minecraft.entity.LivingEntity
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.math.Vec3d

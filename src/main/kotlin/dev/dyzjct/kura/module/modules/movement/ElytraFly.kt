@@ -3,10 +3,10 @@ package dev.dyzjct.kura.module.modules.movement
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils
-import melon.events.player.PlayerTravelEvent
-import melon.system.event.SafeClientEvent
-import melon.system.event.safeEventListener
-import melon.utils.MovementUtils.calcMoveYaw
+import base.events.player.PlayerTravelEvent
+import base.system.event.SafeClientEvent
+import base.system.event.safeEventListener
+import base.utils.MovementUtils.calcMoveYaw
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket

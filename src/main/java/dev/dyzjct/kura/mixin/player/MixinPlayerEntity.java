@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.mixin.player;
 
 import dev.dyzjct.kura.mixin.entity.MixinLivingEntity;
-import melon.events.player.PlayerTravelEvent;
+import base.events.player.PlayerTravelEvent;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;

@@ -2,7 +2,7 @@ package dev.dyzjct.kura.command.impl
 
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.command.Command
-import melon.utils.chat.ChatUtil
+import base.utils.chat.ChatUtil
 
 object PrefixCommand : Command("prefix") {
     init {

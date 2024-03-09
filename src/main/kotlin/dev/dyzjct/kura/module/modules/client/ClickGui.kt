@@ -8,7 +8,7 @@ import dev.dyzjct.kura.manager.FileManager.saveAll
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.hud.Image
-import melon.utils.concurrent.threads.runSafe
+import base.utils.concurrent.threads.runSafe
 import net.minecraft.client.util.InputUtil
 
 object ClickGui : Module(

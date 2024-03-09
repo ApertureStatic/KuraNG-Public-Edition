@@ -7,7 +7,7 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.client.UiSetting
 import dev.dyzjct.kura.utils.animations.Easing
-import melon.utils.chat.ChatUtil
+import base.utils.chat.ChatUtil
 import net.minecraft.client.gui.DrawContext
 import team.exception.melon.MelonIdentifier
 

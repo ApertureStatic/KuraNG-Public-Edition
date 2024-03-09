@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.manager
 
-import melon.events.PacketEvents
-import melon.events.TickEvent
-import melon.system.event.AlwaysListening
-import melon.system.event.safeEventListener
+import base.events.PacketEvents
+import base.events.TickEvent
+import base.system.event.AlwaysListening
+import base.system.event.safeEventListener
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket
 import kotlin.math.hypot
 import kotlin.math.max

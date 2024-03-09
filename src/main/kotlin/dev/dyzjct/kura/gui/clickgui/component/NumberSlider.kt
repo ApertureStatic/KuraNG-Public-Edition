@@ -6,8 +6,8 @@ import dev.dyzjct.kura.setting.FloatSetting
 import dev.dyzjct.kura.setting.IntegerSetting
 import dev.dyzjct.kura.setting.Setting
 import dev.dyzjct.kura.utils.animations.MathUtils
-import melon.system.render.graphic.Render2DEngine
-import melon.system.render.newfont.FontRenderers
+import base.system.render.graphic.Render2DEngine
+import base.system.render.newfont.FontRenderers
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.math.MathHelper
 import org.lwjgl.glfw.GLFW

@@ -4,7 +4,7 @@ import dev.dyzjct.kura.gui.rewrite.gui.animation.AbstractAnimationStrategy
 import dev.dyzjct.kura.gui.rewrite.gui.component.Component
 import dev.dyzjct.kura.gui.rewrite.gui.render.Alignment
 import dev.dyzjct.kura.module.modules.client.UiSetting
-import melon.system.util.interfaces.MinecraftWrapper
+import base.system.util.interfaces.MinecraftWrapper
 import net.minecraft.client.gui.DrawContext
 
 class ScalaAnimationStrategy : AbstractAnimationStrategy() {

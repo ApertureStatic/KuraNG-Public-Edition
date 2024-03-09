@@ -3,13 +3,10 @@ package dev.dyzjct.kura.module.modules.misc
 import dev.dyzjct.kura.manager.FriendManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import melon.events.input.MouseClickEvent
-import melon.system.event.safeEventListener
-import melon.utils.chat.ChatUtil
-import melon.utils.screen.ScreenUtils
-import melon.utils.screen.ScreenUtils.isMelonUIScreen
-import melon.utils.screen.ScreenUtils.notWhiteListScreen
-import melon.utils.screen.ScreenUtils.safeReturn
+import base.events.input.MouseClickEvent
+import base.system.event.safeEventListener
+import base.utils.chat.ChatUtil
+import base.utils.screen.ScreenUtils.safeReturn
 import net.minecraft.entity.player.PlayerEntity
 
 object MCF : Module(

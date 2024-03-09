@@ -1,12 +1,11 @@
 package dev.dyzjct.kura.utils.inventory
 
 import dev.dyzjct.kura.manager.InventoryTaskManager
-import dev.dyzjct.kura.module.AbstractModule
-import melon.system.event.SafeClientEvent
-import melon.system.util.delegate.ComputeFlag
-import melon.utils.TimeUnit
-import melon.utils.concurrent.threads.onMainThreadSafe
-import melon.utils.interfaces.Helper
+import base.system.event.SafeClientEvent
+import base.system.util.delegate.ComputeFlag
+import base.utils.TimeUnit
+import base.utils.concurrent.threads.onMainThreadSafe
+import base.utils.interfaces.Helper
 
 inline fun SafeClientEvent.inventoryTaskNow(block: InventoryTask.Builder.() -> Unit) =
     InventoryTask.Builder()

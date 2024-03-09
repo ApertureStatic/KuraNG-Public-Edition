@@ -2,7 +2,7 @@ package dev.dyzjct.kura.utils.math.path
 
 import dev.dyzjct.kura.utils.math.path.CustomPathFinder.Companion.canPassThrow
 import dev.dyzjct.kura.utils.math.path.CustomPathFinder.Companion.checkPositionValidity
-import melon.system.event.SafeClientEvent
+import base.system.event.SafeClientEvent
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d

@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.setting.Setting
-import melon.utils.concurrent.threads.runSafe
+import base.utils.concurrent.threads.runSafe
 import net.minecraft.client.network.OtherClientPlayerEntity
 import net.minecraft.entity.Entity
 import java.util.*

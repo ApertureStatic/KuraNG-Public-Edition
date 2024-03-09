@@ -5,7 +5,7 @@ import dev.dyzjct.kura.gui.rewrite.gui.render.DrawDelegate
 import dev.dyzjct.kura.gui.rewrite.gui.render.DrawScope
 import dev.dyzjct.kura.gui.rewrite.gui.render.Padding
 import dev.dyzjct.kura.setting.ModeSetting
-import melon.system.util.interfaces.DisplayEnum
+import base.system.util.interfaces.DisplayEnum
 import java.awt.Color
 
 class EnumComponent(

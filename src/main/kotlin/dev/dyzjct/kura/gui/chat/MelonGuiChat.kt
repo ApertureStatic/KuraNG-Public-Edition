@@ -3,7 +3,7 @@ package dev.dyzjct.kura.gui.chat
 import com.mojang.blaze3d.systems.RenderSystem
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.command.CommandManager
-import melon.system.render.graphic.Render2DEngine
+import base.system.render.graphic.Render2DEngine
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext

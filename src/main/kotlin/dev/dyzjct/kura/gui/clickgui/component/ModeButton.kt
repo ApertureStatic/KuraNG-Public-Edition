@@ -5,8 +5,8 @@ import dev.dyzjct.kura.module.modules.client.Colors
 import dev.dyzjct.kura.setting.Setting
 import dev.dyzjct.kura.utils.animations.Animation
 import dev.dyzjct.kura.utils.animations.DecelerateAnimation
-import melon.system.render.graphic.Render2DEngine
-import melon.system.render.newfont.FontRenderers
+import base.system.render.graphic.Render2DEngine
+import base.system.render.newfont.FontRenderers
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.math.RotationAxis
 import team.exception.melon.MelonIdentifier

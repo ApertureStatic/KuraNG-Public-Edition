@@ -2,9 +2,9 @@ package dev.dyzjct.kura.utils.delegate
 
 import dev.dyzjct.kura.utils.TimeUnit
 import dev.dyzjct.kura.utils.TimerUtils
-import melon.events.RunGameLoopEvent
-import melon.system.event.AlwaysListening
-import melon.system.event.listener
+import base.events.RunGameLoopEvent
+import base.system.event.AlwaysListening
+import base.system.event.listener
 import kotlin.reflect.KProperty
 
 class AutoUpdateValue<T>(private val block: () -> T) {

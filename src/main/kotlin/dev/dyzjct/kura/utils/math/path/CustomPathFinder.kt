@@ -1,8 +1,8 @@
 package dev.dyzjct.kura.utils.math.path
 
 import dev.dyzjct.kura.utils.extension.fastFloor
-import melon.system.event.SafeClientEvent
-import melon.utils.block.getBlock
+import base.system.event.SafeClientEvent
+import base.utils.block.getBlock
 import net.minecraft.block.*
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d

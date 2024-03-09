@@ -1,7 +1,6 @@
 package dev.dyzjct.kura.manager
 
-import melon.utils.Wrapper
-import net.minecraft.client.MinecraftClient
+import base.utils.Wrapper
 import net.minecraft.entity.Entity
 
 object FriendManager {

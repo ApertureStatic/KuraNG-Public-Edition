@@ -3,8 +3,8 @@ package dev.dyzjct.kura.module.modules.misc
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils
-import melon.utils.extension.fastPos
-import melon.utils.extension.sendSequencedPacket
+import base.utils.extension.fastPos
+import base.utils.extension.sendSequencedPacket
 import net.minecraft.item.BlockItem
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos

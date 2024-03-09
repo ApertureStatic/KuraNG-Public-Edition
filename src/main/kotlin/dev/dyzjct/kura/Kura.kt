@@ -4,14 +4,13 @@ import dev.dyzjct.kura.command.CommandManager
 import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.gui.clickgui.GUIRender
 import dev.dyzjct.kura.gui.clickgui.HUDRender
-import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.module.ModuleManager
 import dev.dyzjct.kura.module.modules.client.ClickGui
 import dev.dyzjct.kura.module.modules.client.HUDEditor
 import dev.dyzjct.kura.setting.StringSetting
 import dev.dyzjct.kura.utils.math.LagCompensator
-import melon.system.event.AlwaysListening
-import melon.utils.threads.BackgroundScope
+import base.system.event.AlwaysListening
+import base.utils.threads.BackgroundScope
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.io.path.Path

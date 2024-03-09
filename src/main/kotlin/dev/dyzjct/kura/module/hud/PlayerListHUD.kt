@@ -7,8 +7,8 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.scaledHealth
 import dev.dyzjct.kura.utils.animations.MathUtils
-import melon.system.event.SafeClientEvent
-import melon.utils.concurrent.threads.runSafe
+import base.system.event.SafeClientEvent
+import base.utils.concurrent.threads.runSafe
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.Formatting
 import team.exception.melon.util.math.distanceSqTo

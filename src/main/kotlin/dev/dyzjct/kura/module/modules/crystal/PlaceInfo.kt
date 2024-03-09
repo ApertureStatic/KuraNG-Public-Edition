@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.module.modules.crystal
 
 import dev.dyzjct.kura.module.modules.crystal.MelonAura2.getPlaceSide
-import melon.system.event.SafeClientEvent
-import melon.utils.Wrapper
-import melon.utils.world.getHitVecOffset
+import base.system.event.SafeClientEvent
+import base.utils.Wrapper
+import base.utils.world.getHitVecOffset
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.EquipmentSlot

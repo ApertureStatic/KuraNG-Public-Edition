@@ -2,7 +2,7 @@ package dev.dyzjct.kura.command
 
 import dev.dyzjct.kura.command.argument.ArgumentTree
 import dev.dyzjct.kura.command.argument.impl.StringArgument
-import melon.system.util.interfaces.Alias
+import base.system.util.interfaces.Alias
 
 abstract class Command(
     final override val name: String,

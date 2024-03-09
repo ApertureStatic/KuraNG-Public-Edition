@@ -2,9 +2,9 @@ package dev.dyzjct.kura.module.modules.player
 
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import melon.events.TickEvent
-import melon.system.event.SafeClientEvent
-import melon.system.event.safeEventListener
+import base.events.TickEvent
+import base.system.event.SafeClientEvent
+import base.system.event.safeEventListener
 import net.minecraft.screen.slot.SlotActionType
 
 object HotbarSwapper: Module(

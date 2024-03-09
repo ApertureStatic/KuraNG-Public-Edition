@@ -4,7 +4,7 @@ import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.FriendManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
-import melon.system.render.newfont.FontRenderers
+import base.system.render.newfont.FontRenderers
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.Formatting

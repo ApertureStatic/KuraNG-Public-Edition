@@ -4,10 +4,10 @@ import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.FriendManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import melon.events.TickEvent
-import melon.notification.NotificationManager
-import melon.system.event.safeEventListener
-import melon.utils.chat.ChatUtil
+import base.events.TickEvent
+import base.notification.NotificationManager
+import base.system.event.safeEventListener
+import base.utils.chat.ChatUtil
 import net.minecraft.entity.EntityStatuses
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket

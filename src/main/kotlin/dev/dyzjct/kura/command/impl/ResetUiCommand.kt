@@ -3,7 +3,7 @@ package dev.dyzjct.kura.command.impl
 import dev.dyzjct.kura.command.Command
 import dev.dyzjct.kura.gui.rewrite.gui.MelonClickGui
 import dev.dyzjct.kura.gui.rewrite.gui.MelonHudEditor
-import melon.utils.chat.ChatUtil
+import base.utils.chat.ChatUtil
 
 object ResetUiCommand : Command("resetui", arrayOf("reui"), "Reset ClickGui component positions") {
     init {

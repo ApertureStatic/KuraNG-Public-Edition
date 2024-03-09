@@ -4,10 +4,10 @@ import dev.dyzjct.kura.module.modules.combat.AnchorAura
 import dev.dyzjct.kura.module.modules.combat.NewBedAura
 import dev.dyzjct.kura.module.modules.crystal.MelonAura2
 import dev.dyzjct.kura.module.modules.misc.AutoCraftBed
-import melon.events.RunGameLoopEvent
-import melon.system.event.AlwaysListening
-import melon.system.event.safeBackGroundTaskListener
-import melon.utils.combat.CrystalUtils
+import base.events.RunGameLoopEvent
+import base.system.event.AlwaysListening
+import base.system.event.safeBackGroundTaskListener
+import base.utils.combat.CrystalUtils
 import net.minecraft.util.math.BlockPos
 import team.exception.melon.util.math.toVec3dCenter
 import java.util.concurrent.CopyOnWriteArrayList

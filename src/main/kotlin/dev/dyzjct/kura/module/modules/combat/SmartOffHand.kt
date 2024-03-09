@@ -5,11 +5,11 @@ import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.getPredictedTarget
 import dev.dyzjct.kura.utils.TimerUtils
-import melon.system.event.SafeClientEvent
-import melon.utils.concurrent.threads.runSafe
-import melon.utils.entity.EntityUtils.getHealth
-import melon.utils.hole.SurroundUtils
-import melon.utils.hole.SurroundUtils.checkHole
+import base.system.event.SafeClientEvent
+import base.utils.concurrent.threads.runSafe
+import base.utils.entity.EntityUtils.getHealth
+import base.utils.hole.SurroundUtils
+import base.utils.hole.SurroundUtils.checkHole
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.entity.player.PlayerEntity

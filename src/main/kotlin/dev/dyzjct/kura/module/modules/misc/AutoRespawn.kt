@@ -2,9 +2,9 @@ package dev.dyzjct.kura.module.modules.misc
 
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import melon.events.screen.GuiScreenEvent
-import melon.system.event.safeEventListener
-import melon.utils.chat.ChatUtil
+import base.events.screen.GuiScreenEvent
+import base.system.event.safeEventListener
+import base.utils.chat.ChatUtil
 import net.minecraft.client.gui.screen.DeathScreen
 
 object AutoRespawn : Module(

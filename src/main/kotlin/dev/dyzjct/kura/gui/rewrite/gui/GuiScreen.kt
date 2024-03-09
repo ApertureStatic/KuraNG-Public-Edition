@@ -5,8 +5,8 @@ import dev.dyzjct.kura.gui.rewrite.gui.animation.AnimationStrategy
 import dev.dyzjct.kura.gui.rewrite.gui.animation.NonAnimationStrategy
 import dev.dyzjct.kura.gui.rewrite.gui.component.Component
 import dev.dyzjct.kura.gui.rewrite.gui.component.ComponentContainer
-import melon.events.render.Render2DEvent
-import melon.system.event.Listener
+import base.events.render.Render2DEvent
+import base.system.event.Listener
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen

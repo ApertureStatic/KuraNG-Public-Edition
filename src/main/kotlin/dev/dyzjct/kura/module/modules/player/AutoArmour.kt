@@ -5,10 +5,9 @@ import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.movement.ElytraFly
 import it.unimi.dsi.fastutil.objects.Object2IntMap
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
-import melon.system.event.SafeClientEvent
-import melon.utils.chat.ChatUtil
-import melon.utils.concurrent.threads.runSafe
-import melon.utils.inventory.InvUtils
+import base.system.event.SafeClientEvent
+import base.utils.concurrent.threads.runSafe
+import base.utils.inventory.InvUtils
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.enchantment.Enchantments
 import net.minecraft.item.*

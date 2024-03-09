@@ -6,9 +6,9 @@ import dev.dyzjct.kura.module.modules.combat.HolePush.doHolePush
 import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.module.modules.player.PacketMine.hookPos
 import dev.dyzjct.kura.utils.TimerUtils
-import melon.utils.block.BlockUtil.canBreak
-import melon.utils.combat.getTarget
-import melon.utils.world.getMiningSide
+import base.utils.block.BlockUtil.canBreak
+import base.utils.combat.getTarget
+import base.utils.world.getMiningSide
 import net.minecraft.block.CobwebBlock
 import net.minecraft.block.RedstoneBlock
 import net.minecraft.util.math.BlockPos

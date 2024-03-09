@@ -1,8 +1,8 @@
 package dev.dyzjct.kura.mixin.input;
 
 import dev.dyzjct.kura.module.ModuleManager;
-import melon.events.input.MouseClickEvent;
-import melon.events.input.MouseScrollEvent;
+import base.events.input.MouseClickEvent;
+import base.events.input.MouseScrollEvent;
 import net.minecraft.client.Mouse;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

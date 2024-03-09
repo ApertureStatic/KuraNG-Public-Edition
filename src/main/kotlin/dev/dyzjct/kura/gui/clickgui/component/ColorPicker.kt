@@ -3,8 +3,8 @@ package dev.dyzjct.kura.gui.clickgui.component
 import dev.dyzjct.kura.gui.clickgui.Panel
 import dev.dyzjct.kura.setting.ColorSetting
 import dev.dyzjct.kura.utils.animations.MathUtils
-import melon.system.render.graphic.Render2DEngine
-import melon.system.render.newfont.FontRenderers
+import base.system.render.graphic.Render2DEngine
+import base.system.render.newfont.FontRenderers
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.util.math.MatrixStack
 import java.awt.Color

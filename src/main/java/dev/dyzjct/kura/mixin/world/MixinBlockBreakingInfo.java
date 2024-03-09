@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.mixin.world;
 
-import melon.events.block.BlockBreakEvent;
+import base.events.block.BlockBreakEvent;
 import net.minecraft.client.render.BlockBreakingInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

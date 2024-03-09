@@ -4,11 +4,11 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import melon.events.ConnectionEvent
-import melon.events.screen.GuiScreenEvent
-import melon.system.event.listener
-import melon.utils.concurrent.threads.BackgroundScope
-import melon.utils.concurrent.threads.onMainThread
+import base.events.ConnectionEvent
+import base.events.screen.GuiScreenEvent
+import base.system.event.listener
+import base.utils.concurrent.threads.BackgroundScope
+import base.utils.concurrent.threads.onMainThread
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.ConnectScreen

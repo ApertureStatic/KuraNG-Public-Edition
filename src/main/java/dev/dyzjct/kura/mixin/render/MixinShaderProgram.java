@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.mixin.render;
 
-import melon.system.render.shader.GlProgram;
+import base.system.render.shader.GlProgram;
 import net.minecraft.client.gl.ShaderProgram;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

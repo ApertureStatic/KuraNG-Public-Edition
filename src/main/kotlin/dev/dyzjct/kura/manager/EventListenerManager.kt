@@ -6,14 +6,14 @@ import dev.dyzjct.kura.gui.clickgui.HUDRender
 import dev.dyzjct.kura.gui.clickgui.guis.ClickGuiScreen
 import dev.dyzjct.kura.gui.clickgui.guis.HUDEditorScreen
 import dev.dyzjct.kura.module.ModuleManager
-import melon.events.ConnectionEvent
-import melon.events.PacketEvents
-import melon.events.TickEvent
-import melon.events.input.MouseScrollEvent
-import melon.events.screen.ResolutionUpdateEvent
-import melon.system.event.ListenerOwner
-import melon.system.event.listener
-import melon.system.event.safeEventListener
+import base.events.ConnectionEvent
+import base.events.PacketEvents
+import base.events.TickEvent
+import base.events.input.MouseScrollEvent
+import base.events.screen.ResolutionUpdateEvent
+import base.system.event.ListenerOwner
+import base.system.event.listener
+import base.system.event.safeEventListener
 import net.minecraft.client.MinecraftClient
 import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket
 

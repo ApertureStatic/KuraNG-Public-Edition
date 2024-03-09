@@ -4,7 +4,7 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.animations.AnimationFlag
 import dev.dyzjct.kura.utils.animations.Easing
-import melon.utils.concurrent.threads.runSafe
+import base.utils.concurrent.threads.runSafe
 
 object GameAnimation : Module(name = "GameAnimation", langName = "游戏动画", category = Category.CLIENT) {
     private var hotbarAnimation = AnimationFlag(Easing.OUT_CUBIC, 200.0f)
