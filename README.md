@@ -1,2 +1,2 @@
 # Kura-NextGen
-bye exceptionteam.
+金明輝.ZHINA
