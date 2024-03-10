@@ -28,7 +28,7 @@ import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.Hand
 import net.minecraft.util.math.*
-import team.exception.melon.util.math.toBlockPos
+import base.utils.math.toBlockPos
 import java.util.*
 import java.util.function.Consumer
 import kotlin.math.abs

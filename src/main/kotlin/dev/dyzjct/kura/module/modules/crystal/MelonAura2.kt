@@ -89,11 +89,11 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.distanceSq
-import team.exception.melon.util.math.distanceSqTo
-import team.exception.melon.util.math.distanceSqToCenter
-import team.exception.melon.util.math.toVec3dCenter
-import team.exception.melon.util.math.vector.Vec2f
+import base.utils.math.distanceSq
+import base.utils.math.distanceSqTo
+import base.utils.math.distanceSqToCenter
+import base.utils.math.toVec3dCenter
+import base.utils.math.vector.Vec2f
 import java.awt.Color
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.CopyOnWriteArrayList

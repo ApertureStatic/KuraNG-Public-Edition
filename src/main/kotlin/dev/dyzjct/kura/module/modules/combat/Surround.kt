@@ -60,9 +60,9 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.distanceSqTo
-import team.exception.melon.util.math.isInSight
-import team.exception.melon.util.math.vector.Vec2f
+import base.utils.math.distanceSqTo
+import base.utils.math.isInSight
+import base.utils.math.vector.Vec2f
 
 object Surround : Module(
     name = "Surround",

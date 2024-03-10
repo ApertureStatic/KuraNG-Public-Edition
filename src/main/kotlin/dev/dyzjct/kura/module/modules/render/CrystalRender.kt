@@ -11,8 +11,8 @@ import base.system.event.safeConcurrentListener
 import base.system.render.graphic.Render3DEngine
 import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.util.math.BlockPos
-import team.exception.melon.util.math.distanceSqTo
-import team.exception.melon.util.math.distanceSqToCenter
+import base.utils.math.distanceSqTo
+import base.utils.math.distanceSqToCenter
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 

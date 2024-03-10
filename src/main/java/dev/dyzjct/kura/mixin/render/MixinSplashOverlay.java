@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import team.exception.melon.MelonIdentifier;
+import base.KuraIdentifier;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -25,10 +25,10 @@ import java.util.function.Consumer;
 @Mixin(SplashOverlay.class)
 public abstract class MixinSplashOverlay {
     @Unique
-    private static final Identifier XGP = new MelonIdentifier("textures/xgp.png");
+    private static final Identifier XGP = new KuraIdentifier("textures/xgp.png");
 
     @Unique
-    private static final Identifier GENSHIN_IMPACT = new MelonIdentifier("textures/genshin.png");
+    private static final Identifier GENSHIN_IMPACT = new KuraIdentifier("textures/genshin.png");
 
     private static final MinecraftClient mc = Wrapper.getMinecraft();
     @Final

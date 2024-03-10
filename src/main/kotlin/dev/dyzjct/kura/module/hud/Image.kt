@@ -1,21 +1,21 @@
 package dev.dyzjct.kura.module.hud
 
+import base.KuraIdentifier
+import base.utils.chat.ChatUtil
 import com.mojang.blaze3d.systems.RenderSystem
-import dev.dyzjct.kura.gui.rewrite.gui.MelonClickGui
-import dev.dyzjct.kura.gui.rewrite.gui.MelonHudEditor
+import dev.dyzjct.kura.gui.clickgui.ClickGuiScreen
+import dev.dyzjct.kura.gui.clickgui.HudEditorScreen
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.client.UiSetting
 import dev.dyzjct.kura.utils.animations.Easing
-import base.utils.chat.ChatUtil
 import net.minecraft.client.gui.DrawContext
-import team.exception.melon.MelonIdentifier
 
 object Image : HUDModule(name = "Image", langName = "图片显示", category = Category.HUD, x = 150f, y = 150f) {
     private val mode = msetting("Mode", Mode.Mahiro)
-    private val arona = MelonIdentifier("textures/arona.png")
-    private val mahiro = MelonIdentifier("textures/mahiro.png")
-    private val roxy = MelonIdentifier("textures/roxy.png")
+    private val arona = KuraIdentifier("textures/arona.png")
+    private val mahiro = KuraIdentifier("textures/mahiro.png")
+    private val roxy = KuraIdentifier("textures/roxy.png")
     var startTime = System.currentTimeMillis()
     override fun onRender(context: DrawContext) {
         val img = when (mode.value) {
@@ -24,7 +24,7 @@ object Image : HUDModule(name = "Image", langName = "图片显示", category = C
             else -> mahiro
         }
         try {
-            if (mc.currentScreen is MelonClickGui || mc.currentScreen is MelonHudEditor) {
+            if (mc.currentScreen is ClickGuiScreen || mc.currentScreen is HudEditorScreen) {
                 RenderSystem.disableBlend()
                 width = 302f
                 height = 460f

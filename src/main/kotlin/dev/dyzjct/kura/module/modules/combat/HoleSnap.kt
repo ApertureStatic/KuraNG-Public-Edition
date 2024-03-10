@@ -29,10 +29,10 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.BlockPosUtil
-import team.exception.melon.util.math.VectorUtils
-import team.exception.melon.util.math.distanceToCenter
-import team.exception.melon.util.math.vector.Vec2f
+import base.utils.math.BlockPosUtil
+import base.utils.math.VectorUtils
+import base.utils.math.distanceToCenter
+import base.utils.math.vector.Vec2f
 import kotlin.math.*
 
 object HoleSnap :

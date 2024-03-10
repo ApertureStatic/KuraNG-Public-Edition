@@ -14,7 +14,7 @@ import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.Difficulty
 import net.minecraft.world.World
-import team.exception.melon.util.math.distanceTo
+import base.utils.math.distanceTo
 import kotlin.math.floor
 import kotlin.math.min
 

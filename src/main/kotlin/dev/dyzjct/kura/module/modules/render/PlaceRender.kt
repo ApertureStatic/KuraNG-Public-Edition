@@ -6,7 +6,7 @@ import dev.dyzjct.kura.utils.animations.Easing
 import base.utils.graphics.ESPRenderer
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
-import team.exception.melon.util.math.scale
+import base.utils.math.scale
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 

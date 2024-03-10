@@ -1,13 +1,11 @@
 package dev.dyzjct.kura.module.modules.client
 
-import dev.dyzjct.kura.gui.rewrite.gui.AlphaAnimationDrawDelegate
-import dev.dyzjct.kura.gui.rewrite.gui.MelonClickGui
-import dev.dyzjct.kura.gui.rewrite.gui.MelonHudEditor
-import dev.dyzjct.kura.gui.rewrite.gui.animation.AnimationStrategy
-import dev.dyzjct.kura.gui.rewrite.gui.animation.NonAnimationStrategy
-import dev.dyzjct.kura.gui.rewrite.gui.animation.impl.AlphaAnimationStrategy
-import dev.dyzjct.kura.gui.rewrite.gui.animation.impl.ScalaAnimationStrategy
-import dev.dyzjct.kura.gui.rewrite.gui.render.Alignment
+import dev.dyzjct.kura.gui.clickgui.HudEditorScreen
+import dev.dyzjct.kura.gui.clickgui.animation.AnimationStrategy
+import dev.dyzjct.kura.gui.clickgui.animation.NonAnimationStrategy
+import dev.dyzjct.kura.gui.clickgui.animation.impl.AlphaAnimationStrategy
+import dev.dyzjct.kura.gui.clickgui.animation.impl.ScalaAnimationStrategy
+import dev.dyzjct.kura.gui.clickgui.render.Alignment
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.setting.BooleanSetting
@@ -16,12 +14,11 @@ import java.awt.Color
 
 object UiSetting : Module(
     "NewUISetting",
-    langName = "新的界面设置",
+    langName = "界面设置",
     description = "Color settings",
     category = Category.CLIENT,
     alwaysEnable = true
 ) {
-    val enableNewUi by bsetting("BetaGUI", false)
     val disableSearch by bsetting("DisableSearch", false)
 
     //    Theme type
@@ -47,13 +44,14 @@ object UiSetting : Module(
     enum class AnimationType(
         val createInstance: () -> AnimationStrategy
     ) {
-        NONE({ NonAnimationStrategy }), EASE({ AlphaAnimationStrategy(AlphaAnimationDrawDelegate()) }), SCALA({ ScalaAnimationStrategy() })
+        NONE({ NonAnimationStrategy }), EASE({ AlphaAnimationStrategy(dev.dyzjct.kura.gui.clickgui.AlphaAnimationDrawDelegate()) }), SCALA(
+            { ScalaAnimationStrategy() })
     }
 
     init {
         type0.onChange<BooleanSetting> { value: Enum<*> ->
-            MelonClickGui.animationStrategy = (value as AnimationType).createInstance()
-            MelonHudEditor.animationStrategy = value.createInstance()
+            dev.dyzjct.kura.gui.clickgui.ClickGuiScreen.animationStrategy = (value as AnimationType).createInstance()
+            HudEditorScreen.animationStrategy = value.createInstance()
         }
 
         onAnySettingChange(

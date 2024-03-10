@@ -18,10 +18,10 @@ import net.minecraft.util.math.Vec3d
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL11C.glDrawArrays
 import org.lwjgl.opengl.GL32
-import team.exception.melon.MelonIdentifier
-import team.exception.melon.graphics.shaders.DrawShader
-import team.exception.melon.graphics.shaders.DynamicVAO
-import team.exception.melon.graphics.use
+import base.KuraIdentifier
+import base.graphics.shaders.DrawShader
+import base.graphics.shaders.DynamicVAO
+import base.graphics.use
 
 object RenderUtils3D : AlwaysListening {
     var vertexSize = 0
@@ -148,7 +148,7 @@ object RenderUtils3D : AlwaysListening {
     }
 
     object NiggerShader : DrawShader(
-        MelonIdentifier("shaders/pos3color.vsh"), MelonIdentifier("shaders/pos3color.fsh")
+        KuraIdentifier("shaders/pos3color.vsh"), KuraIdentifier("shaders/pos3color.fsh")
     ) {
 
         fun drawBox(stack: MatrixStack, box: Box, color: ColorRGB, sides: Int) = use {

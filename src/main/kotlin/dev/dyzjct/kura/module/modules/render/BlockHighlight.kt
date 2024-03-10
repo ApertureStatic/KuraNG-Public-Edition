@@ -7,8 +7,8 @@ import dev.dyzjct.kura.utils.animations.Easing
 import base.utils.graphics.ESPRenderer
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
-import team.exception.melon.util.math.scale
-import team.exception.melon.util.math.toBox
+import base.utils.math.scale
+import base.utils.math.toBox
 import java.awt.Color
 
 object BlockHighlight : Module(name = "BlockHighlight", langName = "方块渲染", category = Category.RENDER) {

@@ -34,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import team.exception.melon.MelonIdentifier;
+import base.KuraIdentifier;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,9 +44,9 @@ import java.util.Objects;
 @Mixin(value = {HandledScreen.class})
 public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen implements ScreenHandlerProvider<T> {
     @Unique
-    private static final Identifier CONTAINER_BACKGROUND = new MelonIdentifier("textures/container.png");
+    private static final Identifier CONTAINER_BACKGROUND = new KuraIdentifier("textures/container.png");
     @Unique
-    private static final Identifier MAP_BACKGROUND = new MelonIdentifier("textures/map_background.png");
+    private static final Identifier MAP_BACKGROUND = new KuraIdentifier("textures/map_background.png");
     @Unique
     private static final ItemStack[] ITEMS = new ItemStack[27];
     @Unique

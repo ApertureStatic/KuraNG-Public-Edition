@@ -16,8 +16,8 @@ import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.player.getTargetSpeed
 import net.minecraft.block.Blocks
-import team.exception.melon.util.math.distanceSqToCenter
-import team.exception.melon.util.math.toBox
+import base.utils.math.distanceSqToCenter
+import base.utils.math.toBox
 
 object HeadTrap : Module(name = "HeadTrap", "盖头", category = Category.COMBAT, description = "1!5!") {
 

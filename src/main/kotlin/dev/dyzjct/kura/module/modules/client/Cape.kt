@@ -7,13 +7,12 @@ import net.minecraft.util.Identifier
 object Cape : Module(
     "Cape", category = Category.CLIENT
 ) {
-    private val capeEnum by msetting("Type", Cape.MELON)
+    private val capeEnum by msetting("Type", Cape.VAPE)
 
     @Suppress("UNUSED")
     private enum class Cape(
         val path: String
     ) {
-        MELON("melon_cape.png"),
         VAPE("vape_cape.png"),
         Chicken("chicken_cape.png"),
         BadLion("badlion_cape.png"),

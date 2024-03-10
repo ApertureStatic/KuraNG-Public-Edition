@@ -18,9 +18,9 @@ import base.utils.graphics.ESPRenderer
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
-import team.exception.melon.util.math.distanceSqToCenter
-import team.exception.melon.util.math.scale
-import team.exception.melon.util.math.toBox
+import base.utils.math.distanceSqToCenter
+import base.utils.math.scale
+import base.utils.math.toBox
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 

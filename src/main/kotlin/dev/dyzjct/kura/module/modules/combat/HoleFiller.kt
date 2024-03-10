@@ -39,9 +39,9 @@ import net.minecraft.util.Hand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.distance
-import team.exception.melon.util.math.distanceSqToCenter
-import team.exception.melon.util.math.isInSight
+import base.utils.math.distance
+import base.utils.math.distanceSqToCenter
+import base.utils.math.isInSight
 import java.awt.Color
 import java.util.*
 

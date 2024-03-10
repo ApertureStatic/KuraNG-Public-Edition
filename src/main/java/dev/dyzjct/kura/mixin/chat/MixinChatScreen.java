@@ -2,7 +2,7 @@ package dev.dyzjct.kura.mixin.chat;
 
 import dev.dyzjct.kura.Kura;
 import dev.dyzjct.kura.command.CommandManager;
-import dev.dyzjct.kura.gui.chat.MelonGuiChat;
+import dev.dyzjct.kura.gui.chat.GuiChat;
 import base.events.chat.MessageSentEvent;
 import base.utils.Wrapper;
 import base.utils.chat.ChatUtil;
@@ -41,9 +41,9 @@ public class MixinChatScreen extends Screen {
     @Inject(method = "keyPressed", at = @At(value = "RETURN"), cancellable = true)
     public void onKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
         Screen currentScreen = Wrapper.getMinecraft().currentScreen;
-        if (currentScreen instanceof ChatScreen && !(currentScreen instanceof MelonGuiChat)) {
+        if (currentScreen instanceof ChatScreen && !(currentScreen instanceof GuiChat)) {
             if (chatField.getText().startsWith(Kura.Companion.getCommandPrefix().getValue())) {
-                Wrapper.getMinecraft().setScreen(new MelonGuiChat(chatField.getText(), chatLastMessage, messageHistorySize));
+                Wrapper.getMinecraft().setScreen(new GuiChat(chatField.getText(), chatLastMessage, messageHistorySize));
                 cir.setReturnValue(false);
             }
         }

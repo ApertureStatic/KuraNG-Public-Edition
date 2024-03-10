@@ -2,8 +2,6 @@ package dev.dyzjct.kura
 
 import dev.dyzjct.kura.command.CommandManager
 import dev.dyzjct.kura.manager.*
-import dev.dyzjct.kura.gui.clickgui.GUIRender
-import dev.dyzjct.kura.gui.clickgui.HUDRender
 import dev.dyzjct.kura.module.ModuleManager
 import dev.dyzjct.kura.module.modules.client.ClickGui
 import dev.dyzjct.kura.module.modules.client.HUDEditor
@@ -53,8 +51,6 @@ class Kura : AlwaysListening {
             ModuleManager.init()
             CommandManager.onInit()
             RotationManager.onInit()
-            GUIRender.onCall()
-            HUDRender.onCall()
             FileManager.onInit()
             FileManager.loadAll()
             InventoryTaskManager.onInit()

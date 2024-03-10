@@ -22,7 +22,7 @@ import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
 import net.minecraft.util.Hand
-import team.exception.melon.util.math.distanceSqToCenter
+import base.utils.math.distanceSqToCenter
 
 object ManualCev : Module(name = "ManualCev", langName = "手动炸头", category = Category.COMBAT, description = "Place and attack crystal to MinePos.") {
     private val mode by msetting("SwitchMode", Mode.Spoof)

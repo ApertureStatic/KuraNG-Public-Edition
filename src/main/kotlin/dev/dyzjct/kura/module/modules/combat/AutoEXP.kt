@@ -18,7 +18,7 @@ import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.Hand
-import team.exception.melon.util.math.distanceSqTo
+import base.utils.math.distanceSqTo
 import java.util.concurrent.ConcurrentLinkedQueue
 
 object AutoEXP : Module(

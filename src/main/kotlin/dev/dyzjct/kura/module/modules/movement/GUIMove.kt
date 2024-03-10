@@ -1,6 +1,5 @@
 package dev.dyzjct.kura.module.modules.movement
 
-import dev.dyzjct.kura.gui.rewrite.gui.MelonClickGui
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import base.utils.screen.ScreenUtils.notWhiteListScreen
@@ -18,7 +17,7 @@ object GUIMove : Module(
         onMotion {
             val currentScreen = mc.currentScreen ?: return@onMotion
 
-            if (disableInClickGui && currentScreen is MelonClickGui) {
+            if (disableInClickGui && currentScreen is dev.dyzjct.kura.gui.clickgui.ClickGuiScreen) {
                 return@onMotion
             }
 

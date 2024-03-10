@@ -17,7 +17,7 @@ import base.utils.world.isPlaceable
 import net.minecraft.block.Blocks
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
-import team.exception.melon.util.math.distanceSqToCenter
+import base.utils.math.distanceSqToCenter
 
 @Suppress("unused")
 object AutoTrap : Module(name = "AutoTrap", "自动陷阱", category = Category.COMBAT) {

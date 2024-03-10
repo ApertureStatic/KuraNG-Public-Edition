@@ -1,14 +1,14 @@
 package dev.dyzjct.kura.manager
 
+import base.utils.concurrent.threads.IOScope
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import dev.dyzjct.kura.Kura
-import dev.dyzjct.kura.gui.clickgui.GUIRender
-import dev.dyzjct.kura.gui.clickgui.HUDRender
-import dev.dyzjct.kura.gui.rewrite.gui.MelonClickGui
-import dev.dyzjct.kura.gui.rewrite.gui.MelonHudEditor
-import dev.dyzjct.kura.gui.rewrite.gui.component.Panel
+import dev.dyzjct.kura.gui.clickgui.HudEditorScreen
+import dev.dyzjct.kura.gui.clickgui.component.Panel
+import dev.dyzjct.kura.gui.gui.GUIRender
+import dev.dyzjct.kura.gui.gui.HUDRender
 import dev.dyzjct.kura.module.AbstractModule
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.ModuleManager.getHUDByName
@@ -18,7 +18,6 @@ import dev.dyzjct.kura.module.ModuleManager.hUDModules
 import dev.dyzjct.kura.module.modules.client.NullHUD
 import dev.dyzjct.kura.setting.*
 import kotlinx.coroutines.launch
-import base.utils.concurrent.threads.IOScope
 import java.awt.Color
 import java.io.*
 import java.nio.charset.StandardCharsets
@@ -98,17 +97,18 @@ object FileManager {
             val json = file.readText()
             val jsonObject = gsonPretty.fromJson(json, JsonObject::class.java)
 
-            (MelonClickGui.elements + MelonHudEditor.elements).mapNotNull { it as? Panel }.forEach {
-                val panelJsonObject = jsonObject.getAsJsonObject(it.category.name)
+            (dev.dyzjct.kura.gui.clickgui.ClickGuiScreen.elements + HudEditorScreen.elements).mapNotNull { it as? Panel }
+                .forEach {
+                    val panelJsonObject = jsonObject.getAsJsonObject(it.category.name)
 
-                if (panelJsonObject != null) {
-                    it.x = panelJsonObject["x"].asFloat
-                    it.y = panelJsonObject["y"].asFloat
-                    it.isOpened = panelJsonObject["isOpened"].asBoolean
+                    if (panelJsonObject != null) {
+                        it.x = panelJsonObject["x"].asFloat
+                        it.y = panelJsonObject["y"].asFloat
+                        it.isOpened = panelJsonObject["isOpened"].asBoolean
+                    }
+
+                    it.rearrange()
                 }
-
-                it.rearrange()
-            }
         }
     }
 
@@ -116,13 +116,14 @@ object FileManager {
         val jsonObject = JsonObject()
         val file = File(NEW_UI_CONFIG_FILE_NAME)
 
-        (MelonClickGui.elements + MelonHudEditor.elements).mapNotNull { it as? Panel }.forEach {
-            val panelJsonObject = JsonObject()
-            panelJsonObject.addProperty("x", it.x)
-            panelJsonObject.addProperty("y", it.y)
-            panelJsonObject.addProperty("isOpened", it.isOpened)
-            jsonObject.add(it.category.name, panelJsonObject)
-        }
+        (dev.dyzjct.kura.gui.clickgui.ClickGuiScreen.elements + HudEditorScreen.elements).mapNotNull { it as? Panel }
+            .forEach {
+                val panelJsonObject = JsonObject()
+                panelJsonObject.addProperty("x", it.x)
+                panelJsonObject.addProperty("y", it.y)
+                panelJsonObject.addProperty("isOpened", it.isOpened)
+                jsonObject.add(it.category.name, panelJsonObject)
+            }
 
         val json = gsonPretty.toJson(jsonObject)
         file.writeText(json)

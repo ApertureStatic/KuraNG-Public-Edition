@@ -8,8 +8,8 @@ import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.Entity
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.toBlockPos
-import team.exception.melon.util.math.vector.Vec2f
+import base.utils.math.toBlockPos
+import base.utils.math.vector.Vec2f
 import kotlin.math.*
 
 object RotationUtils {

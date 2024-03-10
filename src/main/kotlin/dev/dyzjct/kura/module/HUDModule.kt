@@ -1,16 +1,15 @@
 package dev.dyzjct.kura.module
 
-import dev.dyzjct.kura.gui.clickgui.guis.HUDEditorScreen
-import dev.dyzjct.kura.gui.rewrite.gui.DrawDelegateSelector
-import dev.dyzjct.kura.gui.rewrite.gui.MelonHudEditor
-import dev.dyzjct.kura.gui.rewrite.gui.component.Component
-import dev.dyzjct.kura.gui.rewrite.gui.render.DrawDelegate
-import dev.dyzjct.kura.gui.rewrite.gui.render.DrawScope
-import dev.dyzjct.kura.module.modules.client.UiSetting
-import dev.dyzjct.kura.setting.BooleanSetting
 import base.events.render.Render2DEvent
 import base.system.event.safeEventListener
 import base.system.render.graphic.Render2DEngine
+import dev.dyzjct.kura.gui.clickgui.DrawDelegateSelector
+import dev.dyzjct.kura.gui.clickgui.HudEditorScreen
+import dev.dyzjct.kura.gui.clickgui.component.Component
+import dev.dyzjct.kura.gui.clickgui.render.DrawDelegate
+import dev.dyzjct.kura.gui.clickgui.render.DrawScope
+import dev.dyzjct.kura.module.modules.client.UiSetting
+import dev.dyzjct.kura.setting.BooleanSetting
 import net.minecraft.client.gui.DrawContext
 import java.awt.Color
 
@@ -53,7 +52,7 @@ abstract class HUDModule(
         }
 
         safeEventListener<Render2DEvent> {
-            if (mc.currentScreen !is MelonHudEditor && mc.currentScreen !is HUDEditorScreen)
+            if (mc.currentScreen !is HudEditorScreen)
                 return@safeEventListener
 
             if (UiSetting.getThemeSetting().rounded) {

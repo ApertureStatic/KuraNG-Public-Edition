@@ -16,7 +16,7 @@ import base.utils.hole.SurroundUtils.betterPosition
 import base.utils.hole.SurroundUtils.flooredPosition
 import net.minecraft.entity.Entity
 import net.minecraft.util.math.BlockPos
-import team.exception.melon.util.math.distanceSqTo
+import base.utils.math.distanceSqTo
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Predicate
 

@@ -39,9 +39,9 @@ import net.minecraft.util.Hand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
-import team.exception.melon.util.math.distanceSqTo
-import team.exception.melon.util.math.distanceSqToCenter
-import team.exception.melon.util.math.scale
+import base.utils.math.distanceSqTo
+import base.utils.math.distanceSqToCenter
+import base.utils.math.scale
 
 @Suppress("unused")
 object PacketMine : Module(

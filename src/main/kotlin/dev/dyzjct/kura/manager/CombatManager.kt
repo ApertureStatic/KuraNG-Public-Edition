@@ -30,9 +30,9 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.distanceSqTo
-import team.exception.melon.util.math.toBlockPos
-import team.exception.melon.util.math.toVec3d
+import base.utils.math.distanceSqTo
+import base.utils.math.toBlockPos
+import base.utils.math.toVec3d
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
 import kotlin.math.sqrt

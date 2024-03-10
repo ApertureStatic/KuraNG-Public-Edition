@@ -36,7 +36,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
-import team.exception.melon.util.math.distanceSqToCenter
+import base.utils.math.distanceSqToCenter
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.stream.Collectors

@@ -27,7 +27,7 @@ import net.minecraft.block.Blocks
 import net.minecraft.block.CobwebBlock
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
-import team.exception.melon.util.math.toBlockPos
+import base.utils.math.toBlockPos
 
 object AutoWeb : Module(
     name = "AutoWeb",

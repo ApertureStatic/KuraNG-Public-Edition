@@ -8,7 +8,7 @@ import base.system.event.safeEventListener
 import net.minecraft.entity.LivingEntity
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.vector.Vec2f
+import base.utils.math.vector.Vec2f
 
 object CrystalManager : AlwaysListening {
     var position: Vec3d = Vec3d.ZERO; private set

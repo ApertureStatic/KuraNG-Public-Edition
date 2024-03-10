@@ -24,8 +24,8 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.distanceSqTo
-import team.exception.melon.util.math.toBlockPos
+import base.utils.math.distanceSqTo
+import base.utils.math.toBlockPos
 
 object EntityUtils : MinecraftWrapper {
     val SafeClientEvent.baseMoveSpeed: Double

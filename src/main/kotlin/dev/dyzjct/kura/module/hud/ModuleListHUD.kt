@@ -1,12 +1,5 @@
 package dev.dyzjct.kura.module.hud
 
-import dev.dyzjct.kura.gui.clickgui.guis.HUDEditorScreen
-import dev.dyzjct.kura.gui.rewrite.gui.MelonHudEditor
-import dev.dyzjct.kura.module.HUDModule
-import dev.dyzjct.kura.module.ModuleManager
-import dev.dyzjct.kura.module.modules.client.ClickGui
-import dev.dyzjct.kura.module.modules.client.Colors
-import dev.dyzjct.kura.utils.animations.Easing
 import base.events.ModuleEvent
 import base.events.TickEvent
 import base.system.event.listener
@@ -16,6 +9,12 @@ import base.system.render.graphic.Render2DEngine
 import base.system.render.newfont.FontRenderers
 import base.system.util.state.TimedFlag
 import base.utils.chat.ChatUtil
+import dev.dyzjct.kura.gui.clickgui.HudEditorScreen
+import dev.dyzjct.kura.module.HUDModule
+import dev.dyzjct.kura.module.ModuleManager
+import dev.dyzjct.kura.module.modules.client.ClickGui
+import dev.dyzjct.kura.module.modules.client.Colors
+import dev.dyzjct.kura.utils.animations.Easing
 import net.minecraft.client.gui.DrawContext
 import java.awt.Color
 
@@ -176,7 +175,7 @@ object ModuleListHUD : HUDModule(name = "ModuleListHUD", langName = "功能列�
 
         moduleList.forEach(ModuleRenderer::update)
 
-        if (mc.currentScreen is HUDEditorScreen || mc.currentScreen is MelonHudEditor || !reverseX || !reverseY) {
+        if (mc.currentScreen is HudEditorScreen || !reverseX || !reverseY) {
             reverseX = x > mc.window.scaledWidth / 2
             reverseY = y > mc.window.scaledHeight / 2
         }

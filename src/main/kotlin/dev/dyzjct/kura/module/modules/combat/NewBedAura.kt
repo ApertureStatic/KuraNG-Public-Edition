@@ -37,9 +37,9 @@ import net.minecraft.util.math.BlockPos.Mutable
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.distanceSqToCenter
-import team.exception.melon.util.math.toBox
-import team.exception.melon.util.math.toVec3dCenter
+import base.utils.math.distanceSqToCenter
+import base.utils.math.toBox
+import base.utils.math.toVec3dCenter
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max

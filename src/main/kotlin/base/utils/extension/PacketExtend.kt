@@ -27,8 +27,8 @@ import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.toBlockPos
-import team.exception.melon.util.math.toVec3d
+import base.utils.math.toBlockPos
+import base.utils.math.toVec3d
 
 fun fastPosDirection(
     pos: BlockPos,

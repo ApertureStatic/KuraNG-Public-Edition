@@ -21,8 +21,8 @@ import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.toVec3dCenter
-import team.exception.melon.util.math.vector.Vec3f
+import base.utils.math.toVec3dCenter
+import base.utils.math.vector.Vec3f
 import java.util.*
 
 fun SafeClientEvent.getNeighborSequence(

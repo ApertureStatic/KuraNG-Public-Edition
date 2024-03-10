@@ -1,31 +1,43 @@
 package dev.dyzjct.kura.gui.clickgui.component
 
-import dev.dyzjct.kura.gui.clickgui.Panel
-import net.minecraft.client.MinecraftClient
+import dev.dyzjct.kura.gui.clickgui.render.DrawDelegate
+import dev.dyzjct.kura.gui.clickgui.render.DrawScope
+import net.minecraft.client.gui.DrawContext
 
-abstract class Component : IComponent {
-    var mc: MinecraftClient = MinecraftClient.getInstance()
-    override var x = 0.0
-    override var y = 0.0
-    override var width = 0.0
-    override var height = 0.0
-    var father: Panel? = null
-    var isToggled = false
-    var isExtended = false
-    override fun mouseReleased(mouseX: Double, mouseY: Double, state: Int) {}
-    override fun keyTyped(typedChar: Char, keyCode: Int) {}
-    override fun close() {}
+interface Component {
+    var x: Float
+    var y: Float
 
-    fun solvePos() {
-        father?.let {
-            x = it.x
-            y = it.y
-        }
+    var width: Float
+    var height: Float
+
+    var drawDelegate: DrawDelegate
+
+    fun renderDelegate(context: DrawContext, mouseX: Float, mouseY: Float) {
+        DrawScope(x, y, width, height, drawDelegate, context).render(mouseX, mouseY)
     }
 
-    override fun isHovered(mouseX: Double, mouseY: Double): Boolean {
-        return mouseX >= x.coerceAtMost(x + width) && mouseX <= x.coerceAtLeast(x + width) && mouseY >= y.coerceAtMost(y + height) && mouseY <= y.coerceAtLeast(
-            y + height
-        )
+    fun DrawScope.render(mouseX: Float, mouseY: Float) {}
+    fun mouseClicked(mouseX: Float, mouseY: Float, button: Int): Boolean {
+        return false
+    }
+
+    fun mouseReleased(mouseX: Float, mouseY: Float, button: Int): Boolean {
+        return false
+    }
+
+    fun keyTyped(keyCode: Int): Boolean {
+        return false
+    }
+
+    fun rearrange() {}
+    fun guiClosed() {}
+
+    fun changeDrawDelegate(drawDelegate: DrawDelegate) {
+        this.drawDelegate = drawDelegate
+    }
+
+    fun isHovering(mouseX: Float, mouseY: Float): Boolean {
+        return mouseX in x..(x + width) && mouseY in y..(y + height)
     }
 }

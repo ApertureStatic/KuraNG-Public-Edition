@@ -1,17 +1,17 @@
 package dev.dyzjct.kura.module.hud
 
-import dev.dyzjct.kura.gui.rewrite.gui.render.DrawScope
+import base.system.event.SafeClientEvent
+import base.utils.concurrent.threads.runSafe
+import base.utils.math.distanceSqTo
+import dev.dyzjct.kura.gui.clickgui.render.DrawScope
 import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.FriendManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.scaledHealth
 import dev.dyzjct.kura.utils.animations.MathUtils
-import base.system.event.SafeClientEvent
-import base.utils.concurrent.threads.runSafe
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.Formatting
-import team.exception.melon.util.math.distanceSqTo
 import java.awt.Color
 
 object PlayerListHUD :

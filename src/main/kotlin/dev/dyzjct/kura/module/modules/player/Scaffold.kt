@@ -23,7 +23,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
-import team.exception.melon.util.math.toVec3dCenter
+import base.utils.math.toVec3dCenter
 import java.awt.Color
 
 object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category = Category.PLAYER) {

@@ -10,8 +10,8 @@ import net.minecraft.block.Blocks
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.toVec3dCenter
-import team.exception.melon.util.math.vector.Vec2f
+import base.utils.math.toVec3dCenter
+import base.utils.math.vector.Vec2f
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 

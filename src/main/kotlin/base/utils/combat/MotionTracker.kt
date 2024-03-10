@@ -7,7 +7,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
-import team.exception.melon.util.math.toBlockPos
+import base.utils.math.toBlockPos
 
 class MotionTracker(val entity: Entity) {
     private val motionLog = ArrayDeque<Vec3d>()

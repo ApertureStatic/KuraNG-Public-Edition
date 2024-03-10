@@ -36,7 +36,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
-import team.exception.melon.util.math.distanceSqToCenter
+import base.utils.math.distanceSqToCenter
 
 object HolePush : Module(
     name = "HolePush",

@@ -26,8 +26,8 @@ import net.minecraft.item.Items
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.distanceSqTo
-import team.exception.melon.util.math.toBlockPos
+import base.utils.math.distanceSqTo
+import base.utils.math.toBlockPos
 import kotlin.math.abs
 import kotlin.math.hypot
 import kotlin.math.max

@@ -1,14 +1,12 @@
 package dev.dyzjct.kura.module.modules.client
 
-import dev.dyzjct.kura.gui.clickgui.GUIRender
-import dev.dyzjct.kura.gui.clickgui.guis.ClickGuiScreen
-import dev.dyzjct.kura.gui.rewrite.gui.MelonClickGui
-import dev.dyzjct.kura.gui.rewrite.gui.MelonHudEditor
+import base.utils.concurrent.threads.runSafe
+import dev.dyzjct.kura.gui.clickgui.ClickGuiScreen
+import dev.dyzjct.kura.gui.clickgui.HudEditorScreen
 import dev.dyzjct.kura.manager.FileManager.saveAll
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.hud.Image
-import base.utils.concurrent.threads.runSafe
 import net.minecraft.client.util.InputUtil
 
 object ClickGui : Module(
@@ -21,24 +19,18 @@ object ClickGui : Module(
     var chinese = bsetting("ChineseUI", false)
     var notification by bsetting("Notification", false)
     var chat = bsetting("ToggleChat", true)
-    var screen: ClickGuiScreen = ClickGuiScreen()
 
     override fun onEnable() {
-        if (mc.currentScreen == MelonHudEditor) {
-            MelonHudEditor.close()
+        if (mc.currentScreen == HudEditorScreen) {
+            HudEditorScreen.close()
         }
 
         runSafe {
-            if (mc.currentScreen is MelonClickGui || mc.currentScreen is ClickGuiScreen) {
+            if (mc.currentScreen is ClickGuiScreen) {
                 return
             }
 
-            if (UiSetting.enableNewUi) {
-                mc.setScreen(MelonClickGui)
-            } else {
-                GUIRender.init()
-                mc.setScreen(screen)
-            }
+            mc.setScreen(ClickGuiScreen)
 
             Image.startTime = System.currentTimeMillis()
         }
@@ -46,7 +38,7 @@ object ClickGui : Module(
 
     override fun onDisable() {
         runSafe {
-            if (mc.currentScreen is ClickGuiScreen || mc.currentScreen is MelonClickGui) {
+            if (mc.currentScreen is ClickGuiScreen) {
                 mc.setScreen(null)
             }
             saveAll()

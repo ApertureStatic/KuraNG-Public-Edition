@@ -5,7 +5,7 @@ import base.utils.combat.CrystalUtils
 import net.minecraft.block.Blocks
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
-import team.exception.melon.util.math.toVec3d
+import base.utils.math.toVec3d
 
 @Suppress("NOTHING_TO_INLINE")
 object HoleUtils {

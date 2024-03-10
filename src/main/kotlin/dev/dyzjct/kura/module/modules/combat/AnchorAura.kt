@@ -42,10 +42,10 @@ import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.distanceSqTo
-import team.exception.melon.util.math.distanceSqToCenter
-import team.exception.melon.util.math.toBlockPos
-import team.exception.melon.util.math.toVec3dCenter
+import base.utils.math.distanceSqTo
+import base.utils.math.distanceSqToCenter
+import base.utils.math.toBlockPos
+import base.utils.math.toVec3dCenter
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.stream.Collectors

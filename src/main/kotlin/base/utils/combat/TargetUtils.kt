@@ -11,7 +11,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
-import team.exception.melon.util.math.distanceSqToCenter
+import base.utils.math.distanceSqToCenter
 
 fun SafeClientEvent.getTarget(range: Double): PlayerEntity? {
     for (ent in world.entities.filter {

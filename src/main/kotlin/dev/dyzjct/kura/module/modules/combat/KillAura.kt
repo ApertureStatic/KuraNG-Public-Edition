@@ -19,7 +19,7 @@ import net.minecraft.item.ShieldItem
 import net.minecraft.item.SwordItem
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
 import net.minecraft.util.Hand
-import team.exception.melon.util.math.distanceSqTo
+import base.utils.math.distanceSqTo
 import kotlin.math.max
 
 object KillAura : Module(name = "KillAura", langName = "杀戮", category = Category.COMBAT) {

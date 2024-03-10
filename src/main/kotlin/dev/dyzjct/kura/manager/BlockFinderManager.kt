@@ -20,7 +20,7 @@ import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket
 import net.minecraft.util.Hand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
-import team.exception.melon.util.math.distanceSqToCenter
+import base.utils.math.distanceSqToCenter
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.max
 

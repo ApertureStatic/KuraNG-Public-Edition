@@ -15,7 +15,7 @@ import org.joml.Vector4f
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL14
-import team.exception.melon.util.math.vector.Vec2f
+import base.utils.math.vector.Vec2f
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
