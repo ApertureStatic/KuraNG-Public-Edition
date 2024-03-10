@@ -1,5 +1,13 @@
 package dev.dyzjct.kura.module
 
+import base.events.TickEvent
+import base.events.input.BindEvent
+import base.system.event.AlwaysListening
+import base.system.event.listener
+import base.system.render.newfont.FontRenderers
+import base.utils.concurrent.threads.IOScope
+import base.utils.math.DamageCalculator
+import base.verify.VerificationManager
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.hud.*
 import dev.dyzjct.kura.module.modules.client.*
@@ -10,21 +18,13 @@ import dev.dyzjct.kura.module.modules.movement.*
 import dev.dyzjct.kura.module.modules.player.*
 import dev.dyzjct.kura.module.modules.render.*
 import kotlinx.coroutines.async
-import base.events.TickEvent
-import base.events.input.BindEvent
-import base.system.event.AlwaysListening
-import base.system.event.listener
-import base.system.render.newfont.FontRenderers
-import base.utils.concurrent.threads.IOScope
-import base.utils.math.DamageCalculator
-import base.verify.VerificationManager
 import net.minecraft.client.gui.DrawContext
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.stream.Collectors
 
 object ModuleManager : AlwaysListening {
-    private var sortedModules = CopyOnWriteArrayList<dev.dyzjct.kura.module.AbstractModule>()
-    val moduleList = CopyOnWriteArrayList<dev.dyzjct.kura.module.AbstractModule>()
+    private var sortedModules = CopyOnWriteArrayList<AbstractModule>()
+    val moduleList = CopyOnWriteArrayList<AbstractModule>()
 
     init {
         VerificationManager
@@ -195,12 +195,12 @@ object ModuleManager : AlwaysListening {
         }
     }
 
-    private fun registerModule(module: dev.dyzjct.kura.module.AbstractModule) = runCatching {
+    private fun registerModule(module: AbstractModule) = runCatching {
         IOScope.async { moduleList.add(module) }
     }
 
     @JvmStatic
-    fun getModules(): List<dev.dyzjct.kura.module.AbstractModule> {
+    fun getModules(): List<AbstractModule> {
         return moduleList.stream().filter { it is Module }.collect(Collectors.toList())
     }
 
@@ -212,8 +212,8 @@ object ModuleManager : AlwaysListening {
         )
     }
 
-    private fun getEnabledModules(): ArrayList<dev.dyzjct.kura.module.AbstractModule> {
-        val enabledModules = ArrayList<dev.dyzjct.kura.module.AbstractModule>()
+    private fun getEnabledModules(): ArrayList<AbstractModule> {
+        val enabledModules = ArrayList<AbstractModule>()
         for (module in moduleList) {
             if (!module.isEnabled) continue
             enabledModules.add(module)

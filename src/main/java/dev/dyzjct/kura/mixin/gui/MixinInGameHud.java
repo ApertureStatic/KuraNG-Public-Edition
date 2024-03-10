@@ -53,7 +53,7 @@ public abstract class MixinInGameHud {
 
     @Inject(method = "render", at = @At("HEAD"))
     private void onRender(DrawContext context, float tickDelta, CallbackInfo ci) {
-        client.getProfiler().push("MelonRender2D");
+        client.getProfiler().push("KuraRender2D");
 
         MSAAFramebuffer.Companion.use(() -> {
             Render2DEvent event = new Render2DEvent(context, scaledWidth, scaledHeight, tickDelta);

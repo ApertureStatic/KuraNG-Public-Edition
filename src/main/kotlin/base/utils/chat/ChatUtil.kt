@@ -92,11 +92,11 @@ object ChatUtil {
 
     fun sendNoSpamMessage(message: String) {
         val text = Text.literal("${bracketBuilder(AQUA + Kura.MOD_NAME)} ${message.replace("§", SECTIONSIGN)}")
-        (MinecraftClient.getInstance().inGameHud.chatHud as IChatHud).melonAddMessage(text, text.hashCode())
+        (MinecraftClient.getInstance().inGameHud.chatHud as IChatHud).kuraAddMessage(text, text.hashCode())
     }
 
     fun sendMessageWithID(message: String, id: Int) {
         val text = Text.literal("${bracketBuilder(AQUA + Kura.MOD_NAME)} ${message.replace("§", SECTIONSIGN)}")
-        (MinecraftClient.getInstance().inGameHud.chatHud as IChatHud).melonAddMessage(text, id)
+        (MinecraftClient.getInstance().inGameHud.chatHud as IChatHud).kuraAddMessage(text, id)
     }
 }

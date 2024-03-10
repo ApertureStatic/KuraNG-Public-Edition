@@ -65,7 +65,7 @@ public abstract class MixinChatHud implements IChatHud {
     }
 
     @Override
-    public void melonAddMessage(Text message, int id) {
+    public void kuraAddMessage(Text message, int id) {
         nextId = id;
         addMessage(message);
         nextId = 0;

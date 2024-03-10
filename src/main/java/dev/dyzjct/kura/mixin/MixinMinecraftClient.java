@@ -199,35 +199,35 @@ public abstract class MixinMinecraftClient {
 
     @Inject(method = "run", at = @At("RETURN"))
     public void shutdown(CallbackInfo info) {
-        Kura.Companion.getLogger().warn("Saving Melon configuration please wait...");
+        Kura.Companion.getLogger().warn("Saving Kura configuration please wait...");
         FileManager.saveAll();
         Kura.Companion.getLogger().warn("Configuration saved!");
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderTickCounter;beginRenderTick(J)I", shift = At.Shift.BEFORE))
     public void render$Inject$INVOKE$updateTimer(boolean tick, CallbackInfo ci) {
-        instance.getProfiler().push("melonRunGameLoop");
+        instance.getProfiler().push("kuraRunGameLoop");
         RunGameLoopEvent.Start.INSTANCE.post();
         instance.getProfiler().pop();
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;pop()V", ordinal = 0, shift = At.Shift.AFTER))
     public void renderTick(boolean tick, CallbackInfo ci) {
-        instance.getProfiler().push("melonRunGameLoop");
+        instance.getProfiler().push("kuraRunGameLoop");
         RunGameLoopEvent.Tick.INSTANCE.post();
         instance.getProfiler().pop();
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Mouse;updateMouse()V", shift = At.Shift.BEFORE))
     public void render$Inject$INVOKE$endStartSection(boolean tick, CallbackInfo ci) {
-        instance.getProfiler().push("melonRunGameLoop");
+        instance.getProfiler().push("kuraRunGameLoop");
         RunGameLoopEvent.Render.INSTANCE.post();
         instance.getProfiler().pop();
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;pop()V", ordinal = 7, shift = At.Shift.BEFORE))
     public void render$Inject$INVOKE$isFramerateLimitBelowMax(boolean tick, CallbackInfo ci) {
-        instance.getProfiler().push("melonRunGameLoop");
+        instance.getProfiler().push("kuraRunGameLoop");
         RunGameLoopEvent.End.INSTANCE.post();
         instance.getProfiler().pop();
     }

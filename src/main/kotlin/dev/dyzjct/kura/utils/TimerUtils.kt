@@ -80,6 +80,10 @@ open class TimerUtils(val timeUnit: TimeUnit = TimeUnit.MILLISECONDS) {
     fun passed(ms: Int): Boolean {
         return System.currentTimeMillis() - time >= ms * timeUnit.multiplier
     }
+
+    fun getPassedTime(): Long {
+        return System.currentTimeMillis() - time
+    }
 }
 
 enum class TimeUnit(val multiplier: Long) {

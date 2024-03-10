@@ -5,7 +5,7 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 
 object Timer : Module(name = "Timer", langName = "变速齿轮", category = Category.PLAYER) {
-    private val speed = fsetting("Speed", 1.2f, 1f, 10f)
+    private val speed = fsetting("Speed", 1.2f, 0f, 10f)
 
     init {
         onMotion {

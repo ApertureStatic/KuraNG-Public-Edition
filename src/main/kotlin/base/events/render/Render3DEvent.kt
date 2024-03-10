@@ -9,5 +9,5 @@ class Render3DEvent(
     var matrices: MatrixStack,
     var tickDelta: Float,
 ) : Event, IEventPosting by Companion {
-    companion object : NamedProfilerEventBus("melonRender3D")
+    companion object : NamedProfilerEventBus("kuraRender3D")
 }

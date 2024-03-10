@@ -13,12 +13,12 @@ public abstract class MixinCapabilityTracker implements ICapabilityTracker {
     public abstract void setState(boolean state);
 
     @Override
-    public boolean melonGet() {
+    public boolean kuraGet() {
         return state;
     }
 
     @Override
-    public void melonSet(boolean state) {
+    public void kuraSet(boolean state) {
         setState(state);
     }
 }

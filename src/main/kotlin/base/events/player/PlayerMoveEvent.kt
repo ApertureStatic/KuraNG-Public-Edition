@@ -40,5 +40,5 @@ class PlayerMoveEvent(var type: MovementType, var vec: Vec3d) : Event,
         }
     }
 
-    companion object : NamedProfilerEventBus("melonPlayerMove")
+    companion object : NamedProfilerEventBus("kuraPlayerMove")
 }

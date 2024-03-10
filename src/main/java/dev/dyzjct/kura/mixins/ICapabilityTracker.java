@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.mixins;
 
 public interface ICapabilityTracker {
-    boolean melonGet();
+    boolean kuraGet();
 
-    void melonSet(boolean state);
+    void kuraSet(boolean state);
 }

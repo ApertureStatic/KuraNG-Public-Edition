@@ -4,7 +4,7 @@ import dev.dyzjct.kura.Kura
 import kotlinx.coroutines.*
 
 @OptIn(DelicateCoroutinesApi::class)
-internal object BackgroundScope : CoroutineScope by CoroutineScope(newFixedThreadPoolContext(2, "Melon Background")) {
+internal object BackgroundScope : CoroutineScope by CoroutineScope(newFixedThreadPoolContext(2, "Kura Background")) {
 
     private val jobs = LinkedHashMap<BackgroundJob, Job?>()
     private var started = false
