@@ -12,7 +12,7 @@ import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.hud.*
 import dev.dyzjct.kura.module.modules.client.*
 import dev.dyzjct.kura.module.modules.combat.*
-import dev.dyzjct.kura.module.modules.crystal.MelonAura2
+import dev.dyzjct.kura.module.modules.crystal.KuraAura
 import dev.dyzjct.kura.module.modules.misc.*
 import dev.dyzjct.kura.module.modules.movement.*
 import dev.dyzjct.kura.module.modules.player.*
@@ -164,7 +164,7 @@ object ModuleManager : AlwaysListening {
         loadCategoryMovement()
         loadCategoryRender()
         loadCategoryPlayer()
-        registerModule(MelonAura2)
+        registerModule(KuraAura)
         DamageCalculator
         getModules().sortedWith(Comparator.comparing { it.moduleName })
     }

@@ -54,8 +54,8 @@ object CrystalDamageCalculator : AlwaysListening {
                         val nbtTagCompound = nbtTagList.getCompound(i)
                         val id = nbtTagCompound.getInt("id")
                         val level = nbtTagCompound.getShort("lvl").toInt()
-                        when (MelonAura2.damageMode.value) {
-                            MelonAura2.DamageMode.Auto -> {
+                        when (KuraAura.damageMode.value) {
+                            KuraAura.DamageMode.Auto -> {
                                 if (id == 0) {
                                     // Protection
                                     epf += level
@@ -65,7 +65,7 @@ object CrystalDamageCalculator : AlwaysListening {
                                 }
                             }
 
-                            MelonAura2.DamageMode.PPBP -> {
+                            KuraAura.DamageMode.PPBP -> {
                                 if (itemStack.item is ArmorItem) {
                                     epf += if ((itemStack.item as ArmorItem).type == ArmorItem.Type.LEGGINGS) {
                                         4 * 2
@@ -75,7 +75,7 @@ object CrystalDamageCalculator : AlwaysListening {
                                 }
                             }
 
-                            MelonAura2.DamageMode.BBBB -> {
+                            KuraAura.DamageMode.BBBB -> {
                                 epf += 4 * 2
                             }
                         }
@@ -113,7 +113,7 @@ object CrystalDamageCalculator : AlwaysListening {
                             crystalY.fastFloor() - 1,
                             crystalZ.fastFloor()
                         )
-                    ), MelonAura2.crystalPriority
+                    ), KuraAura.crystalPriority
                 )
             } else {
                 CrystalUtils.isResistant(
@@ -152,9 +152,9 @@ object CrystalDamageCalculator : AlwaysListening {
     }
 
     private val function: World.(BlockPos, BlockState) -> FastRayTraceAction = { _, blockState ->
-        if ((blockState.block != Blocks.AIR || MelonAura2.crystalPriority == MelonAura2.Priority.Block) && isResistant(
+        if ((blockState.block != Blocks.AIR || KuraAura.crystalPriority == KuraAura.Priority.Block) && isResistant(
                 blockState,
-                MelonAura2.crystalPriority
+                KuraAura.crystalPriority
             )
         ) {
             FastRayTraceAction.CALC
@@ -219,6 +219,6 @@ object CrystalDamageCalculator : AlwaysListening {
     }
 
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "DEPRECATION")
-    fun isResistant(blockState: BlockState, prio: MelonAura2.Priority = MelonAura2.Priority.Crystal) =
-        prio == MelonAura2.Priority.Block || (!blockState.isLiquid && blockState.block.blastResistance >= 19.7)
+    fun isResistant(blockState: BlockState, prio: KuraAura.Priority = KuraAura.Priority.Crystal) =
+        prio == KuraAura.Priority.Block || (!blockState.isLiquid && blockState.block.blastResistance >= 19.7)
 }

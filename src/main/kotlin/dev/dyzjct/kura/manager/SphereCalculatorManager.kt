@@ -2,7 +2,7 @@ package dev.dyzjct.kura.manager
 
 import dev.dyzjct.kura.module.modules.combat.AnchorAura
 import dev.dyzjct.kura.module.modules.combat.NewBedAura
-import dev.dyzjct.kura.module.modules.crystal.MelonAura2
+import dev.dyzjct.kura.module.modules.crystal.KuraAura
 import dev.dyzjct.kura.module.modules.misc.AutoCraftBed
 import base.events.RunGameLoopEvent
 import base.system.event.AlwaysListening
@@ -24,7 +24,7 @@ object SphereCalculatorManager : AlwaysListening {
             )
             val secondRange = max(
                 if (AnchorAura.isEnabled) AnchorAura.placeRange.value else 0.0,
-                if (MelonAura2.isEnabled) MelonAura2.placeRange.value else 0.0
+                if (KuraAura.isEnabled) KuraAura.placeRange.value else 0.0
             )
             val maxRange = max(firstRange, secondRange)
             sphereList = CopyOnWriteArrayList(

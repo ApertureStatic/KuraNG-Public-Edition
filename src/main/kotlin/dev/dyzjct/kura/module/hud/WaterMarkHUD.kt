@@ -24,8 +24,8 @@ object WaterMarkHUD :
             1f
         ).rgb
         val text = when (Kura.userState) {
-            Kura.UserType.Beta -> "Melon Beta ${Kura.VERSION}"
-            Kura.UserType.User -> "MelonRewrite ${Kura.VERSION}"
+            Kura.UserType.Beta -> "Kura"
+            Kura.UserType.User -> "Kura"
             Kura.UserType.Nigger -> "FUCK U NIGGER"
         }
         val font = when (fonts) {

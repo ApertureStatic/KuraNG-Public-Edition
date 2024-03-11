@@ -105,8 +105,8 @@ import kotlin.math.*
  * Created by zenhao on 18/12/2022.
  * Updated by zenhao on 22/07/2023.
  */
-object MelonAura2 : Module(
-    name = "MelonAura2", langName = "自动水晶", category = Category.COMBAT, description = "Auto using crystals for pvp."
+object KuraAura : Module(
+    name = "KuraAura", langName = "自动水晶", category = Category.COMBAT, description = "Auto using crystals for pvp."
 ) {
     private var p = msetting("Page", Page.GENERAL)
 
