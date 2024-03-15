@@ -1,11 +1,11 @@
 package dev.dyzjct.kura.module.hud
 
+import base.system.render.graphic.Render2DEngine
+import base.system.render.newfont.FontRenderers
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.client.Colors
-import base.system.render.graphic.Render2DEngine
-import base.system.render.newfont.FontRenderers
 import net.minecraft.client.gui.DrawContext
 
 object WaterMarkHUD :
@@ -23,13 +23,9 @@ object WaterMarkHUD :
             brightness,
             1f
         ).rgb
-        val text = when (Kura.userState) {
-            Kura.UserType.Beta -> "Kura"
-            Kura.UserType.User -> "Kura"
-            Kura.UserType.Nigger -> "FUCK U NIGGER"
-        }
+        val text = "${Kura.MOD_NAME} ${Kura.VERSION} Test"
         val font = when (fonts) {
-            FontMode.Knight -> FontRenderers.knight
+            FontMode.Sigma -> FontRenderers.sigma
             FontMode.Badaboom -> FontRenderers.badaboom
             else -> FontRenderers.comfortaa
         }
@@ -39,6 +35,6 @@ object WaterMarkHUD :
     }
 
     enum class FontMode {
-        Comfortaa, Knight, Badaboom,
+        Comfortaa, Sigma, Badaboom,
     }
 }

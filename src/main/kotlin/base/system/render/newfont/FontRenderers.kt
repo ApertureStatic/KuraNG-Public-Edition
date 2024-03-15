@@ -11,7 +11,7 @@ object FontRenderers {
     lateinit var cn: FontAdapter
     lateinit var lexend: FontAdapter
     lateinit var comfortaa: FontAdapter
-    lateinit var knight: FontAdapter
+    lateinit var sigma: FontAdapter
     lateinit var badaboom: FontAdapter
     lateinit var icons: FontAdapter
     lateinit var mid_icons: FontAdapter

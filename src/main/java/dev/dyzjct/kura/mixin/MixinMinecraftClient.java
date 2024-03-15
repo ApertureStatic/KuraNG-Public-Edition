@@ -99,7 +99,7 @@ public abstract class MixinMinecraftClient {
                 FontRenderers.INSTANCE.setCn(FontRenderers.INSTANCE.createDefault(16f, "chinese"));
                 FontRenderers.INSTANCE.setLexend(FontRenderers.INSTANCE.createDefault(16f, "lexenddeca-regular"));
                 FontRenderers.INSTANCE.setComfortaa(FontRenderers.INSTANCE.createDefault(48f, "OsakaChips"));
-                FontRenderers.INSTANCE.setKnight(FontRenderers.INSTANCE.createDefault(48f, "FoughtKnight"));
+                FontRenderers.INSTANCE.setSigma(FontRenderers.INSTANCE.createDefault(48f, "Geomanist-Regular"));
                 FontRenderers.INSTANCE.setBadaboom(FontRenderers.INSTANCE.createDefault(48f, "Badaboom"));
                 FontRenderers.INSTANCE.setIcons(FontRenderers.INSTANCE.createIcons(20));
                 FontRenderers.INSTANCE.setMid_icons(FontRenderers.INSTANCE.createIcons(46f));
