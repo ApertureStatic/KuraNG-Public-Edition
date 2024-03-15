@@ -85,16 +85,16 @@ tasks {
             group = "auto build"
             dependsOn("build")
 
-            if (file("$targetFolder/Kura-nextgen*.jar").exists()) {
+            if (file("$targetFolder/Kura-nG*.jar").exists()) {
                 delete {
                     fileTree("$targetFolder/").matching {
-                        include("Kura-nextgen*.jar")
+                        include("Kura-NG*.jar")
                     }
                 }
             }
 
             from("build/libs/")
-            include("Kura-nextgen*.jar")
+            include("Kura-NG*.jar")
             into("$targetFolder/")
         }
     }
