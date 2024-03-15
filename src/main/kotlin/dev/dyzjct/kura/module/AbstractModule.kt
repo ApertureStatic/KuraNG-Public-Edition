@@ -1,8 +1,5 @@
 package dev.dyzjct.kura.module
 
-import dev.dyzjct.kura.setting.*
-import dev.dyzjct.kura.module.hud.NotificationHUD
-import dev.dyzjct.kura.module.modules.client.ClickGui
 import base.events.ModuleEvent
 import base.events.PacketEvents
 import base.events.RunGameLoopEvent
@@ -20,6 +17,12 @@ import base.system.util.IDRegistry
 import base.system.util.color.ColorRGB
 import base.utils.Wrapper
 import base.utils.chat.ChatUtil
+import base.utils.sound.SoundPlayer
+import dev.dyzjct.kura.Kura
+import dev.dyzjct.kura.module.hud.NotificationHUD
+import dev.dyzjct.kura.module.modules.client.ClickGui
+import dev.dyzjct.kura.module.modules.client.Sound
+import dev.dyzjct.kura.setting.*
 import net.minecraft.client.gui.DrawContext
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
@@ -57,6 +60,13 @@ abstract class AbstractModule : ListenerOwner() {
             return
         }
         isEnabled = true
+        if (ClickGui.chat.value) ChatUtil.sendMessageWithID(moduleName + " is " + ChatUtil.GREEN + "Enabled!", 11451)
+        if (NotificationHUD.isEnabled && ClickGui.notification) NotificationManager.addNotification((if (ClickGui.chinese.value) moduleCName else moduleName) + ChatUtil.GREEN + " is Enable!")
+        if (Sound.isEnabled) {
+            Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleDisable.wav")?.let {
+                SoundPlayer(it).play(Sound.volume)
+            } ?: println("NULL")
+        }
         ModuleEvent.Toggle(this).post()
         onEnable()
         subscribe()
@@ -67,6 +77,13 @@ abstract class AbstractModule : ListenerOwner() {
             return
         }
         isEnabled = false
+        if (ClickGui.chat.value) ChatUtil.sendMessageWithID(moduleName + " is " + ChatUtil.RED + "Disabled!", 11451)
+        if (NotificationHUD.isEnabled && ClickGui.notification) NotificationManager.addNotification((if (ClickGui.chinese.value) moduleCName else moduleName) + ChatUtil.RED + " is Disable!")
+        if (Sound.isEnabled) {
+            Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleDisable.wav")?.let {
+                SoundPlayer(it).play(Sound.volume)
+            } ?: println("NULL")
+        }
         ModuleEvent.Toggle(this).post()
         onDisable()
         unsubscribe()
@@ -248,12 +265,8 @@ abstract class AbstractModule : ListenerOwner() {
         isEnabled = !isEnabled
         if (isEnabled) {
             enable()
-            if (ClickGui.chat.value) ChatUtil.sendMessageWithID(moduleName + " is " + ChatUtil.GREEN + "Enabled!", 11451)
-            if (NotificationHUD.isEnabled && ClickGui.notification) NotificationManager.addNotification((if (ClickGui.chinese.value) moduleCName else moduleName) + ChatUtil.GREEN + " is Enable!")
         } else {
             disable()
-            if (ClickGui.chat.value) ChatUtil.sendMessageWithID(moduleName + " is " + ChatUtil.RED + "Disabled!", 11451)
-            if (NotificationHUD.isEnabled && ClickGui.notification) NotificationManager.addNotification((if (ClickGui.chinese.value) moduleCName else moduleName) + ChatUtil.RED + " is Disable!")
         }
     }
 

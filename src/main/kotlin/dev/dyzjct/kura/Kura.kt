@@ -1,5 +1,7 @@
 package dev.dyzjct.kura
 
+import base.system.event.AlwaysListening
+import base.utils.threads.BackgroundScope
 import dev.dyzjct.kura.command.CommandManager
 import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.module.ModuleManager
@@ -7,8 +9,6 @@ import dev.dyzjct.kura.module.modules.client.ClickGui
 import dev.dyzjct.kura.module.modules.client.HUDEditor
 import dev.dyzjct.kura.setting.StringSetting
 import dev.dyzjct.kura.utils.math.LagCompensator
-import base.system.event.AlwaysListening
-import base.utils.threads.BackgroundScope
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.io.path.Path
