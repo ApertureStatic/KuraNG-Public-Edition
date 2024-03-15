@@ -6,4 +6,4 @@ pluginManagement {
 }
 
 rootProject.name = "Kura-NG"
-//include("melon-compile-plugin")
+//include("kura-compile-plugin")

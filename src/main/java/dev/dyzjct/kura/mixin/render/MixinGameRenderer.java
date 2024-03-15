@@ -78,7 +78,7 @@ public class MixinGameRenderer {
 
     @Inject(method = "renderWorld", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/GameRenderer;renderHand:Z", opcode = Opcodes.GETFIELD, ordinal = 0))
     public void render3dHook(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo ci) {
-        client.getProfiler().push("MelonRender3D");
+        client.getProfiler().push("KuraRender3D");
         Render3DEngine.INSTANCE.getLastProjMat().set(RenderSystem.getProjectionMatrix());
         Render3DEngine.INSTANCE.getLastModMat().set(RenderSystem.getModelViewMatrix());
         Render3DEngine.INSTANCE.getLastWorldSpaceMatrix().set(matrix.peek().getPositionMatrix());

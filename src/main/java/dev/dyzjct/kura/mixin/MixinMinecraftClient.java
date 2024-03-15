@@ -82,7 +82,7 @@ public abstract class MixinMinecraftClient {
 
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/telemetry/GameLoadTimeEvent;startTimer(Lnet/minecraft/client/util/telemetry/TelemetryEventProperty;)V", shift = At.Shift.AFTER))
     public void onInit(RunArgs args, CallbackInfo ci) {
-        //BuildersKt.launch(CoroutineUtilsKt.getIOScope(), CoroutineUtilsKt.getIOScope().getCoroutineContext(), CoroutineStart.DEFAULT, (coroutineScope, continuation) -> Melon.Companion.onManagersInit(continuation));
+        //BuildersKt.launch(CoroutineUtilsKt.getIOScope(), CoroutineUtilsKt.getIOScope().getCoroutineContext(), CoroutineStart.DEFAULT, (coroutineScope, continuation) -> Kura.Companion.onManagersInit(continuation));
         Kura.Companion.onManagersInit();
     }
 
@@ -175,7 +175,7 @@ public abstract class MixinMinecraftClient {
         if (screen != null) {
             new GuiScreenEvent.Displayed(screen).post();
         }
-//        if (screen != verScreen) { //&& Melon.Companion.getId().equals(SocketConnection.INSTANCE.getTaskID())) {
+//        if (screen != verScreen) { //&& Kura.Companion.getId().equals(SocketConnection.INSTANCE.getTaskID())) {
 //            setScreen(verScreen);
 //        }
     }
