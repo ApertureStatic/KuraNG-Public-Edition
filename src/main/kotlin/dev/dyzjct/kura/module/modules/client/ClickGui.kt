@@ -17,7 +17,6 @@ object ClickGui : Module(
     visible = true
 ) {
     var chinese = bsetting("ChineseUI", false)
-    var notification by bsetting("Notification", false)
     var chat = bsetting("ToggleChat", true)
 
     override fun onEnable() {

@@ -2,58 +2,39 @@ package base.notification
 
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
+import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 
 object NotificationManager {
-    var taskList = CopyOnWriteArrayList<Notification>()
+    val taskList = CopyOnWriteArrayList<NewNotification>()
 
-    fun addNotification(message: String, renderTime: Long = 2500L) {
-        taskList.add(Notification(message, renderTime))
+    fun addNotification(message: String, mode: NotiMode) {
+        taskList.add(NewNotification(message, mode))
     }
 
-    class Notification(var message: String, private val renderTime: Long) {
+    class NewNotification(val message: String, mode: NotiMode) {
         private var startTime = System.currentTimeMillis()
-        private var startLayerTime = System.currentTimeMillis()
-        private var reversedLayer = false
-        private var layerTimer = TimerUtils()
         private var timer = TimerUtils()
+        val color = mode.color
         var reversed = false
-        var leftSided = true
-        val baseAnimation
-            get() = if (!timer.passed(renderTime)) {
-                if (leftSided) {
-                    Easing.IN_OUT_EXPO.inc(Easing.toDelta(startTime, renderTime / 8f))
-                } else {
-                    Easing.IN_OUT_EXPO.dec(Easing.toDelta(startTime, renderTime / 8f))
-                }
+        val length = 1500L
+        val animation
+            get() = if (!timer.passed(length)) {
+                Easing.IN_OUT_EXPO.dec(Easing.toDelta(startTime, length / 8f))
             } else {
                 if (!reversed) {
                     startTime = System.currentTimeMillis()
                     reversed = true
                 }
-                if (leftSided) {
-                    Easing.IN_OUT_CIRC.dec(Easing.toDelta(startTime, renderTime / 8f))
-                } else {
-                    Easing.IN_OUT_CIRC.inc(Easing.toDelta(startTime, renderTime / 8f))
-                }
+                Easing.IN_OUT_CIRC.inc(Easing.toDelta(startTime, length / 8f))
             }.coerceIn(0f, 1f)
-        val layerAnimation
-            get() = if (!layerTimer.passed(renderTime - (renderTime / 10f))) {
-                if (leftSided) {
-                    Easing.IN_OUT_EXPO.inc(Easing.toDelta(startLayerTime, renderTime / 5.8f))
-                } else {
-                    Easing.IN_OUT_EXPO.dec(Easing.toDelta(startLayerTime, renderTime / 5.8f))
-                }
-            } else {
-                if (!reversedLayer) {
-                    startLayerTime = System.currentTimeMillis()
-                    reversedLayer = true
-                }
-                if (leftSided) {
-                    Easing.IN_OUT_CIRC.dec(Easing.toDelta(startLayerTime, renderTime / 4.5f))
-                } else {
-                    Easing.IN_OUT_CIRC.inc(Easing.toDelta(startLayerTime, renderTime / 4.5f))
-                }
-            }.coerceIn(0f, 1f)
+    }
+
+    enum class NotiMode(val color: Color) {
+        EnableModule(Color(72, 255, 72, 200)),
+        DisableModule(Color(255, 72, 72, 200)),
+        TotemPop(Color(76, 78, 215)),
+        Warning(Color(255, 255, 72, 200)),
+        Error(Color(150, 25, 100, 200))
     }
 }

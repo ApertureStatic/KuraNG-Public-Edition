@@ -182,9 +182,9 @@ object ModuleManager : AlwaysListening {
         registerModule(SpeedHUD)
         registerModule(PlayerListHUD)
         registerModule(TpsHUD)
-        registerModule(NotificationHUD)
         registerModule(WaterMarkHUD)
         registerModule(Image)
+        registerModule(NotificationNew)
         getModules().sortedWith(Comparator.comparing { it.moduleName })
     }
 

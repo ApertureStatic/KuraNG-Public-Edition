@@ -1,13 +1,13 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import dev.dyzjct.kura.manager.EntityManager
-import dev.dyzjct.kura.manager.FriendManager
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
 import base.events.TickEvent
 import base.notification.NotificationManager
 import base.system.event.safeEventListener
 import base.utils.chat.ChatUtil
+import dev.dyzjct.kura.manager.EntityManager
+import dev.dyzjct.kura.manager.FriendManager
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
 import net.minecraft.entity.EntityStatuses
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket
@@ -51,14 +51,20 @@ object TotemPopCounter : Module(
                                 ChatUtil.sendMessage("I Popped ${ChatUtil.colorKANJI}$pop Totem!")
                             }
                             if (mode.value == Mode.Notification || mode.value == Mode.Both) {
-                                NotificationManager.addNotification("I Popped ${ChatUtil.colorKANJI}$pop Totem!")
+                                NotificationManager.addNotification(
+                                    "I Popped ${ChatUtil.colorKANJI}$pop Totem!",
+                                    NotificationManager.NotiMode.TotemPop
+                                )
                             }
                         } else {
                             if (mode.value == Mode.Chat || mode.value == Mode.Both) {
                                 ChatUtil.sendMessage("$name Popped ${ChatUtil.colorKANJI}$pop Totem!")
                             }
                             if (mode.value == Mode.Notification || mode.value == Mode.Both) {
-                                NotificationManager.addNotification("$name Popped ${ChatUtil.colorKANJI}$pop Totem!")
+                                NotificationManager.addNotification(
+                                    "$name Popped ${ChatUtil.colorKANJI}$pop Totem!",
+                                    NotificationManager.NotiMode.TotemPop
+                                )
                             }
                         }
                     }
@@ -73,7 +79,10 @@ object TotemPopCounter : Module(
                         ChatUtil.sendMessage("${it.key.entityName} died after popping ${it.value} Totems!")
                     }
                     if (mode.value == Mode.Notification || mode.value == Mode.Both) {
-                        NotificationManager.addNotification("${it.key.entityName} ${ChatUtil.DARK_AQUA}died after popped ${it.value} totems!", 2000)
+                        NotificationManager.addNotification(
+                            "${it.key.entityName} ${ChatUtil.DARK_AQUA}died after popped ${it.value} totems!",
+                            NotificationManager.NotiMode.TotemPop
+                        )
                     }
                     playerList.remove(it.key)
                 }
