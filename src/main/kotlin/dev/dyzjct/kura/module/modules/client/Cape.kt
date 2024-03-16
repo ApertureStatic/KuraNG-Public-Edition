@@ -1,5 +1,6 @@
 package dev.dyzjct.kura.module.modules.client
 
+import base.KuraIdentifier
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import net.minecraft.util.Identifier
@@ -28,6 +29,6 @@ object Cape : Module(
     }
 
     fun getCape(): Identifier {
-        return Identifier("base", "cape/${(capeEnum as Cape).path}")
+        return KuraIdentifier("cape/${(capeEnum as Cape).path}")
     }
 }
