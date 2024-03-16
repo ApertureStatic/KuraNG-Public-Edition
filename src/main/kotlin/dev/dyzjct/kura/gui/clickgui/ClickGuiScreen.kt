@@ -1,8 +1,6 @@
 package dev.dyzjct.kura.gui.clickgui
 
-import base.system.render.graphic.Render2DEngine
 import dev.dyzjct.kura.gui.clickgui.component.Panel
-import dev.dyzjct.kura.module.AbstractModule
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.ModuleManager
 import dev.dyzjct.kura.module.modules.client.ClickGui
@@ -62,25 +60,6 @@ object ClickGuiScreen : GuiScreen() {
 
                 drawDelegate.drawText(
                     context.matrices, queryString, x, y, Color.WHITE
-                )
-            }
-        }
-
-
-        if (UiSetting.getThemeSetting().syt) {
-            if (UiSetting.getThemeSetting().sytMode == UiSetting.SytMode.Top) {
-                Render2DEngine.drawRectGradient(
-                    context.matrices, 0.0f, 0.0f,
-                    AbstractModule.mc.window.scaledWidth.toFloat(), AbstractModule.mc.window.scaledHeight.toFloat(),
-                    UiSetting.getThemeSetting().sytColor, Color(0, 0, 0, 0),
-                    UiSetting.getThemeSetting().sytColor, Color(0, 0, 0, 0)
-                )
-            } else {
-                Render2DEngine.drawRectGradient(
-                    context.matrices, 0.0f, 0.0f,
-                    AbstractModule.mc.window.scaledWidth.toFloat(), AbstractModule.mc.window.scaledHeight.toFloat(),
-                    Color(0, 0, 0, 0), UiSetting.getThemeSetting().sytColor,
-                    Color(0, 0, 0, 0), UiSetting.getThemeSetting().sytColor
                 )
             }
         }

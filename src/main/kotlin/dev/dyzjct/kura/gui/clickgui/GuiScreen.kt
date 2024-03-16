@@ -4,16 +4,19 @@ import base.events.render.Render2DEvent
 import base.graphics.shaders.impl.ParticleShader
 import base.graphics.shaders.impl.WindowBlurShader
 import base.system.event.Listener
+import base.system.render.graphic.Render2DEngine
 import com.mojang.blaze3d.platform.GlStateManager
 import dev.dyzjct.kura.gui.clickgui.animation.AnimationStrategy
 import dev.dyzjct.kura.gui.clickgui.animation.NonAnimationStrategy
 import dev.dyzjct.kura.gui.clickgui.component.Component
 import dev.dyzjct.kura.gui.clickgui.component.ComponentContainer
+import dev.dyzjct.kura.module.AbstractModule
 import dev.dyzjct.kura.module.modules.client.UiSetting
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
+import java.awt.Color
 
 open class GuiScreen : Screen(Text.empty()) {
     private var buffer: Component? = null
@@ -100,6 +103,23 @@ open class GuiScreen : Screen(Text.empty()) {
         GlStateManager._enableBlend()
         if (UiSetting.getThemeSetting().particle) ParticleShader.render()
         animationStrategy.onRender(context, mouseX.toFloat(), mouseY.toFloat(), container)
+        if (UiSetting.getThemeSetting().syt) {
+            if (UiSetting.getThemeSetting().sytMode == UiSetting.SytMode.Top) {
+                Render2DEngine.drawRectGradient(
+                    context.matrices, 0.0f, 0.0f,
+                    AbstractModule.mc.window.scaledWidth.toFloat(), AbstractModule.mc.window.scaledHeight.toFloat(),
+                    UiSetting.getThemeSetting().sytColor, Color(0, 0, 0, 0),
+                    UiSetting.getThemeSetting().sytColor, Color(0, 0, 0, 0)
+                )
+            } else {
+                Render2DEngine.drawRectGradient(
+                    context.matrices, 0.0f, 0.0f,
+                    AbstractModule.mc.window.scaledWidth.toFloat(), AbstractModule.mc.window.scaledHeight.toFloat(),
+                    Color(0, 0, 0, 0), UiSetting.getThemeSetting().sytColor,
+                    Color(0, 0, 0, 0), UiSetting.getThemeSetting().sytColor
+                )
+            }
+        }
     }
 
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {

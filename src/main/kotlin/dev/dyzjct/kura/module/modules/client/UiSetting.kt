@@ -41,9 +41,10 @@ object UiSetting : Module(
     private val sytColor by csetting("SytColor", Color(255, 255, 255, 150)).enumIs(theme, Theme.Custom)
 
     //    Particle Type
-    val particle by bsetting("Particle", true).enumIs(theme, Theme.Custom)
-    val particleRainbow by bsetting("ParticleRainbow", true).isTrue { particle }.enumIs(theme, Theme.Custom)
-    val particleColor by csetting("ParticleColor", Color(255, 255, 255)).isTrue { particle }.isFalse { particleRainbow }
+    private val particle by bsetting("Particle", true).enumIs(theme, Theme.Custom)
+    private val particleRainbow by bsetting("ParticleRainbow", true).isTrue { particle }.enumIs(theme, Theme.Custom)
+    private val particleColor by csetting("ParticleColor", Color(255, 255, 255)).isTrue { particle }
+        .isFalse { particleRainbow }
         .enumIs(theme, Theme.Custom)
 
     //    Animation type
