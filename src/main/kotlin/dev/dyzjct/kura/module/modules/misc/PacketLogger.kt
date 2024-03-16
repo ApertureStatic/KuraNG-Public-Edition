@@ -1,14 +1,19 @@
 package dev.dyzjct.kura.module.modules.misc
 
+import base.utils.chat.ChatUtil
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import base.utils.chat.ChatUtil
-import net.minecraft.network.packet.c2s.play.*
+import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket
+import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 
 object PacketLogger : Module("PacketLogger", langName = "抓包", category = Category.MISC) {
     private var jump by bsetting("Jump", false)
     private var move by bsetting("Move", false)
     private var place by bsetting("Place", false)
+    private var mine by bsetting("Mine", false)
+    private var slot by bsetting("Slot", false)
     private var jumped = false
     private var height = 0.0
 
@@ -22,7 +27,7 @@ object PacketLogger : Module("PacketLogger", langName = "抓包", category = Cat
             if (event.packet is PlayerInteractBlockC2SPacket && place) {
                 ChatUtil.sendMessage("Pos:" + event.packet.blockHitResult.blockPos.toString())
             }
-            if (event.packet is PlayerActionC2SPacket) {
+            if (event.packet is PlayerActionC2SPacket && mine) {
                 ChatUtil.sendMessage(event.packet.action.name)
             }
             if (event.packet is PlayerMoveC2SPacket && jumped && jump) {
@@ -32,6 +37,9 @@ object PacketLogger : Module("PacketLogger", langName = "抓包", category = Cat
                 } else {
                     ChatUtil.sendMessage((event.packet.y - height).toString())
                 }
+            }
+            if (event.packet is ClickSlotC2SPacket && slot) {
+                ChatUtil.sendMessage(event.packet.actionType.name)
             }
         }
 

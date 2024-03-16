@@ -255,7 +255,7 @@ object PacketMine : Module(
                         resetHotbar()
                         doubleData = null
                         return
-                    } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + 100) && !player.usingItem) {
+                    } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime - 100) && !player.usingItem) {
                         spoofHotbar(toolSlot)
                         if (setGround) player.onGround = true
                     }
@@ -263,7 +263,7 @@ object PacketMine : Module(
                     if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + 500 + backTime)) {
                         bypassTo(toolSlot)
                         doubleData = null
-                    } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + 100) && player.usingItem) {
+                    } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime - 100) && player.usingItem) {
                         bypassTo(toolSlot)
                     }
                 }
