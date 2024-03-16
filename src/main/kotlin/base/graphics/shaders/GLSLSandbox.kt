@@ -24,15 +24,15 @@ open class GLSLSandbox(fragShaderId: KuraIdentifier) :
             glUniform2f(resolutionUniform, width, height)
             glUniform2f(mouseUniform, mouseX / width, (height - 1.0f - mouseY) / height)
             glUniform1f(timeUniform, ((System.currentTimeMillis() - initTime) / 1000.0).toFloat())
-            if (UiSetting.particleRainbow) {
+            if (UiSetting.getThemeSetting().pRainbow) {
                 val rainbowColor = Render2DEngine.astolfo(true, 0)
                 glUniform1f(red, rainbowColor.red / 255f)
                 glUniform1f(green, rainbowColor.green / 255f)
                 glUniform1f(blue, rainbowColor.blue / 255f)
             } else {
-                glUniform1f(red, UiSetting.particleColor.red / 255f)
-                glUniform1f(green, UiSetting.particleColor.green / 255f)
-                glUniform1f(blue, UiSetting.particleColor.blue / 255f)
+                glUniform1f(red, UiSetting.getThemeSetting().pColor.red / 255f)
+                glUniform1f(green, UiSetting.getThemeSetting().pColor.green / 255f)
+                glUniform1f(blue, UiSetting.getThemeSetting().pColor.blue / 255f)
             }
 
             Tessellator.getInstance().buffer.apply {

@@ -98,7 +98,7 @@ open class GuiScreen : Screen(Text.empty()) {
         updatePanelIndex()
         WindowBlurShader.render(width.toDouble(), height.toDouble())
         GlStateManager._enableBlend()
-        if (UiSetting.particle) ParticleShader.render()
+        if (UiSetting.getThemeSetting().particle) ParticleShader.render()
         animationStrategy.onRender(context, mouseX.toFloat(), mouseY.toFloat(), container)
     }
 

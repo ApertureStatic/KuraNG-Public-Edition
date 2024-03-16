@@ -36,9 +36,9 @@ object UiSetting : Module(
     private val rounded = bsetting("Rounded", true).enumIs(theme, Theme.Custom)
 
     //    SytRender Type
-    val sytRender by bsetting("SytRender", false).enumIs(theme, Theme.Custom)
-    val sytMode = msetting("SytMode", SytMode.Down).enumIs(theme, Theme.Custom)
-    val sytColor by csetting("SytColor", Color(255, 255, 255, 150)).enumIs(theme, Theme.Custom)
+    private val sytRender by bsetting("SytRender", false).enumIs(theme, Theme.Custom)
+    private val sytMode = msetting("SytMode", SytMode.Down).enumIs(theme, Theme.Custom)
+    private val sytColor by csetting("SytColor", Color(255, 255, 255, 150)).enumIs(theme, Theme.Custom)
 
     //    Particle Type
     val particle by bsetting("Particle", true).enumIs(theme, Theme.Custom)
@@ -173,7 +173,7 @@ object UiSetting : Module(
                     panelBorder.value,
                     rounded.value,
                     sytRender,
-                    SytMode.Down,
+                    sytMode.value as SytMode,
                     sytColor,
                     particle,
                     particleRainbow,
