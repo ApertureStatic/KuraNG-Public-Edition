@@ -2,7 +2,8 @@ package dev.dyzjct.kura.setting
 
 import dev.dyzjct.kura.module.AbstractModule
 
-class ModeSetting<T : Enum<*>>(modeName: String, contain: dev.dyzjct.kura.module.AbstractModule, clazz: T) : Setting<T>(modeName, contain, clazz),
+class ModeSetting<T : Enum<*>>(modeName: String, contain: AbstractModule, clazz: T) :
+    Setting<T>(modeName, contain, clazz),
     SettingVisibility<ModeSetting<T>> {
 
     override var value: T

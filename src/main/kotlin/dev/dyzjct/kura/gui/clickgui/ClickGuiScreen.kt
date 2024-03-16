@@ -67,20 +67,20 @@ object ClickGuiScreen : GuiScreen() {
         }
 
 
-        if (UiSetting.sytRender) {
-            if (UiSetting.sytMode.value == UiSetting.SytMode.Top) {
+        if (UiSetting.getThemeSetting().syt) {
+            if (UiSetting.getThemeSetting().sytMode == UiSetting.SytMode.Top) {
                 Render2DEngine.drawRectGradient(
                     context.matrices, 0.0f, 0.0f,
                     AbstractModule.mc.window.scaledWidth.toFloat(), AbstractModule.mc.window.scaledHeight.toFloat(),
-                    UiSetting.sytColor, Color(0, 0, 0, 0),
-                    UiSetting.sytColor, Color(0, 0, 0, 0)
+                    UiSetting.getThemeSetting().sytColor, Color(0, 0, 0, 0),
+                    UiSetting.getThemeSetting().sytColor, Color(0, 0, 0, 0)
                 )
             } else {
                 Render2DEngine.drawRectGradient(
                     context.matrices, 0.0f, 0.0f,
                     AbstractModule.mc.window.scaledWidth.toFloat(), AbstractModule.mc.window.scaledHeight.toFloat(),
-                    Color(0, 0, 0, 0), UiSetting.sytColor,
-                    Color(0, 0, 0, 0), UiSetting.sytColor
+                    Color(0, 0, 0, 0), UiSetting.getThemeSetting().sytColor,
+                    Color(0, 0, 0, 0), UiSetting.getThemeSetting().sytColor
                 )
             }
         }

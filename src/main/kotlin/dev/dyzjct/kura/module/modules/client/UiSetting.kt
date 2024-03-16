@@ -9,6 +9,7 @@ import dev.dyzjct.kura.gui.clickgui.animation.impl.ScalaAnimationStrategy
 import dev.dyzjct.kura.gui.clickgui.render.Alignment
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.hud.Image
 import dev.dyzjct.kura.setting.BooleanSetting
 import dev.dyzjct.kura.setting.Setting
 import java.awt.Color
@@ -90,9 +91,10 @@ object UiSetting : Module(
     }
 
     private fun newThemeSetting(): ThemesSetting {
-        return when (theme.value) {
+        when (theme.value) {
             Theme.Rimuru -> {
-                ThemesSetting(
+                Image.mode.setValueByString("Rimuru")
+                return ThemesSetting(
                     Color(76, 179, 208, 250),
                     Color(25, 25, 25, 200),
                     Color(10, 10, 10, 200),
@@ -101,7 +103,7 @@ object UiSetting : Module(
                     rounded = false,
                     syt = true,
                     sytMode = SytMode.Down,
-                    sytColor = Color(33, 97, 108, 140),
+                    sytColor = Color(86, 190, 208, 140),
                     particle = true,
                     pRainbow = false,
                     pColor = Color(137, 185, 189, 100),
@@ -109,7 +111,8 @@ object UiSetting : Module(
             }
 
             Theme.Arona -> {
-                ThemesSetting(
+                Image.mode.setValueByString("Arona")
+                return ThemesSetting(
                     Color(144, 204, 236, 250),
                     Color(213, 236, 252, 140),
                     Color(91, 128, 185, 200),
@@ -126,7 +129,8 @@ object UiSetting : Module(
             }
 
             Theme.Mahiro -> {
-                ThemesSetting(
+                Image.mode.setValueByString("Mahiro")
+                return ThemesSetting(
                     Color(245, 176, 166, 250),
                     Color(253, 235, 241, 200),
                     Color(241, 219, 206, 200),
@@ -143,7 +147,8 @@ object UiSetting : Module(
             }
 
             Theme.Roxy -> {
-                ThemesSetting(
+                Image.mode.setValueByString("Roxy")
+                return ThemesSetting(
                     Color(117, 106, 171, 250),
                     Color(89, 77, 89, 200),
                     Color(48, 39, 42, 200),
@@ -160,7 +165,7 @@ object UiSetting : Module(
             }
 
             else -> {
-                ThemesSetting(
+                return ThemesSetting(
                     primaryColor.value,
                     secondaryColor.value,
                     settingPanelColor.value,

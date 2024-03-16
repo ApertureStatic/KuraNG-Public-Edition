@@ -12,7 +12,7 @@ import dev.dyzjct.kura.utils.animations.Easing
 import net.minecraft.client.gui.DrawContext
 
 object Image : HUDModule(name = "Image", langName = "图片显示", category = Category.HUD, x = 150f, y = 150f) {
-    private val mode = msetting("Mode", Mode.Rimuru)
+    val mode = msetting("Mode", Mode.Rimuru)
     private val scale by fsetting("Scale", 1.0f, 0.0f, 2.0f)
     private val rimuru = KuraIdentifier("textures/rimuru.png")
     private val arona = KuraIdentifier("textures/arona.png")
