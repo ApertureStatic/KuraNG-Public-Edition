@@ -1,8 +1,9 @@
 package base.system.render.graphic
 
+import base.system.util.interfaces.MinecraftWrapper
+import base.utils.math.vector.Vec2f
 import com.mojang.blaze3d.systems.RenderSystem
 import dev.dyzjct.kura.utils.animations.MathUtils
-import base.system.util.interfaces.MinecraftWrapper
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.*
 import net.minecraft.client.texture.NativeImage
@@ -15,7 +16,6 @@ import org.joml.Vector4f
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL14
-import base.utils.math.vector.Vec2f
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
@@ -1315,6 +1315,42 @@ object Render2DEngine : MinecraftWrapper {
         fun contains(x: Double, y: Double): Boolean {
             return contains(x.toFloat(), y.toFloat())
         }
+    }
+
+    fun drawRectGradient(
+        matrices: MatrixStack,
+        x: Float,
+        y: Float,
+        width: Float,
+        height: Float,
+        leftBottomColor: Color,
+        leftTopColor: Color,
+        rightBottomColor: Color,
+        rightTopColor: Color
+    ) {
+        val matrix = matrices.peek().positionMatrix
+        val bufferBuilder = Tessellator.getInstance().buffer
+        setupRender()
+        RenderSystem.setShader { GameRenderer.getPositionColorProgram() }
+        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR)
+        bufferBuilder
+            .vertex(matrix, x, y + height, 0.0f)
+            .color(rightTopColor.red, rightTopColor.green, rightTopColor.blue, rightTopColor.alpha)
+            .next()
+        bufferBuilder
+            .vertex(matrix, x + width, y + height, 0.0f)
+            .color(leftTopColor.red, leftTopColor.green, leftTopColor.blue, leftTopColor.alpha)
+            .next()
+        bufferBuilder
+            .vertex(matrix, x + width, y, 0.0f)
+            .color(leftBottomColor.red, leftBottomColor.green, leftBottomColor.blue, leftBottomColor.alpha)
+            .next()
+        bufferBuilder
+            .vertex(matrix, x, y, 0.0f)
+            .color(rightBottomColor.red, rightBottomColor.green, rightBottomColor.blue, rightBottomColor.alpha)
+            .next()
+        BufferRenderer.drawWithGlobalProgram(bufferBuilder.end())
+        endRender()
     }
 
     class BlurredShadow(bufferedImage: BufferedImage) {

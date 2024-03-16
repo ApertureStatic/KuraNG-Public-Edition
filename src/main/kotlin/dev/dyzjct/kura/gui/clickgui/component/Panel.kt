@@ -91,18 +91,6 @@ class Panel(
 
         renderChildElements(mouseX, mouseY)
 
-        if (UiSetting.getThemeSetting().rect) {
-            Render2DEngine.drawRectBlurredShadow(
-                context.matrices,
-                x - 8f,
-                y - 8f,
-                width + 16f,
-                totalHeight + 16f,
-                25,
-                Color(primaryColor.red, primaryColor.green, primaryColor.blue, 30)
-            )
-        }
-
         if (isHovering(mouseX, mouseY)) {
             guiScreen.moveToFirstRender(this@Panel)
         }

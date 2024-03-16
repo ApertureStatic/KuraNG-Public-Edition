@@ -29,10 +29,14 @@ object UiSetting : Module(
     private val primaryColor = csetting("Primary", Color(240, 100, 255, 200)).enumIs(theme, Theme.Custom)
     private val secondaryColor = csetting("Secondary", Color(25, 25, 25, 200)).enumIs(theme, Theme.Custom)
     private val settingPanelColor = csetting("SettingPanel", Color(10, 10, 10, 200)).enumIs(theme, Theme.Custom)
-    private val rectBlur = bsetting("RectBlur", false).enumIs(theme, Theme.Custom)
     private val fillPanelTitle = bsetting("FillPanelTitle", true).enumIs(theme, Theme.Custom)
     private val panelBorder = bsetting("PanelBorder", true).enumIs(theme, Theme.Custom)
     private val rounded = bsetting("Rounded", true).enumIs(theme, Theme.Custom)
+
+    //    SytRender
+    var sytRender by bsetting("SytRender", false)
+    var sytMode = msetting("SytMode", SytMode.Down)
+    var sytColor by csetting("SytColor", Color(255, 255, 255, 150))
 
     //    Animation type
     private val type0 = msetting("Type", AnimationType.NONE)
@@ -60,7 +64,6 @@ object UiSetting : Module(
                 primaryColor,
                 secondaryColor,
                 settingPanelColor,
-                rectBlur,
                 fillPanelTitle,
                 panelBorder,
                 rounded
@@ -92,7 +95,6 @@ object UiSetting : Module(
                 ThemesSetting(
                     Color(144, 204, 236, 250),
                     Color(213, 236, 252, 140),
-                    rect = true,
                     Color(91, 128, 185, 200),
                     fillPanelTitle = true,
                     panelBorder = false,
@@ -104,7 +106,6 @@ object UiSetting : Module(
                 ThemesSetting(
                     Color(245, 176, 166, 250),
                     Color(253, 235, 241, 200),
-                    true,
                     Color(241, 219, 206, 200),
                     fillPanelTitle = true,
                     panelBorder = false,
@@ -116,7 +117,6 @@ object UiSetting : Module(
                 ThemesSetting(
                     Color(117, 106, 171, 250),
                     Color(89, 77, 89, 200),
-                    true,
                     Color(48, 39, 42, 200),
                     fillPanelTitle = true,
                     panelBorder = true,
@@ -128,7 +128,6 @@ object UiSetting : Module(
                 ThemesSetting(
                     primaryColor.value,
                     secondaryColor.value,
-                    rectBlur.value,
                     settingPanelColor.value,
                     fillPanelTitle.value,
                     panelBorder.value,
@@ -141,7 +140,6 @@ object UiSetting : Module(
     data class ThemesSetting(
         val primary: Color,
         val secondary: Color,
-        val rect: Boolean,
         val setting: Color,
         val fillPanelTitle: Boolean,
         val panelBorder: Boolean,
@@ -150,5 +148,9 @@ object UiSetting : Module(
 
     enum class Theme {
         Custom, Mahiro, Arona, Roxy
+    }
+
+    enum class SytMode {
+        Top, Down
     }
 }
