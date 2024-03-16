@@ -9,6 +9,7 @@ import dev.dyzjct.kura.gui.clickgui.animation.AnimationStrategy
 import dev.dyzjct.kura.gui.clickgui.animation.NonAnimationStrategy
 import dev.dyzjct.kura.gui.clickgui.component.Component
 import dev.dyzjct.kura.gui.clickgui.component.ComponentContainer
+import dev.dyzjct.kura.module.modules.client.UiSetting
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
@@ -97,7 +98,7 @@ open class GuiScreen : Screen(Text.empty()) {
         updatePanelIndex()
         WindowBlurShader.render(width.toDouble(), height.toDouble())
         GlStateManager._enableBlend()
-        ParticleShader.render()
+        if (UiSetting.particle) ParticleShader.render()
         animationStrategy.onRender(context, mouseX.toFloat(), mouseY.toFloat(), container)
     }
 

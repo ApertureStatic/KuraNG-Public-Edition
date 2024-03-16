@@ -33,10 +33,15 @@ object UiSetting : Module(
     private val panelBorder = bsetting("PanelBorder", true).enumIs(theme, Theme.Custom)
     private val rounded = bsetting("Rounded", true).enumIs(theme, Theme.Custom)
 
-    //    SytRender
-    var sytRender by bsetting("SytRender", false)
-    var sytMode = msetting("SytMode", SytMode.Down)
-    var sytColor by csetting("SytColor", Color(255, 255, 255, 150))
+    //    SytRender Type
+    val sytRender by bsetting("SytRender", false)
+    val sytMode = msetting("SytMode", SytMode.Down)
+    val sytColor by csetting("SytColor", Color(255, 255, 255, 150))
+
+    //    Particle Type
+    val particle by bsetting("Particle", true)
+    val particleRainbow by bsetting("ParticleRainbow", true).isTrue { particle }
+    val particleColor by csetting("ParticleColor", Color(255, 255, 255)).isTrue { particle }.isFalse { particleRainbow }
 
     //    Animation type
     private val type0 = msetting("Type", AnimationType.NONE)
