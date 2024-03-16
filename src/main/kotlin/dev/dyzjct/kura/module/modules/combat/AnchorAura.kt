@@ -5,7 +5,7 @@ import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.scaledHealth
-import dev.dyzjct.kura.module.modules.crystal.KuraAura
+import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
 import dev.dyzjct.kura.module.modules.crystal.PlaceInfo
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
@@ -104,9 +104,9 @@ object AnchorAura : Module(
         lastUpdateTime = 0L
         startTime = 0L
         scale = 0.0f
-        if (disableCrystalAura && KuraAura.isEnabled) {
+        if (disableCrystalAura && AutoCrystal.isEnabled) {
             lastCrystalAuraState = true
-            KuraAura.disable()
+            AutoCrystal.disable()
         }
     }
 
@@ -114,7 +114,7 @@ object AnchorAura : Module(
         super.onDisable()
         if (lastCrystalAuraState) {
             lastCrystalAuraState = false
-            KuraAura.enable()
+            AutoCrystal.enable()
         }
     }
 

@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.modules.crystal
 
-import dev.dyzjct.kura.module.modules.crystal.KuraAura.getPlaceSide
+import dev.dyzjct.kura.module.modules.crystal.AutoCrystal.getPlaceSide
 import base.system.event.SafeClientEvent
 import base.utils.Wrapper
 import base.utils.world.getHitVecOffset
@@ -30,7 +30,7 @@ open class PlaceInfo(
         target,
         BlockPos.ORIGIN,
         Float.MAX_VALUE,
-        KuraAura.forcePlaceDmg.value,
+        AutoCrystal.forcePlaceDmg.value,
         Direction.UP,
         Vec3f.ZERO,
         Vec3d.ZERO
@@ -69,14 +69,14 @@ open class PlaceInfo(
         }
 
         fun clear(player: ClientPlayerEntity) {
-            update(player, BlockPos.ORIGIN, Double.MAX_VALUE, KuraAura.forcePlaceDmg.value)
+            update(player, BlockPos.ORIGIN, Double.MAX_VALUE, AutoCrystal.forcePlaceDmg.value)
         }
 
         fun takeValid(): Mutable? {
             return this.takeIf {
                 target != Wrapper.player
                         && selfDamage != Float.MAX_VALUE
-                        && targetDamage != KuraAura.forcePlaceDmg.value
+                        && targetDamage != AutoCrystal.forcePlaceDmg.value
             }
         }
     }

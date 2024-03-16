@@ -49,7 +49,7 @@ public abstract class MixinWorld implements WorldAccess, AutoCloseable {
     }
 
     /**
-     * @author zenhao
+     * @author nigger
      * @reason FUCK SHIT ABSTRACT METHOD
      */
     @Overwrite

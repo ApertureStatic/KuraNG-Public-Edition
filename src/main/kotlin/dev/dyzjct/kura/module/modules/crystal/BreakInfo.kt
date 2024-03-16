@@ -7,7 +7,7 @@ open class BreakInfo(
     open val selfDamage: Float,
     open val targetDamage: Double
 ) {
-    class Mutable : BreakInfo(DUMMY_CRYSTAL, Float.MAX_VALUE, KuraAura.forcePlaceDmg.value) {
+    class Mutable : BreakInfo(DUMMY_CRYSTAL, Float.MAX_VALUE, AutoCrystal.forcePlaceDmg.value) {
         override var crystal = super.crystal; private set
         override var selfDamage = super.selfDamage; private set
         override var targetDamage = super.targetDamage; private set
@@ -23,7 +23,7 @@ open class BreakInfo(
         }
 
         fun clear() {
-            update(DUMMY_CRYSTAL, Float.MAX_VALUE, KuraAura.forcePlaceDmg.value)
+            update(DUMMY_CRYSTAL, Float.MAX_VALUE, AutoCrystal.forcePlaceDmg.value)
         }
     }
 
@@ -31,7 +31,7 @@ open class BreakInfo(
         return this.takeIf {
             crystal !== DUMMY_CRYSTAL
                     && selfDamage != Float.MAX_VALUE
-                    && targetDamage != KuraAura.forcePlaceDmg.value
+                    && targetDamage != AutoCrystal.forcePlaceDmg.value
         }
     }
 

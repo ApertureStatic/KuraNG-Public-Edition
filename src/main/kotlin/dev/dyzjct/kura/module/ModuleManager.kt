@@ -12,7 +12,7 @@ import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.hud.*
 import dev.dyzjct.kura.module.modules.client.*
 import dev.dyzjct.kura.module.modules.combat.*
-import dev.dyzjct.kura.module.modules.crystal.KuraAura
+import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
 import dev.dyzjct.kura.module.modules.misc.*
 import dev.dyzjct.kura.module.modules.movement.*
 import dev.dyzjct.kura.module.modules.player.*
@@ -69,7 +69,6 @@ object ModuleManager : AlwaysListening {
         registerModule(AutoTotem)
         registerModule(Surround)
         registerModule(HoleFiller)
-        registerModule(CityMiner)
         registerModule(AnchorAura)
         registerModule(AutoTrap)
         registerModule(FastUse)
@@ -86,7 +85,7 @@ object ModuleManager : AlwaysListening {
         registerModule(Burrow)
         registerModule(HeadTrap)
         registerModule(InfiniteAura)
-        registerModule(CityRecode)
+        registerModule(HoleMiner)
     }
 
     private fun loadCategoryMisc() {
@@ -165,7 +164,7 @@ object ModuleManager : AlwaysListening {
         loadCategoryMovement()
         loadCategoryRender()
         loadCategoryPlayer()
-        registerModule(KuraAura)
+        registerModule(AutoCrystal)
         DamageCalculator
         getModules().sortedWith(Comparator.comparing { it.moduleName })
     }

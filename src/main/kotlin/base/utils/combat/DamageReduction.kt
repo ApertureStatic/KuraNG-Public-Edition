@@ -1,6 +1,6 @@
 package base.utils.combat
 
-import dev.dyzjct.kura.module.modules.crystal.KuraAura
+import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.Enchantments
@@ -28,14 +28,14 @@ class DamageReduction(val entity: LivingEntity) {
         var blastEPF = 0
 
         for (itemStack in entity.armorItems) {
-            if (KuraAura.isEnabled) {
-                when (KuraAura.damageMode.value) {
-                    KuraAura.DamageMode.Auto -> {
+            if (AutoCrystal.isEnabled) {
+                when (AutoCrystal.damageMode.value) {
+                    AutoCrystal.DamageMode.Auto -> {
                         genericEPF += itemStack.getEnchantmentLevel(Enchantments.PROTECTION)
                         blastEPF += itemStack.getEnchantmentLevel(Enchantments.BLAST_PROTECTION) * 2
                     }
 
-                    KuraAura.DamageMode.PPBP -> {
+                    AutoCrystal.DamageMode.PPBP -> {
                         if (itemStack.item is ArmorItem) {
                             if ((itemStack.item as ArmorItem).type == ArmorItem.Type.LEGGINGS) {
                                 blastEPF += 4 * 2
@@ -45,7 +45,7 @@ class DamageReduction(val entity: LivingEntity) {
                         }
                     }
 
-                    KuraAura.DamageMode.BBBB -> {
+                    AutoCrystal.DamageMode.BBBB -> {
                         blastEPF += 4 * 2
                     }
                 }

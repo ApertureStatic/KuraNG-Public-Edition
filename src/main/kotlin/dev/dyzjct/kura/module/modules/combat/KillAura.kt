@@ -4,7 +4,7 @@ import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.UiSetting
-import dev.dyzjct.kura.module.modules.crystal.KuraAura
+import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
 import dev.dyzjct.kura.utils.animations.sq
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import dev.dyzjct.kura.utils.math.LagCompensator
@@ -40,7 +40,7 @@ object KillAura : Module(name = "KillAura", langName = "杀戮", category = Cate
     init {
         onMotion {
             if (pauseIfCA) {
-                if (KuraAura.isEnabled && KuraAura.placeInfo != null) return@onMotion
+                if (AutoCrystal.isEnabled && AutoCrystal.placeInfo != null) return@onMotion
             }
             target = getEntityTarget(if (autoBlock.value) max(range, abRange) else range, mob = mobs, ani = animals)
             target?.let { target ->

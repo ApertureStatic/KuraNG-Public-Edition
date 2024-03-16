@@ -1,21 +1,21 @@
 package dev.dyzjct.kura.module.modules.combat
 
+import base.utils.block.BlockUtil.canBreak
+import base.utils.combat.getTarget
+import base.utils.world.getMiningSide
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.combat.HolePush.doHolePush
 import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.module.modules.player.PacketMine.hookPos
 import dev.dyzjct.kura.utils.TimerUtils
-import base.utils.block.BlockUtil.canBreak
-import base.utils.combat.getTarget
-import base.utils.world.getMiningSide
 import net.minecraft.block.CobwebBlock
 import net.minecraft.block.RedstoneBlock
 import net.minecraft.util.math.BlockPos
 
-object CityRecode : Module(
+object HoleMiner : Module(
     name = "CityRecode",
-    langName = "自动挖角重写",
+    langName = "自动挖角",
     description = "auto mine target feet.",
     category = Category.COMBAT
 ) {
@@ -42,10 +42,10 @@ object CityRecode : Module(
                     }
                 }
                 if (eatingPause && player.isUsingItem) return@onMotion
-                for (offset in CityOffset.values()) {
+                for (offset in CityOffset.entries) {
                     PacketMine.blockData?.let { data ->
                         PacketMine.doubleData?.let { dbData ->
-                            for (offsetCheck in CityOffset.values()) {
+                            for (offsetCheck in CityOffset.entries) {
                                 if (data.blockPos == targetPos.add(offsetCheck.offset) && dbData.blockPos == targetPos.add(
                                         offsetCheck.offset
                                     )

@@ -51,7 +51,7 @@ public class MixinChatScreen extends Screen {
 
 
     /**
-     * @author zenhao
+     * @author nigger
      * @reason FUCK EVENT MANAGER
      */
     @Overwrite

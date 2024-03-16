@@ -72,7 +72,7 @@ public abstract class MixinChatHud implements IChatHud {
     }
 
     /**
-     * @author zenhao
+     * @author nigger
      * @reason Fix List Crash Error
      */
     @Overwrite

@@ -3,7 +3,7 @@ package dev.dyzjct.kura.manager
 import com.google.common.collect.MapMaker
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamage
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.setAndAdd
-import dev.dyzjct.kura.module.modules.crystal.KuraAura
+import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
 import dev.dyzjct.kura.utils.animations.fastFloor
 import it.unimi.dsi.fastutil.ints.*
 import kotlinx.coroutines.Job
@@ -292,7 +292,7 @@ object CombatManager : AlwaysListening {
         val flag2 = !crystalJob.isActiveOrFalse
 
         if (flag1 || flag2) {
-            val predictPosSelf = trackerSelf?.calcPosAhead(KuraAura.ownPredictTicks.value) ?: player.pos
+            val predictPosSelf = trackerSelf?.calcPosAhead(AutoCrystal.ownPredictTicks.value) ?: player.pos
             val contextSelf = CalcContext(this, player, predictPosSelf)
 
             val target = target

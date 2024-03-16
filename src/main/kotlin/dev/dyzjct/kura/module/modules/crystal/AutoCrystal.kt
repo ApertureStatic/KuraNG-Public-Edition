@@ -101,12 +101,8 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.stream.Collectors
 import kotlin.math.*
 
-/**
- * Created by zenhao on 18/12/2022.
- * Updated by zenhao on 22/07/2023.
- */
-object KuraAura : Module(
-    name = "KuraAura", langName = "自动水晶", category = Category.COMBAT, description = "Auto using crystals for pvp."
+object AutoCrystal : Module(
+    name = "AutoCrystal", langName = "自动水晶", category = Category.COMBAT, description = "Help u play crystal pvp."
 ) {
     private var p = msetting("Page", Page.GENERAL)
 
