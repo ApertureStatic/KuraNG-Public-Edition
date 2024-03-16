@@ -101,7 +101,7 @@ object UiSetting : Module(
                     rounded = false,
                     syt = true,
                     sytMode = SytMode.Down,
-                    sytColor = Color(33, 97, 108, 100),
+                    sytColor = Color(33, 97, 108, 140),
                     particle = true,
                     pRainbow = false,
                     pColor = Color(137, 185, 189, 100),
