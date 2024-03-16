@@ -1,5 +1,6 @@
 package dev.dyzjct.kura.module.modules.client
 
+import dev.dyzjct.kura.gui.clickgui.AlphaAnimationDrawDelegate
 import dev.dyzjct.kura.gui.clickgui.HudEditorScreen
 import dev.dyzjct.kura.gui.clickgui.animation.AnimationStrategy
 import dev.dyzjct.kura.gui.clickgui.animation.NonAnimationStrategy
@@ -22,7 +23,7 @@ object UiSetting : Module(
     val disableSearch by bsetting("DisableSearch", false)
 
     //    Theme type
-    val theme = msetting("Theme", Theme.Custom)
+    private val theme = msetting("Theme", Theme.Custom)
     private var themeSettings: ThemesSetting? = null
 
     //    Ui colors
@@ -34,14 +35,15 @@ object UiSetting : Module(
     private val rounded = bsetting("Rounded", true).enumIs(theme, Theme.Custom)
 
     //    SytRender Type
-    val sytRender by bsetting("SytRender", false)
-    val sytMode = msetting("SytMode", SytMode.Down)
-    val sytColor by csetting("SytColor", Color(255, 255, 255, 150))
+    val sytRender by bsetting("SytRender", false).enumIs(theme, Theme.Custom)
+    val sytMode = msetting("SytMode", SytMode.Down).enumIs(theme, Theme.Custom)
+    val sytColor by csetting("SytColor", Color(255, 255, 255, 150)).enumIs(theme, Theme.Custom)
 
     //    Particle Type
-    val particle by bsetting("Particle", true)
-    val particleRainbow by bsetting("ParticleRainbow", true).isTrue { particle }
+    val particle by bsetting("Particle", true).enumIs(theme, Theme.Custom)
+    val particleRainbow by bsetting("ParticleRainbow", true).isTrue { particle }.enumIs(theme, Theme.Custom)
     val particleColor by csetting("ParticleColor", Color(255, 255, 255)).isTrue { particle }.isFalse { particleRainbow }
+        .enumIs(theme, Theme.Custom)
 
     //    Animation type
     private val type0 = msetting("Type", AnimationType.NONE)
@@ -49,13 +51,6 @@ object UiSetting : Module(
     val animationLength by isetting("AnimationTime", 150, 100, 1000).enumIsNot(type0, AnimationType.NONE)
 
     val scalaDirection by msetting("Direction", Alignment.CENTER).isTrue { type == AnimationType.SCALA }
-
-    enum class AnimationType(
-        val createInstance: () -> AnimationStrategy
-    ) {
-        NONE({ NonAnimationStrategy }), EASE({ AlphaAnimationStrategy(dev.dyzjct.kura.gui.clickgui.AlphaAnimationDrawDelegate()) }), SCALA(
-            { ScalaAnimationStrategy() })
-    }
 
     init {
         type0.onChange<BooleanSetting> { value: Enum<*> ->
@@ -96,6 +91,23 @@ object UiSetting : Module(
 
     private fun newThemeSetting(): ThemesSetting {
         return when (theme.value) {
+            Theme.Rimuru -> {
+                ThemesSetting(
+                    Color(76, 179, 208, 250),
+                    Color(25, 25, 25, 200),
+                    Color(10, 10, 10, 200),
+                    fillPanelTitle = true,
+                    panelBorder = true,
+                    rounded = false,
+                    syt = true,
+                    sytMode = SytMode.Down,
+                    sytColor = Color(33, 97, 108, 100),
+                    particle = true,
+                    pRainbow = false,
+                    pColor = Color(137, 185, 189, 100),
+                )
+            }
+
             Theme.Arona -> {
                 ThemesSetting(
                     Color(144, 204, 236, 250),
@@ -103,7 +115,13 @@ object UiSetting : Module(
                     Color(91, 128, 185, 200),
                     fillPanelTitle = true,
                     panelBorder = false,
-                    rounded = false
+                    rounded = false,
+                    syt = false,
+                    sytMode = SytMode.Down,
+                    sytColor = sytColor,
+                    particle = particle,
+                    pRainbow = particleRainbow,
+                    pColor = particleColor,
                 )
             }
 
@@ -114,7 +132,13 @@ object UiSetting : Module(
                     Color(241, 219, 206, 200),
                     fillPanelTitle = true,
                     panelBorder = false,
-                    rounded = false
+                    rounded = false,
+                    syt = false,
+                    sytMode = SytMode.Down,
+                    sytColor = sytColor,
+                    particle = particle,
+                    pRainbow = particleRainbow,
+                    pColor = particleColor,
                 )
             }
 
@@ -125,7 +149,13 @@ object UiSetting : Module(
                     Color(48, 39, 42, 200),
                     fillPanelTitle = true,
                     panelBorder = true,
-                    rounded = false
+                    rounded = false,
+                    syt = false,
+                    sytMode = SytMode.Down,
+                    sytColor = sytColor,
+                    particle = particle,
+                    pRainbow = particleRainbow,
+                    pColor = particleColor,
                 )
             }
 
@@ -136,7 +166,13 @@ object UiSetting : Module(
                     settingPanelColor.value,
                     fillPanelTitle.value,
                     panelBorder.value,
-                    rounded.value
+                    rounded.value,
+                    sytRender,
+                    SytMode.Down,
+                    sytColor,
+                    particle,
+                    particleRainbow,
+                    particleColor,
                 )
             }
         }
@@ -148,14 +184,28 @@ object UiSetting : Module(
         val setting: Color,
         val fillPanelTitle: Boolean,
         val panelBorder: Boolean,
-        val rounded: Boolean
+        val rounded: Boolean,
+        val syt: Boolean,
+        val sytMode: SytMode,
+        val sytColor: Color,
+        val particle: Boolean,
+        val pRainbow: Boolean,
+        val pColor: Color
     )
 
     enum class Theme {
-        Custom, Mahiro, Arona, Roxy
+        Custom, Rimuru, Mahiro, Arona, Roxy
     }
 
     enum class SytMode {
         Top, Down
+    }
+
+    @Suppress("UNUSED")
+    enum class AnimationType(
+        val createInstance: () -> AnimationStrategy
+    ) {
+        NONE({ NonAnimationStrategy }), EASE({ AlphaAnimationStrategy(AlphaAnimationDrawDelegate()) }), SCALA(
+            { ScalaAnimationStrategy() })
     }
 }
