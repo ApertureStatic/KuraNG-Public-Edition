@@ -23,7 +23,7 @@ object UiSetting : Module(
     val disableSearch by bsetting("DisableSearch", false)
 
     //    Theme type
-    private val theme = msetting("Theme", Theme.Custom)
+    val theme = msetting("Theme", Theme.Custom)
     private var themeSettings: ThemesSetting? = null
 
     //    Ui colors

@@ -1,16 +1,18 @@
 package dev.dyzjct.kura.gui.clickgui.component
 
-import base.system.render.graphic.Render2DEngine
+import base.KuraIdentifier
+import com.mojang.blaze3d.systems.RenderSystem
 import dev.dyzjct.kura.gui.clickgui.GuiScreen
 import dev.dyzjct.kura.gui.clickgui.render.Alignment
 import dev.dyzjct.kura.gui.clickgui.render.DrawDelegate
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope
+import dev.dyzjct.kura.module.AbstractModule
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.modules.client.UiSetting
 import java.awt.Color
 
 class Panel(
-    modules: List<dev.dyzjct.kura.module.AbstractModule>,
+    modules: List<AbstractModule>,
     val category: Category,
     private val guiScreen: GuiScreen,
     override var x: Float,
@@ -22,6 +24,7 @@ class Panel(
     private var dragging = false
     private var dragOffsetX = 0f
     private var dragOffsetY = 0f
+    private val img = KuraIdentifier("textures/slm.png")
 
     private val beforeFilterModuleComponents = mutableListOf<ModuleComponent>()
 
@@ -90,6 +93,12 @@ class Panel(
         )
 
         renderChildElements(mouseX, mouseY)
+
+        if (UiSetting.theme.value == UiSetting.Theme.Rimuru) {
+            RenderSystem.disableBlend()
+            context.drawTexture(img, x.toInt() - 4, y.toInt() - 8, 0F, 0F, 30, 30, 30, 30)
+            RenderSystem.enableBlend()
+        }
 
         if (isHovering(mouseX, mouseY)) {
             guiScreen.moveToFirstRender(this@Panel)
