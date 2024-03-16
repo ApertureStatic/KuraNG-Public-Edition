@@ -1,12 +1,12 @@
 package dev.dyzjct.kura.gui.clickgui.component
 
+import base.system.render.graphic.Render2DEngine
 import dev.dyzjct.kura.gui.clickgui.GuiScreen
 import dev.dyzjct.kura.gui.clickgui.render.Alignment
 import dev.dyzjct.kura.gui.clickgui.render.DrawDelegate
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.modules.client.UiSetting
-import base.graphics.shaders.impl.WindowBlurShader
 import java.awt.Color
 
 class Panel(
@@ -92,8 +92,15 @@ class Panel(
         renderChildElements(mouseX, mouseY)
 
         if (UiSetting.getThemeSetting().rect) {
-            WindowBlurShader.render(x - 8.0, y - 8.0, width + 16.0, totalHeight + 16.0)
-            //Render2DEngine.drawRectBlurredShadow(context.matrices, x - 8f, y - 8f, width + 16f, totalHeight + 16f, 25, Color(primaryColor.red, primaryColor.green, primaryColor.blue, 30))
+            Render2DEngine.drawRectBlurredShadow(
+                context.matrices,
+                x - 8f,
+                y - 8f,
+                width + 16f,
+                totalHeight + 16f,
+                25,
+                Color(primaryColor.red, primaryColor.green, primaryColor.blue, 30)
+            )
         }
 
         if (isHovering(mouseX, mouseY)) {

@@ -14,11 +14,9 @@ object NotificationNew : HUDModule(
     y = 150f
 ) {
     private var notificationCount by isetting("NotificationCount", 4, 1, 12)
-    private var widthSize by isetting("Width", 200, 1, 500)
-    private var heightSize by isetting("Height", 35, 1, 100)
     override fun onRender(context: DrawContext) {
-        width = widthSize.toFloat()
-        height = heightSize.toFloat()
+        width = 150f
+        height = 35f
         if (NotificationManager.taskList.isEmpty()) return
         runCatching {
             for (i in 0 until NotificationManager.taskList.size.coerceAtMost(notificationCount)) {
@@ -32,9 +30,21 @@ object NotificationNew : HUDModule(
                     NotificationManager.taskList.remove(notification)
                     continue
                 }
+
+                Render2DEngine.drawRectBlurredShadow(
+                    context.matrices,
+                    animationXOffset - 8f,
+                    y + arrangedHeight - 8f,
+                    width + 16f,
+                    height + 16f,
+                    15,
+                    notification.color
+                )
+
                 Render2DEngine.drawRect(
                     context.matrices, animationXOffset, y + arrangedHeight, width, height, notification.color
                 )
+
                 FontRenderers.cn.drawString(
                     context.matrices,
                     notification.message,
