@@ -1,13 +1,13 @@
 package dev.dyzjct.kura.mixin;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import dev.dyzjct.kura.Kura;
-import dev.dyzjct.kura.manager.FileManager;
 import base.events.RunGameLoopEvent;
 import base.events.TickEvent;
 import base.events.screen.GuiScreenEvent;
 import base.system.antileak.AntiLeak;
 import base.system.render.newfont.FontRenderers;
+import com.mojang.blaze3d.systems.RenderSystem;
+import dev.dyzjct.kura.Kura;
+import dev.dyzjct.kura.manager.FileManager;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
