@@ -38,7 +38,6 @@ object CrystalHelper : AlwaysListening {
     val EndCrystalEntity.blockPos: BlockPos
         get() = BlockPos(this.pos.x.fastFloor(), this.pos.y.fastFloor() - 1, this.pos.z.fastFloor())
 
-    @JvmStatic
     val LivingEntity.scaledHealth: Float
         get() = this.health + this.absorptionAmount * (this.health / this.maxHealth)
 
