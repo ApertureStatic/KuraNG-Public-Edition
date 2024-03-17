@@ -25,7 +25,10 @@ object NotificationHUD : HUDModule(
                 val animationXOffset = x + width * notification.animation
                 val arrangedHeight = if (y < mc.window.scaledHeight / 2)
                     (height + 5 + interval) * i.toFloat()
-                        .symbolArranged(!notification.reversed, notification.animation) else -(height + 5) * i.toFloat()
+                        .symbolArranged(
+                            !notification.reversed,
+                            notification.animation
+                        ) else -(height + 5 + interval) * i.toFloat()
                     .symbolArranged(!notification.reversed, notification.animation)
                 if (notification.reversed && (notification.animation == 1f)) {
                     NotificationManager.taskList.remove(notification)
