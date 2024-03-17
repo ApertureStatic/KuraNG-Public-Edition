@@ -7,13 +7,14 @@ import dev.dyzjct.kura.module.HUDModule
 import net.minecraft.client.gui.DrawContext
 import java.awt.Color
 
-object NotificationNew : HUDModule(
+object NotificationHUD : HUDModule(
     name = "NotificationNew",
     langName = "新的通知界面",
     x = 300f,
     y = 150f
 ) {
     private var notificationCount by isetting("NotificationCount", 4, 1, 12)
+    private var interval by isetting("Interval", 0, 0, 20)
     override fun onRender(context: DrawContext) {
         width = 150f
         height = 35f
@@ -23,7 +24,7 @@ object NotificationNew : HUDModule(
                 val notification = NotificationManager.taskList[i]
                 val animationXOffset = x + width * notification.animation
                 val arrangedHeight = if (y < mc.window.scaledHeight / 2)
-                    (height + 5) * i.toFloat()
+                    (height + 5 + interval) * i.toFloat()
                         .symbolArranged(!notification.reversed, notification.animation) else -(height + 5) * i.toFloat()
                     .symbolArranged(!notification.reversed, notification.animation)
                 if (notification.reversed && (notification.animation == 1f)) {
@@ -37,7 +38,7 @@ object NotificationNew : HUDModule(
                     y + arrangedHeight - 8f,
                     width + 16f,
                     height + 16f,
-                    15,
+                    16,
                     notification.color
                 )
 

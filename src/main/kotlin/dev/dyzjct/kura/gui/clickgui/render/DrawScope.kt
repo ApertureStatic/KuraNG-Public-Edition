@@ -57,7 +57,7 @@ class DrawScope(
             y + padding.top,
             (width - padding.left - padding.right).coerceAtLeast(0f),
             (height - padding.top - padding.bottom).coerceAtLeast(0f),
-            4f,
+            1f,
             color
         )
     }
@@ -133,6 +133,7 @@ class DrawScope(
         width: Float,
         height: Float,
         color: Color,
+        lineWidth: Float = 1f,
         padding: Padding = Padding.Empty
     ) {
         drawDelegate.drawOutlineRoundRect(
@@ -141,9 +142,9 @@ class DrawScope(
             y + padding.top,
             (width - padding.left - padding.right).coerceAtLeast(0f),
             (height - padding.top - padding.bottom).coerceAtLeast(0f),
-            4f,
+            2f,
             9f,
-            1f,
+            lineWidth,
             color
         )
     }
@@ -157,7 +158,7 @@ class DrawScope(
         padding: Padding = Padding.Empty
     ) {
         if (UiSetting.getThemeSetting().rounded) {
-            drawOutlineRoundRect(x, y, width, height, color, padding)
+            drawOutlineRoundRect(x, y, width, height, color, padding = padding)
         } else {
             drawOutlineRect(x, y, width, height, color, padding)
         }

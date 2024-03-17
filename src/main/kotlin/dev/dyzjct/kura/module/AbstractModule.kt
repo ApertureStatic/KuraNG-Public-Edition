@@ -19,7 +19,7 @@ import base.utils.Wrapper
 import base.utils.chat.ChatUtil
 import base.utils.sound.SoundPlayer
 import dev.dyzjct.kura.Kura
-import dev.dyzjct.kura.module.hud.NotificationNew
+import dev.dyzjct.kura.module.hud.NotificationHUD
 import dev.dyzjct.kura.module.modules.client.ClickGui
 import dev.dyzjct.kura.module.modules.client.Sound
 import dev.dyzjct.kura.setting.*
@@ -61,7 +61,7 @@ abstract class AbstractModule : ListenerOwner() {
         }
         isEnabled = true
         if (ClickGui.chat.value) ChatUtil.sendMessageWithID(moduleName + " is " + ChatUtil.GREEN + "Enabled!", 11451)
-        if (NotificationNew.isEnabled) NotificationManager.addNotification(
+        if (NotificationHUD.isEnabled) NotificationManager.addNotification(
             (ChatUtil.WHITE + if (ClickGui.chinese.value) moduleCName else moduleName) + " Enable!",
             NotificationManager.NotiMode.EnableModule
         )
@@ -81,7 +81,7 @@ abstract class AbstractModule : ListenerOwner() {
         }
         isEnabled = false
         if (ClickGui.chat.value) ChatUtil.sendMessageWithID(moduleName + " is " + ChatUtil.RED + "Disabled!", 11451)
-        if (NotificationNew.isEnabled) NotificationManager.addNotification(
+        if (NotificationHUD.isEnabled) NotificationManager.addNotification(
             (ChatUtil.WHITE + if (ClickGui.chinese.value) moduleCName else moduleName) + " Disable!",
             NotificationManager.NotiMode.DisableModule
         )

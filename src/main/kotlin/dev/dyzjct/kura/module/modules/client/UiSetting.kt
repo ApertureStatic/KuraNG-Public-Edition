@@ -101,7 +101,7 @@ object UiSetting : Module(
                     Color(10, 10, 10, 200),
                     fillPanelTitle = true,
                     panelBorder = true,
-                    rounded = false,
+                    rounded = true,
                     syt = true,
                     sytMode = SytMode.Down,
                     sytColor = Color(86, 190, 208, 140),
