@@ -1,5 +1,6 @@
 package dev.dyzjct.kura.module.hud
 
+import base.system.render.newfont.FontRenderers
 import base.utils.combat.getTarget
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope
 import dev.dyzjct.kura.module.HUDModule
@@ -23,7 +24,6 @@ object TargetHUD : HUDModule(
     private var lastTarget: PlayerEntity? = null
     private var isTargetNull = true
     private var started = false
-    private var animationScale = 0.0f
     private var startTime = 0L
 
     init {
@@ -56,7 +56,7 @@ object TargetHUD : HUDModule(
 
     override fun DrawScope.renderOnGame() {
         lastTarget?.let {
-            animationScale = if (isTargetNull) {
+            val animationScale = if (isTargetNull) {
                 Easing.IN_CUBIC.dec(Easing.toDelta(startTime, fadeLength))
             } else {
                 Easing.OUT_CUBIC.inc(Easing.toDelta(startTime, fadeLength))
@@ -68,6 +68,17 @@ object TargetHUD : HUDModule(
             drawTargetFace(
                 context, it, animationScale, x.toDouble(), y.toDouble()
             )
+            matrixStack.push()
+            context.matrices.scale(animationScale, animationScale, 1.0f)
+            matrixStack.translate((x / animationScale) - x, (y / animationScale) - y, 0.0f)
+            FontRenderers.cn.drawString(
+                context.matrices,
+                "Name: ${it.name.string}",
+                x + 40,
+                y + 10,
+                Color(255, 255, 255).rgb
+            )
+            matrixStack.pop()
         }
     }
 
