@@ -25,6 +25,7 @@ import base.utils.concurrent.threads.runSynchronized
 import base.utils.entity.EntityUtils.eyePosition
 import base.utils.entity.EntityUtils.isntValid
 import base.utils.extension.fastPos
+import base.utils.extension.minePacket
 import base.utils.extension.sendSequencedPacket
 import base.utils.graphics.ESPRenderer
 import base.utils.inventory.slot.*
@@ -717,8 +718,19 @@ object AutoCrystal : Module(
                     ).toDouble()
                     if (selfDamage > placeMaxSelf.value) continue
 
-                    if (world.getBlockState(blockPos).block is FireBlock)
-                        damageCA = targetDamage
+                    if (world.getBlockState(blockPos).block is FireBlock) sendSequencedPacket(world) { id ->
+                        minePacket(
+                            PacketMine.PacketType.Stop,
+                            PacketMine.BlockData(
+                                blockPos,
+                                Direction.UP,
+                                null,
+                                System.currentTimeMillis(),
+                                0f
+                            ), id
+                        )
+                    }
+                    damageCA = targetDamage
                     val holeInfo = HoleManager.getHoleInfo(target)
                     isFacePlacing = holeInfo.isHole && !ddosArmor
 
