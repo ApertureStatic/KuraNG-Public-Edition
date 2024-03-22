@@ -1,6 +1,7 @@
 package dev.dyzjct.kura.module.hud
 
 import base.KuraIdentifier
+import base.system.render.graphic.Render2DEngine
 import base.system.render.newfont.FontRenderers
 import base.utils.combat.getTarget
 import base.utils.concurrent.threads.runSafe
@@ -22,7 +23,8 @@ object TargetHUD : HUDModule(
     255f,
     255f
 ) {
-    private val range by dsetting("targetRange", 8.0, 1.0, 12.0)
+    private val range by dsetting("TargetRange", 8.0, 1.0, 12.0)
+    private val color by csetting("Color", Color(76, 179, 208, 150))
     private val fadeLength by isetting("FadeLength", 200, 0, 1000)
     private var lastTarget: PlayerEntity? = null
     private var isTargetNull = true
@@ -71,16 +73,36 @@ object TargetHUD : HUDModule(
                 val healthPercentage =
                     (100f - ((it.scaledHealth * 2.7f))) / 100f
 
-                drawRoundRect(x, y, width * animationScale, height * animationScale, Color(76, 179, 208, 150))
-
-                drawTargetFace(
-                    context, it, animationScale, x.toDouble(), y.toDouble()
-                )
+                drawRoundRect(x, y, width * animationScale, height * animationScale, color)
 
                 matrixStack.push()
 
                 context.matrices.scale(animationScale, animationScale, 1.0f)
                 matrixStack.translate((x / animationScale) - x, (y / animationScale) - y, 0.0f)
+
+                Render2DEngine.drawRectBlurredShadow(
+                    context.matrices,
+                    x,
+                    y,
+                    width,
+                    height,
+                    16,
+                    color
+                )
+
+                drawRect(x + 45, y + 25, width * healthPercentage / 1.5f, height / 4, Color.RED)
+
+                FontRenderers.cn.drawString(
+                    context.matrices,
+                    "Name: ${it.name.string}",
+                    x + 45,
+                    y + 13,
+                    Color.WHITE.rgb
+                )
+
+                drawTargetFace(
+                    context, it, x.toDouble(), y.toDouble()
+                )
 
                 RenderSystem.disableBlend()
                 context.drawTexture(
@@ -96,25 +118,15 @@ object TargetHUD : HUDModule(
                 )
                 RenderSystem.enableBlend()
 
-                drawRect(x + 45, y + 25, width * healthPercentage / 1.5f, height / 4, Color.RED)
-
-                FontRenderers.cn.drawString(
-                    context.matrices,
-                    "Name: ${it.name.string}",
-                    x + 45,
-                    y + 13,
-                    Color.WHITE.rgb
-                )
-
                 matrixStack.pop()
             }
         }
     }
 
-    private fun drawTargetFace(context: DrawContext, target: PlayerEntity, scale: Float, x: Double, y: Double) {
+    private fun drawTargetFace(context: DrawContext, target: PlayerEntity, x: Double, y: Double) {
         context.matrices.push()
         context.matrices.translate(x, y, 0.0)
-        context.matrices.scale(scale, scale, 1f)
+        context.matrices.scale(1f, 1f, 1f)
         context.matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(0f))
         PlayerSkinDrawer.draw(context, (target as AbstractClientPlayerEntity).skinTexture, 10, 7, 32, false, false)
         context.matrices.pop()
