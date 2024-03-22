@@ -153,7 +153,7 @@ class DrawScope(
         width: Float,
         height: Float,
         color: Color,
-        lineWidth: Float = 2f,
+        lineWidth: Float = 1f,
         padding: Padding = Padding.Empty
     ) {
         drawDelegate.drawOutlineRoundRect(
@@ -163,7 +163,7 @@ class DrawScope(
             (width - padding.left - padding.right).coerceAtLeast(0f),
             (height - padding.top - padding.bottom).coerceAtLeast(0f),
             2f,
-            2f,
+            360f,
             lineWidth,
             color
         )
