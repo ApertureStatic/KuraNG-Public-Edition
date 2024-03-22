@@ -11,7 +11,7 @@ import dev.dyzjct.kura.module.modules.client.UiSetting
 import dev.dyzjct.kura.utils.animations.Easing
 import net.minecraft.client.gui.DrawContext
 
-object Image : HUDModule(name = "Image", langName = "图片显示", category = Category.HUD, x = 150f, y = 150f) {
+object Image : HUDModule(name = "Image", langName = "二次元小图片", category = Category.HUD, x = 150f, y = 150f) {
     val mode = msetting("Mode", Mode.Rimuru)
     private val scale by fsetting("Scale", 1.0f, 0.0f, 2.0f)
     private val animation by msetting("AnimationType", AnimationType.Center)
@@ -28,11 +28,17 @@ object Image : HUDModule(name = "Image", langName = "图片显示", category = C
             else -> mahiro
         }
         try {
-            if (mc.currentScreen is ClickGuiScreen || mc.currentScreen is HudEditorScreen) {
+            val progress =
+                if (mc.currentScreen is ClickGuiScreen || mc.currentScreen is HudEditorScreen) Easing.IN_QUAD.inc(
+                    Easing.toDelta(
+                        startTime,
+                        UiSetting.animationLength
+                    )
+                ) else Easing.IN_QUAD.dec(Easing.toDelta(startTime, UiSetting.animationLength))
+            if (progress > 0.0f) {
                 RenderSystem.disableBlend()
                 width = 302f * scale
                 height = 460f * scale
-                val progress = Easing.IN_QUAD.inc(Easing.toDelta(startTime, UiSetting.animationLength))
                 val animationX =
                     if (animation == AnimationType.Center) x + ((302f - (302f * progress)) / 2) else if (animation == AnimationType.TopLeft || animation == AnimationType.DownLeft) x else x + (302f - (302f * progress))
                 val animationY =

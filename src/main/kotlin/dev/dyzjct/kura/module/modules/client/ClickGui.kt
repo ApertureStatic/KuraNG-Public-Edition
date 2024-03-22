@@ -7,6 +7,7 @@ import dev.dyzjct.kura.manager.FileManager.saveAll
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.hud.Image
+import dev.dyzjct.kura.utils.animations.Easing
 import net.minecraft.client.util.InputUtil
 
 object ClickGui : Module(
@@ -37,6 +38,13 @@ object ClickGui : Module(
 
     override fun onDisable() {
         runSafe {
+            if (Easing.IN_QUAD.inc(
+                    Easing.toDelta(
+                        Image.startTime,
+                        UiSetting.animationLength
+                    )
+                ) >= 1.0f
+            ) Image.startTime = System.currentTimeMillis()
             if (mc.currentScreen is ClickGuiScreen) {
                 mc.setScreen(null)
             }
