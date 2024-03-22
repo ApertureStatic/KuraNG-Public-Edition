@@ -16,6 +16,7 @@ import kotlin.math.sin
 
 object Flight : Module(
     name = "Flight",
+    langName = "飞行",
     category = Category.MOVEMENT,
     description = ""
 ) {
