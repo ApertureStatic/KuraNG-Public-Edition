@@ -11,7 +11,6 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.hud.Image
 import dev.dyzjct.kura.setting.BooleanSetting
-import dev.dyzjct.kura.setting.Setting
 import java.awt.Color
 
 object UiSetting : Module(
@@ -25,7 +24,6 @@ object UiSetting : Module(
 
     //    Theme type
     val theme = msetting("Theme", Theme.Custom)
-    private var themeSettings: ThemesSetting? = null
 
     //    Ui colors
     private val primaryColor = csetting("Primary", Color(240, 100, 255, 200)).enumIs(theme, Theme.Custom)
@@ -59,36 +57,10 @@ object UiSetting : Module(
             dev.dyzjct.kura.gui.clickgui.ClickGuiScreen.animationStrategy = (value as AnimationType).createInstance()
             HudEditorScreen.animationStrategy = value.createInstance()
         }
-
-        onAnySettingChange(
-            listOf(
-                theme,
-                primaryColor,
-                secondaryColor,
-                settingPanelColor,
-                fillPanelTitle,
-                panelBorder,
-                rounded
-            )
-        ) {
-            themeSettings = newThemeSetting()
-        }
-    }
-
-    private fun onAnySettingChange(settings: List<Setting<*>>, block: () -> Unit) {
-        settings.forEach {
-            it.onChange<Setting<*>> { _ ->
-                block()
-            }
-        }
     }
 
     fun getThemeSetting(): ThemesSetting {
-        if (themeSettings == null) {
-            themeSettings = newThemeSetting()
-        }
-
-        return themeSettings!!
+        return newThemeSetting()
     }
 
     private fun newThemeSetting(): ThemesSetting {
