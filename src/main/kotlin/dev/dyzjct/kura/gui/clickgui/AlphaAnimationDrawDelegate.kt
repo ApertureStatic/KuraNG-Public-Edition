@@ -101,7 +101,7 @@ class AlphaAnimationDrawDelegate : DrawDelegate {
                 matrixStack,
                 text,
                 x,
-                y + 2,
+                y + 4,
                 calculatedColor.red / 255f,
                 calculatedColor.green / 255f,
                 calculatedColor.blue / 255f,

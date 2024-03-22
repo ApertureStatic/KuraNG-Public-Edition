@@ -83,7 +83,7 @@ object DefaultDrawDelegate : DrawDelegate {
     override fun drawText(matrixStack: MatrixStack, text: String, x: Float, y: Float, color: Color) {
         if (ClickGui.chinese.value) {
             FontRenderers.cn.drawString(
-                matrixStack, text, x, y + 2, color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha / 255f
+                matrixStack, text, x, y + 4, color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha / 255f
             )
 
         } else {
