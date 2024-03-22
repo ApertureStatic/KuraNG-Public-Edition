@@ -66,7 +66,7 @@ abstract class AbstractModule : ListenerOwner() {
             NotificationManager.NotiMode.EnableModule
         )
         if (Sound.isEnabled) {
-            Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleDisable.wav")?.let {
+            Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleEnable.wav")?.let {
                 SoundPlayer(it).play(Sound.volume)
             } ?: println("NULL")
         }
