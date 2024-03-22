@@ -12,6 +12,7 @@ import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.MathHelper
 import org.apache.commons.lang3.RandomStringUtils
+import org.joml.Matrix4f
 import org.joml.Vector4f
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
@@ -480,7 +481,7 @@ object Render2DEngine : MinecraftWrapper {
             (width + x).toDouble(),
             (height + y).toDouble(),
             radius.toDouble(),
-            9.0
+            4.0
         )
     }
 
@@ -493,7 +494,7 @@ object Render2DEngine : MinecraftWrapper {
         radius: Float,
         color: Color
     ) {
-        renderRoundedQuad(matrices, color, x, y, width + x, height + y, radius.toDouble(), 9.0)
+        renderRoundedQuad(matrices, color, x, y, width + x, height + y, radius.toDouble(), 4.0)
     }
 
     fun drawRoundDoubleColor(
@@ -506,7 +507,7 @@ object Render2DEngine : MinecraftWrapper {
         color: Color,
         color2: Color
     ) {
-        renderRoundedQuad(matrices, color, color2, x, y, width + x, height + y, radius.toDouble(), 9.0)
+        renderRoundedQuad(matrices, color, color2, x, y, width + x, height + y, radius.toDouble(), 4.0)
     }
 
     fun renderRoundedQuad(
@@ -643,13 +644,15 @@ object Render2DEngine : MinecraftWrapper {
                 val angle = Math.toRadians(r).toFloat()
                 val sin = sin(angle) * radius
                 val cos = cos(angle) * radius
-                bufferBuilder.vertex(matrix, current[0] + sin, current[1] + cos, 0f).color(currentColor).next()
+                if (i <= 1) bufferBuilder.vertex(matrix, current[0] + sin, current[1] + cos, 0f)
+                    .color(currentColor).next() else
+                    bufferBuilder.vertex(matrix, current[0] + sin, current[1] + cos, 0f).color(currentColor).next()
                 r += 90 / samples
             }
-            val angle = Math.toRadians((i + 1) * 90.0).toFloat()
-            val sin = sin(angle) * radius
-            val cos = cos(angle) * radius
-            bufferBuilder.vertex(matrix, current[0] + sin, current[1] + cos, 0f).color(currentColor).next()
+//            val angle = Math.toRadians((i + 1) * 90.0).toFloat()
+//            val sin = sin(angle) * radius
+//            val cos = cos(angle) * radius
+//            bufferBuilder.vertex(matrix, current[0] + sin, current[1] + cos, 0f).color(currentColor).next()
         }
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end())
         endRender()

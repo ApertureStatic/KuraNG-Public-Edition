@@ -1,6 +1,7 @@
 package dev.dyzjct.kura.module.modules.client
 
 import dev.dyzjct.kura.gui.clickgui.AlphaAnimationDrawDelegate
+import dev.dyzjct.kura.gui.clickgui.ClickGuiScreen
 import dev.dyzjct.kura.gui.clickgui.HudEditorScreen
 import dev.dyzjct.kura.gui.clickgui.animation.AnimationStrategy
 import dev.dyzjct.kura.gui.clickgui.animation.NonAnimationStrategy
@@ -54,7 +55,7 @@ object UiSetting : Module(
 
     init {
         type0.onChange<BooleanSetting> { value: Enum<*> ->
-            dev.dyzjct.kura.gui.clickgui.ClickGuiScreen.animationStrategy = (value as AnimationType).createInstance()
+            ClickGuiScreen.animationStrategy = (value as AnimationType).createInstance()
             HudEditorScreen.animationStrategy = value.createInstance()
         }
     }
