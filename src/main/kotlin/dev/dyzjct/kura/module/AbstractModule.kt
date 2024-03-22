@@ -68,7 +68,7 @@ abstract class AbstractModule : ListenerOwner() {
         if (Sound.isEnabled) {
             Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleEnable.wav")?.let {
                 SoundPlayer(it).play(Sound.volume)
-            } ?: println("NULL")
+            } ?: NotificationManager.addNotification("SoundNull", NotificationManager.NotiMode.Error)
         }
         ModuleEvent.Toggle(this).post()
         onEnable()
@@ -88,7 +88,7 @@ abstract class AbstractModule : ListenerOwner() {
         if (Sound.isEnabled) {
             Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleDisable.wav")?.let {
                 SoundPlayer(it).play(Sound.volume)
-            } ?: println("NULL")
+            } ?: NotificationManager.addNotification("SoundNull", NotificationManager.NotiMode.Error)
         }
         ModuleEvent.Toggle(this).post()
         onDisable()
