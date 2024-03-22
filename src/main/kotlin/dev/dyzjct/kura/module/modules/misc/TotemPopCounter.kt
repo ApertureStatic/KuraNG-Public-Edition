@@ -4,10 +4,13 @@ import base.events.TickEvent
 import base.notification.NotificationManager
 import base.system.event.safeEventListener
 import base.utils.chat.ChatUtil
+import base.utils.sound.SoundPlayer
+import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.FriendManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.Sound
 import net.minecraft.entity.EntityStatuses
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket
@@ -83,6 +86,13 @@ object TotemPopCounter : Module(
                             "${it.key.entityName} ${ChatUtil.DARK_AQUA}died after popped ${it.value} totems!",
                             NotificationManager.NotiMode.TotemPop
                         )
+                    }
+                    if (Sound.isEnabled && Sound.ezz) {
+                        Kura::class.java.getResourceAsStream("/assets/kura/sounds/EZ.wav")?.let { sound ->
+                            SoundPlayer(sound).play(Sound.volume)
+                        } ?: run {
+                            NotificationManager.addNotification("SoundFailed", NotificationManager.NotiMode.Error)
+                        }
                     }
                     playerList.remove(it.key)
                 }

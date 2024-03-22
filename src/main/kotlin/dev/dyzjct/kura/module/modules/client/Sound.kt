@@ -10,4 +10,5 @@ object Sound : Module(
     description = "Play Sound."
 ) {
     val volume by fsetting("Volume", 0.5f, 0.0f, 1.0f)
+    val ezz by bsetting("EZZ",true)
 }
