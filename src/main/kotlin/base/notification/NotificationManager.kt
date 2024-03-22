@@ -31,10 +31,10 @@ object NotificationManager {
     }
 
     enum class NotiMode(val color: Color) {
-        EnableModule(Color(72, 255, 72, 200)),
-        DisableModule(Color(255, 72, 72, 200)),
+        EnableModule(Color(72, 255, 72)),
+        DisableModule(Color(255, 72, 72)),
         TotemPop(Color(76, 78, 215)),
-        Warning(Color(255, 255, 72, 200)),
-        Error(Color(150, 25, 100, 200))
+        Warning(Color(255, 255, 72)),
+        Error(Color(150, 25, 100))
     }
 }

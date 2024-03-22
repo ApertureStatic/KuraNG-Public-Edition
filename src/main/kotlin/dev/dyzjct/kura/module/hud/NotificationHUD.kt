@@ -15,6 +15,7 @@ object NotificationHUD : HUDModule(
 ) {
     private var notificationCount by isetting("NotificationCount", 4, 1, 12)
     private var interval by isetting("Interval", 0, 0, 20)
+    val alpha by isetting("Alpha", 100, 1, 255)
     override fun onRender(context: DrawContext) {
         width = 150f
         height = 35f
@@ -42,11 +43,16 @@ object NotificationHUD : HUDModule(
                     width + 16f,
                     height + 16f,
                     16,
-                    notification.color
+                    Color(notification.color.red, notification.color.green, notification.color.blue, alpha)
                 )
 
                 Render2DEngine.drawRect(
-                    context.matrices, animationXOffset, y + arrangedHeight, width, height, notification.color
+                    context.matrices,
+                    animationXOffset,
+                    y + arrangedHeight,
+                    width,
+                    height,
+                    Color(notification.color.red, notification.color.green, notification.color.blue, alpha)
                 )
 
                 FontRenderers.cn.drawString(
