@@ -60,16 +60,21 @@ abstract class AbstractModule : ListenerOwner() {
             return
         }
         isEnabled = true
-        if (ClickGui.chat.value) ChatUtil.sendMessageWithID(moduleName + " is " + ChatUtil.GREEN + "Enabled!", 11451)
-        if (NotificationHUD.isEnabled) NotificationManager.addNotification(
-            (ChatUtil.WHITE + if (ClickGui.chinese.value) moduleCName else moduleName) + " Enable!",
-            NotificationManager.NotiMode.EnableModule
-        )
-        if (Sound.isEnabled) {
-            Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleEnable.wav")?.let {
-                SoundPlayer(it).play(Sound.volume)
-            } ?: run {
-                NotificationManager.addNotification("SoundFailed", NotificationManager.NotiMode.Error)
+        if (laoded) {
+            if (ClickGui.chat.value) ChatUtil.sendMessageWithID(
+                moduleName + " is " + ChatUtil.GREEN + "Enabled!",
+                11451
+            )
+            if (NotificationHUD.isEnabled) NotificationManager.addNotification(
+                (ChatUtil.WHITE + if (ClickGui.chinese.value) moduleCName else moduleName) + " Enable!",
+                NotificationManager.NotiMode.EnableModule
+            )
+            if (Sound.isEnabled) {
+                Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleEnable.wav")?.let {
+                    SoundPlayer(it).play(Sound.volume)
+                } ?: run {
+                    NotificationManager.addNotification("SoundFailed", NotificationManager.NotiMode.Error)
+                }
             }
         }
         ModuleEvent.Toggle(this).post()
@@ -82,16 +87,18 @@ abstract class AbstractModule : ListenerOwner() {
             return
         }
         isEnabled = false
-        if (ClickGui.chat.value) ChatUtil.sendMessageWithID(moduleName + " is " + ChatUtil.RED + "Disabled!", 11451)
-        if (NotificationHUD.isEnabled) NotificationManager.addNotification(
-            (ChatUtil.WHITE + if (ClickGui.chinese.value) moduleCName else moduleName) + " Disable!",
-            NotificationManager.NotiMode.DisableModule
-        )
-        if (Sound.isEnabled) {
-            Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleDisable.wav")?.let {
-                SoundPlayer(it).play(Sound.volume)
-            } ?: run {
-                NotificationManager.addNotification("SoundFailed", NotificationManager.NotiMode.Error)
+        if (laoded) {
+            if (ClickGui.chat.value) ChatUtil.sendMessageWithID(moduleName + " is " + ChatUtil.RED + "Disabled!", 11451)
+            if (NotificationHUD.isEnabled) NotificationManager.addNotification(
+                (ChatUtil.WHITE + if (ClickGui.chinese.value) moduleCName else moduleName) + " Disable!",
+                NotificationManager.NotiMode.DisableModule
+            )
+            if (Sound.isEnabled) {
+                Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleDisable.wav")?.let {
+                    SoundPlayer(it).play(Sound.volume)
+                } ?: run {
+                    NotificationManager.addNotification("SoundFailed", NotificationManager.NotiMode.Error)
+                }
             }
         }
         ModuleEvent.Toggle(this).post()
@@ -280,7 +287,7 @@ abstract class AbstractModule : ListenerOwner() {
         }
     }
 
-    @Suppress("unused")
+    @Suppress("UNUSED")
     fun onKey(event: BindEvent) {
     }
 
@@ -299,5 +306,6 @@ abstract class AbstractModule : ListenerOwner() {
     companion object {
         @JvmField
         val mc = Wrapper.minecraft
+        var laoded = false
     }
 }

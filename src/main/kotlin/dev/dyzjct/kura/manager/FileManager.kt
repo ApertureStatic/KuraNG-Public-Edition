@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import dev.dyzjct.kura.Kura
+import dev.dyzjct.kura.gui.clickgui.ClickGuiScreen
 import dev.dyzjct.kura.gui.clickgui.HudEditorScreen
 import dev.dyzjct.kura.gui.clickgui.component.Panel
 import dev.dyzjct.kura.gui.gui.GUIRender
@@ -97,7 +98,7 @@ object FileManager {
             val json = file.readText()
             val jsonObject = gsonPretty.fromJson(json, JsonObject::class.java)
 
-            (dev.dyzjct.kura.gui.clickgui.ClickGuiScreen.elements + HudEditorScreen.elements).mapNotNull { it as? Panel }
+            (ClickGuiScreen.elements + HudEditorScreen.elements).mapNotNull { it as? Panel }
                 .forEach {
                     val panelJsonObject = jsonObject.getAsJsonObject(it.category.name)
 
@@ -116,7 +117,7 @@ object FileManager {
         val jsonObject = JsonObject()
         val file = File(NEW_UI_CONFIG_FILE_NAME)
 
-        (dev.dyzjct.kura.gui.clickgui.ClickGuiScreen.elements + HudEditorScreen.elements).mapNotNull { it as? Panel }
+        (ClickGuiScreen.elements + HudEditorScreen.elements).mapNotNull { it as? Panel }
             .forEach {
                 val panelJsonObject = JsonObject()
                 panelJsonObject.addProperty("x", it.x)

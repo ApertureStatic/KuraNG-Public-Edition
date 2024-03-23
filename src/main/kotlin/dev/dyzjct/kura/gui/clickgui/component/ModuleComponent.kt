@@ -5,13 +5,14 @@ import dev.dyzjct.kura.gui.clickgui.render.Alignment
 import dev.dyzjct.kura.gui.clickgui.render.DrawDelegate
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope
 import dev.dyzjct.kura.gui.clickgui.render.Padding
+import dev.dyzjct.kura.module.AbstractModule
 import dev.dyzjct.kura.module.modules.client.UiSetting
 import dev.dyzjct.kura.utils.animations.AnimationFlag
 import dev.dyzjct.kura.utils.animations.Easing
 import java.awt.Color
 
 class ModuleComponent(
-    val module: dev.dyzjct.kura.module.AbstractModule,
+    val module: AbstractModule,
     panel: Panel,
     override var x: Float,
     override var y: Float,
