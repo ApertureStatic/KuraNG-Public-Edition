@@ -48,6 +48,10 @@ object TotemPopCounter : Module(
                         if (FriendManager.isFriend(name) && player != players) {
                             if (mode.value == Mode.Chat || mode.value == Mode.Both) {
                                 ChatUtil.sendMessage("Your Friend $name Popped ${ChatUtil.colorKANJI}$pop Totem!")
+                                NotificationManager.addNotification(
+                                    "$name Popped ${ChatUtil.colorKANJI}$pop Totem!",
+                                    NotificationManager.NotiMode.TotemPop
+                                )
                             }
                         } else if (player == players) {
                             if (mode.value == Mode.Chat || mode.value == Mode.Both) {
@@ -56,7 +60,7 @@ object TotemPopCounter : Module(
                             if (mode.value == Mode.Notification || mode.value == Mode.Both) {
                                 NotificationManager.addNotification(
                                     "I Popped ${ChatUtil.colorKANJI}$pop Totem!",
-                                    NotificationManager.NotiMode.TotemPop
+                                    NotificationManager.NotiMode.Warning
                                 )
                             }
                         } else {

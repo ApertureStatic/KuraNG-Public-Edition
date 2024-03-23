@@ -8,6 +8,7 @@ import base.system.render.newfont.FontRenderers;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.dyzjct.kura.Kura;
 import dev.dyzjct.kura.manager.FileManager;
+import dev.dyzjct.kura.module.AbstractModule;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
@@ -175,6 +176,7 @@ public abstract class MixinMinecraftClient {
         if (screen != null) {
             new GuiScreenEvent.Displayed(screen).post();
         }
+        AbstractModule.Companion.setLaoded(true);
 //        if (screen != verScreen) { //&& Kura.Companion.getId().equals(SocketConnection.INSTANCE.getTaskID())) {
 //            setScreen(verScreen);
 //        }

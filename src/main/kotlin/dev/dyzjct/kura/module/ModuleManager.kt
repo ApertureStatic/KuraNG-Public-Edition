@@ -232,8 +232,6 @@ object ModuleManager : AlwaysListening {
             if (!iModule.moduleName.equals(targetName, ignoreCase = true)) continue
             return iModule
         }
-        //TODO 祖传代码👇
-        //XG42.logger.fatal("Module " + targetName + " is not exist.Please check twice!");
         return NullModule
     }
 
@@ -243,8 +241,6 @@ object ModuleManager : AlwaysListening {
             if (iModule.javaClass != targetName) continue
             return iModule
         }
-        //TODO 一码传三代
-        //XG42.logger.fatal("Module " + targetName + " is not exist.Please check twice!");
         return NullModule
     }
 
@@ -254,8 +250,6 @@ object ModuleManager : AlwaysListening {
             if (!iModule.moduleName.equals(targetName, ignoreCase = true)) continue
             return iModule
         }
-        //TODO 人走码还在
-        //XG42.logger.fatal("HUD " + targetName + " is not exist.Please check twice!");
         return NullHUD
     }
 
