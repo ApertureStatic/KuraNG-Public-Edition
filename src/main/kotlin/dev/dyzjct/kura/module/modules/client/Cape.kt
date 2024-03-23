@@ -15,6 +15,7 @@ object Cape : Module(
         val path: String
     ) {
         Rimuru("rimuru_cape.png"),
+        RimuruTwo("rimuru_two_cape.png"),
         VAPE("vape_cape.png"),
         Chicken("chicken_cape.png"),
         BadLion("badlion_cape.png"),
