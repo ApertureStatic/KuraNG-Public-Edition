@@ -10,7 +10,7 @@ object ChatSuffix : Module(name = "ChatSuffix", langName = "后缀", category = 
     init {
         safeEventListener<MessageSentEvent>(true) { event ->
             if (isEnabled) {
-                event.message += " 金明會.Lua"
+                event.message += " kนrค"
             }
         }
     }
