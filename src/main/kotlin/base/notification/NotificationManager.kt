@@ -1,5 +1,6 @@
 package base.notification
 
+import dev.dyzjct.kura.module.hud.NotificationHUD
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
 import java.awt.Color
@@ -17,7 +18,7 @@ object NotificationManager {
         private var timer = TimerUtils()
         val color = mode.color
         var reversed = false
-        val length = 1500L
+        val length = NotificationHUD.animationLength * 100
         val animation
             get() = if (!timer.passed(length)) {
                 Easing.IN_OUT_EXPO.dec(Easing.toDelta(startTime, length / 8f))

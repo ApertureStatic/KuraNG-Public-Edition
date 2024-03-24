@@ -1,13 +1,5 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
-import dev.dyzjct.kura.manager.RotationManager
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.player.PacketMine
-import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.animations.sq
 import base.events.player.PlayerMotionEvent
 import base.system.event.safeEventListener
 import base.utils.block.BlockUtil.canBreak
@@ -16,18 +8,32 @@ import base.utils.extension.fastPos
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
+import base.utils.math.distanceSqToCenter
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.player.PacketMine
+import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.animations.sq
 import net.minecraft.block.Blocks
 import net.minecraft.entity.decoration.EndCrystalEntity
+import net.minecraft.item.EndCrystalItem
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
 import net.minecraft.util.Hand
-import base.utils.math.distanceSqToCenter
 
-object ManualCev : Module(name = "ManualCev", langName = "手动炸头", category = Category.COMBAT, description = "Place and attack crystal to MinePos.") {
+object ManualCev : Module(
+    name = "ManualCev",
+    langName = "手动炸头",
+    category = Category.COMBAT,
+    description = "Place and attack crystal to MinePos."
+) {
     private val mode by msetting("SwitchMode", Mode.Spoof)
     private val delay by isetting("Delay", 50, 0, 500)
-    private val range by isetting("range",5,0,10)
+    private val range by isetting("range", 5, 0, 10)
     private val rotation by bsetting("Rotation", false)
     private val debug by bsetting("Debug", false)
 
@@ -50,8 +56,8 @@ object ManualCev : Module(name = "ManualCev", langName = "手动炸头", categor
             PacketMine.blockData?.let { blockData ->
                 if (player.distanceSqToCenter(blockData.blockPos) > range.sq) return@safeEventListener
                 if (!world.isAir(blockData.blockPos.up())) return@safeEventListener
-                if (!canBreak(blockData.blockPos,true))
-                if (debug) ChatUtil.sendNoSpamMessage("DEBUG >> ${stage.name}")
+                if (!canBreak(blockData.blockPos, true))
+                    if (debug) ChatUtil.sendNoSpamMessage("DEBUG >> ${stage.name}")
                 if (rotation) {
                     RotationManager.addRotations(blockData.blockPos)
                 }
@@ -84,16 +90,20 @@ object ManualCev : Module(name = "ManualCev", langName = "手动炸头", categor
                         crySlot?.let { cry ->
                             if (!world.isAir(blockData.blockPos)) {
                                 if (timer.tickAndReset(delay)) {
-                                    when (mode) {
-                                        Mode.Spoof -> {
-                                            spoofHotbar(cry) {
-                                                connection.sendPacket(fastPos(blockData.blockPos.up()))
+                                    if (player.offHandStack.item is EndCrystalItem) {
+                                        connection.sendPacket(fastPos(blockData.blockPos.up(), hand = Hand.OFF_HAND))
+                                    } else {
+                                        when (mode) {
+                                            Mode.Spoof -> {
+                                                spoofHotbar(cry) {
+                                                    connection.sendPacket(fastPos(blockData.blockPos.up()))
+                                                }
                                             }
-                                        }
 
-                                        Mode.SpoofBypass -> {
-                                            spoofHotbarBypass(cry) {
-                                                connection.sendPacket(fastPos(blockData.blockPos.up()))
+                                            Mode.SpoofBypass -> {
+                                                spoofHotbarBypass(cry) {
+                                                    connection.sendPacket(fastPos(blockData.blockPos.up()))
+                                                }
                                             }
                                         }
                                     }

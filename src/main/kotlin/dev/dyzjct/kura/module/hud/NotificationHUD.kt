@@ -15,6 +15,7 @@ object NotificationHUD : HUDModule(
 ) {
     private var notificationCount by isetting("NotificationCount", 4, 1, 12)
     private var interval by isetting("Interval", 0, 0, 20)
+    var animationLength by isetting("AnimationLength", 15,10,100)
     val alpha by isetting("Alpha", 100, 1, 255)
     override fun onRender(context: DrawContext) {
         width = 150f
