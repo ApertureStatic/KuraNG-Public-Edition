@@ -5,6 +5,7 @@ import base.system.render.graphic.Render2DEngine
 import base.system.render.newfont.FontRenderers
 import base.utils.combat.getTarget
 import base.utils.concurrent.threads.runSafe
+import base.utils.math.MathUtils.clamp
 import com.mojang.blaze3d.systems.RenderSystem
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope
 import dev.dyzjct.kura.module.HUDModule
@@ -73,12 +74,29 @@ object TargetHUD : HUDModule(
                 val healthPercentage =
                     (100f - ((it.scaledHealth * 2.7f))) / 100f
 
-                drawRoundRect(x, y, width * animationScale, height * animationScale, color)
+                val hurtPercentage = (Render2DEngine.interpolateFloat(
+                    clamp(if (it.hurtTime == 0) 0f else it.hurtTime + 1f, 0f, 10f), it.hurtTime.toFloat(),
+                    mc.tickDelta.toDouble()
+                )) / 8f
+
 
                 matrixStack.push()
 
                 context.matrices.scale(animationScale, animationScale, 1.0f)
-                matrixStack.translate((x / animationScale) - x, (y / animationScale) - y, 0.0f)
+
+                if (animationScale == 1f) context.matrices.scale(
+                    1f - hurtPercentage / 20f,
+                    1f - hurtPercentage / 20f,
+                    1f
+                )
+
+                if (animationScale == 1f) matrixStack.translate(
+                    (x / (1f - hurtPercentage / 20f)) - x,
+                    (y / (1f - hurtPercentage / 20f)) - y,
+                    0.0f
+                ) else matrixStack.translate((x / animationScale) - x, (y / animationScale) - y, 0.0f)
+
+                drawRoundRect(x, y, width, height, color)
 
                 Render2DEngine.drawRectBlurredShadow(
                     context.matrices,
@@ -102,6 +120,15 @@ object TargetHUD : HUDModule(
 
                 drawTargetFace(
                     context, it, x.toDouble(), y.toDouble()
+                )
+
+                Render2DEngine.drawRect(
+                    context.matrices,
+                    x + 10,
+                    y + 7,
+                    32f,
+                    32f,
+                    Color(255, 0, 0, (150 * hurtPercentage).toInt())
                 )
 
                 RenderSystem.disableBlend()
