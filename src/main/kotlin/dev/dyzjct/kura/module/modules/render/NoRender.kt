@@ -8,5 +8,6 @@ object NoRender : Module(name = "NoRender", langName = "移除渲染" , category
     val blockLayer = bsetting("BlockLayer", true)
     var totemPops = bsetting("Totem", false)
     var explosions = bsetting("Explosions", true)
+    var noArmor = bsetting("noArmor",true)
     var fog = bsetting("Fog", true)
 }

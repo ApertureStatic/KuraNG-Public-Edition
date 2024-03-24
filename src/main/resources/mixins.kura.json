@@ -16,6 +16,7 @@
     "player.MixinBipedEntityModel",
     "player.MixinClientPlayerEntity",
     "player.MixinClientPlayerInteractionManager",
+    "render.MixinArmorFeatureRenderer",
     "render.MixinBackgroundRenderer",
     "render.MixinBufferRenderer",
     "render.MixinCamera",
