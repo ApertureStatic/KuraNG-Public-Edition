@@ -8,30 +8,23 @@ import net.minecraft.client.gui.DrawContext
 import java.awt.Color
 
 object NotificationHUD : HUDModule(
-    name = "NotificationNew",
-    langName = "新的通知界面",
-    x = 300f,
-    y = 150f
+    name = "NotificationNew", langName = "新的通知界面", x = 300f, y = 150f
 ) {
     private var notificationCount by isetting("NotificationCount", 4, 1, 12)
     private var interval by isetting("Interval", 0, 0, 20)
-    var animationLength by isetting("AnimationLength", 15,10,100)
+    var animationLength by isetting("AnimationLength", 15, 10, 100)
     val alpha by isetting("Alpha", 100, 1, 255)
     override fun onRender(context: DrawContext) {
         width = 150f
         height = 35f
         if (NotificationManager.taskList.isEmpty()) return
+        var count = 1f
         runCatching {
             for (i in 0 until NotificationManager.taskList.size.coerceAtMost(notificationCount)) {
                 val notification = NotificationManager.taskList[i]
                 val animationXOffset = x + width * notification.animation
-                val arrangedHeight = if (y < mc.window.scaledHeight / 2)
-                    (height + 5 + interval) * i.toFloat()
-                        .symbolArranged(
-                            !notification.reversed,
-                            notification.animation
-                        ) else -(height + 5 + interval) * i.toFloat()
-                    .symbolArranged(!notification.reversed, notification.animation)
+                val arrangedHeight =
+                    if (y < mc.window.scaledHeight / 2) (height + 5 + interval) * count else -(height + 5 + interval) * count
                 if (notification.reversed && (notification.animation == 1f)) {
                     NotificationManager.taskList.remove(notification)
                     continue
@@ -57,13 +50,11 @@ object NotificationHUD : HUDModule(
                 )
 
                 FontRenderers.cn.drawString(
-                    context.matrices,
-                    notification.message,
-                    (x + width * notification.animation).symbolArranged(
+                    context.matrices, notification.message, (x + width * notification.animation).symbolArranged(
                         true, width / 7f
-                    ), y.symbolArranged(true, height / 2f) + arrangedHeight,
-                    Color(255, 255, 255).rgb
+                    ), y.symbolArranged(true, height / 2f) + arrangedHeight, Color(255, 255, 255).rgb
                 )
+                count += 1f.symbolArranged(!notification.reversed, notification.animation)
             }
         }
     }

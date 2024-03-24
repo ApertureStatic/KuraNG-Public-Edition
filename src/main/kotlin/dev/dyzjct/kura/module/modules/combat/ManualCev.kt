@@ -19,7 +19,6 @@ import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.sq
 import net.minecraft.block.Blocks
 import net.minecraft.entity.decoration.EndCrystalEntity
-import net.minecraft.item.EndCrystalItem
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
@@ -87,12 +86,12 @@ object ManualCev : Module(
                     }
 
                     CevStage.Place -> {
-                        crySlot?.let { cry ->
-                            if (!world.isAir(blockData.blockPos)) {
-                                if (timer.tickAndReset(delay)) {
-                                    if (player.offHandStack.item is EndCrystalItem) {
-                                        connection.sendPacket(fastPos(blockData.blockPos.up(), hand = Hand.OFF_HAND))
-                                    } else {
+                        if (!world.isAir(blockData.blockPos)) {
+                            if (timer.tickAndReset(delay)) {
+                                if (player.offHandStack.item == Items.END_CRYSTAL) {
+                                    connection.sendPacket(fastPos(blockData.blockPos.up(), hand = Hand.OFF_HAND))
+                                } else {
+                                    crySlot?.let { cry ->
                                         when (mode) {
                                             Mode.Spoof -> {
                                                 spoofHotbar(cry) {
@@ -107,11 +106,11 @@ object ManualCev : Module(
                                             }
                                         }
                                     }
-                                    stage = CevStage.Mine
                                 }
-                            } else {
                                 stage = CevStage.Mine
                             }
+                        } else {
+                            stage = CevStage.Mine
                         }
                     }
 
