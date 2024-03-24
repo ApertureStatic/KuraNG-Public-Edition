@@ -58,7 +58,7 @@ object TargetHUD : HUDModule(
     override fun onRender(context: DrawContext) {
         var addWidth = 0f
         lastTarget?.let {
-            if (FontRenderers.cn.getStringWidth("Name: ${it.name.string}") + 45f > 135) {
+            if (FontRenderers.cn.getStringWidth("Name: ${it.name.string}") + 55f > 135) {
                 addWidth = FontRenderers.cn.getStringWidth("Name: ${it.name.string}") + 55f - 135f
             }
         }

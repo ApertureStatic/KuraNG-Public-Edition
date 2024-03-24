@@ -1,14 +1,16 @@
 package base.utils.entity
 
-import dev.dyzjct.kura.manager.EntityManager
-import dev.dyzjct.kura.manager.FriendManager
-import dev.dyzjct.kura.utils.animations.fastFloor
-import dev.dyzjct.kura.utils.animations.sq
 import base.system.event.SafeClientEvent
 import base.system.util.interfaces.MinecraftWrapper
 import base.utils.Wrapper
 import base.utils.block.BlockUtil.canSeeEntity
 import base.utils.concurrent.threads.runSafe
+import base.utils.math.distanceSqTo
+import base.utils.math.toBlockPos
+import dev.dyzjct.kura.manager.EntityManager
+import dev.dyzjct.kura.manager.FriendManager
+import dev.dyzjct.kura.utils.animations.fastFloor
+import dev.dyzjct.kura.utils.animations.sq
 import net.minecraft.block.*
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.Entity
@@ -24,8 +26,6 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
-import base.utils.math.distanceSqTo
-import base.utils.math.toBlockPos
 
 object EntityUtils : MinecraftWrapper {
     val SafeClientEvent.baseMoveSpeed: Double
@@ -179,6 +179,10 @@ object EntityUtils : MinecraftWrapper {
         return (world.getBlockState(pos).block == Blocks.OBSIDIAN || world.getBlockState(pos).block == Blocks.CRYING_OBSIDIAN) && player.boundingBox.intersects(
             Box(pos)
         )
+    }
+
+    fun SafeClientEvent.isInBox(pos: BlockPos): Boolean {
+        return player.boundingBox.intersects(Box(pos))
     }
 
     fun SafeClientEvent.isInWeb(entity: Entity): Boolean {

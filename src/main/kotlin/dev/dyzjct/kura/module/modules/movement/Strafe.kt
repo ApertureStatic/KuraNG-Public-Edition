@@ -10,6 +10,7 @@ import base.system.event.safeEventListener
 import base.utils.entity.EntityUtils
 import base.utils.entity.EntityUtils.baseMoveSpeed
 import base.utils.entity.EntityUtils.isInBurrow
+import base.utils.entity.EntityUtils.isInWeb
 import net.minecraft.entity.effect.StatusEffects
 import kotlin.math.cos
 import kotlin.math.sin
@@ -26,7 +27,7 @@ object Strafe :
 
     init {
         safeEventListener<PlayerMoveEvent> { event ->
-            if (player.isFallFlying || (player.isSneaking && (!isInBurrow() || !burrowDetect.value))) return@safeEventListener
+            if (player.isFallFlying || isInWeb(player) || (player.isSneaking && (!isInBurrow() || !burrowDetect.value))) return@safeEventListener
             if (player.isUsingItem && eatingCheck.value) return@safeEventListener
             if (burrowDetect.value && bMode.value == BMode.Cancel && isInBurrow()) return@safeEventListener
 

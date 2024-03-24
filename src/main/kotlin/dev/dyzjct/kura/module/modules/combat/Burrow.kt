@@ -1,5 +1,18 @@
 package dev.dyzjct.kura.module.modules.combat
 
+import base.system.event.SafeClientEvent
+import base.system.util.interfaces.DisplayEnum
+import base.utils.block.BlockUtil.getNeighbor
+import base.utils.block.isLiquidBlock
+import base.utils.block.isWater
+import base.utils.entity.EntityUtils.isInBox
+import base.utils.extension.fastPos
+import base.utils.extension.position
+import base.utils.extension.positionRotation
+import base.utils.extension.sendSequencedPacket
+import base.utils.inventory.slot.firstBlock
+import base.utils.inventory.slot.hotbarSlots
+import base.utils.math.toBlockPos
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
 import dev.dyzjct.kura.manager.RotationManager
@@ -7,17 +20,6 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
-import base.system.event.SafeClientEvent
-import base.system.util.interfaces.DisplayEnum
-import base.utils.block.BlockUtil.getNeighbor
-import base.utils.block.isLiquidBlock
-import base.utils.block.isWater
-import base.utils.extension.fastPos
-import base.utils.extension.position
-import base.utils.extension.positionRotation
-import base.utils.extension.sendSequencedPacket
-import base.utils.inventory.slot.firstBlock
-import base.utils.inventory.slot.hotbarSlots
 import net.minecraft.block.*
 import net.minecraft.entity.Entity
 import net.minecraft.entity.decoration.EndCrystalEntity
@@ -28,7 +30,6 @@ import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.Hand
 import net.minecraft.util.math.*
-import base.utils.math.toBlockPos
 import java.util.*
 import java.util.function.Consumer
 import kotlin.math.abs
@@ -106,9 +107,21 @@ object Burrow : Module(
                     }
 
                     FakeJumpMode.Strict -> {
-                        val selfPos: BlockPos = getFillBlock() ?: return@onMotion
-                        val headFillMode: Boolean = selfPos.y > player.y
-                        val fakeJumpOffset = getFakeJumpOffset(selfPos, headFillMode)
+                        fun checkHead(): Boolean {
+                            return ((isInBox(player.blockPos) && !world.isAir(player.blockPos.up(2))) || (isInBox(
+                                player.pos.add(0.3, 0.0, 0.3).toBlockPos()
+                            ) && !world.isAir(player.pos.add(0.3, 0.0, 0.3).toBlockPos().up(2))) || (isInBox(
+                                player.pos.add(-0.3, 0.0, 0.3).toBlockPos()
+                            ) && !world.isAir(player.pos.add(-0.3, 0.0, 0.3).toBlockPos().up(2))) || (isInBox(
+                                player.pos.add(-0.3, 0.0, -0.3).toBlockPos()
+                            ) && !world.isAir(player.pos.add(-0.3, 0.0, -0.3).toBlockPos().up(2))) || (isInBox(
+                                player.pos.add(0.3, 0.0, -0.3).toBlockPos()
+                            ) && !world.isAir(player.pos.add(0.3, 0.0, -0.3).toBlockPos().up(2))))
+                        }
+
+                        val selfPos = getFillBlock() ?: return@onMotion
+                        val fakeJumpOffset =
+                            getFakeJumpOffset(if (checkHead()) selfPos else player.blockPos, checkHead())
                         doFakeJump(fakeJumpOffset)
                     }
                 }

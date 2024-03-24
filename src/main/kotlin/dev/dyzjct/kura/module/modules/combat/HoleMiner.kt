@@ -1,5 +1,6 @@
 package dev.dyzjct.kura.module.modules.combat
 
+import base.system.event.SafeClientEvent
 import base.utils.block.BlockUtil.canBreak
 import base.utils.combat.getTarget
 import base.utils.world.getMiningSide
@@ -14,7 +15,7 @@ import net.minecraft.block.RedstoneBlock
 import net.minecraft.util.math.BlockPos
 
 object HoleMiner : Module(
-    name = "CityRecode",
+    name = "HoleMiner",
     langName = "自动挖角",
     description = "auto mine target feet.",
     category = Category.COMBAT
@@ -79,8 +80,8 @@ object HoleMiner : Module(
         }
     }
 
-    private fun pass(): Boolean {
-        return PacketMine.blockData == null || if (PacketMine.doubleBreak) PacketMine.doubleData == null else false
+    private fun SafeClientEvent.pass(): Boolean {
+        return (PacketMine.blockData == null || PacketMine.blockData?.let { world.isAir(it.blockPos) } ?: false) || if (PacketMine.doubleBreak) PacketMine.doubleData == null else false
     }
 
     private enum class CityOffset(val offset: BlockPos) {

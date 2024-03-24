@@ -1,20 +1,5 @@
 package dev.dyzjct.kura.module.modules.player
 
-import dev.dyzjct.kura.manager.HotbarManager.bypassTo
-import dev.dyzjct.kura.manager.HotbarManager.resetHotbar
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
-import dev.dyzjct.kura.manager.RotationManager
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.combat.ManualCev
-import dev.dyzjct.kura.module.modules.player.PacketMine.PacketType.Start
-import dev.dyzjct.kura.module.modules.player.PacketMine.PacketType.Stop
-import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.animations.Easing
-import dev.dyzjct.kura.utils.animations.sq
-import dev.dyzjct.kura.utils.inventory.HotbarSlot
-import dev.dyzjct.kura.utils.inventory.InventoryUtil.findBestItem
 import base.events.block.BlockEvent
 import base.system.event.SafeClientEvent
 import base.system.event.safeEventListener
@@ -29,19 +14,35 @@ import base.utils.graphics.ESPRenderer
 import base.utils.inventory.slot.allSlots
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
+import base.utils.math.distanceSqTo
+import base.utils.math.distanceSqToCenter
+import base.utils.math.scale
 import base.utils.world.getMiningSide
+import dev.dyzjct.kura.manager.HotbarManager.resetHotbar
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.combat.ManualCev
+import dev.dyzjct.kura.module.modules.player.PacketMine.PacketType.Start
+import dev.dyzjct.kura.module.modules.player.PacketMine.PacketType.Stop
+import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.animations.Easing
+import dev.dyzjct.kura.utils.animations.sq
+import dev.dyzjct.kura.utils.inventory.HotbarSlot
+import dev.dyzjct.kura.utils.inventory.InventoryUtil.findBestItem
 import net.minecraft.block.CobwebBlock
 import net.minecraft.block.FireBlock
 import net.minecraft.item.SwordItem
+import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket
+import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket
 import net.minecraft.util.Hand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
-import base.utils.math.distanceSqTo
-import base.utils.math.distanceSqToCenter
-import base.utils.math.scale
 
 @Suppress("unused")
 object PacketMine : Module(
@@ -250,22 +251,15 @@ object PacketMine : Module(
         val toolSlot = blockData.mineTool ?: return
         if (db) {
             if (doubleBreak) {
-                if (switchMode0 != SwitchMode.Bypass || !inventoryTool) {
-                    if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + 500 + backTime)) {
-                        resetHotbar()
-                        doubleData = null
-                        return
-                    } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime - 100) && !player.usingItem) {
-                        spoofHotbar(toolSlot)
-                        if (setGround) player.onGround = true
-                    }
-                } else {
-                    if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + 500 + backTime)) {
-                        bypassTo(toolSlot)
-                        doubleData = null
-                    } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime - 100) && player.usingItem) {
-                        bypassTo(toolSlot)
-                    }
+                if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + 500 + backTime)) {
+                    connection.sendPacket(CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId))
+                    resetHotbar()
+                    doubleData = null
+                    return
+                } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + 500) && !player.usingItem) {
+                    connection.sendPacket(CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId))
+                    connection.sendPacket(UpdateSelectedSlotC2SPacket(toolSlot.hotbarSlot))
+                    if (setGround) player.onGround = true
                 }
             }
         } else {
