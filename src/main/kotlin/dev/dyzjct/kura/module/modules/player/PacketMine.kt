@@ -58,6 +58,7 @@ object PacketMine : Module(
     var inventoryTool by bsetting("InvTool", false).enumIs(switchMode, SwitchMode.Bypass)
     var doubleBreak by bsetting("DoubleBreak", false)
     private var setGround by bsetting("SetGround", true)
+    private var startTime by isetting("StartTime", 0, 0, 1000).isTrue { doubleBreak }
     private var backTime by isetting("BackTime", 0, 0, 500).isTrue { doubleBreak }
     private var rotate = bsetting("Rotate", true)
     private var prio by bsetting("PrioRotate", true).isTrue(rotate)
@@ -251,12 +252,12 @@ object PacketMine : Module(
         val toolSlot = blockData.mineTool ?: return
         if (db) {
             if (doubleBreak) {
-                if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + 500 + backTime)) {
+                if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime + backTime)) {
                     connection.sendPacket(CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId))
                     resetHotbar()
                     doubleData = null
                     return
-                } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + 500) && !player.usingItem) {
+                } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime) && !player.usingItem) {
                     connection.sendPacket(CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId))
                     connection.sendPacket(UpdateSelectedSlotC2SPacket(toolSlot.hotbarSlot))
                     if (setGround) player.onGround = true
