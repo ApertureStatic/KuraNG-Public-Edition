@@ -18,8 +18,8 @@ object NotificationHUD : HUDModule(
         width = 150f
         height = 35f
         if (NotificationManager.taskList.isEmpty()) return
-        var count = 1f
         runCatching {
+            var count = 1f
             for (i in 0 until NotificationManager.taskList.size.coerceAtMost(notificationCount)) {
                 val notification = NotificationManager.taskList[i]
                 val animationXOffset = x + width * notification.animation
@@ -54,7 +54,10 @@ object NotificationHUD : HUDModule(
                         true, width / 7f
                     ), y.symbolArranged(true, height / 2f) + arrangedHeight, Color(255, 255, 255).rgb
                 )
-                count += 1f.symbolArranged(!notification.reversed, notification.animation)
+                count += 1f.symbolArranged(
+                    !notification.reversed,
+                    notification.animation
+                )
             }
         }
     }

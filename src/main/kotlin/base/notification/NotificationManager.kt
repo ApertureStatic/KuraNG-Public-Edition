@@ -20,8 +20,8 @@ object NotificationManager {
         var reversed = false
         val length = NotificationHUD.animationLength * 100
         val animation
-            get() = if (!timer.passed(length)) {
-                Easing.IN_OUT_EXPO.dec(Easing.toDelta(startTime, length / 8f))
+            get() = if (!timer.passed(length / 2f)) {
+                Easing.IN_OUT_EXPO.dec(Easing.toDelta(startTime, length / 8f)).coerceIn(0f, 1f)
             } else {
                 if (!reversed) {
                     startTime = System.currentTimeMillis()
