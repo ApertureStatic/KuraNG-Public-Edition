@@ -32,7 +32,7 @@ class BooleanComponent(
     }
 
     override fun DrawScope.render(mouseX: Float, mouseY: Float) {
-        drawRectBySetting(
+        drawRect(
             x,
             y,
             width * progress,

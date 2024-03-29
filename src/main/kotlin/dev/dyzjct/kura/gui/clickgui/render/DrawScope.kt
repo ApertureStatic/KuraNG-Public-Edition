@@ -24,7 +24,7 @@ class DrawScope(
         x: Float, y: Float, width: Float, height: Float, color: Color, padding: Padding = Padding.Empty
     ) {
         if (UiSetting.getThemeSetting().rounded) {
-            drawRoundRect(x, y, width, height, 2f, color)
+            drawRoundRect(x, y, width, height, color)
         } else {
             drawRect(x, y, width, height, color, padding)
         }
@@ -84,7 +84,7 @@ class DrawScope(
 
     fun fillScopeBySetting(color: Color) {
         if (UiSetting.getThemeSetting().rounded) {
-            drawRoundRect(x, y, width, height, 2f, color)
+            drawRoundRect(x, y, width, height, color)
         } else {
             drawRect(x, y, width, height, color)
         }
@@ -128,6 +128,21 @@ class DrawScope(
         drawText(text, x, y, color, padding, verticalAlignment, horizontalAlignment, containerHeight, containerWidth)
     }
 
+    fun drawOutlineRectBySetting(
+        x: Float,
+        y: Float,
+        width: Float,
+        height: Float,
+        color: Color,
+        padding: Padding = Padding.Empty
+    ) {
+        if (UiSetting.getThemeSetting().rounded) {
+            drawOutlineRoundRect(x, y, width, height, color)
+        } else {
+            drawOutlineRect(x, y, width, height, color, padding)
+        }
+    }
+
     fun drawOutlineRect(
         x: Float,
         y: Float,
@@ -167,20 +182,5 @@ class DrawScope(
             lineWidth,
             color
         )
-    }
-
-    fun drawOutlineRectBySetting(
-        x: Float,
-        y: Float,
-        width: Float,
-        height: Float,
-        color: Color,
-        padding: Padding = Padding.Empty
-    ) {
-        if (UiSetting.getThemeSetting().rounded) {
-            drawOutlineRoundRect(x, y, width, height, color)
-        } else {
-            drawOutlineRect(x, y, width, height, color, padding)
-        }
     }
 }

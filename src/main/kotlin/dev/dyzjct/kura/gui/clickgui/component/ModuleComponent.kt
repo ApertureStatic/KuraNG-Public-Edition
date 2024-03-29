@@ -1,12 +1,12 @@
 package dev.dyzjct.kura.gui.clickgui.component
 
-import dev.dyzjct.kura.setting.*
 import dev.dyzjct.kura.gui.clickgui.render.Alignment
 import dev.dyzjct.kura.gui.clickgui.render.DrawDelegate
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope
 import dev.dyzjct.kura.gui.clickgui.render.Padding
 import dev.dyzjct.kura.module.AbstractModule
 import dev.dyzjct.kura.module.modules.client.UiSetting
+import dev.dyzjct.kura.setting.*
 import dev.dyzjct.kura.utils.animations.AnimationFlag
 import dev.dyzjct.kura.utils.animations.Easing
 import java.awt.Color
@@ -147,7 +147,7 @@ class ModuleComponent(
 
     override fun DrawScope.render(mouseX: Float, mouseY: Float) {
         if (height != selfHeight) {
-            drawRectBySetting(
+            drawRect(
                 x,
                 y + selfHeight,
                 width,
@@ -170,7 +170,7 @@ class ModuleComponent(
         targetProgress = if (module.isEnabled) 1f else 0f
 
         val progress = sliderProgress.getAndUpdate(targetProgress)
-        drawRectBySetting(
+        drawRect(
             x,
             y,
             width * progress,
@@ -250,7 +250,7 @@ class ModuleComponent(
             val textProgress = descriptionTextProgress
             val secondaryColor = UiSetting.getThemeSetting().secondary
 
-            drawRectBySetting(
+            drawRect(
                 mouseX + 2,
                 mouseY - (textHeight * textProgress),
                 getTextWidth(text),

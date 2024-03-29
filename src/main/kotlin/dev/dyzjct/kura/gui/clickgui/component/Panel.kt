@@ -74,14 +74,44 @@ class Panel(
         fillScopeBySetting(UiSetting.getThemeSetting().secondary)
         val primaryColor = UiSetting.getThemeSetting().primary
 
-        if (UiSetting.getThemeSetting().panelBorder) {
-            drawOutlineRectBySetting(
+        if (!UiSetting.getThemeSetting().fillPanelTitle) {
+            if (UiSetting.getThemeSetting().panelBorder) drawOutlineRectBySetting(
                 x, y, width, height, primaryColor
             )
-        }
+        } else {
+            if (UiSetting.getThemeSetting().rounded) {
+                if (UiSetting.getThemeSetting().panelBorder) {
+                    drawOutlineRect(
+                        x,
+                        y + selfHeight * 0.5f,
+                        0.0f,
+                        height,
+                        primaryColor
+                    )
+                    drawOutlineRect(
+                        x + width,
+                        y + selfHeight * 0.5f,
+                        0.0f,
+                        height,
+                        primaryColor
+                    )
+                }
 
-        if (UiSetting.getThemeSetting().fillPanelTitle) {
-            drawRectBySetting(x, y, width, selfHeight, primaryColor)
+                drawRectBySetting(x, y, width, selfHeight, primaryColor)
+                drawRectBySetting(x, y + height, width, selfHeight * 0.7f, primaryColor)
+            } else {
+                if (UiSetting.getThemeSetting().panelBorder) {
+                    drawOutlineRect(
+                        x, y, 0.0f, height + selfHeight * 0.7f - 0.1f, primaryColor
+                    )
+                    drawOutlineRect(
+                        x + width, y, 0.0f, height + selfHeight * 0.7f - 0.1f, primaryColor
+                    )
+                }
+
+                drawRectBySetting(x, y, width, selfHeight, primaryColor)
+                drawRectBySetting(x, y + height, width, selfHeight * 0.7f, primaryColor)
+            }
         }
 
         drawText(
