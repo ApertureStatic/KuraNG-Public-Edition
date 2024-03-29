@@ -47,30 +47,27 @@ object TotemPopCounter : Module(
                     if (players.isAlive) {
                         if (FriendManager.isFriend(name) && player != players) {
                             if (mode.value == Mode.Chat || mode.value == Mode.Both) {
-                                ChatUtil.sendMessage("Your Friend $name Popped ${ChatUtil.colorKANJI}$pop Totem!")
+                                ChatUtil.sendMessage("Your Friend $name Popped ${ChatUtil.YELLOW}$pop ${ChatUtil.WHITE} Totem!")
                                 NotificationManager.addNotification(
-                                    "$name Popped ${ChatUtil.colorKANJI}$pop Totem!",
-                                    NotificationManager.NotiMode.TotemPop
+                                    "$name Popped ${ChatUtil.colorKANJI}$pop ${ChatUtil.WHITE} Totem!"
                                 )
                             }
                         } else if (player == players) {
                             if (mode.value == Mode.Chat || mode.value == Mode.Both) {
-                                ChatUtil.sendMessage("I Popped ${ChatUtil.colorKANJI}$pop Totem!")
+                                ChatUtil.sendMessage("I Popped ${ChatUtil.colorKANJI}$pop ${ChatUtil.WHITE} Totem!")
                             }
                             if (mode.value == Mode.Notification || mode.value == Mode.Both) {
                                 NotificationManager.addNotification(
-                                    "I Popped ${ChatUtil.colorKANJI}$pop Totem!",
-                                    NotificationManager.NotiMode.Warning
+                                    "I Popped ${ChatUtil.RED}$pop ${ChatUtil.WHITE} Totem!"
                                 )
                             }
                         } else {
                             if (mode.value == Mode.Chat || mode.value == Mode.Both) {
-                                ChatUtil.sendMessage("$name Popped ${ChatUtil.colorKANJI}$pop Totem!")
+                                ChatUtil.sendMessage("$name Popped ${ChatUtil.colorKANJI}$pop ${ChatUtil.WHITE} Totem!")
                             }
                             if (mode.value == Mode.Notification || mode.value == Mode.Both) {
                                 NotificationManager.addNotification(
-                                    "$name Popped ${ChatUtil.colorKANJI}$pop Totem!",
-                                    NotificationManager.NotiMode.TotemPop
+                                    "$name Popped ${ChatUtil.colorKANJI}$pop ${ChatUtil.WHITE} Totem!"
                                 )
                             }
                         }
@@ -83,19 +80,35 @@ object TotemPopCounter : Module(
             playerList.forEach {
                 if (!EntityManager.players.contains(it.key)) {
                     if (mode.value == Mode.Chat || mode.value == Mode.Both) {
-                        ChatUtil.sendMessage("${it.key.entityName} died after popping ${it.value} Totems!")
+                        ChatUtil.sendMessage("${ChatUtil.GREEN} ${it.key.entityName} died after popped ${ChatUtil.RED}${it.value} ${ChatUtil.GREEN} totems!")
                     }
                     if (mode.value == Mode.Notification || mode.value == Mode.Both) {
                         NotificationManager.addNotification(
-                            "${it.key.entityName} ${ChatUtil.DARK_AQUA}died after popped ${it.value} totems!",
-                            NotificationManager.NotiMode.TotemPop
+                            "${ChatUtil.GREEN} ${it.key.entityName} died after popped ${ChatUtil.RED}${it.value} ${ChatUtil.GREEN} totems!"
                         )
                     }
                     if (Sound.isEnabled && Sound.ezz) {
                         Kura::class.java.getResourceAsStream("/assets/kura/sounds/EZ.wav")?.let { sound ->
                             SoundPlayer(sound).play(Sound.volume)
                         } ?: run {
-                            NotificationManager.addNotification("SoundFailed", NotificationManager.NotiMode.Error)
+                            NotificationManager.addNotification("${ChatUtil.YELLOW} SoundFailed!")
+                        }
+                    }
+                    playerList.remove(it.key)
+                } else {
+                    if (mode.value == Mode.Chat || mode.value == Mode.Both) {
+                        ChatUtil.sendMessage("${ChatUtil.RED} I died after popped ${it.value} totems!")
+                    }
+                    if (mode.value == Mode.Notification || mode.value == Mode.Both) {
+                        NotificationManager.addNotification(
+                            "${ChatUtil.RED} I died after popped${it.value}  totems!"
+                        )
+                    }
+                    if (Sound.isEnabled && Sound.ezz) {
+                        Kura::class.java.getResourceAsStream("/assets/kura/sounds/EZ.wav")?.let { sound ->
+                            SoundPlayer(sound).play(Sound.volume)
+                        } ?: run {
+                            NotificationManager.addNotification("${ChatUtil.YELLOW} SoundFailed!")
                         }
                     }
                     playerList.remove(it.key)

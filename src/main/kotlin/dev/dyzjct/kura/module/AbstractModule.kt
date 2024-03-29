@@ -66,14 +66,25 @@ abstract class AbstractModule : ListenerOwner() {
                 11451
             )
             if (NotificationHUD.isEnabled) NotificationManager.addNotification(
-                (ChatUtil.WHITE + if (ClickGui.chinese.value) moduleCName else moduleName) + " Enable!",
-                NotificationManager.NotiMode.EnableModule
+                (ChatUtil.WHITE + "[ " + ChatUtil.RED + if (ClickGui.chinese.value) moduleCName else moduleName) + ChatUtil.WHITE + " ]" + "has been " + ChatUtil.GREEN + "Enable!"
             )
             if (Sound.isEnabled) {
-                Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleEnable.wav")?.let {
-                    SoundPlayer(it).play(Sound.volume)
+                Kura::class.java.getResourceAsStream("/assets/kura/sounds/Sigma_Enable.wav")?.let { sigma ->
+                    Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleEnable.wav")?.let { fdp ->
+                        when (Sound.mode.value) {
+                            Sound.SoundMode.Sigma -> {
+                                SoundPlayer(sigma).play(Sound.volume)
+                            }
+
+                            Sound.SoundMode.FDP -> {
+                                SoundPlayer(fdp).play(Sound.volume)
+                            }
+                        }
+                    } ?: run {
+                        NotificationManager.addNotification(ChatUtil.YELLOW + "SoundFailed!")
+                    }
                 } ?: run {
-                    NotificationManager.addNotification("SoundFailed", NotificationManager.NotiMode.Error)
+                    NotificationManager.addNotification(ChatUtil.YELLOW + "SoundFailed!")
                 }
             }
         }
@@ -90,14 +101,25 @@ abstract class AbstractModule : ListenerOwner() {
         if (laoded) {
             if (ClickGui.chat.value) ChatUtil.sendMessageWithID(moduleName + " is " + ChatUtil.RED + "Disabled!", 11451)
             if (NotificationHUD.isEnabled) NotificationManager.addNotification(
-                (ChatUtil.WHITE + if (ClickGui.chinese.value) moduleCName else moduleName) + " Disable!",
-                NotificationManager.NotiMode.DisableModule
+                (ChatUtil.WHITE + "[ " + ChatUtil.RED + if (ClickGui.chinese.value) moduleCName else moduleName) + ChatUtil.WHITE + " ]" + "has been " + ChatUtil.RED + "Disable!"
             )
             if (Sound.isEnabled) {
-                Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleDisable.wav")?.let {
-                    SoundPlayer(it).play(Sound.volume)
+                Kura::class.java.getResourceAsStream("/assets/kura/sounds/Sigma_Disable.wav")?.let { sigma ->
+                    Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleDisable.wav")?.let { fdp ->
+                        when (Sound.mode.value) {
+                            Sound.SoundMode.Sigma -> {
+                                SoundPlayer(sigma).play(Sound.volume)
+                            }
+
+                            Sound.SoundMode.FDP -> {
+                                SoundPlayer(fdp).play(Sound.volume)
+                            }
+                        }
+                    } ?: run {
+                        NotificationManager.addNotification(ChatUtil.YELLOW + "SoundFailed!")
+                    }
                 } ?: run {
-                    NotificationManager.addNotification("SoundFailed", NotificationManager.NotiMode.Error)
+                    NotificationManager.addNotification(ChatUtil.YELLOW + "SoundFailed!")
                 }
             }
         }

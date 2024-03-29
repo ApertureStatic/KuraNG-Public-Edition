@@ -8,36 +8,45 @@ import net.minecraft.client.gui.DrawContext
 import java.awt.Color
 
 object NotificationHUD : HUDModule(
-    name = "NotificationNew", langName = "新的通知界面", x = 300f, y = 150f
+    name = "NotificationNew", langName = "的通知界面", x = 300f, y = 150f
 ) {
     private var notificationCount by isetting("NotificationCount", 4, 1, 12)
     private var interval by isetting("Interval", 0, 0, 20)
     var animationLength by isetting("AnimationLength", 15, 10, 100)
-    val alpha by isetting("Alpha", 100, 1, 255)
+    private var blur by bsetting("Blur", false)
+    private var color by csetting("Color", Color(0, 0, 0))
     override fun onRender(context: DrawContext) {
         width = 150f
-        height = 35f
+        height = 15f
         if (NotificationManager.taskList.isEmpty()) return
         runCatching {
             var count = 1f
             for (i in 0 until NotificationManager.taskList.size.coerceAtMost(notificationCount)) {
                 val notification = NotificationManager.taskList[i]
-                val animationXOffset = x + width * notification.animation
-                val arrangedHeight =
-                    if (y < mc.window.scaledHeight / 2) (height + 5 + interval) * count else -(height + 5 + interval) * count
+                width = FontRenderers.cn.getStringWidth(notification.message) + 6
+                val offsetX = x + 150 - width
+                val animationXOffset = offsetX + width * notification.animation
+                val arrangedHeight = if (y < mc.window.scaledHeight / 2)
+                    (height + 5 + interval) * count
+                        .symbolArranged(
+                            !notification.reversed,
+                            notification.animation
+                        ) else -(height + 5 + interval) * count
+                    .symbolArranged(!notification.reversed, notification.animation)
+
                 if (notification.reversed && (notification.animation == 1f)) {
                     NotificationManager.taskList.remove(notification)
                     continue
                 }
 
-                Render2DEngine.drawRectBlurredShadow(
+                if (blur) Render2DEngine.drawRectBlurredShadow(
                     context.matrices,
                     animationXOffset - 8f,
                     y + arrangedHeight - 8f,
                     width + 16f,
                     height + 16f,
                     16,
-                    Color(notification.color.red, notification.color.green, notification.color.blue, alpha)
+                    color
                 )
 
                 Render2DEngine.drawRect(
@@ -46,13 +55,15 @@ object NotificationHUD : HUDModule(
                     y + arrangedHeight,
                     width,
                     height,
-                    Color(notification.color.red, notification.color.green, notification.color.blue, alpha)
+                    color
                 )
 
                 FontRenderers.cn.drawString(
-                    context.matrices, notification.message, (x + width * notification.animation).symbolArranged(
-                        true, width / 7f
-                    ), y.symbolArranged(true, height / 2f) + arrangedHeight, Color(255, 255, 255).rgb
+                    context.matrices,
+                    notification.message,
+                    animationXOffset + 3,
+                    y.symbolArranged(true, height / 2f) + arrangedHeight - 1.5f,
+                    Color(255, 255, 255).rgb
                 )
                 count += 1f.symbolArranged(
                     !notification.reversed,

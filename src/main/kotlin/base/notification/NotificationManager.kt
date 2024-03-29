@@ -9,14 +9,13 @@ import java.util.concurrent.CopyOnWriteArrayList
 object NotificationManager {
     val taskList = CopyOnWriteArrayList<NewNotification>()
 
-    fun addNotification(message: String, mode: NotiMode) {
-        taskList.add(NewNotification(message, mode))
+    fun addNotification(message: String) {
+        taskList.add(NewNotification(message))
     }
 
-    class NewNotification(val message: String, mode: NotiMode) {
+    class NewNotification(val message: String) {
         private var startTime = System.currentTimeMillis()
         private var timer = TimerUtils()
-        val color = mode.color
         var reversed = false
         val length = NotificationHUD.animationLength * 100
         val animation
@@ -29,13 +28,5 @@ object NotificationManager {
                 }
                 Easing.IN_OUT_CIRC.inc(Easing.toDelta(startTime, length / 8f))
             }.coerceIn(0f, 1f)
-    }
-
-    enum class NotiMode(val color: Color) {
-        EnableModule(Color(72, 255, 72)),
-        DisableModule(Color(255, 72, 72)),
-        TotemPop(Color(76, 78, 215)),
-        Warning(Color(255, 255, 72)),
-        Error(Color(150, 25, 100))
     }
 }
