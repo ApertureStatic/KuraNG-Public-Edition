@@ -23,7 +23,7 @@ object WaterMarkHUD :
             brightness,
             1f
         ).rgb
-        val text = "${Kura.MOD_NAME} ${Kura.VERSION} Test"
+        val text = "${Kura.MOD_NAME} ${Kura.VERSION}"
         val font = when (fonts) {
             FontMode.Sigma -> FontRenderers.sigma
             FontMode.Badaboom -> FontRenderers.badaboom

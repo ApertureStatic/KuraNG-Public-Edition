@@ -71,7 +71,7 @@ class Panel(
             rearrange()
         }
 
-        fillScopeBySetting(UiSetting.getThemeSetting().secondary)
+        drawRect(x, y, width, height, UiSetting.getThemeSetting().secondary)
         val primaryColor = UiSetting.getThemeSetting().primary
 
         if (!UiSetting.getThemeSetting().fillPanelTitle) {
@@ -81,36 +81,35 @@ class Panel(
         } else {
             if (UiSetting.getThemeSetting().rounded) {
                 if (UiSetting.getThemeSetting().panelBorder) {
-                    drawOutlineRect(
-                        x,
-                        y + selfHeight * 0.5f,
-                        0.0f,
-                        height,
-                        primaryColor
-                    )
-                    drawOutlineRect(
-                        x + width,
-                        y + selfHeight * 0.5f,
-                        0.0f,
-                        height,
-                        primaryColor
-                    )
+                    drawRect(x, y + selfHeight * 0.4f, 0.5f, height, primaryColor)
+                    drawRect(x + width - 0.5f, y + selfHeight * 0.4f, 0.5f, height, primaryColor)
                 }
-
-                drawRectBySetting(x, y, width, selfHeight, primaryColor)
-                drawRectBySetting(x, y + height, width, selfHeight * 0.7f, primaryColor)
+                drawRoundRect(x, y, width, selfHeight, primaryColor)
+                drawRect(
+                    x,
+                    y + height - (selfHeight * 0.1f + 0.2f),
+                    width,
+                    1f,
+                    Color(
+                        primaryColor.red,
+                        primaryColor.green,
+                        primaryColor.blue,
+                        if (primaryColor.alpha - 50 >= 0) primaryColor.alpha - 50 else primaryColor.alpha
+                    )
+                )
+                drawRoundRect(x, y + height - (selfHeight * 0.1f + 0.2f), width, selfHeight * 0.7f, primaryColor)
             } else {
                 if (UiSetting.getThemeSetting().panelBorder) {
-                    drawOutlineRect(
-                        x, y, 0.0f, height + selfHeight * 0.7f - 0.1f, primaryColor
+                    drawRect(
+                        x, y, 0.5f, height + selfHeight * 0.7f - 0.1f, primaryColor
                     )
-                    drawOutlineRect(
-                        x + width, y, 0.0f, height + selfHeight * 0.7f - 0.1f, primaryColor
+                    drawRect(
+                        x + width - 0.5f, y, 0.5f, height + selfHeight * 0.7f - 0.1f, primaryColor
                     )
                 }
 
-                drawRectBySetting(x, y, width, selfHeight, primaryColor)
-                drawRectBySetting(x, y + height, width, selfHeight * 0.7f, primaryColor)
+                drawRect(x, y, width, selfHeight, primaryColor)
+                drawRect(x, y + height - (selfHeight * 0.1f + 0.2f), width, selfHeight * 0.7f, primaryColor)
             }
         }
 

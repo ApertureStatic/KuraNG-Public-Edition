@@ -20,16 +20,6 @@ class DrawScope(
         return drawDelegate.getStringWidth(text)
     }
 
-    fun drawRectBySetting(
-        x: Float, y: Float, width: Float, height: Float, color: Color, padding: Padding = Padding.Empty
-    ) {
-        if (UiSetting.getThemeSetting().rounded) {
-            drawRoundRect(x, y, width, height, color)
-        } else {
-            drawRect(x, y, width, height, color, padding)
-        }
-    }
-
     fun drawRect(
         x: Float, y: Float, width: Float, height: Float, color: Color, padding: Padding = Padding.Empty
     ) {
@@ -80,14 +70,6 @@ class DrawScope(
             4f,
             color
         )
-    }
-
-    fun fillScopeBySetting(color: Color) {
-        if (UiSetting.getThemeSetting().rounded) {
-            drawRoundRect(x, y, width, height, color)
-        } else {
-            drawRect(x, y, width, height, color)
-        }
     }
 
     fun drawText(
