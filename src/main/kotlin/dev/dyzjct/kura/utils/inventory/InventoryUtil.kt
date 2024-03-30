@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.math.BlockPos
-import java.util.function.Predicate
 
 object InventoryUtil {
 
@@ -21,16 +20,22 @@ object InventoryUtil {
         return outPut
     }
 
-    fun findInInventory(
-        condition: Predicate<ItemStack>,
-    ): Int {
+    fun SafeClientEvent.findItemInInventory(item: Item): Int? {
         runSafe {
-            for (i in 9..44) {
+            for (i in 0..44) {
                 val stack = player.inventory.getStack(i)
-                if (condition.test(stack)) {
+                if (item == stack.item) {
                     return i
                 }
             }
+        }
+        return null
+    }
+
+    fun SafeClientEvent.findItemInventorySlot(item: Item): Int {
+        for (i in 0..44) {
+            val stack = player.inventory.getStack(i)
+            if (stack.item === item) return if (i < 9) i + 36 else i
         }
         return -1
     }

@@ -41,8 +41,11 @@ object CrystalHelper : AlwaysListening {
     val LivingEntity.scaledHealth: Float
         get() = this.health + this.absorptionAmount * (this.health / this.maxHealth)
 
-    @JvmStatic
     val LivingEntity.totalHealth: Float
+        get() = this.health + this.absorptionAmount
+
+    @JvmStatic
+    val LivingEntity.totalHealthStatic: Float
         get() = this.health + this.absorptionAmount
 
     fun PlayerEntity.getCrystalSlot(): HotbarSlot? {

@@ -9,8 +9,7 @@ import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.distanceSqToCenter
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -62,26 +61,14 @@ object ManualCev : Module(
                 }
                 when (stage) {
                     CevStage.Block -> {
-                        obsSlot?.let { obs ->
-                            if (world.isAir(blockData.blockPos)) {
-                                if (timer.tickAndReset(delay)) {
-                                    when (mode) {
-                                        Mode.Spoof -> {
-                                            spoofHotbar(obs) {
-                                                connection.sendPacket(fastPos(blockData.blockPos, true))
-                                            }
-                                        }
-
-                                        Mode.SpoofBypass -> {
-                                            spoofHotbarBypass(obs) {
-                                                connection.sendPacket(fastPos(blockData.blockPos, true))
-                                            }
-                                        }
-                                    }
+                        if (world.isAir(blockData.blockPos)) {
+                            if (timer.tickAndReset(delay)) {
+                                spoofHotbarWithSetting(Items.OBSIDIAN) {
+                                    connection.sendPacket(fastPos(blockData.blockPos, true))
                                 }
-                            } else {
-                                stage = CevStage.Place
                             }
+                        } else {
+                            stage = CevStage.Place
                         }
                     }
 
@@ -91,20 +78,8 @@ object ManualCev : Module(
                                 if (player.offHandStack.item == Items.END_CRYSTAL) {
                                     connection.sendPacket(fastPos(blockData.blockPos.up(), hand = Hand.OFF_HAND))
                                 } else {
-                                    crySlot?.let { cry ->
-                                        when (mode) {
-                                            Mode.Spoof -> {
-                                                spoofHotbar(cry) {
-                                                    connection.sendPacket(fastPos(blockData.blockPos.up()))
-                                                }
-                                            }
-
-                                            Mode.SpoofBypass -> {
-                                                spoofHotbarBypass(cry) {
-                                                    connection.sendPacket(fastPos(blockData.blockPos.up()))
-                                                }
-                                            }
-                                        }
+                                    spoofHotbarWithSetting(Items.END_CRYSTAL) {
+                                        connection.sendPacket(fastPos(blockData.blockPos.up()))
                                     }
                                 }
                                 stage = CevStage.Mine

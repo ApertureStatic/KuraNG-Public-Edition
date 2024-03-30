@@ -71,7 +71,7 @@ class Panel(
             rearrange()
         }
 
-        drawRect(x, y, width, height, UiSetting.getThemeSetting().secondary)
+        drawRect(x, y + selfHeight, width, height - selfHeight, UiSetting.getThemeSetting().secondary)
         val primaryColor = UiSetting.getThemeSetting().primary
 
         if (!UiSetting.getThemeSetting().fillPanelTitle) {
@@ -89,7 +89,7 @@ class Panel(
                     x,
                     y + height - (selfHeight * 0.1f + 0.2f),
                     width,
-                    1f,
+                    2.5f,
                     Color(
                         primaryColor.red,
                         primaryColor.green,

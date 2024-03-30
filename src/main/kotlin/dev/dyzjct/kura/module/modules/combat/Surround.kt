@@ -5,7 +5,7 @@ import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.HoleManager
 import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -423,7 +423,7 @@ object Surround : Module(
                     )
                 }
                 if (spoofBypass.value) {
-                    spoofHotbarBypass(slot) {
+                    swapSpoof(slot) {
                         sendSequencedPacket(world) {
                             placeInfo.toPlacePacket(Hand.MAIN_HAND, sequence = it)
                         }

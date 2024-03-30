@@ -28,7 +28,8 @@ import base.utils.extension.fastPos
 import base.utils.extension.minePacket
 import base.utils.extension.sendSequencedPacket
 import base.utils.graphics.ESPRenderer
-import base.utils.inventory.slot.*
+import base.utils.inventory.slot.firstBlock
+import base.utils.inventory.slot.hotbarSlots
 import base.utils.item.attackDamage
 import base.utils.item.duraPercentage
 import base.utils.math.distanceSq
@@ -41,8 +42,7 @@ import base.utils.world.noCollision
 import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.manager.FriendManager.isFriend
 import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
@@ -50,8 +50,6 @@ import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.isResistan
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.calcCollidingCrystalDamage
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.canMove
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.checkBreakRange
-import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.getCrystalSlot
-import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.getMaxCrystalSlot
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.isReplaceable
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.realSpeed
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.scaledHealth
@@ -79,7 +77,7 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.EnchantedGoldenAppleItem
+import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.item.SwordItem
 import net.minecraft.item.ToolItem
@@ -108,14 +106,11 @@ object AutoCrystal : Module(
 
     //Page GENERAL
     var damageMode = msetting("DamageMode", DamageMode.PPBP).enumIs(p, Page.GENERAL)
-    private var switchmode0 = msetting("Switch", Switch.SpoofBypass).enumIs(p, Page.GENERAL)
-    private var switchMode = (switchmode0.value as Switch)
-    private var antiWeakness = msetting("AntiWeakness", AntiWeaknessMode.Spoof).enumIs(p, Page.GENERAL)
     private var swingMode = msetting("Swing", SwingMode.Off).enumIs(p, Page.GENERAL)
     private var strictDirection = bsetting("StrictDirection", false).enumIs(p, Page.GENERAL)
     private var rotate = bsetting("Rotate", false).enumIs(p, Page.GENERAL)
     private var yawSpeed = fsetting("YawSpeed", 30.0f, 5.0f, 180f, 1f).isTrue(rotate).enumIs(p, Page.GENERAL)
-    private var rotateDiff = isetting("RotationDiff", 2, 0, 180).isTrue(rotate).enumIs(p, Page.GENERAL)
+    private var rotateDiff = fsetting("RotationDiff", 1f, 0f, 2f).isTrue(rotate).enumIs(p, Page.GENERAL)
     private var eatingPause = bsetting("EatingPause", false).enumIs(p, Page.GENERAL)
     private var old = bsetting("OldPlace", false).enumIs(p, Page.GENERAL)
     private var wallRange = dsetting("WallRange", 3.0, 0.0, 6.0).isTrue(old).enumIs(p, Page.GENERAL)
@@ -192,9 +187,7 @@ object AutoCrystal : Module(
     private var fpTimer = TimerUtils()
 
     private var crystalInteracting: EndCrystalEntity? = null
-    private var weaponSlot: HotbarSlot? = null
     private var obiSlot: HotbarSlot? = null
-    private var cSlot: HotbarSlot? = null
     private var render: BlockPos? = null
     private var isFacePlacing = false
     private var bypassPacket = false
@@ -291,9 +284,6 @@ object AutoCrystal : Module(
             if (returnNeeded()) return@safeConcurrentListener
             updateFade(render)
             packetPlace0 = (packetPlaceMode.value as PacketPlaceMode)
-            switchMode = (switchmode0.value as Switch)
-            weaponSlot = getWeaponSlot()
-            cSlot = player.hotbarSlots.firstItem(Items.END_CRYSTAL)
             obiSlot = player.hotbarSlots.firstBlock(Blocks.OBSIDIAN)
             if (timeoutTimer.tickAndReset(5L)) {
                 updateTimeouts()
@@ -531,27 +521,14 @@ object AutoCrystal : Module(
                                 if (world.isAir(pos)) {
                                     crystalPriority = prio
                                     if (!world.noCollision(pos)) continue
-                                    obiSlot?.let {
-                                        doRotate(CurrentState.Blocking, pos)
-                                        when (switchmode0.value) {
-                                            Switch.SpoofBypass -> {
-                                                spoofHotbarBypass(it) {
-                                                    sendSequencedPacket(world) { sequence ->
-                                                        fastPos(pos, strictDirection.value, sequence = sequence)
-                                                    }
-                                                }
-                                            }
-
-                                            else -> {
-                                                spoofHotbar(it) {
-                                                    sendSequencedPacket(world) { sequence ->
-                                                        fastPos(pos, strictDirection.value, sequence = sequence)
-                                                    }
-                                                }
-                                            }
+                                    doRotate(CurrentState.Blocking, pos)
+                                    spoofHotbarWithSetting(Items.OBSIDIAN) {
+                                        sendSequencedPacket(world) { sequence ->
+                                            fastPos(pos, strictDirection.value, sequence = sequence)
                                         }
-                                        render = pos
                                     }
+
+                                    render = pos
                                     crystalPriority = Priority.Crystal
                                     blockBoostList.clear()
                                     if (debug.value) {
@@ -625,24 +602,7 @@ object AutoCrystal : Module(
                     if (player.offHandStack.item == Items.END_CRYSTAL) {
                         sendPacket()
                     } else {
-                        if (switchMode.onSwitch) {
-                            val slot = player.getCrystalSlot() ?: return@onMainThread
-                            if (player.mainHandStack.item is EnchantedGoldenAppleItem && player.usingItem && player.offHandStack.item != Items.END_CRYSTAL) {
-                                return@onMainThread
-                            }
-                            swapToSlot(slot)
-                            sendPacket()
-                        } else if (switchMode.onSpoof) {
-                            val slot = player.getCrystalSlot() ?: return@onMainThread
-                            spoofHotbar(slot) {
-                                sendPacket()
-                            }
-                        } else if (switchMode.onBypassSpoof) {
-                            val slot = player.getMaxCrystalSlot() ?: return@onMainThread
-                            spoofHotbarBypass(slot) {
-                                sendPacket()
-                            }
-                        } else {
+                        spoofHotbarWithSetting(Items.END_CRYSTAL) {
                             sendPacket()
                         }
                     }
@@ -685,7 +645,7 @@ object AutoCrystal : Module(
             return null
         }
 
-        if (cSlot == null && player.offHandStack.item != Items.END_CRYSTAL) {
+        if (!spoofHotbarWithSetting(Items.END_CRYSTAL, true) {} && player.offHandStack.item != Items.END_CRYSTAL) {
             return null
         }
         for (blockPos in targetBlocks) {
@@ -834,32 +794,11 @@ object AutoCrystal : Module(
         x: Double, y: Double, z: Double, endCrystal: EndCrystalEntity
     ) {
         if (player.isWeaknessActive() && !isHoldingTool()) {
-            weaponSlot?.let {
-                onMainThread {
-                    when (antiWeakness.value) {
-                        AntiWeaknessMode.Off -> {
-                            return@onMainThread
-                        }
-
-                        AntiWeaknessMode.Swap -> {
-                            swapToSlot(it)
-                            runExplode(endCrystal)
-                            swingArm()
-                        }
-
-                        AntiWeaknessMode.Spoof -> {
-                            spoofHotbar(it) {
-                                runExplode(endCrystal)
-                                swingArm()
-                            }
-                        }
-
-                        AntiWeaknessMode.Bypass -> {
-                            spoofHotbarBypass(it) {
-                                runExplode(endCrystal)
-                                swingArm()
-                            }
-                        }
+            onMainThread {
+                getWeaponSlot()?.let { stack ->
+                    spoofHotbarWithSetting(stack.item) {
+                        runExplode(endCrystal)
+                        swingArm()
                     }
                 }
             }
@@ -1161,14 +1100,18 @@ object AutoCrystal : Module(
         return item is SwordItem || item is ToolItem
     }
 
-    private fun SafeClientEvent.getWeaponSlot(): HotbarSlot? {
-        return player.hotbarSlots.filterByStack {
-            val item = it.item
-            item is SwordItem || item is ToolItem
-        }.maxByOrNull {
-            val itemStack = it.stack
-            itemStack.attackDamage
+    private fun SafeClientEvent.getWeaponSlot(): ItemStack? {
+        var bestItem: ItemStack? = null
+        for (i in 0..44) {
+            if (player.inventory.getStack(i).item is SwordItem || player.inventory.getStack(i).item is ToolItem) {
+                bestItem?.let {
+                    if (player.inventory.getStack(i).attackDamage > it.damage) bestItem = player.inventory.getStack(i)
+                } ?: run {
+                    bestItem = player.inventory.getStack(i)
+                }
+            }
         }
+        return bestItem
     }
 
     private fun SafeClientEvent.getRawPosList(prio: Priority = Priority.Crystal): List<BlockPos> {
@@ -1302,7 +1245,6 @@ object AutoCrystal : Module(
 
     override fun onEnable() {
         runSafe {
-            cSlot = null
             isFacePlacing = false
             bypassPacket = false
             flagged = false
@@ -1343,23 +1285,12 @@ object AutoCrystal : Module(
         Off(false, false), Weak(true, false), Strong(true, true)
     }
 
-    @Suppress("unused")
-    enum class Switch(val onSpoof: Boolean, val onSwitch: Boolean, val onBypassSpoof: Boolean) {
-        AutoSwitch(false, true, false), PacketSpoof(true, false, false), SpoofBypass(false, false, true), Off(
-            false, false, false
-        )
-    }
-
     enum class DamageMode {
         Auto, PPBP, BBBB
     }
 
     enum class Page {
         GENERAL, CALCULATION, PLACE, BREAK, FORCE, LETHAL, RENDER
-    }
-
-    enum class AntiWeaknessMode {
-        Swap, Spoof, Bypass, Off
     }
 
     enum class ExplodeMode {

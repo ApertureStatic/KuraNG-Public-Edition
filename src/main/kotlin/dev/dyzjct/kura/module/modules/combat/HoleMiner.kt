@@ -36,7 +36,7 @@ object HoleMiner : Module(
                 val targetPos = target.blockPos
                 if (HolePush.isEnabled) {
                     PacketMine.blockData?.let { data ->
-                        doHolePush(targetPos.up(1), true, null, null)?.let { stonePos ->
+                        doHolePush(targetPos.up(1), true)?.let { stonePos ->
                             if (stonePos == data.blockPos) return@onMotion
                         }
                         if (world.getBlockState(data.blockPos).block is RedstoneBlock) return@onMotion

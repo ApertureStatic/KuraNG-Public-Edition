@@ -14,7 +14,7 @@ import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.toBlockPos
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -127,7 +127,6 @@ object Burrow : Module(
                 }
             }
             if (rotate) RotationManager.addRotations(player.yaw, 90f, true)
-            RotationManager.stopRotation()
             sendPlayerRotation(-180f, 90f, false)
             doSneak()
             place(player.pos, slot)
@@ -203,7 +202,6 @@ object Burrow : Module(
 
                 PacketMode.OFF -> {}
             }
-            RotationManager.startRotation()
         }
 
         onPacketReceive { event ->
@@ -259,7 +257,7 @@ object Burrow : Module(
             RotationManager.addRotations(player.yaw, 90.0f, true)
         }
         if (spoofBypass) {
-            spoofHotbarBypass(slot) {
+            swapSpoof(slot) {
                 sendSequencedPacket(world) {
                     fastPos(pos, strictDirection, sequence = it)
                 }

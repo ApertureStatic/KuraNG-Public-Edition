@@ -1,16 +1,5 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.manager.*
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.scaledHealth
-import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
-import dev.dyzjct.kura.module.modules.crystal.PlaceInfo
-import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.animations.Easing
-import dev.dyzjct.kura.utils.animations.sq
-import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import base.events.RunGameLoopEvent
 import base.events.WorldEvent
 import base.events.render.Render3DEvent
@@ -22,17 +11,31 @@ import base.utils.block.BlockUtil.getNeighbor
 import base.utils.chat.ChatUtil
 import base.utils.combat.TargetInfo
 import base.utils.combat.getPredictedTarget
+import base.utils.entity.EntityUtils.isInBurrow
 import base.utils.entity.EntityUtils.spoofSneak
 import base.utils.extension.fastPos
 import base.utils.extension.sendSequencedPacket
 import base.utils.graphics.ESPRenderer
-import base.utils.inventory.slot.firstItem
-import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.DamageCalculator.anchorDamage
+import base.utils.math.distanceSqTo
+import base.utils.math.distanceSqToCenter
+import base.utils.math.toBlockPos
+import base.utils.math.toVec3dCenter
 import base.utils.player.getTargetSpeed
+import dev.dyzjct.kura.manager.*
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.scaledHealth
+import dev.dyzjct.kura.module.modules.crystal.PlaceInfo
+import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.animations.Easing
+import dev.dyzjct.kura.utils.animations.sq
 import net.minecraft.block.Blocks
 import net.minecraft.block.RespawnAnchorBlock
 import net.minecraft.entity.ItemEntity
+import net.minecraft.item.Item
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
@@ -42,10 +45,6 @@ import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
-import base.utils.math.distanceSqTo
-import base.utils.math.distanceSqToCenter
-import base.utils.math.toBlockPos
-import base.utils.math.toVec3dCenter
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.stream.Collectors
@@ -241,7 +240,7 @@ object AnchorAura : Module(
                 val targetDamage = anchorDamage(target, targetPos, targetBox, blockPos)
                 val minDamage = minDamage.value
                 val balance = -8f
-                if (world.isAir(target.blockPos) && world.entities.none {
+                if (!isInBurrow(target) && world.entities.none {
                         it !is ItemEntity;it.isAlive;it.boundingBox.intersects(
                         Box(target.blockPos.up(2))
                     )
@@ -282,11 +281,9 @@ object AnchorAura : Module(
             if (postBreak.value) {
                 placeInfo?.let {
                     if (it.blockPos == event.blockPos) {
-                        player.hotbarSlots.firstItem(Items.GLOWSTONE)?.let { glowSlot ->
-                            if (packetTimer.tickAndReset(globalDelay)) {
-                                if (rotate.value) RotationManager.addRotations(it.blockPos, true)
-                                checkGlowPlaceable(it, glowSlot)
-                            }
+                        if (packetTimer.tickAndReset(globalDelay)) {
+                            if (rotate.value) RotationManager.addRotations(it.blockPos, true)
+                            checkGlowPlaceable(it, Items.GLOWSTONE)
                         }
                     }
                 }
@@ -302,19 +299,17 @@ object AnchorAura : Module(
                     packetTimer.reset()
                     return@safeConcurrentListener
                 }
-                val anchorSlot = player.hotbarSlots.firstItem(Items.RESPAWN_ANCHOR) ?: return@safeConcurrentListener
-                val glowSlot = player.hotbarSlots.firstItem(Items.GLOWSTONE) ?: return@safeConcurrentListener
                 placeInfo?.let { placeInfo ->
                     if (rotate.value) RotationManager.addRotations(placeInfo.blockPos)
                     if (globalTimer.tickAndReset(globalDelay)) {
                         if (preBreak.value) {
-                            checkGlowPlaceable(placeInfo, glowSlot)
+                            checkGlowPlaceable(placeInfo, Items.GLOWSTONE)
                         }
-                        globalPlace(anchorSlot, placeInfo, true)
-                        checkGlowPlaceable(placeInfo, glowSlot, true)
-                        globalPlace(anchorSlot, placeInfo, false)
+                        globalPlace(Items.RESPAWN_ANCHOR, placeInfo, true)
+                        checkGlowPlaceable(placeInfo, Items.GLOWSTONE, true)
+                        globalPlace(Items.RESPAWN_ANCHOR, placeInfo, false)
                         if (getTargetSpeed(placeInfo.target) < 10) {
-                            globalPlace(anchorSlot, placeInfo, true)
+                            globalPlace(Items.RESPAWN_ANCHOR, placeInfo, true)
                         }
                     }
                 }
@@ -326,11 +321,11 @@ object AnchorAura : Module(
         }
     }
 
-    private fun SafeClientEvent.globalPlace(slot: HotbarSlot, placeInfo: PlaceInfo, explode: Boolean) {
+    private fun SafeClientEvent.globalPlace(item: Item, placeInfo: PlaceInfo, explode: Boolean) {
         if (explode) {
             AutoWeb.onAnchorPlacing = true
             player.spoofSneak {
-                spoofHotbar(slot) {
+                spoofHotbarWithSetting(item) {
                     sendSequencedPacket(world) {
                         fastPos(
                             placeInfo.blockPos,
@@ -361,11 +356,11 @@ object AnchorAura : Module(
     }
 
     private fun SafeClientEvent.checkGlowPlaceable(
-        placeInfo: PlaceInfo, slot: HotbarSlot, ignore: Boolean = false
+        placeInfo: PlaceInfo, item: Item, ignore: Boolean = false
     ) {
         val currentBlockState = world.getBlockState(placeInfo.blockPos)
         if ((currentBlockState.block == Blocks.RESPAWN_ANCHOR && currentBlockState.get(Properties.CHARGES) < 1) || ignore) {
-            spoofHotbar(slot) {
+            spoofHotbarWithSetting(item) {
                 sendSequencedPacket(world) {
                     PlayerInteractBlockC2SPacket(
                         Hand.MAIN_HAND, BlockHitResult(

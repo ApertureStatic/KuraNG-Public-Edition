@@ -163,26 +163,26 @@ object EntityUtils : MinecraftWrapper {
         }
     }
 
-    fun SafeClientEvent.isInBurrow(): Boolean {
-        return (isBurrowBlock(player.blockPos) || isBurrowBlock(
-            player.pos.add(0.3, 0.0, 0.3).toBlockPos()
-        ) || isBurrowBlock(player.pos.add(-0.3, 0.0, 0.3).toBlockPos()) || isBurrowBlock(
-            player.pos.add(
+    fun SafeClientEvent.isInBurrow(target: Entity = player): Boolean {
+        return (isBurrowBlock(target.blockPos, target) || isBurrowBlock(
+            target.pos.add(0.3, 0.0, 0.3).toBlockPos(), target
+        ) || isBurrowBlock(target.pos.add(-0.3, 0.0, 0.3).toBlockPos(), target) || isBurrowBlock(
+            target.pos.add(
                 -0.3,
                 0.0,
                 -0.3
-            ).toBlockPos()
-        ) || isBurrowBlock(player.pos.add(0.3, 0.0, -0.3).toBlockPos()))
+            ).toBlockPos(), target
+        ) || isBurrowBlock(target.pos.add(0.3, 0.0, -0.3).toBlockPos(), target))
     }
 
-    private fun SafeClientEvent.isBurrowBlock(pos: BlockPos): Boolean {
-        return (world.getBlockState(pos).block == Blocks.OBSIDIAN || world.getBlockState(pos).block == Blocks.CRYING_OBSIDIAN) && player.boundingBox.intersects(
+    private fun SafeClientEvent.isBurrowBlock(pos: BlockPos, target: Entity = player): Boolean {
+        return (world.getBlockState(pos).block == Blocks.OBSIDIAN || world.getBlockState(pos).block == Blocks.CRYING_OBSIDIAN) && target.boundingBox.intersects(
             Box(pos)
         )
     }
 
-    fun SafeClientEvent.isInBox(pos: BlockPos): Boolean {
-        return player.boundingBox.intersects(Box(pos))
+    fun SafeClientEvent.isInBox(pos: BlockPos, target: Entity = player): Boolean {
+        return target.boundingBox.intersects(Box(pos))
     }
 
     fun SafeClientEvent.isInWeb(entity: Entity): Boolean {

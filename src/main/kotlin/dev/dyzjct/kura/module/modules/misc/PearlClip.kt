@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.misc
 
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -91,7 +91,7 @@ object PearlClip : Module(
                             Hand.MAIN_HAND, it
                         )
                     }
-                } else if (bypass) spoofHotbarBypass(slot) {
+                } else if (bypass) swapSpoof(slot) {
                     sendSequencedPacket(
                         world
                     ) {

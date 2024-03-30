@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.combat
 
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -57,7 +57,7 @@ object HeadTrap : Module(name = "HeadTrap", "盖头", category = Category.COMBAT
                     if (airPlace.value) {
                         if (rotate.value) RotationManager.addRotations(target.blockPos.up(2), side = side.value)
                         if (placeTimer.tickAndReset(placeDelay.value)) {
-                            if (bypass.value) spoofHotbarBypass(slot) {
+                            if (bypass.value) swapSpoof(slot) {
                                 sendSequencedPacket(world) { seq ->
                                     fastPos(pos = target.blockPos.up(2), strictDirection = true, sequence = seq)
                                 }
@@ -79,7 +79,7 @@ object HeadTrap : Module(name = "HeadTrap", "盖头", category = Category.COMBAT
                                 )
                                 if (placeTimer.tickAndReset(placeDelay.value)) {
                                     if (bypass.value) {
-                                        spoofHotbarBypass(slot) {
+                                        swapSpoof(slot) {
                                             sendSequencedPacket(world) {
                                                 fastPos(block.position.offset(block.facing), strictDirection = true)
                                             }

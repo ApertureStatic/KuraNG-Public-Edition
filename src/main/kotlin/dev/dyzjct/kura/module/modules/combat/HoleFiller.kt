@@ -2,7 +2,7 @@ package dev.dyzjct.kura.module.modules.combat
 
 import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.player.AntiMinePlace
@@ -391,7 +391,7 @@ object HoleFiller :
                         connection.sendPacket(fastPos(pos))
                     }
                 } else {
-                    spoofHotbarBypass(slot) {
+                    swapSpoof(slot) {
                         connection.sendPacket(fastPos(pos))
                     }
                 }

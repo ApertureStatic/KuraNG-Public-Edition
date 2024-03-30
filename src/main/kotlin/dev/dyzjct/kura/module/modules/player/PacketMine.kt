@@ -20,7 +20,7 @@ import base.utils.math.scale
 import base.utils.world.getMiningSide
 import dev.dyzjct.kura.manager.HotbarManager.resetHotbar
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -274,7 +274,7 @@ object PacketMine : Module(
                         }
                     }
                 } else {
-                    spoofHotbarBypass(toolSlot) {
+                    swapSpoof(toolSlot) {
                         sendSequencedPacket(world) {
                             minePacket(action, blockData, it)
                         }

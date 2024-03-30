@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.combat
 
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -84,7 +84,7 @@ object PistonAura : Module(
                                                     if (debug) ChatUtil.sendMessage("[PistonAura] -> PlaceCrystal!")
                                                     if (rotate) RotationManager.addRotations(crystalPos)
                                                     if (spoofBypass) {
-                                                        spoofHotbarBypass(crystalSlot) {
+                                                        swapSpoof(crystalSlot) {
                                                             connection.sendPacket(fastPos(crystalPos))
                                                         }
                                                     } else spoofHotbar(crystalSlot) {
@@ -227,7 +227,7 @@ object PistonAura : Module(
                         }, 0f, true
                     )
                 }
-                if (spoofBypass) spoofHotbarBypass(slot) { connection.sendPacket(fastPos(blockPos, strictDirection)) }
+                if (spoofBypass) swapSpoof(slot) { connection.sendPacket(fastPos(blockPos, strictDirection)) }
                 else spoofHotbar(slot) { connection.sendPacket(fastPos(blockPos, strictDirection)) }
                 swingHand()
             }

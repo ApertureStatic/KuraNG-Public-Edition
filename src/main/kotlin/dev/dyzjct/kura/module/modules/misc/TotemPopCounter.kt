@@ -79,39 +79,41 @@ object TotemPopCounter : Module(
         safeEventListener<TickEvent.Pre> {
             playerList.forEach {
                 if (!EntityManager.players.contains(it.key)) {
-                    if (mode.value == Mode.Chat || mode.value == Mode.Both) {
-                        ChatUtil.sendMessage("${ChatUtil.GREEN} ${it.key.entityName} died after popped ${ChatUtil.RED}${it.value} ${ChatUtil.GREEN} totems!")
-                    }
-                    if (mode.value == Mode.Notification || mode.value == Mode.Both) {
-                        NotificationManager.addNotification(
-                            "${ChatUtil.GREEN} ${it.key.entityName} died after popped ${ChatUtil.RED}${it.value} ${ChatUtil.GREEN} totems!"
-                        )
-                    }
-                    if (Sound.isEnabled && Sound.ezz) {
-                        Kura::class.java.getResourceAsStream("/assets/kura/sounds/EZ.wav")?.let { sound ->
-                            SoundPlayer(sound).play(Sound.volume)
-                        } ?: run {
-                            NotificationManager.addNotification("${ChatUtil.YELLOW} SoundFailed!")
+                    if (it.key.name.string != player.name.string) {
+                        if (mode.value == Mode.Chat || mode.value == Mode.Both) {
+                            ChatUtil.sendMessage("${ChatUtil.GREEN} ${it.key.entityName} died after popped ${ChatUtil.RED}${it.value} ${ChatUtil.GREEN} totems!")
                         }
-                    }
-                    playerList.remove(it.key)
-                } else {
-                    if (mode.value == Mode.Chat || mode.value == Mode.Both) {
-                        ChatUtil.sendMessage("${ChatUtil.RED} I died after popped ${it.value} totems!")
-                    }
-                    if (mode.value == Mode.Notification || mode.value == Mode.Both) {
-                        NotificationManager.addNotification(
-                            "${ChatUtil.RED} I died after popped${it.value}  totems!"
-                        )
-                    }
-                    if (Sound.isEnabled && Sound.ezz) {
-                        Kura::class.java.getResourceAsStream("/assets/kura/sounds/EZ.wav")?.let { sound ->
-                            SoundPlayer(sound).play(Sound.volume)
-                        } ?: run {
-                            NotificationManager.addNotification("${ChatUtil.YELLOW} SoundFailed!")
+                        if (mode.value == Mode.Notification || mode.value == Mode.Both) {
+                            NotificationManager.addNotification(
+                                "${ChatUtil.GREEN} ${it.key.entityName} died after popped ${ChatUtil.RED}${it.value} ${ChatUtil.GREEN} totems!"
+                            )
                         }
+                        if (Sound.isEnabled && Sound.ezz) {
+                            Kura::class.java.getResourceAsStream("/assets/kura/sounds/EZ.wav")?.let { sound ->
+                                SoundPlayer(sound).play(Sound.volume)
+                            } ?: run {
+                                NotificationManager.addNotification("${ChatUtil.YELLOW} SoundFailed!")
+                            }
+                        }
+                        playerList.remove(it.key)
+                    } else if (it.key.name.string == player.name.string) {
+                        if (mode.value == Mode.Chat || mode.value == Mode.Both) {
+                            ChatUtil.sendMessage("${ChatUtil.RED} I died after popped ${it.value} totems!")
+                        }
+                        if (mode.value == Mode.Notification || mode.value == Mode.Both) {
+                            NotificationManager.addNotification(
+                                "${ChatUtil.RED} I died after popped${it.value}  totems!"
+                            )
+                        }
+                        if (Sound.isEnabled && Sound.ezz) {
+                            Kura::class.java.getResourceAsStream("/assets/kura/sounds/EZ.wav")?.let { sound ->
+                                SoundPlayer(sound).play(Sound.volume)
+                            } ?: run {
+                                NotificationManager.addNotification("${ChatUtil.YELLOW} SoundFailed!")
+                            }
+                        }
+                        playerList.remove(it.key)
                     }
-                    playerList.remove(it.key)
                 }
             }
         }

@@ -1,24 +1,23 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.getItemSlot
-import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.animations.sq
-import dev.dyzjct.kura.utils.inventory.InventoryUtil
-import dev.dyzjct.kura.utils.inventory.InventoryUtil.findEmptySlots
 import base.system.event.SafeClientEvent
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils
 import base.utils.extension.sendSequencedPacket
 import base.utils.extension.synchronized
+import base.utils.math.distanceSqTo
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.animations.sq
+import dev.dyzjct.kura.utils.inventory.InventoryUtil
+import dev.dyzjct.kura.utils.inventory.InventoryUtil.findEmptySlots
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.Hand
-import base.utils.math.distanceSqTo
 import java.util.concurrent.ConcurrentLinkedQueue
 
 object AutoEXP : Module(
@@ -74,10 +73,10 @@ object AutoEXP : Module(
         }
 
         onMotion { event ->
-            val slot = player.getItemSlot(Items.EXPERIENCE_BOTTLE) ?: return@onMotion
+            if (!spoofHotbarWithSetting(Items.EXPERIENCE_BOTTLE, true) {}) return@onMotion
             event.setRotation(player.yaw, 90f)
             if (packetTimer.tickAndReset(packetDelay.value)) {
-                spoofHotbar(slot) {
+                spoofHotbarWithSetting(Items.EXPERIENCE_BOTTLE) {
                     sendSequencedPacket(world) {
                         PlayerInteractItemC2SPacket(Hand.MAIN_HAND, it)
                     }
