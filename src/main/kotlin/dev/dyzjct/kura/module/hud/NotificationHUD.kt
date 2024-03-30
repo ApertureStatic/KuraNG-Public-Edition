@@ -8,9 +8,9 @@ import net.minecraft.client.gui.DrawContext
 import java.awt.Color
 
 object NotificationHUD : HUDModule(
-    name = "NotificationNew", langName = "的通知界面", x = 300f, y = 150f
+    name = "NotificationNew", langName = "通知界面", x = 300f, y = 150f
 ) {
-    private var notificationCount by isetting("NotificationCount", 4, 1, 12)
+    //    private var notificationCount by isetting("NotificationCount", 4, 1, 12)
     private var interval by isetting("Interval", 0, 0, 20)
     var animationLength by isetting("AnimationLength", 15, 10, 100)
     private var blur by bsetting("Blur", false)
@@ -19,10 +19,18 @@ object NotificationHUD : HUDModule(
         width = 150f
         height = 15f
         if (NotificationManager.taskList.isEmpty()) return
-        runCatching {
+        try {
             var count = 1f
-            for (i in 0 until NotificationManager.taskList.size.coerceAtMost(notificationCount)) {
-                val notification = NotificationManager.taskList[i]
+            for (notification in NotificationManager.taskList) {
+//                val notification = NotificationManager.taskList[i]
+                if (notification.reversed && (notification.animation >= 1f)) {
+                    count += 1f.symbolArranged(
+                        !notification.reversed,
+                        notification.animation
+                    )
+                    NotificationManager.taskList.remove(notification)
+                    continue
+                }
                 width = FontRenderers.cn.getStringWidth(notification.message) + 6
                 val offsetX = x + 150 - width
                 val animationXOffset = offsetX + width * notification.animation
@@ -34,18 +42,13 @@ object NotificationHUD : HUDModule(
                         ) else -(height + 5 + interval) * count
                     .symbolArranged(!notification.reversed, notification.animation)
 
-                if (notification.reversed && (notification.animation == 1f)) {
-                    NotificationManager.taskList.remove(notification)
-                    continue
-                }
-
                 if (blur) Render2DEngine.drawRectBlurredShadow(
                     context.matrices,
                     animationXOffset - 8f,
                     y + arrangedHeight - 8f,
                     width + 16f,
                     height + 16f,
-                    16,
+                    8,
                     color
                 )
 
@@ -70,6 +73,8 @@ object NotificationHUD : HUDModule(
                     notification.animation
                 )
             }
+        } catch (e: Exception) {
+            println(e)
         }
     }
 
