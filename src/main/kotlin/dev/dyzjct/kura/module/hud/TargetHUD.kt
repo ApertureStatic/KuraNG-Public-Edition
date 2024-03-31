@@ -9,7 +9,6 @@ import base.utils.math.MathUtils.clamp
 import com.mojang.blaze3d.systems.RenderSystem
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope
 import dev.dyzjct.kura.module.HUDModule
-import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.scaledHealth
 import dev.dyzjct.kura.utils.animations.Easing
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.PlayerSkinDrawer
@@ -41,18 +40,6 @@ object TargetHUD : HUDModule(
                 isTargetNull = true
             }
         }
-
-        onLoop {
-            if (!isTargetNull) {
-                if (started) {
-                    startTime = System.currentTimeMillis()
-                }
-                started = false
-            } else if (!started) {
-                startTime = System.currentTimeMillis()
-                started = true
-            }
-        }
     }
 
     override fun onRender(context: DrawContext) {
@@ -67,34 +54,57 @@ object TargetHUD : HUDModule(
     }
 
     override fun DrawScope.renderOnGame() {
+        if (!isTargetNull) {
+            if (started) {
+
+                startTime = System.currentTimeMillis() - if (Easing.OUT_CUBIC.inc(
+                        Easing.toDelta(
+                            startTime,
+                            fadeLength
+                        )
+                    ) < 1f
+                ) (fadeLength - (System.currentTimeMillis() - startTime)) else 0
+            }
+            started = false
+        } else if (!started) {
+            startTime = System.currentTimeMillis() - if (Easing.OUT_CUBIC.inc(
+                    Easing.toDelta(
+                        startTime,
+                        fadeLength
+                    )
+                ) < 1f
+            ) (fadeLength - (System.currentTimeMillis() - startTime)) else 0
+            started = true
+        }
+
+        val animationScale = if (isTargetNull) {
+            Easing.IN_CUBIC.dec(Easing.toDelta(startTime, fadeLength))
+        } else {
+            Easing.OUT_CUBIC.inc(Easing.toDelta(startTime, fadeLength))
+        }
+
         runSafe {
             lastTarget?.let {
-                val animationScale = if (isTargetNull) {
-                    Easing.IN_CUBIC.dec(Easing.toDelta(startTime, fadeLength))
-                } else {
-                    Easing.OUT_CUBIC.inc(Easing.toDelta(startTime, fadeLength))
-                }
 
-                if (animationScale == 0.0f) return
+                RenderSystem.disableBlend()
+
+                matrixStack.push()
 
                 val healthPercentage =
-                    (100f - ((it.scaledHealth * 2.7f))) / 100f
+                    (((it.health + it.absorptionAmount) * 2.7f)) / 100f
 
                 val hurtPercentage = (Render2DEngine.interpolateFloat(
                     clamp(if (it.hurtTime == 0) 0f else it.hurtTime + 1f, 0f, 10f), it.hurtTime.toFloat(),
                     mc.tickDelta.toDouble()
                 )) / 8f
 
-
-                matrixStack.push()
-
-                context.matrices.scale(animationScale, animationScale, 1.0f)
-
-                if (animationScale == 1f) context.matrices.scale(
+                if (animationScale >= 1f) context.matrices.scale(
                     1f - hurtPercentage / 20f,
                     1f - hurtPercentage / 20f,
                     1f
-                )
+                ) else {
+                    context.matrices.scale(animationScale, animationScale, 1.0f)
+                }
 
                 if (animationScale == 1f) matrixStack.translate(
                     (x / (1f - hurtPercentage / 20f)) - x,
@@ -114,7 +124,7 @@ object TargetHUD : HUDModule(
                     color
                 )
 
-                drawRect(x + 45, y + 25, width * healthPercentage / 1.5f, height / 4, Color.RED)
+                drawRoundRect(x + 45, y + 25, width * healthPercentage / 1.5f, height / 4, Color.RED)
 
                 FontRenderers.cn.drawString(
                     context.matrices,
@@ -137,7 +147,6 @@ object TargetHUD : HUDModule(
                     Color(255, 0, 0, (150 * hurtPercentage).toInt())
                 )
 
-                RenderSystem.disableBlend()
                 context.drawTexture(
                     KuraIdentifier("textures/slm.png"),
                     x.toInt() - 6,
@@ -149,9 +158,11 @@ object TargetHUD : HUDModule(
                     28,
                     28
                 )
-                RenderSystem.enableBlend()
 
                 matrixStack.pop()
+
+                RenderSystem.enableBlend()
+
             }
         }
     }

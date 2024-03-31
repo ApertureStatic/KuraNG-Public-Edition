@@ -29,7 +29,6 @@ import base.utils.extension.minePacket
 import base.utils.extension.sendSequencedPacket
 import base.utils.graphics.ESPRenderer
 import base.utils.inventory.slot.firstBlock
-import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.item.attackDamage
 import base.utils.item.duraPercentage
@@ -42,8 +41,8 @@ import base.utils.world.getMiningSide
 import base.utils.world.noCollision
 import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.manager.FriendManager.isFriend
+import dev.dyzjct.kura.manager.HotbarManager.doSwap
 import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -65,6 +64,7 @@ import dev.dyzjct.kura.utils.extension.ceilToInt
 import dev.dyzjct.kura.utils.extension.synchronized
 import dev.dyzjct.kura.utils.extension.toDegree
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
+import dev.dyzjct.kura.utils.inventory.InventoryUtil.findItemInInventory
 import dev.dyzjct.kura.utils.math.RotationUtils
 import dev.dyzjct.kura.utils.math.RotationUtils.normalizeAngle
 import it.unimi.dsi.fastutil.ints.Int2LongMaps
@@ -112,6 +112,7 @@ object AutoCrystal : Module(
     private var swingMode = msetting("Swing", SwingMode.Off).enumIs(p, Page.GENERAL)
     private var strictDirection = bsetting("StrictDirection", false).enumIs(p, Page.GENERAL)
     private var antiWeak = bsetting("AntiWeakness", true)
+    private var ghostHand = bsetting("GhostHand", true)
     private var rotate = bsetting("Rotate", false).enumIs(p, Page.GENERAL)
     private var yawSpeed = fsetting("YawSpeed", 30.0f, 5.0f, 180f, 1f).isTrue(rotate).enumIs(p, Page.GENERAL)
     private var rotateDiff = fsetting("RotationDiff", 1f, 0f, 2f).isTrue(rotate).enumIs(p, Page.GENERAL)
@@ -594,20 +595,22 @@ object AutoCrystal : Module(
                     if (player.offHandStack.item == Items.END_CRYSTAL) {
                         sendPacket()
                     } else {
-                        if (CombatSystem.autoSwitch) {
-                            player.hotbarSlots.firstItem(Items.END_CRYSTAL)?.let { cry ->
-                                spoofHotbar(cry)
+                        if (!ghostHand.value) {
+                            if (player.mainHandStack.item == Items.END_CRYSTAL) {
+                                sendPacket()
+                            } else if (CombatSystem.autoSwitch) {
+                                findItemInInventory(Items.END_CRYSTAL)?.let { slot ->
+                                    doSwap(slot)
+                                }
                             }
-                            sendPacket()
+                            return@onMainThread
                         } else {
                             spoofHotbarWithSetting(Items.END_CRYSTAL) {
                                 sendPacket()
                             }
                         }
                     }
-                }
-                if (placeSwing.value) {
-                    onMainThread {
+                    if (placeSwing.value) {
                         swingArm()
                     }
                 }

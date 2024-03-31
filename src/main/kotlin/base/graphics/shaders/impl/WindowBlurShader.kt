@@ -28,7 +28,7 @@ object WindowBlurShader : AlwaysListening, MinecraftWrapper {
     }
 
     private fun updateResolution(width: Int, height: Int) {
-        if (width < 0 || height < 0) return
+        if (width <= 0 || height <= 0) return
         pass1.bind()
         pass1.updateResolution(width.toFloat(), height.toFloat())
         pass2.bind()
