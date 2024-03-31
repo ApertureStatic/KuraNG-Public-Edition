@@ -36,10 +36,8 @@ object AutoWeb : Module(
     private var holeCheck = bsetting("HoleCheck", true)
     private var betterPush = bsetting("BetterPush", true)
     private var betterAnchor = bsetting("BetterAnchor", true)
-    private var eatingPause = bsetting("EatingPause", true)
     private var facePlace = bsetting("FacePlace", false)
     private var multiPlace = bsetting("MultiPlace", true)
-    private var spoofBypass = bsetting("SpoofBypass", false)
     private var ground = bsetting("OnlyGround", true)
     private var inside = bsetting("Inside", false)
     private var strictDirection = bsetting("StrictDirection", false)
@@ -70,7 +68,7 @@ object AutoWeb : Module(
     init {
         onLoop {
             if (!player.isOnGround && ground.value) return@onLoop
-            if ((eatingPause.value && player.isUsingItem) || !spoofHotbarWithSetting(Items.COBWEB, true) {}) {
+            if (!spoofHotbarWithSetting(Items.COBWEB, true) {}) {
                 return@onLoop
             }
             target = getTarget(range.value.toDouble())

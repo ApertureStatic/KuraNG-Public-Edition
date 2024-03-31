@@ -1,12 +1,5 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
-import dev.dyzjct.kura.manager.RotationManager
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.utils.inventory.HotbarSlot
-import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
 import base.system.event.SafeClientEvent
 import base.utils.entity.EntityUtils.autoCenter
 import base.utils.extension.sendSequencedPacket
@@ -14,6 +7,14 @@ import base.utils.inventory.slot.allSlots
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.player.RotationUtils.getPlayerDirection
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
+import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.utils.inventory.HotbarSlot
+import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
 import net.minecraft.block.Blocks
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket
@@ -24,7 +25,6 @@ import net.minecraft.util.math.Direction
 object PearlClip : Module(
     name = "PearlClip", langName = "珍珠卡墙", category = Category.MISC, description = "PearlClip Ez"
 ) {
-    private val eatingPause by bsetting("EatingPause", false)
     private val better by bsetting("LookBetter", true)
     private val bedRock by bsetting("BedRock", false)
     private val one by bsetting("OneHeight", true)
@@ -37,7 +37,7 @@ object PearlClip : Module(
         onLoop {
             val slot = if (bypass) player.allSlots.firstItem(Items.ENDER_PEARL)
                 ?.let { item -> HotbarSlot(item) } else player.hotbarSlots.firstItem(Items.ENDER_PEARL)
-            if ((eatingPause && player.isUsingItem) || slot == null || !world.isAir(player.blockPos)) {
+            if ((CombatSystem.eating && player.isUsingItem) || slot == null || !world.isAir(player.blockPos)) {
                 toggle()
                 return@onLoop
             }

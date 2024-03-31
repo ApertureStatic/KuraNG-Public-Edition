@@ -11,7 +11,7 @@ import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.inventory.slot.offhandSlot
 import base.utils.player.updateController
-import dev.dyzjct.kura.module.modules.client.SwapManager
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.utils.inventory.*
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.findItemInInventory
 import net.minecraft.client.network.ClientPlayerEntity
@@ -122,8 +122,9 @@ object HotbarManager : AlwaysListening {
         crossinline block: () -> Unit
     ): Boolean {
         var notNullSlot = false
-        when (SwapManager.mode.value) {
-            SwapManager.SpoofMode.Normal -> {
+        if (CombatSystem.eating && player.isUsingItem) return false
+        when (CombatSystem.mode.value) {
+            CombatSystem.SpoofMode.Normal -> {
                 player.hotbarSlots.firstItem(item)?.let { slot ->
                     notNullSlot = true
                     synchronized(HotbarManager) {
@@ -136,7 +137,7 @@ object HotbarManager : AlwaysListening {
                 }
             }
 
-            SwapManager.SpoofMode.Swap -> {
+            CombatSystem.SpoofMode.Swap -> {
                 player.allSlots.firstItem(item)
                     ?.let { thisItem -> HotbarSlot(thisItem) }?.let { slot ->
                         notNullSlot = true
@@ -158,7 +159,7 @@ object HotbarManager : AlwaysListening {
                     }
             }
 
-            SwapManager.SpoofMode.PickUP -> {
+            CombatSystem.SpoofMode.China -> {
                 findItemInInventory(item)?.let { slot ->
                     notNullSlot = true
                     if (!isCheck) {

@@ -9,7 +9,7 @@ abstract class Module(
     visible: Boolean = false,
     alwaysEnable: Boolean = false,
     isHidden: Boolean = false
-) : dev.dyzjct.kura.module.AbstractModule() {
+) : AbstractModule() {
 
     init {
         moduleName = name

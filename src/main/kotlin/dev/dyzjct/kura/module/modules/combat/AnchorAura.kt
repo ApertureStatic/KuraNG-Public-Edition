@@ -67,7 +67,6 @@ object AnchorAura : Module(
     private val rotate = bsetting("Rotation", false)
     private val swing = bsetting("Swing", true)
     private val packetSwing by bsetting("PacketSwing", true).isTrue(swing)
-    private var eatingPause = bsetting("EatingPause", false)
     private val render = bsetting("Render", true)
     private val fillColor = csetting("FillColor", Color(255, 255, 255, 50)).isTrue(render)
     private val lineColor = csetting("LineColor", Color(255, 255, 255, 255)).isTrue(render)
@@ -294,11 +293,6 @@ object AnchorAura : Module(
             runCatching {
                 rawPosList = getPlaceablePos()
                 placeInfo = calcPlaceInfo()
-                if (eatingPause.value && player.isUsingItem) {
-                    globalTimer.reset()
-                    packetTimer.reset()
-                    return@safeConcurrentListener
-                }
                 placeInfo?.let { placeInfo ->
                     if (rotate.value) RotationManager.addRotations(placeInfo.blockPos)
                     if (globalTimer.tickAndReset(globalDelay)) {

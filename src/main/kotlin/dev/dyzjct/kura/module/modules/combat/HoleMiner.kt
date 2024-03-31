@@ -6,6 +6,7 @@ import base.utils.combat.getTarget
 import base.utils.world.getMiningSide
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.combat.HolePush.doHolePush
 import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.module.modules.player.PacketMine.hookPos
@@ -21,7 +22,6 @@ object HoleMiner : Module(
     category = Category.COMBAT
 ) {
     private var range by isetting("Range", 6, 1, 6)
-    private var eatingPause by bsetting("EatingPause", true)
     private var raytrace by bsetting("RayTrace", true)
     private var ground by bsetting("OnlyGround", true)
     private var instant by bsetting("Instant", false)
@@ -42,7 +42,7 @@ object HoleMiner : Module(
                         if (world.getBlockState(data.blockPos).block is RedstoneBlock) return@onMotion
                     }
                 }
-                if (eatingPause && player.isUsingItem) return@onMotion
+                if (CombatSystem.eating && player.isUsingItem) return@onMotion
                 for (offset in CityOffset.entries) {
                     PacketMine.blockData?.let { data ->
                         PacketMine.doubleData?.let { dbData ->

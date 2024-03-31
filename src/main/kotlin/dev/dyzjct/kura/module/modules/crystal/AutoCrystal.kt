@@ -29,6 +29,7 @@ import base.utils.extension.minePacket
 import base.utils.extension.sendSequencedPacket
 import base.utils.graphics.ESPRenderer
 import base.utils.inventory.slot.firstBlock
+import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.item.attackDamage
 import base.utils.item.duraPercentage
@@ -42,9 +43,11 @@ import base.utils.world.noCollision
 import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.manager.FriendManager.isFriend
 import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.isResistant
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.calcCollidingCrystalDamage
@@ -108,10 +111,10 @@ object AutoCrystal : Module(
     var damageMode = msetting("DamageMode", DamageMode.PPBP).enumIs(p, Page.GENERAL)
     private var swingMode = msetting("Swing", SwingMode.Off).enumIs(p, Page.GENERAL)
     private var strictDirection = bsetting("StrictDirection", false).enumIs(p, Page.GENERAL)
+    private var antiWeak = bsetting("AntiWeakness", true)
     private var rotate = bsetting("Rotate", false).enumIs(p, Page.GENERAL)
     private var yawSpeed = fsetting("YawSpeed", 30.0f, 5.0f, 180f, 1f).isTrue(rotate).enumIs(p, Page.GENERAL)
     private var rotateDiff = fsetting("RotationDiff", 1f, 0f, 2f).isTrue(rotate).enumIs(p, Page.GENERAL)
-    private var eatingPause = bsetting("EatingPause", false).enumIs(p, Page.GENERAL)
     private var old = bsetting("OldPlace", false).enumIs(p, Page.GENERAL)
     private var wallRange = dsetting("WallRange", 3.0, 0.0, 6.0).isTrue(old).enumIs(p, Page.GENERAL)
 
@@ -274,14 +277,12 @@ object AutoCrystal : Module(
         }
 
         safeConcurrentListener<RunGameLoopEvent.Tick> {
-            if (returnNeeded()) return@safeConcurrentListener
             rawPosList.updateForce()
             placeInfo = calcPlaceInfo()
             crystalList = CopyOnWriteArrayList(getCrystalList())
         }
 
         safeConcurrentListener<PlayerMotionEvent> {
-            if (returnNeeded()) return@safeConcurrentListener
             updateFade(render)
             packetPlace0 = (packetPlaceMode.value as PacketPlaceMode)
             obiSlot = player.hotbarSlots.firstBlock(Blocks.OBSIDIAN)
@@ -303,7 +304,6 @@ object AutoCrystal : Module(
         }
 
         safeParallelListener<TickEvent.Pre> {
-            if (returnNeeded()) return@safeParallelListener
             updateDdosQueue()
             blockBoost()
             for (target in EntityManager.players) {
@@ -360,14 +360,6 @@ object AutoCrystal : Module(
                 }
             }
         }
-    }
-
-    private fun SafeClientEvent.returnNeeded(): Boolean {
-        return if (eatingPause.value && player.isUsingItem) {
-            placeInfo = null
-            crystalList.clear()
-            true
-        } else false
     }
 
     private fun SafeClientEvent.doRotate(tempState: CurrentState? = null, tempPos: BlockPos? = null) {
@@ -602,8 +594,15 @@ object AutoCrystal : Module(
                     if (player.offHandStack.item == Items.END_CRYSTAL) {
                         sendPacket()
                     } else {
-                        spoofHotbarWithSetting(Items.END_CRYSTAL) {
+                        if (CombatSystem.autoSwitch) {
+                            player.hotbarSlots.firstItem(Items.END_CRYSTAL)?.let { cry ->
+                                spoofHotbar(cry)
+                            }
                             sendPacket()
+                        } else {
+                            spoofHotbarWithSetting(Items.END_CRYSTAL) {
+                                sendPacket()
+                            }
                         }
                     }
                 }
@@ -793,7 +792,7 @@ object AutoCrystal : Module(
     private fun SafeClientEvent.breakDirect(
         x: Double, y: Double, z: Double, endCrystal: EndCrystalEntity
     ) {
-        if (player.isWeaknessActive() && !isHoldingTool()) {
+        if (player.isWeaknessActive() && !isHoldingTool() && antiWeak.value) {
             onMainThread {
                 getWeaponSlot()?.let { stack ->
                     spoofHotbarWithSetting(stack.item) {

@@ -62,7 +62,7 @@ object ModuleManager : AlwaysListening {
         registerModule(Cape)
         registerModule(LoadingMenu)
         registerModule(Sound)
-        registerModule(SwapManager)
+        registerModule(CombatSystem)
     }
 
     private fun loadCategoryCombat() {
