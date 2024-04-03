@@ -121,8 +121,8 @@ object HotbarManager : AlwaysListening {
         isCheck: Boolean = false,
         crossinline block: () -> Unit
     ): Boolean {
-        var notNullSlot = false
         if (CombatSystem.eating && player.isUsingItem) return false
+        var notNullSlot = false
         when (CombatSystem.mode.value) {
             CombatSystem.SpoofMode.Normal -> {
                 player.hotbarSlots.firstItem(item)?.let { slot ->

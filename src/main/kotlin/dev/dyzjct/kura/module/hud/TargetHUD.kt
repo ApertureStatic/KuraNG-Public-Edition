@@ -91,7 +91,7 @@ object TargetHUD : HUDModule(
                 matrixStack.push()
 
                 val healthPercentage =
-                    (((it.health + it.absorptionAmount) * 2.7f)) / 100f
+                    (it.health + it.absorptionAmount) / 36f
                 val hurtPercentage = (Render2DEngine.interpolateFloat(
                     clamp(if (it.hurtTime == 0) 0f else it.hurtTime + 1f, 0f, 10f), it.hurtTime.toFloat(),
                     mc.tickDelta.toDouble()
@@ -123,7 +123,7 @@ object TargetHUD : HUDModule(
                     color
                 )
 
-                drawRoundRect(x + 45, y + 25, width * healthPercentage / 1.6f, height / 4, Color.RED)
+                drawRoundRect(x + 45, y + 25, width * healthPercentage / 1.65f, height / 4, Color.RED)
 
                 FontRenderers.cn.drawString(
                     context.matrices,

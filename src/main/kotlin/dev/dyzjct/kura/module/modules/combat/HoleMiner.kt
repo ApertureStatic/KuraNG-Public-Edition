@@ -32,17 +32,17 @@ object HoleMiner : Module(
     init {
         onMotion {
             if (ground && !player.onGround) return@onMotion
+            if (CombatSystem.eating && player.isUsingItem) return@onMotion
             getTarget(range.toDouble())?.let { target ->
                 val targetPos = target.blockPos
                 if (HolePush.isEnabled) {
                     PacketMine.blockData?.let { data ->
-                        doHolePush(targetPos.up(1), true)?.let { stonePos ->
+                        doHolePush(targetPos.up(1), true, test = true)?.let { stonePos ->
                             if (stonePos == data.blockPos) return@onMotion
                         }
                         if (world.getBlockState(data.blockPos).block is RedstoneBlock) return@onMotion
                     }
                 }
-                if (CombatSystem.eating && player.isUsingItem) return@onMotion
                 for (offset in CityOffset.entries) {
                     PacketMine.blockData?.let { data ->
                         PacketMine.doubleData?.let { dbData ->

@@ -104,7 +104,7 @@ object HolePush : Module(
     fun SafeClientEvent.doHolePush(
         targetPos: BlockPos,
         check: Boolean,
-        test:Boolean = false
+        test: Boolean = false
     ): BlockPos? {
         fun checkPull(face: Direction): Boolean {
             val opposite = targetPos.offset(face.opposite)
@@ -146,7 +146,6 @@ object HolePush : Module(
                     )
                 )
                 }) continue
-//            if (!world.noCollision(targetPos.offset(face)) && world.getBlockState(targetPos.offset(face)).block !is PistonBlock) continue
             if (!world.isAir(targetPos.offset(face)) && world.getBlockState(targetPos.offset(face)).block !is PistonBlock) continue
             getRedStonePos(targetPos.offset(face), face)?.let {
                 if (!world.isAir(it.pos.down()) || !checkDown) {
@@ -268,7 +267,7 @@ object HolePush : Module(
         } else player.swingHand(Hand.MAIN_HAND)
     }
 
-    fun SafeClientEvent.getRedStonePos(pos: BlockPos, direction: Direction): StonePos? {
+    private fun SafeClientEvent.getRedStonePos(pos: BlockPos, direction: Direction): StonePos? {
         val face = when (direction) {
             Direction.EAST -> Direction.WEST
             Direction.WEST -> Direction.EAST

@@ -17,6 +17,7 @@ import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.combat.HolePush.doHolePush
 import dev.dyzjct.kura.module.modules.player.AntiMinePlace
 import dev.dyzjct.kura.module.modules.player.PacketMine
@@ -96,8 +97,8 @@ object AutoWeb : Module(
                                 if (spoofRotations.value) {
                                     RotationManager.addRotations(pos)
                                 }
-                                player.spoofSneak {
-                                    spoofHotbarWithSetting(Items.COBWEB) {
+                                spoofHotbarWithSetting(Items.COBWEB) {
+                                    player.spoofSneak {
                                         connection.sendPacket(
                                             fastPos(pos, true)
                                         )
@@ -137,6 +138,8 @@ object AutoWeb : Module(
                         }
                     }
                 }
+
+                if (CombatSystem.eating && player.isUsingItem) return@onLoop
 
                 if (checkHole(it) != SurroundUtils.HoleType.NONE && it.onGround && holeCheck.value) return@onLoop
 
