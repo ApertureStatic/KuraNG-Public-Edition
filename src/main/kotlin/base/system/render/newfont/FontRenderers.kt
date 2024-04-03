@@ -10,9 +10,7 @@ object FontRenderers {
     lateinit var default: FontAdapter
     lateinit var cn: FontAdapter
     lateinit var lexend: FontAdapter
-    lateinit var comfortaa: FontAdapter
-    lateinit var sigma: FontAdapter
-    lateinit var badaboom: FontAdapter
+    lateinit var jbMono: FontAdapter
     lateinit var icons: FontAdapter
     lateinit var mid_icons: FontAdapter
     lateinit var big_icons: FontAdapter

@@ -10,31 +10,26 @@ import net.minecraft.client.gui.DrawContext
 
 object WaterMarkHUD :
     HUDModule(name = "WaterMarkHUD", langName = "标题显示", category = Category.HUD, x = 100f, y = 100f) {
-    private val rainbow = bsetting("Rainbow", false)
-    private var speed by isetting("Speed", 18, 2, 54)
-    private var saturation by fsetting("Saturation", 0.65f, 0.0f, 1.0f).isTrue(rainbow)
-    private var brightness by fsetting("Brightness", 1.0f, 0.0f, 1.0f).isTrue(rainbow)
-    private val fonts by msetting("Fonts", FontMode.Comfortaa)
+    private val size by fsetting("Size", 1.0f, 0.1f, 2.0f)
+    private val rainbow by bsetting("Rainbow", false)
+    private val speed by isetting("Speed", 18, 2, 54)
+    private val saturation by fsetting("Saturation", 0.65f, 0.0f, 1.0f).isTrue { rainbow }
+    private val brightness by fsetting("Brightness", 1.0f, 0.0f, 1.0f).isTrue { rainbow }
     override fun onRender(context: DrawContext) {
-        val fontColor = if (!rainbow.value) Colors.hudColor.value.rgb else Render2DEngine.rainbow(
+        val fontColor = if (!rainbow) Colors.hudColor.value.rgb else Render2DEngine.rainbow(
             speed,
             0,
             saturation,
             brightness,
             1f
         ).rgb
-        val text = "${Kura.MOD_NAME} ${Kura.VERSION}"
-        val font = when (fonts) {
-            FontMode.Sigma -> FontRenderers.sigma
-            FontMode.Badaboom -> FontRenderers.badaboom
-            else -> FontRenderers.comfortaa
-        }
-        font.drawString(context.matrices, text, x + 2.0, y + 3.0, fontColor)
-        width = font.getStringWidth(text) + 4
-        height = font.getFontHeight(text) + 4
-    }
-
-    enum class FontMode {
-        Comfortaa, Sigma, Badaboom,
+        val font = FontRenderers.jbMono
+        context.matrices.push()
+        context.matrices.scale(size / 2f, size / 2f, 1.0f)
+        context.matrices.translate((x / (size / 2f)) - x, (y / (size / 2f)) - y, 0.0f)
+        font.drawString(context.matrices, Kura.MOD_NAME, x + 2.0, y + 3.0, fontColor)
+        width = (font.getStringWidth(Kura.MOD_NAME) + 4) * (if (size / 2f >= 0.3f) (size / 2f) else 0.3f)
+        height = (font.getFontHeight(Kura.MOD_NAME) + 4) * (if (size / 2f >= 0.3f) (size / 2f) else 0.3f)
+        context.matrices.pop()
     }
 }
