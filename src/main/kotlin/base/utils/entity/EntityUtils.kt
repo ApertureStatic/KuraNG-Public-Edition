@@ -175,7 +175,7 @@ object EntityUtils : MinecraftWrapper {
         ) || isBurrowBlock(target.pos.add(0.3, 0.0, -0.3).toBlockPos(), target))
     }
 
-    private fun SafeClientEvent.isBurrowBlock(pos: BlockPos, target: Entity = player): Boolean {
+    fun SafeClientEvent.isBurrowBlock(pos: BlockPos, target: Entity = player): Boolean {
         return (world.getBlockState(pos).block == Blocks.OBSIDIAN || world.getBlockState(pos).block == Blocks.CRYING_OBSIDIAN) && target.boundingBox.intersects(
             Box(pos)
         )

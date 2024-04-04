@@ -11,7 +11,7 @@ import base.utils.block.BlockUtil.getNeighbor
 import base.utils.chat.ChatUtil
 import base.utils.combat.TargetInfo
 import base.utils.combat.getPredictedTarget
-import base.utils.entity.EntityUtils.isInBurrow
+import base.utils.entity.EntityUtils.isBurrowBlock
 import base.utils.entity.EntityUtils.spoofSneak
 import base.utils.extension.fastPos
 import base.utils.extension.sendSequencedPacket
@@ -239,7 +239,7 @@ object AnchorAura : Module(
                 val targetDamage = anchorDamage(target, targetPos, targetBox, blockPos)
                 val minDamage = minDamage.value
                 val balance = -8f
-                if (!isInBurrow(target) && world.entities.none {
+                if (!isBurrowBlock(target.blockPos) && world.entities.none {
                         it !is ItemEntity;it.isAlive;it.boundingBox.intersects(
                         Box(target.blockPos.up(2))
                     )

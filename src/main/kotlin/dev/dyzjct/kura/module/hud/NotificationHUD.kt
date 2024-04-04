@@ -22,7 +22,6 @@ object NotificationHUD : HUDModule(
         try {
             var count = 1f
             for (notification in NotificationManager.taskList) {
-//                val notification = NotificationManager.taskList[i]
                 if (notification.reversed && (notification.animation >= 1f)) {
                     count += 1f.symbolArranged(
                         !notification.reversed,
