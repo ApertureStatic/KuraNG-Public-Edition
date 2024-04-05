@@ -38,14 +38,6 @@ public class MixinBipedEntityModel<T extends LivingEntity> {
     @Shadow
     public final ModelPart rightLeg;
 
-    @Shadow
-    @Final
-    public ModelPart hat;
-
-    @Shadow
-    @Final
-    public ModelPart body;
-
     public MixinBipedEntityModel(ModelPart head, ModelPart leftArm, ModelPart rightArm, ModelPart leftLeg, ModelPart rightLeg) {
         this.head = head;
         this.leftArm = leftArm;
