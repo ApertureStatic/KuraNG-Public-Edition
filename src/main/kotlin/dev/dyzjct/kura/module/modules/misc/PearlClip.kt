@@ -3,17 +3,12 @@ package dev.dyzjct.kura.module.modules.misc
 import base.system.event.SafeClientEvent
 import base.utils.entity.EntityUtils.autoCenter
 import base.utils.extension.sendSequencedPacket
-import base.utils.inventory.slot.allSlots
-import base.utils.inventory.slot.firstItem
-import base.utils.inventory.slot.hotbarSlots
 import base.utils.player.RotationUtils.getPlayerDirection
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
-import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
 import net.minecraft.block.Blocks
 import net.minecraft.item.Items
@@ -35,9 +30,11 @@ object PearlClip : Module(
 
     init {
         onLoop {
-            val slot = if (bypass) player.allSlots.firstItem(Items.ENDER_PEARL)
-                ?.let { item -> HotbarSlot(item) } else player.hotbarSlots.firstItem(Items.ENDER_PEARL)
-            if ((CombatSystem.eating && player.isUsingItem) || slot == null || !world.isAir(player.blockPos)) {
+            if ((CombatSystem.eating && player.isUsingItem) || !spoofHotbarWithSetting(
+                    Items.ENDER_PEARL,
+                    true
+                ) {} || !world.isAir(player.blockPos)
+            ) {
                 toggle()
                 return@onLoop
             }
@@ -91,16 +88,8 @@ object PearlClip : Module(
                             Hand.MAIN_HAND, it
                         )
                     }
-                } else if (bypass) swapSpoof(slot) {
-                    sendSequencedPacket(
-                        world
-                    ) {
-                        PlayerInteractItemC2SPacket(
-                            Hand.MAIN_HAND, it
-                        )
-                    }
                 } else {
-                    spoofHotbar(slot) {
+                    spoofHotbarWithSetting(Items.ENDER_PEARL) {
                         sendSequencedPacket(
                             world
                         ) {
