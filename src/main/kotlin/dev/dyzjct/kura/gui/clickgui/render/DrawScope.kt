@@ -118,11 +118,7 @@ class DrawScope(
         color: Color,
         padding: Padding = Padding.Empty
     ) {
-        if (UiSetting.getThemeSetting().rounded) {
-            drawOutlineRoundRect(x, y, width, height, color)
-        } else {
-            drawOutlineRect(x, y, width, height, color, padding)
-        }
+        drawOutlineRect(x, y, width, height, color, padding)
     }
 
     fun drawOutlineRect(

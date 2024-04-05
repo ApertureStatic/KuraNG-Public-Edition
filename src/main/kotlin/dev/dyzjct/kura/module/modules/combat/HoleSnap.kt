@@ -1,27 +1,27 @@
 package dev.dyzjct.kura.module.modules.combat
 
+import base.events.player.PlayerMotionEvent
+import base.events.player.PlayerMoveEvent
+import base.system.event.SafeClientEvent
+import base.system.event.safeEventListener
+import base.utils.concurrent.threads.runSafe
+import base.utils.entity.EntityUtils
+import base.utils.hole.SurroundUtils
+import base.utils.hole.SurroundUtils.betterPosition
+import base.utils.hole.SurroundUtils.checkHole
+import base.utils.math.BlockPosUtil
+import base.utils.math.VectorUtils
+import base.utils.math.distanceToCenter
+import base.utils.math.vector.Vec2f
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.ModuleManager
 import dev.dyzjct.kura.module.modules.movement.Speed
 import dev.dyzjct.kura.module.modules.movement.Step
-import dev.dyzjct.kura.setting.BooleanSetting
-import dev.dyzjct.kura.setting.FloatSetting
-import dev.dyzjct.kura.setting.IntegerSetting
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.toRadian
 import dev.dyzjct.kura.utils.math.RandomUtil
-import base.events.player.PlayerMotionEvent
-import base.events.player.PlayerMoveEvent
-import base.system.event.SafeClientEvent
-import base.system.event.safeEventListener
-import base.utils.MovementUtils.resetMove
-import base.utils.concurrent.threads.runSafe
-import base.utils.entity.EntityUtils
-import base.utils.hole.SurroundUtils
-import base.utils.hole.SurroundUtils.betterPosition
-import base.utils.hole.SurroundUtils.checkHole
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.effect.StatusEffects
@@ -29,21 +29,17 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket
 import net.minecraft.util.math.Vec3d
-import base.utils.math.BlockPosUtil
-import base.utils.math.VectorUtils
-import base.utils.math.distanceToCenter
-import base.utils.math.vector.Vec2f
 import kotlin.math.*
 
 object HoleSnap :
     Module(name = "HoleSnap", langName = "拉坑", category = Category.COMBAT, description = "Move to the hole.") {
-    private var range: IntegerSetting = isetting("Range", 5, 1, 50)
-    private var timerVal: FloatSetting = fsetting("TimerVal", 3.4f, 1f, 4f)
-    private var timeoutTicks: IntegerSetting = isetting("TimeOutTicks", 60, 0, 1000)
-    private var toggleStep: BooleanSetting = bsetting("EnableStep", true)
-    private var disableStrafe: BooleanSetting = bsetting("DisableSpeed", false)
-    private var antiAim: BooleanSetting = bsetting("AntiAim", true)
-    private var packetListReset: TimerUtils = TimerUtils()
+    private var range = isetting("Range", 5, 1, 50)
+    private var timerVal = fsetting("TimerVal", 3.4f, 1f, 4f)
+    private var timeoutTicks = isetting("TimeOutTicks", 60, 0, 1000)
+    private var toggleStep = bsetting("EnableStep", true)
+    private var disableStrafe = bsetting("DisableSpeed", false)
+    private var antiAim = bsetting("AntiAim", true)
+    private var packetListReset = TimerUtils()
     private var holePos: Vec3d? = null
     private var timerBypassing = false
     private var normalLookPos = 0
@@ -109,10 +105,6 @@ object HoleSnap :
         }
 
         safeEventListener<PlayerMotionEvent> {
-            if (holePos != null) {
-                mc.options.resetMove()
-            }
-
             if (packetListReset.passed(1000)) {
                 normalPos = 0
                 normalLookPos = 0

@@ -125,7 +125,7 @@ object ModuleManager : AlwaysListening {
         registerModule(NoRotate)
         registerModule(Timer)
         registerModule(Reach)
-        registerModule(PacketEat)
+        registerModule(BetterEat)
         registerModule(Scaffold)
         registerModule(NoFall)
         registerModule(Freecam)
@@ -156,6 +156,7 @@ object ModuleManager : AlwaysListening {
         registerModule(Xray)
         registerModule(PopChams)
         registerModule(Zoom)
+        registerModule(AntiPlayerSwing)
     }
 
     private fun loadModules() {

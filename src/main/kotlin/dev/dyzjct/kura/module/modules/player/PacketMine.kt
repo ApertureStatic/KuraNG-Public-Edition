@@ -75,6 +75,7 @@ object PacketMine : Module(
     private var forceRetry = false
     var blockData: BlockData? = null
     var doubleData: BlockData? = null
+    var onDoubleBreak = false
 
     override fun onDisable() {
         blockData = null
@@ -115,8 +116,8 @@ object PacketMine : Module(
                     val blockData = blockData
                     val doubleData = doubleData
                     if (blockData != null && !world.isAir(blockData.blockPos) && doubleData == null) {
-                        timerReset()
                         sendMinePacket(Stop, blockData, force = true)
+                        timerReset()
                         PacketMine.doubleData = blockData
                     }
                 }
@@ -171,9 +172,12 @@ object PacketMine : Module(
                 if ((System.currentTimeMillis() - data.startTime) < data.breakTime) return@let
                 if (data.blockPos.distanceSqTo(player.blockPos) >= maxRange.sq) {
                     blockData = null
+                    doubleData = null
+                    onDoubleBreak = false
+                    connection.sendPacket(CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId))
                     return@let
                 }
-                if (player.distanceSqToCenter(data.blockPos) <= 5.15.sq) {
+                if (player.distanceSqToCenter(data.blockPos) <= maxRange.sq) {
                     if (((mode0.ignoreCheck && packetSpamming) || !fastSyncCheck) && !player.isUsingItem) {
                         if (rotate.value) RotationManager.addRotations(data.blockPos, prio)
                         sendMinePacket(Stop, data)
@@ -231,10 +235,9 @@ object PacketMine : Module(
     fun SafeClientEvent.hookPos(blockPos: BlockPos, reset: Boolean = false) {
         if (reset) blockData = null
         world.getBlockState(blockPos).onBlockBreakStart(world, blockPos, player)
-        val side = getMiningSide(blockPos) ?: run {
-            val vector = player.eyePosition.subtract(blockPos.x + 0.5, blockPos.y + 0.5, blockPos.z + 0.5)
-            Direction.getFacing(vector.x.toFloat(), vector.y.toFloat(), vector.z.toFloat())
-        }
+        val vector = player.eyePosition.subtract(blockPos.x + 0.5, blockPos.y + 0.5, blockPos.z + 0.5)
+        val side =
+            getMiningSide(blockPos) ?: Direction.getFacing(vector.x.toFloat(), vector.y.toFloat(), vector.z.toFloat())
         BlockEvent(blockPos, side).post()
         timerReset()
     }
@@ -252,12 +255,17 @@ object PacketMine : Module(
         val toolSlot = blockData.mineTool ?: return
         if (db) {
             if (doubleBreak) {
-                if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime + backTime)) {
+                if (onDoubleBreak) {
+                    doubleData?.let { RotationManager.addRotations(it.blockPos) }
+                }
+                if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime + backTime) && onDoubleBreak) {
+                    onDoubleBreak = false
                     connection.sendPacket(CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId))
                     resetHotbar()
                     doubleData = null
                     return
-                } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime) && !player.usingItem) {
+                } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime) && !player.usingItem && !onDoubleBreak) {
+                    onDoubleBreak = true
                     connection.sendPacket(CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId))
                     connection.sendPacket(UpdateSelectedSlotC2SPacket(toolSlot.hotbarSlot))
                     if (setGround) player.onGround = true

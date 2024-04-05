@@ -54,12 +54,7 @@ abstract class HUDModule(
         safeEventListener<Render2DEvent> {
             if (mc.currentScreen !is HudEditorScreen)
                 return@safeEventListener
-
-            if (UiSetting.getThemeSetting().rounded) {
-                Render2DEngine.drawRound(it.drawContext.matrices, x, y, width, height, 2f, Color(0, 0, 0, 50))
-            } else {
-                Render2DEngine.drawRect(it.drawContext.matrices, x, y, width, height, Color(0, 0, 0, 50))
-            }
+            Render2DEngine.drawRect(it.drawContext.matrices, x, y, width, height, Color(0, 0, 0, 50))
         }
     }
 

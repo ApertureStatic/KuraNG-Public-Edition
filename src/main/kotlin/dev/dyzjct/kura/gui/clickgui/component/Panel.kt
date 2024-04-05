@@ -79,38 +79,12 @@ class Panel(
                 x, y, width, height, primaryColor
             )
         } else {
-            if (UiSetting.getThemeSetting().rounded) {
-                if (UiSetting.getThemeSetting().panelBorder) {
-                    drawRect(x, y + selfHeight * 0.4f, 0.5f, height, primaryColor)
-                    drawRect(x + width - 0.5f, y + selfHeight * 0.4f, 0.5f, height, primaryColor)
-                }
-                drawRoundRect(x, y, width, selfHeight, primaryColor)
-                drawRect(
-                    x,
-                    y + height - (selfHeight * 0.1f + 0.2f),
-                    width,
-                    2.5f,
-                    Color(
-                        primaryColor.red,
-                        primaryColor.green,
-                        primaryColor.blue,
-                        if (primaryColor.alpha - 50 >= 0) primaryColor.alpha - 50 else primaryColor.alpha
-                    )
+            if (UiSetting.getThemeSetting().panelBorder) {
+                drawOutlineRect(
+                    x, y, width, height, primaryColor
                 )
-                drawRoundRect(x, y + height - (selfHeight * 0.1f + 0.2f), width, selfHeight * 0.7f, primaryColor)
-            } else {
-                if (UiSetting.getThemeSetting().panelBorder) {
-                    drawRect(
-                        x, y, 0.5f, height + selfHeight * 0.7f - 0.1f, primaryColor
-                    )
-                    drawRect(
-                        x + width - 0.5f, y, 0.5f, height + selfHeight * 0.7f - 0.1f, primaryColor
-                    )
-                }
-
-                drawRect(x, y, width, selfHeight, primaryColor)
-                drawRect(x, y + height - (selfHeight * 0.1f + 0.2f), width, selfHeight * 0.7f, primaryColor)
             }
+            drawRect(x, y, width, selfHeight, primaryColor)
         }
 
         drawText(

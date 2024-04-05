@@ -5,6 +5,7 @@ import dev.dyzjct.kura.module.modules.movement.Velocity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
+import net.minecraft.entity.data.TrackedData;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -19,6 +20,8 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(Entity.class)
 public abstract class MixinEntity {
+    @Shadow
+    static TrackedData<Byte> FLAGS;
     @Shadow
     public Vec3d pos;
     @Shadow

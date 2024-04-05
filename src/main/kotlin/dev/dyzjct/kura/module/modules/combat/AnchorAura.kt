@@ -1,11 +1,9 @@
 package dev.dyzjct.kura.module.modules.combat
 
 import base.events.RunGameLoopEvent
-import base.events.WorldEvent
 import base.events.render.Render3DEvent
 import base.system.event.SafeClientEvent
 import base.system.event.safeConcurrentListener
-import base.system.event.safeEventListener
 import base.utils.block.BlockUtil.getAnchorBlock
 import base.utils.block.BlockUtil.getNeighbor
 import base.utils.chat.ChatUtil
@@ -60,10 +58,9 @@ object AnchorAura : Module(
     private var maxSelfDamage = isetting("MaxSelfDamage", 10, 0, 36)
     private var minDamage = dsetting("MinDamage", 4.0, 0.0, 36.0)
     private val globalDelay by isetting("GlobalDelay", 50, 0, 500)
-    private var preBreak = bsetting("PreBreak", true)
-    private var postBreak = bsetting("PostBreak", true)
     private var airPlace = bsetting("AirPlace", false)
     private val strictDirection = bsetting("StrictDirection", false)
+    private val disableCrystalAura by bsetting("DisableCAura", false)
     private val rotate = bsetting("Rotation", false)
     private val swing = bsetting("Swing", true)
     private val packetSwing by bsetting("PacketSwing", true).isTrue(swing)
@@ -74,18 +71,15 @@ object AnchorAura : Module(
     private val fadeLength = isetting("FadeLength", 200, 0, 1000).isTrue(render)
     private val debug = bsetting("Debug", false)
 
-    private val disableCrystalAura by bsetting("DisableCAura", false)
-    private var lastCrystalAuraState = false
-    private val globalTimer = TimerUtils()
-    private val packetTimer = TimerUtils()
-    private var placeInfo: PlaceInfo? = null
-    private var rawPosList = CopyOnWriteArrayList<BlockPos>()
-
-    //RenderNew
     private var lastBlockPos: BlockPos? = null
     private var lastRenderPos: Vec3d? = null
     private var prevPos: Vec3d? = null
     private var currentPos: Vec3d? = null
+    private var lastCrystalAuraState = false
+    private var placeInfo: PlaceInfo? = null
+    private val globalTimer = TimerUtils()
+    private var rawPosList = CopyOnWriteArrayList<BlockPos>()
+
     private var lastTargetDamage = 0.0
     private var lastUpdateTime = 0L
     private var startTime = 0L
@@ -93,7 +87,6 @@ object AnchorAura : Module(
 
     override fun onEnable() {
         globalTimer.reset()
-        packetTimer.reset()
         prevPos = null
         currentPos = null
         lastRenderPos = null
@@ -228,7 +221,7 @@ object AnchorAura : Module(
                     it !is ItemEntity;it.isAlive;it.boundingBox.intersects(
                     placeBox
                 )
-                }) continue
+                } && world.isAir(pos)) continue
             val selfDamage = anchorDamage(player, player.pos, player.boundingBox, blockPos)
             if (player.scaledHealth - selfDamage <= noSuicide.value) continue
             if (selfDamage > maxSelfDamage.value) continue
@@ -276,19 +269,6 @@ object AnchorAura : Module(
     }
 
     init {
-        safeEventListener<WorldEvent.RenderUpdate> { event ->
-            if (postBreak.value) {
-                placeInfo?.let {
-                    if (it.blockPos == event.blockPos) {
-                        if (packetTimer.tickAndReset(globalDelay)) {
-                            if (rotate.value) RotationManager.addRotations(it.blockPos, true)
-                            checkGlowPlaceable(it, Items.GLOWSTONE)
-                        }
-                    }
-                }
-            }
-        }
-
         safeConcurrentListener<RunGameLoopEvent.Tick> {
             runCatching {
                 rawPosList = getPlaceablePos()
@@ -296,9 +276,6 @@ object AnchorAura : Module(
                 placeInfo?.let { placeInfo ->
                     if (rotate.value) RotationManager.addRotations(placeInfo.blockPos)
                     if (globalTimer.tickAndReset(globalDelay)) {
-                        if (preBreak.value) {
-                            checkGlowPlaceable(placeInfo, Items.GLOWSTONE)
-                        }
                         globalPlace(Items.RESPAWN_ANCHOR, placeInfo, true)
                         checkGlowPlaceable(placeInfo, Items.GLOWSTONE, true)
                         globalPlace(Items.RESPAWN_ANCHOR, placeInfo, false)

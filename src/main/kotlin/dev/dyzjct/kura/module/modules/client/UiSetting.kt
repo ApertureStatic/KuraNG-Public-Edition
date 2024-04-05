@@ -32,7 +32,6 @@ object UiSetting : Module(
     private val settingPanelColor = csetting("SettingPanel", Color(10, 10, 10, 200)).enumIs(theme, Theme.Custom)
     private val fillPanelTitle = bsetting("FillPanelTitle", true).enumIs(theme, Theme.Custom)
     private val panelBorder = bsetting("PanelBorder", true).enumIs(theme, Theme.Custom)
-    private val rounded = bsetting("Rounded", true).enumIs(theme, Theme.Custom)
 
     //    SytRender Type
     private val sytRender by bsetting("SytRender", false).enumIs(theme, Theme.Custom)
@@ -73,8 +72,7 @@ object UiSetting : Module(
                     Color(25, 25, 25, 200),
                     Color(10, 10, 10, 200),
                     fillPanelTitle = true,
-                    panelBorder = false,
-                    rounded = false,
+                    panelBorder = true,
                     syt = true,
                     sytMode = SytMode.Down,
                     sytColor = Color(86, 190, 208, 140),
@@ -92,7 +90,6 @@ object UiSetting : Module(
                     Color(91, 128, 185, 200),
                     fillPanelTitle = true,
                     panelBorder = false,
-                    rounded = false,
                     syt = false,
                     sytMode = SytMode.Down,
                     sytColor = sytColor,
@@ -110,7 +107,6 @@ object UiSetting : Module(
                     Color(241, 219, 206, 200),
                     fillPanelTitle = true,
                     panelBorder = false,
-                    rounded = false,
                     syt = false,
                     sytMode = SytMode.Down,
                     sytColor = sytColor,
@@ -128,7 +124,6 @@ object UiSetting : Module(
                     Color(48, 39, 42, 200),
                     fillPanelTitle = true,
                     panelBorder = true,
-                    rounded = false,
                     syt = false,
                     sytMode = SytMode.Down,
                     sytColor = sytColor,
@@ -145,7 +140,6 @@ object UiSetting : Module(
                     settingPanelColor.value,
                     fillPanelTitle.value,
                     panelBorder.value,
-                    rounded.value,
                     sytRender,
                     sytMode.value as SytMode,
                     sytColor,
@@ -163,7 +157,6 @@ object UiSetting : Module(
         val setting: Color,
         val fillPanelTitle: Boolean,
         val panelBorder: Boolean,
-        val rounded: Boolean,
         val syt: Boolean,
         val sytMode: SytMode,
         val sytColor: Color,

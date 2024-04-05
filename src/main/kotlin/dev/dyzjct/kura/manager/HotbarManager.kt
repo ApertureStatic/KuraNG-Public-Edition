@@ -12,6 +12,7 @@ import base.utils.inventory.slot.hotbarSlots
 import base.utils.inventory.slot.offhandSlot
 import base.utils.player.updateController
 import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.utils.inventory.*
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.findItemInInventory
 import net.minecraft.client.network.ClientPlayerEntity
@@ -122,6 +123,67 @@ object HotbarManager : AlwaysListening {
         crossinline block: () -> Unit
     ): Boolean {
         if (CombatSystem.eating && player.isUsingItem) return false
+        if (PacketMine.isEnabled && PacketMine.doubleBreak && PacketMine.onDoubleBreak) return false
+        var notNullSlot = false
+        when (CombatSystem.mode.value) {
+            CombatSystem.SpoofMode.Normal -> {
+                player.hotbarSlots.firstItem(item)?.let { slot ->
+                    notNullSlot = true
+                    synchronized(HotbarManager) {
+                        if (!isCheck) {
+                            spoofHotbar(slot)
+                            block.invoke()
+                            resetHotbar()
+                        }
+                    }
+                }
+            }
+
+            CombatSystem.SpoofMode.Swap -> {
+                player.allSlots.firstItem(item)
+                    ?.let { thisItem -> HotbarSlot(thisItem) }?.let { slot ->
+                        notNullSlot = true
+                        if (!isCheck) {
+                            synchronized(HotbarManager) {
+                                val swap = slot.hotbarSlot != serverSideHotbar
+                                if (swap) {
+                                    inventoryTaskNow {
+                                        val hotbarSlot = player.hotbarSlots[serverSideHotbar]
+                                        swapWith(slot, hotbarSlot)
+                                        action { block.invoke() }
+                                        swapWith(slot, hotbarSlot)
+                                    }
+                                } else {
+                                    block.invoke()
+                                }
+                            }
+                        }
+                    }
+            }
+
+            CombatSystem.SpoofMode.China -> {
+                findItemInInventory(item)?.let { slot ->
+                    notNullSlot = true
+                    if (!isCheck) {
+                        synchronized(HotbarManager) {
+                            val old = player.inventory.selectedSlot
+                            inventorySwap(slot, player.inventory.selectedSlot)
+                            block.invoke()
+                            inventorySwap(slot, player.inventory.selectedSlot)
+                            doSwap(old)
+                        }
+                    }
+                }
+            }
+        }
+        return notNullSlot
+    }
+
+    inline fun SafeClientEvent.spoofHotbarNoAnyCheck(
+        item: Item,
+        isCheck: Boolean = false,
+        crossinline block: () -> Unit
+    ): Boolean {
         var notNullSlot = false
         when (CombatSystem.mode.value) {
             CombatSystem.SpoofMode.Normal -> {

@@ -6,6 +6,7 @@ import base.utils.block.BlockUtil.getNeighbor
 import base.utils.block.isLiquidBlock
 import base.utils.block.isWater
 import base.utils.entity.EntityUtils.isInBox
+import base.utils.entity.EntityUtils.isInWeb
 import base.utils.extension.fastPos
 import base.utils.extension.position
 import base.utils.extension.positionRotation
@@ -13,17 +14,16 @@ import base.utils.extension.sendSequencedPacket
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.toBlockPos
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import net.minecraft.block.*
 import net.minecraft.entity.Entity
 import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
@@ -48,7 +48,6 @@ object Burrow : Module(
     private var packetMode = msetting("PacketMode", PacketMode.Normal)
     private var bypass by bsetting("Bypass", false)
     private var cancelMotion by bsetting("CancelMotion", false)
-    private var spoofBypass by bsetting("SpoofBypass", false)
     private var strictDirection by bsetting("StrictDirection", false)
     private var delay by isetting("Delay", 50, 0, 250)
     private var timer = TimerUtils()
@@ -71,6 +70,10 @@ object Burrow : Module(
                 return@onMotion
             }
 
+            if (isInWeb(player)) return@onMotion
+
+            if (!spoofHotbarNoAnyCheck(Items.OBSIDIAN, true) {}) return@onMotion
+
             if (cancelMotion) player.velocity.y = 0.0
 
             if (canPlace(player.blockPos.down())) {
@@ -80,11 +83,11 @@ object Burrow : Module(
                 sendPlayerRotation(player.yaw, 90f, false)
                 RotationManager.startRotation()
                 doSneak()
-                placeBlock(player.blockPos.down(), slot)
-                place(vec.add(0.3, 0.3, 0.3), slot)
-                place(vec.add(-0.3, 0.3, -0.3), slot)
-                place(vec.add(-0.3, 0.3, 0.3), slot)
-                place(vec.add(0.3, 0.3, -0.3), slot)
+                placeBlock(player.blockPos.down())
+                place(vec.add(0.3, 0.3, 0.3))
+                place(vec.add(-0.3, 0.3, -0.3))
+                place(vec.add(-0.3, 0.3, 0.3))
+                place(vec.add(0.3, 0.3, -0.3))
                 cancelSneak()
             }
             val vec = player.pos
@@ -126,18 +129,15 @@ object Burrow : Module(
                     }
                 }
             }
-            if (rotate) RotationManager.addRotations(player.yaw, 90f, true)
-            sendPlayerRotation(-180f, 90f, false)
-            doSneak()
-            place(player.pos, slot)
-            place(vec.add(0.3, 0.3, 0.3), slot)
-            place(vec.add(-.3, 0.3, -0.3), slot)
-            place(vec.add(-0.3, 0.3, 0.3), slot)
-            place(vec.add(0.3, 0.3, -0.3), slot)
-            cancelSneak()
 
-            // stop move
-            // player.input.resetMove()
+            if (rotate) sendPlayerRotation(player.yaw, 90f, player.onGround)
+            doSneak()
+            place(player.pos)
+            place(vec.add(0.3, 0.3, 0.3))
+            place(vec.add(-.3, 0.3, -0.3))
+            place(vec.add(-0.3, 0.3, 0.3))
+            place(vec.add(0.3, 0.3, -0.3))
+            cancelSneak()
 
             when (packetMode.value) {
                 PacketMode.Normal -> {
@@ -239,7 +239,7 @@ object Burrow : Module(
         timer.reset()
     }
 
-    private fun SafeClientEvent.place(vec3d: Vec3d, slot: HotbarSlot) {
+    private fun SafeClientEvent.place(vec3d: Vec3d) {
         if (getNeighbor(
                 vec3d.toBlockPos(), strictDirection
             ) == null
@@ -248,7 +248,9 @@ object Burrow : Module(
         }
         val pos = vec3d.toBlockPos()
 
-        placeBlock(pos.down(), slot)
+        if (rotate) RotationManager.addRotations(player.yaw, 90f, true)
+
+        placeBlock(pos.down())
         if (!canPlace(pos)) {
             return
         }
@@ -256,28 +258,20 @@ object Burrow : Module(
         if (rotate) {
             RotationManager.addRotations(player.yaw, 90.0f, true)
         }
-        if (spoofBypass) {
-            swapSpoof(slot) {
-                sendSequencedPacket(world) {
-                    fastPos(pos, strictDirection, sequence = it)
-                }
-            }
-        } else {
-            spoofHotbar(slot) {
-                sendSequencedPacket(world) {
-                    fastPos(pos, strictDirection, sequence = it)
-                }
+        spoofHotbarNoAnyCheck(Items.OBSIDIAN) {
+            sendSequencedPacket(world) {
+                fastPos(pos, strictDirection, sequence = it)
             }
         }
         connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
     }
 
-    private fun SafeClientEvent.placeBlock(pos: BlockPos, slot: HotbarSlot) {
+    private fun SafeClientEvent.placeBlock(pos: BlockPos) {
         if (!canPlace(pos)) return
         if (rotate) {
             RotationManager.addRotations(player.yaw, 90.0f, true)
         }
-        spoofHotbar(slot) {
+        spoofHotbarNoAnyCheck(Items.OBSIDIAN) {
             sendSequencedPacket(world) {
                 fastPos(pos, strictDirection, sequence = it)
             }

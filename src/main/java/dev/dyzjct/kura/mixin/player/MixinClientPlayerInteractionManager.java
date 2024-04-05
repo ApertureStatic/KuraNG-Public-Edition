@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.mixin.player;
 
 import dev.dyzjct.kura.mixins.IClientPlayerInteractionManager;
-import dev.dyzjct.kura.module.modules.misc.PacketEat;
+import dev.dyzjct.kura.module.modules.misc.BetterEat;
 import dev.dyzjct.kura.module.modules.player.Reach;
 import base.events.block.BlockEvent;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
@@ -34,7 +34,7 @@ public abstract class MixinClientPlayerInteractionManager implements IClientPlay
     @Inject(method = "stopUsingItem", at = @At("HEAD"), cancellable = true)
     public void onStoppedUsingItem(PlayerEntity playerIn, CallbackInfo ci) {
         if (playerIn.getActiveItem().getItem().isFood() || playerIn.getActiveItem().getItem() instanceof PotionItem) {
-            if (playerIn.isUsingItem() && PacketEat.INSTANCE.isEnabled()) {
+            if (playerIn.isUsingItem() && BetterEat.INSTANCE.getPacketEat() && BetterEat.INSTANCE.isEnabled()) {
                 this.syncSelectedSlot();
                 playerIn.stopUsingItem();
                 ci.cancel();
