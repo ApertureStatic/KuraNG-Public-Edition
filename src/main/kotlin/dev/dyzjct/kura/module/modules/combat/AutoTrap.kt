@@ -1,23 +1,24 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.manager.EntityManager
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.RotationManager
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.animations.sq
 import base.utils.combat.getTarget
 import base.utils.entity.EntityUtils.spoofSneak
 import base.utils.extension.fastPos
 import base.utils.extension.sendSequencedPacket
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
+import base.utils.math.distanceSqToCenter
 import base.utils.world.isPlaceable
+import dev.dyzjct.kura.manager.EntityManager
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.animations.sq
 import net.minecraft.block.Blocks
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
-import base.utils.math.distanceSqToCenter
 
 @Suppress("unused")
 object AutoTrap : Module(name = "AutoTrap", "自动陷阱", category = Category.COMBAT) {
@@ -33,12 +34,12 @@ object AutoTrap : Module(name = "AutoTrap", "自动陷阱", category = Category.
 
     init {
         onLoop {
-            val target = getTarget(placeRange.toDouble()) ?: return@onLoop
+            val target = getTarget(CombatSystem.targetRange) ?: return@onLoop
             player.hotbarSlots.firstBlock(Blocks.OBSIDIAN)?.let { hotbarSlot ->
                 outerLoop@ for (pos in (placeMode.value as Mode).posArray) {
                     val placePos = target.blockPos.add(pos)
                     if (!world.isPlaceable(placePos)) continue
-                    if (player.distanceSqToCenter(placePos) > placeRange.sq) continue
+                    if (player.distanceSqToCenter(placePos) > CombatSystem.placeRange.sq) continue
                     for (e in EntityManager.entity) {
                         if (e.boundingBox.intersects(Box(placePos))) continue@outerLoop
                     }

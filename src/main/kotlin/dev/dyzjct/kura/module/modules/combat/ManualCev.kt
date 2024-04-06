@@ -29,7 +29,6 @@ object ManualCev : Module(
     category = Category.COMBAT,
     description = "Place and attack crystal to MinePos."
 ) {
-    private val mode by msetting("SwitchMode", Mode.Spoof)
     private val delay by isetting("Delay", 50, 0, 500)
     private val range by isetting("range", 5, 0, 10)
     private val rotation by bsetting("Rotation", false)
@@ -112,9 +111,5 @@ object ManualCev : Module(
 
     enum class CevStage {
         Block, Place, Attack, Mine
-    }
-
-    enum class Mode {
-        Spoof, SpoofBypass
     }
 }

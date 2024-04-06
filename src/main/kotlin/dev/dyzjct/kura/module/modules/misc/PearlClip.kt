@@ -4,7 +4,7 @@ import base.system.event.SafeClientEvent
 import base.utils.entity.EntityUtils.autoCenter
 import base.utils.extension.sendSequencedPacket
 import base.utils.player.RotationUtils.getPlayerDirection
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -23,14 +23,13 @@ object PearlClip : Module(
     private val better by bsetting("LookBetter", true)
     private val bedRock by bsetting("BedRock", false)
     private val one by bsetting("OneHeight", true)
-    private val bypass by bsetting("SpoofBypass", false)
     private val safe = msetting("SafeMode", SafeMode.Center)
     private val boundary by bsetting("Boundary", false).enumIs(safe, SafeMode.Smart)
 
 
     init {
         onLoop {
-            if ((CombatSystem.eating && player.isUsingItem) || !spoofHotbarWithSetting(
+            if ((CombatSystem.eating && player.isUsingItem) || !spoofHotbarNoAnyCheck(
                     Items.ENDER_PEARL,
                     true
                 ) {} || !world.isAir(player.blockPos)
@@ -89,7 +88,7 @@ object PearlClip : Module(
                         )
                     }
                 } else {
-                    spoofHotbarWithSetting(Items.ENDER_PEARL) {
+                    spoofHotbarNoAnyCheck(Items.ENDER_PEARL) {
                         sendSequencedPacket(
                             world
                         ) {

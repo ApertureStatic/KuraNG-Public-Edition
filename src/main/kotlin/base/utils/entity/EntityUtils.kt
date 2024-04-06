@@ -215,9 +215,9 @@ object EntityUtils : MinecraftWrapper {
         )
     }
 
-    fun SafeClientEvent.boxCheck(box: Box, entity: Boolean = false): Boolean {
+    fun SafeClientEvent.boxCheck(box: Box, item: Boolean = false): Boolean {
         return world.entities.none {
-            (it !is ItemEntity || !entity);it.isAlive;it.boundingBox.intersects(box)
+            (it !is ItemEntity || !item);it.isAlive;it.boundingBox.intersects(box)
         }
     }
 

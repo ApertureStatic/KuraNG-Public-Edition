@@ -11,6 +11,8 @@ import base.utils.entity.EntityUtils.spoofSneak
 import base.utils.extension.fastPos
 import base.utils.hole.SurroundUtils
 import base.utils.hole.SurroundUtils.checkHole
+import base.utils.math.distanceSqTo
+import base.utils.math.sq
 import base.utils.math.toBlockPos
 import base.utils.player.getTargetSpeed
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
@@ -43,7 +45,6 @@ object AutoWeb : Module(
     private var inside = bsetting("Inside", false)
     private var strictDirection = bsetting("StrictDirection", false)
     private var air = bsetting("AirPlace", false)
-    private var range = isetting("Range", 5, 1, 6)
     private var predictTicks = isetting("PredictTicks", 8, 0, 20)
     private var smartDelay = bsetting("SmartDelay", false)
     private var delay = isetting("minDelay", 25, 0, 500)
@@ -72,7 +73,7 @@ object AutoWeb : Module(
             if (!spoofHotbarWithSetting(Items.COBWEB, true) {}) {
                 return@onLoop
             }
-            target = getTarget(range.value.toDouble())
+            target = getTarget(CombatSystem.targetRange)
             if (onAnchorPlacing && betterAnchor.value) return@onLoop
             target?.let {
                 val targetDistance = getPredictedTarget(it, predictTicks.value).blockPos
@@ -92,7 +93,11 @@ object AutoWeb : Module(
                             if (System.currentTimeMillis() - mine.start >= mine.mine) return@onPacket
                         }
 
-                        if (world.isAir(pos) && (getNeighbor(pos, strictDirection.value) != null || air.value)) {
+                        if (world.isAir(pos) && (getNeighbor(
+                                pos,
+                                strictDirection.value
+                            ) != null || air.value) && player.distanceSqTo(pos) < CombatSystem.placeRange.sq
+                        ) {
                             if (timerDelay.tickAndReset(delay)) {
                                 if (spoofRotations.value) {
                                     RotationManager.addRotations(pos)
@@ -130,6 +135,10 @@ object AutoWeb : Module(
                         packet(it.pos.add(-0.3, 0.3, -0.3).toBlockPos())
                         packet(it.pos.add(-0.3, 0.3, 0.3).toBlockPos())
                         packet(it.pos.add(0.3, 0.3, -0.3).toBlockPos())
+                        packet(it.pos.add(0.3, 0.3, 0.3).toBlockPos().down())
+                        packet(it.pos.add(-0.3, 0.3, -0.3).toBlockPos().down())
+                        packet(it.pos.add(-0.3, 0.3, 0.3).toBlockPos().down())
+                        packet(it.pos.add(0.3, 0.3, -0.3).toBlockPos().down())
                         if (facePlace.value) {
                             packet(it.pos.add(0.3, 0.3, 0.3).toBlockPos().up(), true)
                             packet(it.pos.add(-0.3, 0.3, -0.3).toBlockPos().up(), true)

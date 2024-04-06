@@ -13,7 +13,6 @@ import base.system.render.graphic.Render2DEngine
 import base.system.render.graphic.Render3DEngine
 import base.system.util.color.ColorRGB
 import base.system.util.delegate.CachedValueN
-import base.utils.block.BlockUtil.canBreak
 import base.utils.block.BlockUtil.canSee
 import base.utils.chat.ChatUtil
 import base.utils.combat.CrystalUtils
@@ -47,6 +46,7 @@ import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.combat.AnchorAura
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.isResistant
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.calcCollidingCrystalDamage
@@ -84,7 +84,6 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.item.SwordItem
 import net.minecraft.item.ToolItem
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket
@@ -124,7 +123,6 @@ object AutoCrystal : Module(
     private var packetPlace0 = (packetPlaceMode.value as PacketPlaceMode)
     private var placeSwing = bsetting("PlaceSwing", false).enumIs(p, Page.PLACE)
     private var placeDelay = isetting("PlaceDelay", 45, 1, 1000).enumIs(p, Page.PLACE)
-    var placeRange = dsetting("PlaceRange", 5.5, 1.0, 6.0).enumIs(p, Page.PLACE)
     private var placeMinDmg = dsetting("PlaceMinDmg", 4.0, 0.0, 36.0).enumIs(p, Page.PLACE)
     private var placeMaxSelf = isetting("PlaceMaxSelfDmg", 10, 0, 36).enumIs(p, Page.PLACE)
     private var placeBalance = fsetting("PlaceBalance", -3f, -10f, 10f).enumIs(p, Page.PLACE)
@@ -135,7 +133,6 @@ object AutoCrystal : Module(
         "PacketDelay", 35, 0, 50, 1
     ).isTrue { explodeMode.value == ExplodeMode.Sync || explodeMode.value == ExplodeMode.Both }.enumIs(p, Page.BREAK)
     private var hitDelay = isetting("HitDelay", 55, 0, 500, 1).enumIs(p, Page.BREAK)
-    private var breakRange = fsetting("BreakRange", 5.5f, 1f, 6f).enumIs(p, Page.BREAK)
     private var breakMinDmg = dsetting("BreakMinDmg", 1.0, 0.0, 36.0).enumIs(p, Page.BREAK)
     private var breakMaxSelf = isetting("BreakMaxSelf", 12, 0, 36).enumIs(p, Page.BREAK)
     private val breakBalance = fsetting("BreakBalance", -7.0f, -10.0f, 10.0f).enumIs(p, Page.BREAK)
@@ -163,7 +160,6 @@ object AutoCrystal : Module(
     private val ddosDamageStep = fsetting("DdosDamageStep", 0.1f, 0.1f, 5.0f).isTrue(armorDdos).enumIs(p, Page.FORCE)
 
     //Page Lethal
-    private var antiSurround = bsetting("AntiSurround", false).enumIs(p, Page.LETHAL)
     private var blockBoost = bsetting("BlockBoost", false).enumIs(p, Page.LETHAL)
 
     //Page Render
@@ -193,6 +189,7 @@ object AutoCrystal : Module(
     private var crystalInteracting: EndCrystalEntity? = null
     private var obiSlot: HotbarSlot? = null
     private var render: BlockPos? = null
+    private var lastAnchorAuraState = false
     private var isFacePlacing = false
     private var bypassPacket = false
     private var ddosArmor = false
@@ -204,7 +201,6 @@ object AutoCrystal : Module(
     var crystalPriority = Priority.Crystal
     var placeInfo: PlaceInfo? = null
 
-    //RenderNew
     private var lastBlockPos: BlockPos? = null
     private var lastRenderPos: Vec3d? = null
     private var prevPos: Vec3d? = null
@@ -234,14 +230,6 @@ object AutoCrystal : Module(
                         }
                     }
                 }
-
-                is PlayerActionC2SPacket -> {
-                    val action = event.packet.action
-                    if (action == PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK || action == PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) {
-                        doAntiSurround(event.packet.pos)
-                    }
-                }
-
             }
         }
 
@@ -307,24 +295,10 @@ object AutoCrystal : Module(
         safeParallelListener<TickEvent.Pre> {
             updateDdosQueue()
             blockBoost()
-            for (target in EntityManager.players) {
-                if (isntValid(target, placeRange.value, old.value, wallRange.value)) continue
-                if (PacketMine.isEnabled) {
-                    PacketMine.blockData?.let {
-                        val holeInfo = HoleManager.getHoleInfo(target)
-                        if ((holeInfo.isHole && holeInfo.surroundPos.contains(it.blockPos)) || (canBreak(
-                                target.blockPos, false
-                            ) && it.blockPos == target.blockPos)
-                        ) {
-                            doAntiSurround(it.blockPos)
-                        }
-                    }
-                }
-            }
         }
 
         safeEventListener<WorldEvent.ClientBlockUpdate>(114514) {
-            if (player.distanceSqToCenter(it.pos) < (placeRange.value.ceilToInt() + 1).sq && isResistant(it.oldState) != isResistant(
+            if (player.distanceSqToCenter(it.pos) < (CombatSystem.placeRange.ceilToInt() + 1).sq && isResistant(it.oldState) != isResistant(
                     it.newState
                 )
             ) {
@@ -419,48 +393,11 @@ object AutoCrystal : Module(
         return Vec2f(yaw, pitch)
     }
 
-    private fun SafeClientEvent.doAntiSurround(pos: BlockPos?) {
-        if (antiSurround.value) {
-            if (EntityManager.players.isEmpty()) return
-            if (pos == null) return
-            for (target in EntityManager.players) {
-                if (isntValid(target, placeRange.value, old.value, wallRange.value)) continue
-                if (target.pos.y != pos.y.toDouble()) continue
-                val burrowPos = target.blockPos
-                val holeInfo = HoleManager.getHoleInfo(target)
-                val finalPos = if (canBreak(burrowPos, false)) {
-                    burrowPos
-                } else {
-                    pos
-                }
-                val isBurrowPos = finalPos == burrowPos
-                for (facing in offsetFacing) {
-                    if (!holeInfo.isHole && !isBurrowPos) continue
-                    val placePos = finalPos.offset(facing)
-                    if (!getAntiSurroundPos(placePos)) continue
-                    if (!world.noCollision(placePos)) continue
-                    if (debug.value) {
-                        ChatUtil.sendMessage("AntiSurrounding")
-                    }
-                    doPlace(placePos.down()) {
-                        doRotate(CurrentState.Placing, placePos.down())
-                    }
-                    render = placePos.down()
-                    break
-                }
-            }
-        }
-    }
-
-    private fun SafeClientEvent.getAntiSurroundPos(posOffset: BlockPos): Boolean {
-        return world.isAir(posOffset) && canPlaceCrystal(posOffset.down(), oldPlace = old.value)
-    }
-
     private fun SafeClientEvent.blockBoost() {
         if (blockBoost.value) {
             if (EntityManager.players.isEmpty()) return
             for (target in EntityManager.players) {
-                if (isntValid(target, placeRange.value, old.value, wallRange.value)) continue
+                if (isntValid(target, CombatSystem.placeRange, old.value, wallRange.value)) continue
                 val calcOffset = target.blockPos
 
                 for (facing in offsetFacing) {
@@ -835,7 +772,7 @@ object AutoCrystal : Module(
     private fun SafeClientEvent.getCrystalList(): List<EndCrystalEntity> {
         return EntityManager.entity.asSequence().filterIsInstance<EndCrystalEntity>().filter { it.isAlive }.filter {
             checkBreakRange(
-                it, breakRange.value, old.value, wallRange.value
+                it, CombatSystem.attackRange.toFloat(), old.value, wallRange.value
             )
         }.toList()
     }
@@ -1128,7 +1065,7 @@ object AutoCrystal : Module(
                 val crystalZ = it.z + 0.5
                 player.distanceSqTo(
                     crystalX, crystalY, crystalZ
-                ) <= placeRange.value.sq && (!old.value || player.distanceSqTo(it.toCenterPos()) <= wallRange.value || canSee(
+                ) <= CombatSystem.placeRange.sq && (!old.value || player.distanceSqTo(it.toCenterPos()) <= wallRange.value || canSee(
                     it.x.toDouble(), it.y.toDouble(), it.z.toDouble()
                 ))
             }.filter { canPlaceCrystal(it, prio, old.value) }.collect(Collectors.toList())
@@ -1256,6 +1193,10 @@ object AutoCrystal : Module(
             placeTimer.reset()
             calcTimer.reset()
             fpTimer.reset()
+            if (CombatSystem.autoToggle && AnchorAura.isEnabled) {
+                if (CombatSystem.mainToggle != CombatSystem.MainToggle.Crystal)lastAnchorAuraState = true
+                AnchorAura.disable()
+            }
         }
     }
 
@@ -1273,6 +1214,10 @@ object AutoCrystal : Module(
             lastUpdateTime = 0L
             startTime = 0L
             scale = 0.0f
+            if (lastAnchorAuraState) {
+                lastAnchorAuraState = false
+                AnchorAura.enable()
+            }
         }
     }
 

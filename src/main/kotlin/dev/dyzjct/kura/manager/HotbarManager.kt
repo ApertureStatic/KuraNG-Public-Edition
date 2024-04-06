@@ -167,9 +167,9 @@ object HotbarManager : AlwaysListening {
                     if (!isCheck) {
                         synchronized(HotbarManager) {
                             val old = player.inventory.selectedSlot
-                            inventorySwap(slot, player.inventory.selectedSlot)
+                            inventorySwap(slot)
                             block.invoke()
-                            inventorySwap(slot, player.inventory.selectedSlot)
+                            inventorySwap(slot)
                             doSwap(old)
                         }
                     }
@@ -227,9 +227,9 @@ object HotbarManager : AlwaysListening {
                     if (!isCheck) {
                         synchronized(HotbarManager) {
                             val old = player.inventory.selectedSlot
-                            inventorySwap(slot, player.inventory.selectedSlot)
+                            inventorySwap(slot)
                             block.invoke()
-                            inventorySwap(slot, player.inventory.selectedSlot)
+                            inventorySwap(slot)
                             doSwap(old)
                         }
                     }
@@ -239,10 +239,9 @@ object HotbarManager : AlwaysListening {
         return notNullSlot
     }
 
-    fun SafeClientEvent.inventorySwap(slot: Int, selectedSlot: Int) {
-        if (slot - 36 == selectedSlot) return
+    fun SafeClientEvent.inventorySwap(slot: Int) {
         if (slot < 9) {
-            doSwap(slot)
+            spoofHotbar(slot)
             return
         }
         connection.sendPacket(PickFromInventoryC2SPacket(slot))

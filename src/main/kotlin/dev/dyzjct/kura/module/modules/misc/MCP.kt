@@ -5,7 +5,7 @@ import base.system.event.SafeClientEvent
 import base.system.event.safeEventListener
 import base.utils.chat.ChatUtil
 import base.utils.screen.ScreenUtils.safeReturn
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -21,7 +21,7 @@ object MCP : Module(
             if (it.button == MouseClickEvent.MouseButton.MIDDLE && it.action == MouseClickEvent.MouseAction.PRESS) {
                 if (mc.currentScreen.safeReturn()) return@safeEventListener
                 if (mc.targetedEntity == null) {
-                    spoofHotbarWithSetting(Items.ENDER_PEARL) {
+                    spoofHotbarNoAnyCheck(Items.ENDER_PEARL) {
                         interactPearl()
                     }
                 } else {

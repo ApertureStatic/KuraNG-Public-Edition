@@ -12,15 +12,16 @@ import base.utils.extension.fastPos
 import base.utils.hole.SurroundUtils
 import base.utils.hole.SurroundUtils.checkHole
 import base.utils.math.distanceSqToCenter
+import base.utils.math.sq
 import base.utils.world.noCollision
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.player.AntiMinePlace
 import dev.dyzjct.kura.module.modules.player.PacketMine.hookPos
 import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.animations.sq
 import net.minecraft.block.Blocks
 import net.minecraft.block.PistonBlock
 import net.minecraft.block.RedstoneBlock
@@ -39,8 +40,6 @@ object HolePush : Module(
     category = Category.COMBAT,
     description = "Push the target away from the hole."
 ) {
-    private val targetRange = dsetting("TargetRange", 7.0, 0.0, 10.0)
-    private val range by isetting("Range", 5, 0, 6)
     private val swing = bsetting("Swing", true)
     private val packet by bsetting("packet", true).isTrue(swing)
     private val rotate = bsetting("Rotation", false)
@@ -68,7 +67,7 @@ object HolePush : Module(
 
     init {
         onMotion {
-            val target = getTarget(targetRange.value)
+            val target = getTarget(CombatSystem.targetRange)
 
             if ((!spoofHotbarWithSetting(Items.PISTON, true) {} && !spoofHotbarWithSetting(
                     Items.STICKY_PISTON,
@@ -280,7 +279,7 @@ object HolePush : Module(
                 return StonePos(pos.offset(facing), facing)
             }
             if (facing != face) {
-                if (player.distanceSqToCenter(pos.offset(facing)) > range.sq) continue
+                if (player.distanceSqToCenter(pos.offset(facing)) > CombatSystem.placeRange.sq) continue
                 if (!boxCheck(Box(pos.offset(facing)))) continue
                 if (!world.noCollision(pos.offset(facing))) continue
                 if (!world.isAir(pos.offset(facing))) continue

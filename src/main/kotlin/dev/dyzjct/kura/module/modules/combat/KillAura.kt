@@ -1,29 +1,29 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.manager.RotationManager
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.client.UiSetting
-import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
-import dev.dyzjct.kura.utils.animations.sq
-import dev.dyzjct.kura.utils.inventory.HotbarSlot
-import dev.dyzjct.kura.utils.math.LagCompensator
 import base.system.event.SafeClientEvent
 import base.utils.combat.getEntityTarget
 import base.utils.concurrent.threads.runSafe
 import base.utils.graphics.ESPRenderer
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
+import base.utils.math.distanceSqTo
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.client.UiSetting
+import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
+import dev.dyzjct.kura.utils.animations.sq
+import dev.dyzjct.kura.utils.inventory.HotbarSlot
+import dev.dyzjct.kura.utils.math.LagCompensator
 import net.minecraft.entity.Entity
 import net.minecraft.item.ShieldItem
 import net.minecraft.item.SwordItem
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
 import net.minecraft.util.Hand
-import base.utils.math.distanceSqTo
 import kotlin.math.max
 
 object KillAura : Module(name = "KillAura", langName = "杀戮", category = Category.COMBAT) {
-    private var range by dsetting("Range", 4.5, 0.1, 6.0)
     private var animals by bsetting("Animals", false)
     private var mobs by bsetting("Mobs", false)
     private var swapWeapon by bsetting("SwapWeapon", false)
@@ -40,9 +40,13 @@ object KillAura : Module(name = "KillAura", langName = "杀戮", category = Cate
     init {
         onMotion {
             if (pauseIfCA) {
-                if (AutoCrystal.isEnabled && AutoCrystal.placeInfo != null) return@onMotion
+                if (AutoCrystal.isEnabled && AutoCrystal.placeInfo != null || AnchorAura.isEnabled && AnchorAura.placeInfo != null) return@onMotion
             }
-            target = getEntityTarget(if (autoBlock.value) max(range, abRange) else range, mob = mobs, ani = animals)
+            target = getEntityTarget(
+                if (autoBlock.value) max(CombatSystem.kaRange, abRange) else CombatSystem.kaRange,
+                mob = mobs,
+                ani = animals
+            )
             target?.let { target ->
                 val weaponSlot = player.hotbarSlots.firstItem<SwordItem, HotbarSlot>()
                 if (onlySword && player.mainHandStack.item !is SwordItem) return@onMotion
@@ -61,7 +65,7 @@ object KillAura : Module(name = "KillAura", langName = "杀戮", category = Cate
                         }
                     }
                 }
-                if (!delayCheck() || player.distanceSqTo(target.pos) > range.sq) return@onMotion
+                if (!delayCheck() || player.distanceSqTo(target.pos) > CombatSystem.kaRange.sq) return@onMotion
                 if (autoBlock.value && pauseInHit) {
                     if (player.offHandStack.item is ShieldItem) {
                         playerController.stopUsingItem(player)

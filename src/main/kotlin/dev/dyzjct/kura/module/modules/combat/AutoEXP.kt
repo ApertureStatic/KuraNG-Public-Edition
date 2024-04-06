@@ -6,6 +6,7 @@ import base.utils.entity.EntityUtils
 import base.utils.extension.sendSequencedPacket
 import base.utils.extension.synchronized
 import base.utils.math.distanceSqTo
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -73,10 +74,10 @@ object AutoEXP : Module(
         }
 
         onMotion { event ->
-            if (!spoofHotbarWithSetting(Items.EXPERIENCE_BOTTLE, true) {}) return@onMotion
+            if (!spoofHotbarNoAnyCheck(Items.EXPERIENCE_BOTTLE, true) {}) return@onMotion
             event.setRotation(player.yaw, 90f)
             if (packetTimer.tickAndReset(packetDelay.value)) {
-                spoofHotbarWithSetting(Items.EXPERIENCE_BOTTLE) {
+                spoofHotbarNoAnyCheck(Items.EXPERIENCE_BOTTLE) {
                     sendSequencedPacket(world) {
                         PlayerInteractItemC2SPacket(Hand.MAIN_HAND, it)
                     }

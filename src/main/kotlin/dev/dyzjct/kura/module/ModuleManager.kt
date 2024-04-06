@@ -82,7 +82,6 @@ object ModuleManager : AlwaysListening {
         registerModule(ManualCev)
         registerModule(AutoWeb)
         registerModule(HolePush)
-        registerModule(PistonAura)
         registerModule(Burrow)
         registerModule(HeadTrap)
         registerModule(InfiniteAura)

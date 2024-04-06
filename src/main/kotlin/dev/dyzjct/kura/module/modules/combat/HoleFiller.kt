@@ -1,21 +1,5 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.manager.*
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.player.AntiMinePlace
-import dev.dyzjct.kura.utils.animations.Easing
-import dev.dyzjct.kura.utils.animations.sq
-import dev.dyzjct.kura.utils.inventory.HotbarSlot
-import dev.dyzjct.kura.utils.runIf
-import it.unimi.dsi.fastutil.longs.Long2LongMaps
-import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet
-import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap
-import it.unimi.dsi.fastutil.objects.Object2LongMaps
-import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
 import base.events.WorldEvent
 import base.system.event.SafeClientEvent
 import base.system.event.listener
@@ -32,6 +16,26 @@ import base.utils.graphics.ESPRenderer
 import base.utils.hole.HoleType
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
+import base.utils.math.distance
+import base.utils.math.distanceSqToCenter
+import base.utils.math.isInSight
+import dev.dyzjct.kura.manager.*
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
+import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.player.AntiMinePlace
+import dev.dyzjct.kura.utils.animations.Easing
+import dev.dyzjct.kura.utils.animations.sq
+import dev.dyzjct.kura.utils.inventory.HotbarSlot
+import dev.dyzjct.kura.utils.runIf
+import it.unimi.dsi.fastutil.longs.Long2LongMaps
+import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet
+import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap
+import it.unimi.dsi.fastutil.objects.Object2LongMaps
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
 import net.minecraft.block.Blocks
 import net.minecraft.entity.Entity
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
@@ -39,9 +43,6 @@ import net.minecraft.util.Hand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
-import base.utils.math.distance
-import base.utils.math.distanceSqToCenter
-import base.utils.math.isInSight
 import java.awt.Color
 import java.util.*
 
@@ -58,7 +59,6 @@ object HoleFiller :
     private var distanceBalance = fsetting("DistanceBalance", 1.0f, -5.0f, 5.0f)
     private var fillDelay = isetting("FillDelay", 50, 0, 1000)
     private var fillTimeout = isetting("FillTimeout", 100, 0, 1000)
-    private var fillRange = fsetting("FillRange", 5.0f, 1.0f, 6.0f)
     private var rotation = bsetting("Rotation", true)
     private var webFill = bsetting("WebFill", false)
     private var switchBypass = bsetting("SwitchBypass", false)
@@ -301,7 +301,7 @@ object HoleFiller :
 
     private fun SafeClientEvent.getHoleInfos(): List<IntermediateHoleInfo> {
         val eyePos = player.eyePosition
-        val rangeSq = fillRange.value.sq
+        val rangeSq = CombatSystem.placeRange.sq
         val entities = EntityManager.entity.filter {
             it.preventEntitySpawning && it.isAlive
         }

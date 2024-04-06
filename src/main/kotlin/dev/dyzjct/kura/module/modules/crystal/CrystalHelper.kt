@@ -1,18 +1,16 @@
 package dev.dyzjct.kura.module.modules.crystal
 
-import dev.dyzjct.kura.manager.CombatManager
-import dev.dyzjct.kura.manager.EntityManager
-import dev.dyzjct.kura.utils.animations.fastFloor
-import dev.dyzjct.kura.utils.animations.sq
-import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import base.system.event.AlwaysListening
 import base.system.event.SafeClientEvent
 import base.utils.block.BlockUtil.canSee
 import base.utils.combat.CrystalUtils
-import base.utils.inventory.slot.allSlots
-import base.utils.inventory.slot.firstItem
-import base.utils.inventory.slot.hotbarSlots
+import base.utils.math.distanceSqTo
+import base.utils.math.toBlockPos
 import base.utils.world.noCollision
+import dev.dyzjct.kura.manager.CombatManager
+import dev.dyzjct.kura.manager.EntityManager
+import dev.dyzjct.kura.utils.animations.fastFloor
+import dev.dyzjct.kura.utils.animations.sq
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
@@ -20,14 +18,9 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.decoration.EndCrystalEntity
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.Item
-import net.minecraft.item.Items
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
-import base.utils.math.distanceSqTo
-import base.utils.math.toBlockPos
 import kotlin.math.abs
 import kotlin.math.hypot
 import kotlin.math.max
@@ -47,26 +40,6 @@ object CrystalHelper : AlwaysListening {
     @JvmStatic
     val LivingEntity.totalHealthStatic: Float
         get() = this.health + this.absorptionAmount
-
-    fun PlayerEntity.getCrystalSlot(): HotbarSlot? {
-        return this.hotbarSlots.firstItem(Items.END_CRYSTAL)
-    }
-
-    fun PlayerEntity.getMaxCrystalSlot(): HotbarSlot? {
-        return this.hotbarSlots.asSequence().filter {
-            it.stack.item == Items.END_CRYSTAL
-        }.maxByOrNull {
-            it.stack.count
-        }
-    }
-
-    fun PlayerEntity.getInvCrystalSlot(): HotbarSlot? {
-        return this.allSlots.firstItem(Items.END_CRYSTAL)?.let { HotbarSlot(it) }
-    }
-
-    fun PlayerEntity.getItemSlot(item: Item): HotbarSlot? {
-        return this.hotbarSlots.firstItem(item)
-    }
 
     fun calcCollidingCrystalDamageOld(
         crystals: List<Pair<EndCrystalEntity, CrystalDamage>>,

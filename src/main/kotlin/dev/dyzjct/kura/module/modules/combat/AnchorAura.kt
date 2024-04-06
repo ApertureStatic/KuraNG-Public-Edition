@@ -24,6 +24,7 @@ import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.scaledHealth
 import dev.dyzjct.kura.module.modules.crystal.PlaceInfo
@@ -50,8 +51,6 @@ import java.util.stream.Collectors
 object AnchorAura : Module(
     name = "AnchorAura", langName = "恶俗狗", category = Category.COMBAT, description = "Auto using crystals for pvp."
 ) {
-    private var targetRange by dsetting("TargetRange", 8.0, 0.1, 20.0)
-    var placeRange = dsetting("PlaceRange", 4.5, 0.1, 6.0)
     private var maxTargets = isetting("MaxTarget", 3, 1, 8)
     private var predictTicks = isetting("PredictedTicks", 4, 0, 20)
     private var noSuicide = fsetting("NoSuicide", 2f, 0f, 20f)
@@ -60,7 +59,6 @@ object AnchorAura : Module(
     private val globalDelay by isetting("GlobalDelay", 50, 0, 500)
     private var airPlace = bsetting("AirPlace", false)
     private val strictDirection = bsetting("StrictDirection", false)
-    private val disableCrystalAura by bsetting("DisableCAura", false)
     private val rotate = bsetting("Rotation", false)
     private val swing = bsetting("Swing", true)
     private val packetSwing by bsetting("PacketSwing", true).isTrue(swing)
@@ -76,7 +74,7 @@ object AnchorAura : Module(
     private var prevPos: Vec3d? = null
     private var currentPos: Vec3d? = null
     private var lastCrystalAuraState = false
-    private var placeInfo: PlaceInfo? = null
+    var placeInfo: PlaceInfo? = null
     private val globalTimer = TimerUtils()
     private var rawPosList = CopyOnWriteArrayList<BlockPos>()
 
@@ -95,8 +93,8 @@ object AnchorAura : Module(
         lastUpdateTime = 0L
         startTime = 0L
         scale = 0.0f
-        if (disableCrystalAura && AutoCrystal.isEnabled) {
-            lastCrystalAuraState = true
+        if (CombatSystem.autoToggle && AutoCrystal.isEnabled) {
+            if (CombatSystem.mainToggle != CombatSystem.MainToggle.Anchor) lastCrystalAuraState = true
             AutoCrystal.disable()
         }
     }
@@ -185,7 +183,7 @@ object AnchorAura : Module(
         positions.addAll(
             SphereCalculatorManager.sphereList.stream()
                 .filter { world.isInBuildLimit(it.up()) && world.worldBorder.contains(it.up()) }
-                .filter { player.distanceSqToCenter(it.up()) <= placeRange.value.sq }
+                .filter { player.distanceSqToCenter(it.up()) <= CombatSystem.placeRange.sq }
                 .filter { world.isAir(it.up()) || world.getBlockState(it.up()).block is RespawnAnchorBlock }.filter {
                     if (airPlace.value) {
                         true
@@ -232,27 +230,28 @@ object AnchorAura : Module(
                 val targetDamage = anchorDamage(target, targetPos, targetBox, blockPos)
                 val minDamage = minDamage.value
                 val balance = -8f
+                val headPos = target.blockPos.up(2)
                 if (!isBurrowBlock(target.blockPos) && world.entities.none {
                         it !is ItemEntity;it.isAlive;it.boundingBox.intersects(
-                        Box(target.blockPos.up(2))
+                        Box(headPos)
                     )
                     } && (world.isAir(
-                        target.blockPos.up(2)
+                        headPos
                     ) || world.getBlockState(
-                        target.blockPos.up(2)
+                        headPos
                     ).block is RespawnAnchorBlock) && if (airPlace.value) true else (if (!strictDirection.value) getNeighbor(
-                        target.blockPos.up(2), false
-                    ) != null else getAnchorBlock(target.blockPos.up(2), true) != null) && player.distanceSqToCenter(
-                        target.blockPos.up(2)
-                    ) <= placeRange.value.sq) {
+                        headPos, false
+                    ) != null else getAnchorBlock(headPos, true) != null) && player.distanceSqToCenter(
+                        headPos
+                    ) <= CombatSystem.placeRange.sq) {
                     normal.update(
-                        target, target.blockPos.up(2), selfDamage, targetDamage
+                        target, headPos, selfDamage, targetDamage
                     )
                 } else {
                     if (targetDamage >= minDamage && targetDamage - selfDamage >= balance && (if (!strictDirection.value) getNeighbor(
                             blockPos,
                             false
-                        ) != null else getAnchorBlock(blockPos, true) != null) || airPlace.value
+                        ) != null else getAnchorBlock(blockPos, true) != null || airPlace.value)
                     ) {
                         if (targetDamage > normal.targetDamage) {
                             normal.update(
@@ -271,6 +270,7 @@ object AnchorAura : Module(
     init {
         safeConcurrentListener<RunGameLoopEvent.Tick> {
             runCatching {
+                if (CombatSystem.eating && player.isUsingItem) return@safeConcurrentListener
                 rawPosList = getPlaceablePos()
                 placeInfo = calcPlaceInfo()
                 placeInfo?.let { placeInfo ->
@@ -361,7 +361,7 @@ object AnchorAura : Module(
 
     private val SafeClientEvent.targetList: Sequence<TargetInfo>
         get() {
-            val rangeSq = targetRange.sq
+            val rangeSq = CombatSystem.targetRange.sq
             val list = CopyOnWriteArrayList<TargetInfo>()
             val eyePos = CrystalManager.eyePosition
 

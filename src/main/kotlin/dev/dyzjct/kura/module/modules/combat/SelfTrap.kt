@@ -1,18 +1,17 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.manager.EntityManager
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.RotationManager
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.setting.Setting
-import dev.dyzjct.kura.utils.TimerUtils
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils.spoofSneak
 import base.utils.extension.fastPos
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.world.isPlaceable
+import dev.dyzjct.kura.manager.EntityManager
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.utils.TimerUtils
 import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
@@ -24,7 +23,7 @@ import net.minecraft.util.math.Box
 object SelfTrap : Module(name = "SelfTrap", "自动裹自己", category = Category.COMBAT) {
 
     private var placeDelay = isetting("PlaceDelay", 10, 0, 1000)
-    private var rotate: Setting<Boolean> = bsetting("Rotate", false)
+    private var rotate = bsetting("Rotate", false)
     private var strictDirection = bsetting("StrictDirection", false)
     private var placeTimer = TimerUtils()
     private var attackTimer = TimerUtils()

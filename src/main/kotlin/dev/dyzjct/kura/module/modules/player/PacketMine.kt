@@ -24,6 +24,7 @@ import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.combat.ManualCev
 import dev.dyzjct.kura.module.modules.player.PacketMine.PacketType.Start
 import dev.dyzjct.kura.module.modules.player.PacketMine.PacketType.Stop
@@ -44,13 +45,11 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
 
-@Suppress("unused")
 object PacketMine : Module(
     name = "PacketMine", langName = "发包挖掘", category = Category.PLAYER, description = "Better Mine."
 ) {
     private var mode = msetting("Mode", PacketMode.Instant)
     private var mode0 = mode.value as PacketMode
-    private var maxRange by fsetting("MaxRange", 8.0f, 0.5f, 16f)
     private var safeSpamFactor by isetting("SafeSpamFactor", 350, 1, 1000).enumIs(mode, PacketMode.Spam)
     private var spamDelay by isetting("SpamDelay", 0, 0, 200).enumIs(mode, PacketMode.Spam)
     private var switchMode = msetting("SwitchMode", SwitchMode.Spoof)
@@ -170,14 +169,14 @@ object PacketMine : Module(
             }
             blockData?.let { data ->
                 if ((System.currentTimeMillis() - data.startTime) < data.breakTime) return@let
-                if (data.blockPos.distanceSqTo(player.blockPos) >= maxRange.sq) {
+                if (data.blockPos.distanceSqTo(player.blockPos) >= CombatSystem.interactRange.sq) {
                     blockData = null
                     doubleData = null
                     onDoubleBreak = false
                     connection.sendPacket(CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId))
                     return@let
                 }
-                if (player.distanceSqToCenter(data.blockPos) <= maxRange.sq) {
+                if (player.distanceSqToCenter(data.blockPos) <= CombatSystem.interactRange.sq) {
                     if (((mode0.ignoreCheck && packetSpamming) || !fastSyncCheck) && !player.isUsingItem) {
                         if (rotate.value) RotationManager.addRotations(data.blockPos, prio)
                         sendMinePacket(Stop, data)
@@ -302,14 +301,17 @@ object PacketMine : Module(
         }
     }
 
+    @Suppress("UNUSED")
     private enum class SwitchMode(val spoof: Boolean, val bypass: Boolean = false) {
         Spoof(true), Bypass(true, true), Swap(false), Off(false)
     }
 
+    @Suppress("UNUSED")
     enum class PacketMode(val strict: Boolean, val retry: Boolean = false, val ignoreCheck: Boolean = false) {
         Instant(false), Spam(false, ignoreCheck = true), Packet(true), Legit(true, true)
     }
 
+    @Suppress("UNUSED")
     enum class PacketType(val action: PlayerActionC2SPacket.Action) {
         Start(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK), Abort(PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK), Stop(
             PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK

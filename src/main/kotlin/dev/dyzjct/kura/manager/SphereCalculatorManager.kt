@@ -1,15 +1,16 @@
 package dev.dyzjct.kura.manager
 
-import dev.dyzjct.kura.module.modules.combat.AnchorAura
-import dev.dyzjct.kura.module.modules.combat.NewBedAura
-import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
-import dev.dyzjct.kura.module.modules.misc.AutoCraftBed
 import base.events.RunGameLoopEvent
 import base.system.event.AlwaysListening
 import base.system.event.safeBackGroundTaskListener
 import base.utils.combat.CrystalUtils
-import net.minecraft.util.math.BlockPos
 import base.utils.math.toVec3dCenter
+import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.combat.AnchorAura
+import dev.dyzjct.kura.module.modules.combat.NewBedAura
+import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
+import dev.dyzjct.kura.module.modules.misc.AutoCraftBed
+import net.minecraft.util.math.BlockPos
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.max
 
@@ -22,11 +23,8 @@ object SphereCalculatorManager : AlwaysListening {
                 if (AutoCraftBed.isEnabled) AutoCraftBed.placeRange.value else 0.0,
                 if (NewBedAura.isEnabled) NewBedAura.range.value.toDouble() else 0.0
             )
-            val secondRange = max(
-                if (AnchorAura.isEnabled) AnchorAura.placeRange.value else 0.0,
-                if (AutoCrystal.isEnabled) AutoCrystal.placeRange.value else 0.0
-            )
-            val maxRange = max(firstRange, secondRange)
+
+            val maxRange = max(firstRange, CombatSystem.placeRange)
             sphereList = CopyOnWriteArrayList(
                 CrystalUtils.getSphereVec(
                     DisablerManager.timerFlagData?.playerPos?.toVec3dCenter() ?: CrystalManager.position,

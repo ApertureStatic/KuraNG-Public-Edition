@@ -1,12 +1,5 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
-import dev.dyzjct.kura.manager.RotationManager
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.extension.sq
 import base.utils.block.BlockUtil.checkNearBlocksExtended
 import base.utils.combat.getTarget
 import base.utils.entity.EntityUtils.boxCheck
@@ -14,15 +7,21 @@ import base.utils.extension.fastPos
 import base.utils.extension.sendSequencedPacket
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
-import base.utils.player.getTargetSpeed
-import net.minecraft.block.Blocks
 import base.utils.math.distanceSqToCenter
 import base.utils.math.toBox
+import base.utils.player.getTargetSpeed
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
+import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.extension.sq
+import net.minecraft.block.Blocks
 
 object HeadTrap : Module(name = "HeadTrap", "盖头", category = Category.COMBAT, description = "1!5!") {
 
-    private var placeRange = isetting("PlaceRange", 4, 0, 6)
-    private var enemyRange = isetting("EnemyRange", 4, 0, 6)
     private var placeDelay = isetting("PlaceDelay", 10, 0, 1000)
     private var airPlace = bsetting("AirPlace", false)
     private var rotate = bsetting("Rotate", false)
@@ -50,7 +49,7 @@ object HeadTrap : Module(name = "HeadTrap", "盖头", category = Category.COMBAT
             }
 
             supportSlot?.let { slot ->
-                getTarget(enemyRange.value.toDouble())?.let { target ->
+                getTarget(CombatSystem.targetRange)?.let { target ->
                     if (getTargetSpeed(target) > maxSpeed.value) {
                         return@onMotion
                     }
@@ -71,7 +70,7 @@ object HeadTrap : Module(name = "HeadTrap", "盖头", category = Category.COMBAT
                         }
                     } else if (boxCheck(target.blockPos.up(2).toBox(), true)) {
                         checkNearBlocksExtended(target.blockPos.up(2))?.let { block ->
-                            if (player.distanceSqToCenter(block.position.offset(block.facing)) <= placeRange.value.sq) {
+                            if (player.distanceSqToCenter(block.position.offset(block.facing)) <= CombatSystem.placeRange.sq) {
                                 if (!world.isAir(block.position.offset(block.facing))) return@onMotion
                                 if (rotate.value) RotationManager.addRotations(
                                     block.position.offset(block.facing),

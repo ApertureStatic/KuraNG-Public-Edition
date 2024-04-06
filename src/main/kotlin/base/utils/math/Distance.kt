@@ -1,6 +1,7 @@
 package base.utils.math
 
 import net.minecraft.entity.Entity
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.ChunkPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.Vec3i
@@ -203,6 +204,9 @@ fun Entity.distanceSqTo(vec3d: Vec3d): Double {
     return distanceSqTo(vec3d.x, vec3d.y, vec3d.z)
 }
 
+fun Entity.distanceSqTo(pos: BlockPos): Double {
+    return distanceSqTo(pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble())
+}
 
 fun Entity.distanceTo(entity: Entity): Double {
     return distanceTo(entity.x, entity.y, entity.z)

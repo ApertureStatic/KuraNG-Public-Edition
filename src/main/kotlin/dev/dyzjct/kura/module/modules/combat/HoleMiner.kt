@@ -3,6 +3,8 @@ package dev.dyzjct.kura.module.modules.combat
 import base.system.event.SafeClientEvent
 import base.utils.block.BlockUtil.canBreak
 import base.utils.combat.getTarget
+import base.utils.math.distanceSqTo
+import base.utils.math.sq
 import base.utils.world.getMiningSide
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -21,7 +23,6 @@ object HoleMiner : Module(
     description = "auto mine target feet.",
     category = Category.COMBAT
 ) {
-    private var range by isetting("Range", 6, 1, 6)
     private var raytrace by bsetting("RayTrace", true)
     private var ground by bsetting("OnlyGround", true)
     private var instant by bsetting("Instant", false)
@@ -33,7 +34,7 @@ object HoleMiner : Module(
         onMotion {
             if (ground && !player.onGround) return@onMotion
             if (CombatSystem.eating && player.isUsingItem) return@onMotion
-            getTarget(range.toDouble())?.let { target ->
+            getTarget(CombatSystem.targetRange)?.let { target ->
                 val targetPos = target.blockPos
                 if (HolePush.isEnabled) {
                     PacketMine.blockData?.let { data ->
@@ -57,6 +58,7 @@ object HoleMiner : Module(
                         }
                     }
                     val pos = targetPos.add(offset.offset)
+                    if (player.distanceSqTo(pos) > CombatSystem.interactRange.sq) continue
                     if (!canBreak(pos, true)) continue
                     if (world.getBlockState(pos).block is CobwebBlock) continue
                     if (world.isAir(pos)) {
