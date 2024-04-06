@@ -156,7 +156,7 @@ object ModuleManager : AlwaysListening {
         registerModule(Xray)
         registerModule(PopChams)
         registerModule(Zoom)
-        registerModule(AntiPlayerSwing)
+        registerModule(AnimationRemover)
     }
 
     private fun loadModules() {

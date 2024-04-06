@@ -2,7 +2,7 @@ package dev.dyzjct.kura.mixin.player;
 
 import base.utils.chat.ChatUtil;
 import dev.dyzjct.kura.manager.EventAccessManager;
-import dev.dyzjct.kura.module.modules.render.AntiPlayerSwing;
+import dev.dyzjct.kura.module.modules.render.AnimationRemover;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
@@ -62,71 +62,72 @@ public class MixinBipedEntityModel<T extends LivingEntity> {
                 head.pitch = EventAccessManager.INSTANCE.getData().getPitch() / (180F / (float) Math.PI);
             }
         }
-        if (livingEntity != null && AntiPlayerSwing.INSTANCE.isEnabled() && EventAccessManager.INSTANCE.getData() != null && livingEntity instanceof PlayerEntity) {
-            if (AntiPlayerSwing.INSTANCE.getFakeSneak()) {
+        if (livingEntity != null && AnimationRemover.INSTANCE.isEnabled() && EventAccessManager.INSTANCE.getData() != null && livingEntity instanceof PlayerEntity && (AnimationRemover.INSTANCE.getRemoveSelf() || livingEntity != MinecraftClient.getInstance().player)) {
+            if (AnimationRemover.INSTANCE.getFakeSneak()) {
                 if (head != null) {
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("head.pivotX " + head.pivotX);
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("head.pivotY " + head.pivotY);
                     head.pivotY = 4.2f;
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("head.pivotZ " + head.pivotZ);
-                    if (AntiPlayerSwing.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("head.yaw " + head.yaw);
-                    if (AntiPlayerSwing.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("head.pitch " + head.pitch);
-                    if (AntiPlayerSwing.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("head.roll " + head.roll);
+                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("head.yaw " + head.yaw);
+                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("head.pitch " + head.pitch);
+                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("head.roll " + head.roll);
                 }
                 if (body != null) {
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("body.pivotX " + body.pivotX);
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("body.pivotY " + body.pivotY);
                     body.pivotY = 3.2f;
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("body.pivotZ " + body.pivotZ);
-                    if (AntiPlayerSwing.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("body.yaw " + body.yaw);
-                    if (AntiPlayerSwing.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("body.pitch " + body.pitch);
+                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("body.yaw " + body.yaw);
+                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("body.pitch " + body.pitch);
                     body.pitch = 0.5f;
-                    if (AntiPlayerSwing.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("body.roll " + body.roll);
+                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("body.roll " + body.roll);
                 }
                 if (leftLeg != null) {
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("leftLeg.pivotX " + leftLeg.pivotX);
                     leftLeg.pivotX = 1.9f;
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("leftLeg.pivotY " + leftLeg.pivotY);
                     leftLeg.pivotY = 12.2f;
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("leftLeg.pivotZ " + leftLeg.pivotZ);
                     leftLeg.pivotZ = 4.0f;
-                    if (AntiPlayerSwing.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("leftLeg.yaw" + leftLeg.yaw);
+                    if (AnimationRemover.INSTANCE.getDebug())
+                        ChatUtil.INSTANCE.sendMessage("leftLeg.yaw" + leftLeg.yaw);
                     leftLeg.yaw = -0.005f;
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("leftLeg.pitch " + leftLeg.pitch);
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("leftLeg.roll " + leftLeg.roll);
                 }
                 if (leftArm != null) {
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("leftArm.pivotX " + leftArm.pivotX);
                     leftArm.pivotX = 5.0f;
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("leftArm.pivotY " + leftArm.pivotY);
                     leftArm.pivotY = 5.2f;
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("leftArm.pivotZ " + leftArm.pivotZ);
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("leftArm.yaw " + leftArm.yaw);
-                    if (AntiPlayerSwing.INSTANCE.getDebug())
+                    if (AnimationRemover.INSTANCE.getDebug())
                         ChatUtil.INSTANCE.sendMessage("leftArm.roll " + leftArm.roll);
                 }
                 if (hat != null) {
-                    if (AntiPlayerSwing.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.pivotX " + hat.pivotX);
-                    if (AntiPlayerSwing.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.pivotY " + hat.pivotY);
+                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.pivotX " + hat.pivotX);
+                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.pivotY " + hat.pivotY);
                     hat.pivotY = 4.2f;
-                    if (AntiPlayerSwing.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.pivotZ " + hat.pivotZ);
-                    if (AntiPlayerSwing.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.yaw " + hat.yaw);
-                    if (AntiPlayerSwing.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.roll " + hat.roll);
+                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.pivotZ " + hat.pivotZ);
+                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.yaw " + hat.yaw);
+                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.roll " + hat.roll);
                 }
                 if (rightLeg != null) {
                     rightLeg.pivotY = 12.2f;
@@ -137,7 +138,7 @@ public class MixinBipedEntityModel<T extends LivingEntity> {
                     rightArm.pivotY = 5.2f;
                 }
             }
-            if (AntiPlayerSwing.INSTANCE.getArm()) {
+            if (AnimationRemover.INSTANCE.getArm()) {
                 if (leftArm != null) {
                     leftArm.pitch = 0f;
                 }
@@ -145,7 +146,7 @@ public class MixinBipedEntityModel<T extends LivingEntity> {
                     rightArm.pitch = 0f;
                 }
             }
-            if (AntiPlayerSwing.INSTANCE.getLeg()) {
+            if (AnimationRemover.INSTANCE.getLeg()) {
                 if (leftLeg != null) {
                     leftLeg.pitch = 0f;
                 }
