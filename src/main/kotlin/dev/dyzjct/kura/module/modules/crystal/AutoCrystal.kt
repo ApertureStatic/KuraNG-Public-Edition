@@ -46,6 +46,7 @@ import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.module.modules.combat.AnchorAura
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.isResistant
@@ -108,7 +109,6 @@ object AutoCrystal : Module(
 
     //Page GENERAL
     var damageMode = msetting("DamageMode", DamageMode.PPBP).enumIs(p, Page.GENERAL)
-    private var swingMode = msetting("Swing", SwingMode.Off).enumIs(p, Page.GENERAL)
     private var strictDirection = bsetting("StrictDirection", false).enumIs(p, Page.GENERAL)
     private var antiWeak = bsetting("AntiWeakness", true).enumIs(p, Page.GENERAL)
     private var ghostHand = bsetting("GhostHand", true).enumIs(p, Page.GENERAL)
@@ -138,9 +138,6 @@ object AutoCrystal : Module(
     private val breakBalance = fsetting("BreakBalance", -7.0f, -10.0f, 10.0f).enumIs(p, Page.BREAK)
 
     //Page Calculation
-    private var maxTargets = isetting("MaxTarget", 3, 1, 8).enumIs(p, Page.CALCULATION)
-    private var motionPredict = bsetting("MotionPredict", true).enumIs(p, Page.CALCULATION)
-    private var predictTicks = isetting("PredictTicks", 12, 1, 20).isTrue(motionPredict).enumIs(p, Page.CALCULATION)
     private var debug = bsetting("Debug", false).enumIs(p, Page.CALCULATION)
     private var enemyRange = isetting("EnemyRange", 8, 1, 10).enumIs(p, Page.CALCULATION)
     private var noSuicide = fsetting("NoSuicide", 2f, 0f, 20f).enumIs(p, Page.CALCULATION)
@@ -548,7 +545,7 @@ object AutoCrystal : Module(
                         }
                     }
                     if (placeSwing.value) {
-                        swingArm()
+                        swing()
                     }
                 }
             }
@@ -678,26 +675,9 @@ object AutoCrystal : Module(
         return minDura
     }
 
-    private fun SafeClientEvent.swingArm() {
-        when (swingMode.value) {
-            SwingMode.Offhand -> {
-                player.swingHand(Hand.OFF_HAND)
-            }
-
-            SwingMode.Mainhand -> {
-                player.swingHand(Hand.MAIN_HAND)
-            }
-
-            SwingMode.Auto -> {
-                player.swingHand(if (player.offHandStack.item == Items.END_CRYSTAL) Hand.OFF_HAND else Hand.MAIN_HAND)
-            }
-        }
-    }
-
     private val SafeClientEvent.targetList: Sequence<TargetInfo>
         get() {
             val rangeSq = enemyRange.value.sq
-            val ticks = if (motionPredict.value) predictTicks.value else 0
             val list = ObjectArrayList<TargetInfo>().synchronized()
             val eyePos = CrystalManager.eyePosition
 
@@ -707,7 +687,7 @@ object AutoCrystal : Module(
                 if (target.distanceSqTo(eyePos) > rangeSq) continue
                 if (isFriend(target.entityName)) continue
 
-                list.add(getPredictedTarget(target, ticks))
+                list.add(getPredictedTarget(target, CombatSystem.predictTicks))
             }
 
             return list.asSequence().filter { it.entity.isAlive }
@@ -715,7 +695,7 @@ object AutoCrystal : Module(
                     player.distanceSqTo(
                         it.predictMotion
                     )
-                }).take(maxTargets.value)
+                }).take(CombatSystem.maxTargets)
         }
 
     private fun SafeClientEvent.doBreak() {
@@ -737,13 +717,13 @@ object AutoCrystal : Module(
                 getWeaponSlot()?.let { stack ->
                     spoofHotbarWithSetting(stack.item) {
                         runExplode(endCrystal)
-                        swingArm()
+                        swing()
                     }
                 }
             }
         } else {
             runExplode(endCrystal)
-            swingArm()
+            swing()
         }
 
         placeInfo?.let {
@@ -834,7 +814,7 @@ object AutoCrystal : Module(
                 crystalState.set(CurrentState.Breaking)
                 rotationInvoke?.invoke()
                 connection.sendPacket(PlayerInteractEntityC2SPacket.attack(endCrystal, player.isSneaking))
-                swingArm()
+                swing()
             }
         }
     }
@@ -1194,7 +1174,7 @@ object AutoCrystal : Module(
             calcTimer.reset()
             fpTimer.reset()
             if (CombatSystem.autoToggle && AnchorAura.isEnabled) {
-                if (CombatSystem.mainToggle != CombatSystem.MainToggle.Crystal)lastAnchorAuraState = true
+                if (CombatSystem.mainToggle != CombatSystem.MainToggle.Crystal) lastAnchorAuraState = true
                 AnchorAura.disable()
             }
         }

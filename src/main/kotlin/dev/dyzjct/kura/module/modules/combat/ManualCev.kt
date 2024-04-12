@@ -13,13 +13,13 @@ import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.sq
 import net.minecraft.block.Blocks
 import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.item.Items
-import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
 import net.minecraft.util.Hand
 
@@ -99,7 +99,7 @@ object ManualCev : Module(
                             for (ent in world.entities) {
                                 if (ent !is EndCrystalEntity) continue
                                 connection.sendPacket(PlayerInteractEntityC2SPacket.attack(ent, player.isSneaking))
-                                connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
+                                swing()
                             }
                             stage = CevStage.Block
                         }

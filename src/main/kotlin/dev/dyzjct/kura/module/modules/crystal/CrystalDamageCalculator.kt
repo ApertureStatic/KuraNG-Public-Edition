@@ -1,13 +1,17 @@
 package dev.dyzjct.kura.module.modules.crystal
 
-import dev.dyzjct.kura.utils.animations.fastFloor
 import base.system.event.AlwaysListening
 import base.system.event.SafeClientEvent
+import base.utils.Wrapper.minecraft
+import base.utils.block.getBlock
 import base.utils.combat.CrystalUtils
 import base.utils.world.FastRayTraceAction
 import base.utils.world.fastRaytrace
+import dev.dyzjct.kura.mixins.IExplosion
+import dev.dyzjct.kura.utils.animations.fastFloor
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
+import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.entity.DamageUtil
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.attribute.EntityAttributes
@@ -16,15 +20,20 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ArmorItem
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
+import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.Difficulty
 import net.minecraft.world.World
+import net.minecraft.world.explosion.Explosion
 import java.util.*
+import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
 object CrystalDamageCalculator : AlwaysListening {
     val reductionMap: MutableMap<LivingEntity, DamageReduction> = Collections.synchronizedMap(WeakHashMap())
+
+    var explosion = Explosion(minecraft.world, null, 0.0, 0.0, 0.0, 6f, false, Explosion.DestructionType.DESTROY)
 
     class DamageReduction(var entity: LivingEntity) {
         private val armorValue: Float = entity.armor.toFloat()
@@ -221,4 +230,87 @@ object CrystalDamageCalculator : AlwaysListening {
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "DEPRECATION")
     fun isResistant(blockState: BlockState, prio: AutoCrystal.Priority = AutoCrystal.Priority.Crystal) =
         prio == AutoCrystal.Priority.Block || (!blockState.isLiquid && blockState.block.blastResistance >= 19.7)
+
+    fun SafeClientEvent.anchorDamageNew(pos: BlockPos, target: PlayerEntity): Float {
+        if (world.getBlock(pos) === Blocks.RESPAWN_ANCHOR) {
+            val oldState = world.getBlockState(pos)
+            world.setBlockState(pos, Blocks.AIR.defaultState)
+            val damage = calculateDamage(pos.toCenterPos(), target, 5f)
+            world.setBlockState(pos, oldState)
+            return damage
+        } else {
+            return calculateDamage(pos.toCenterPos(), target, 5f)
+        }
+    }
+
+    fun SafeClientEvent.calculateDamage(
+        explosionPos: Vec3d,
+        target: PlayerEntity,
+        power: Float
+    ): Float {
+        if (world.difficulty === Difficulty.PEACEFUL) return 0f
+        (explosion as IExplosion)[explosionPos, power] = true
+
+        if (!Box(
+                MathHelper.floor(explosionPos.x - 11.0).toDouble(),
+                MathHelper.floor(explosionPos.y - 11.0).toDouble(),
+                MathHelper.floor(explosionPos.z - 11.0).toDouble(),
+                MathHelper.floor(explosionPos.x + 13.0).toDouble(),
+                MathHelper.floor(explosionPos.y + 13.0).toDouble(),
+                MathHelper.floor(explosionPos.z + 13.0).toDouble()
+            ).intersects(target.boundingBox)
+        ) {
+            return 0f
+        }
+
+        if (!target.isImmuneToExplosion && !target.isInvulnerable) {
+            val distExposure = MathHelper.sqrt(target.squaredDistanceTo(explosionPos).toFloat()) / 12.0
+            if (distExposure <= 1.0) {
+                val xDiff = target.x - explosionPos.x
+                val yDiff = target.y - explosionPos.y
+                val zDiff = target.x - explosionPos.z
+                val diff = MathHelper.sqrt((xDiff * xDiff + yDiff * yDiff + zDiff * zDiff).toFloat()).toDouble()
+                if (diff != 0.0) {
+                    val exposure = Explosion.getExposure(explosionPos, target).toDouble()
+                    val finalExposure = (1.0 - distExposure) * exposure
+
+                    var toDamage = floor((finalExposure * finalExposure + finalExposure) / 2.0 * 7.0 * 12.0 + 1.0)
+                        .toFloat()
+
+                    if (world.difficulty === Difficulty.EASY) {
+                        toDamage = min((toDamage / 2f + 1f).toDouble(), toDamage.toDouble()).toFloat()
+                    } else if (world.difficulty === Difficulty.HARD) {
+                        toDamage = toDamage * 3f / 2f
+                    }
+
+                    toDamage = DamageUtil.getDamageLeft(
+                        toDamage,
+                        target.armor.toFloat(),
+                        (target.getAttributeInstance(EntityAttributes.GENERIC_ARMOR_TOUGHNESS)?.value ?: 1.0).toFloat()
+                    )
+
+                    if (target.hasStatusEffect(StatusEffects.RESISTANCE)) {
+                        val resistance =
+                            25 - ((target.getStatusEffect(StatusEffects.RESISTANCE)?.amplifier ?: 0) + 1) * 5
+                        val resistance1 = toDamage * resistance
+                        toDamage = max((resistance1 / 25f).toDouble(), 0.0).toFloat()
+                    }
+
+                    if (toDamage <= 0f) {
+                        toDamage = 0f
+                    } else {
+                        val protAmount = EnchantmentHelper.getProtectionAmount(
+                            target.armorItems,
+                            explosion.damageSource
+                        )
+                        if (protAmount > 0) {
+                            toDamage = DamageUtil.getInflictedDamage(toDamage, protAmount.toFloat())
+                        }
+                    }
+                    return toDamage
+                }
+            }
+        }
+        return 0f
+    }
 }

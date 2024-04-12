@@ -45,7 +45,6 @@ object AutoWeb : Module(
     private var inside = bsetting("Inside", false)
     private var strictDirection = bsetting("StrictDirection", false)
     private var air = bsetting("AirPlace", false)
-    private var predictTicks = isetting("PredictTicks", 8, 0, 20)
     private var smartDelay = bsetting("SmartDelay", false)
     private var delay = isetting("minDelay", 25, 0, 500)
     private var maxDelay = isetting("MaxDelay", 400, 0, 1000).isTrue(smartDelay)
@@ -77,7 +76,7 @@ object AutoWeb : Module(
             target = getTarget(CombatSystem.targetRange)
             if (onAnchorPlacing && betterAnchor.value) return@onLoop
             target?.let {
-                val targetDistance = getPredictedTarget(it, predictTicks.value).blockPos
+                val targetDistance = getPredictedTarget(it, CombatSystem.predictTicks).blockPos
                 if (doHolePush(
                         it.blockPos.up(),
                         check = true, test = true

@@ -1,15 +1,16 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
-import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.getPredictedTarget
-import dev.dyzjct.kura.utils.TimerUtils
 import base.system.event.SafeClientEvent
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils.getHealth
 import base.utils.hole.SurroundUtils
 import base.utils.hole.SurroundUtils.checkHole
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.getPredictedTarget
+import dev.dyzjct.kura.utils.TimerUtils
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -17,7 +18,6 @@ import net.minecraft.item.*
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.Hand
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Vec3d
 
 object SmartOffHand :
     Module(name = "SmartOffHand", langName = "自动副手", category = Category.COMBAT, description = "StupidOffHand") {
@@ -31,7 +31,6 @@ object SmartOffHand :
     private var holeSwitch = dsetting("HoleHealth", 8.0, 0.0, 36.0).isTrue(holeCheck)
     private var crystalCalculate = bsetting("CalculateDmg", true)
     private var maxSelfDmg = dsetting("MaxSelfDmg", 26.0, 0.0, 36.0).isTrue(crystalCalculate)
-    private var predictTicks = isetting("PredictTicks", 0, 0, 20)
     private var timerUtils = TimerUtils()
     private var totems = 0
     private var count = 0
@@ -122,9 +121,7 @@ object SmartOffHand :
                 continue
             }
             val predictionTarget =
-                if (predictTicks.value > 0) getPredictedTarget(entity, predictTicks.value) else Vec3d(
-                    0.0, 0.0, 0.0
-                )
+                getPredictedTarget(entity, CombatSystem.predictTicks)
             val d = calcDamage(
                 player,
                 player.pos.add(predictionTarget),

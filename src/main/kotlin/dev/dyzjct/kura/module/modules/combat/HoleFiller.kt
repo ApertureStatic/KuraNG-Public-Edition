@@ -52,7 +52,6 @@ object HoleFiller :
     private var obbyHole = bsetting("ObbyHole", true)
     private var twoBlocksHole = bsetting("2BlocksHole", true)
     private var fourBlocksHole = bsetting("4BlocksHole", true)
-    private var predictTicks = isetting("PredictTicks", 8, 0, 50)
     private var detectRange = fsetting("DetectRange", 5.0f, 0.0f, 16.0f)
     private var hRange = fsetting("HRange", 0.5f, 0.0f, 4.0f)
     private var vRange = fsetting("VRange", 3.0f, 0.0f, 8.0f)
@@ -367,13 +366,13 @@ object HoleFiller :
     }
 
     private fun Entity.calcPredict(current: Vec3d): Vec3d {
-        return if (predictTicks.value == 0) {
+        return if (CombatSystem.predictTicks == 0) {
             current
         } else {
             Vec3d(
-                this.x + (this.x - this.lastRenderX) * predictTicks.value,
-                this.y + (this.y - this.lastRenderY) * predictTicks.value,
-                this.z + (this.z - this.lastRenderZ) * predictTicks.value
+                this.x + (this.x - this.lastRenderX) * CombatSystem.predictTicks,
+                this.y + (this.y - this.lastRenderY) * CombatSystem.predictTicks,
+                this.z + (this.z - this.lastRenderZ) * CombatSystem.predictTicks
             )
         }
     }

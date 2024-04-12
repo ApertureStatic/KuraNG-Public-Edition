@@ -1,9 +1,7 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.events.RunGameLoopEvent
 import base.events.render.Render3DEvent
 import base.system.event.SafeClientEvent
-import base.system.event.safeConcurrentListener
 import base.utils.block.BlockUtil.getAnchorBlock
 import base.utils.block.BlockUtil.getNeighbor
 import base.utils.chat.ChatUtil
@@ -25,7 +23,9 @@ import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
+import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.anchorDamageNew
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.scaledHealth
 import dev.dyzjct.kura.module.modules.crystal.PlaceInfo
 import dev.dyzjct.kura.utils.TimerUtils
@@ -36,7 +36,6 @@ import net.minecraft.block.RespawnAnchorBlock
 import net.minecraft.entity.ItemEntity
 import net.minecraft.item.Item
 import net.minecraft.item.Items
-import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
 import net.minecraft.state.property.Properties
 import net.minecraft.util.Hand
@@ -51,23 +50,20 @@ import java.util.stream.Collectors
 object AnchorAura : Module(
     name = "AnchorAura", langName = "恶俗狗", category = Category.COMBAT, description = "Auto using crystals for pvp."
 ) {
-    private var maxTargets = isetting("MaxTarget", 3, 1, 8)
-    private var predictTicks = isetting("PredictedTicks", 4, 0, 20)
-    private var noSuicide = fsetting("NoSuicide", 2f, 0f, 20f)
-    private var maxSelfDamage = isetting("MaxSelfDamage", 10, 0, 36)
-    private var minDamage = dsetting("MinDamage", 4.0, 0.0, 36.0)
-    private val globalDelay by isetting("GlobalDelay", 50, 0, 500)
-    private var airPlace = bsetting("AirPlace", false)
-    private val strictDirection = bsetting("StrictDirection", false)
-    private val rotate = bsetting("Rotation", false)
-    private val swing = bsetting("Swing", true)
-    private val packetSwing by bsetting("PacketSwing", true).isTrue(swing)
-    private val render = bsetting("Render", true)
-    private val fillColor = csetting("FillColor", Color(255, 255, 255, 50)).isTrue(render)
-    private val lineColor = csetting("LineColor", Color(255, 255, 255, 255)).isTrue(render)
-    private val movingLength = isetting("MovingLength", 400, 0, 1000).isTrue(render)
-    private val fadeLength = isetting("FadeLength", 200, 0, 1000).isTrue(render)
-    private val debug = bsetting("Debug", false)
+    private var noSuicide by fsetting("NoSuicide", 2f, 0f, 20f)
+    private var maxSelfDamage by isetting("MaxSelfDamage", 10, 0, 36)
+    private var minDamage by dsetting("MinDamage", 4.0, 0.0, 36.0)
+    private val glowDelay by isetting("GlowDelay", 50, 0, 500)
+    private val anchorDelay by isetting("AnchorDelay", 50, 0, 500)
+    private val clickDelay by isetting("ClickDelay", 50, 0, 500)
+    private var airPlace by bsetting("AirPlace", false)
+    private val strictDirection by bsetting("StrictDirection", false)
+    private val rotate by bsetting("Rotation", false)
+    private val fillColor by csetting("FillColor", Color(255, 255, 255, 50))
+    private val lineColor by csetting("LineColor", Color(255, 255, 255, 255))
+    private val movingLength by isetting("MovingLength", 400, 0, 1000)
+    private val fadeLength by isetting("FadeLength", 200, 0, 1000)
+    private val debug by bsetting("Debug", false)
 
     private var lastBlockPos: BlockPos? = null
     private var lastRenderPos: Vec3d? = null
@@ -75,7 +71,9 @@ object AnchorAura : Module(
     private var currentPos: Vec3d? = null
     private var lastCrystalAuraState = false
     var placeInfo: PlaceInfo? = null
-    private val globalTimer = TimerUtils()
+    private val glowTimer = TimerUtils()
+    private val anchorTimer = TimerUtils()
+    private val clickTimer = TimerUtils()
     private var rawPosList = CopyOnWriteArrayList<BlockPos>()
 
     private var lastTargetDamage = 0.0
@@ -84,7 +82,6 @@ object AnchorAura : Module(
     private var scale = 0.0f
 
     override fun onEnable() {
-        globalTimer.reset()
         prevPos = null
         currentPos = null
         lastRenderPos = null
@@ -100,7 +97,6 @@ object AnchorAura : Module(
     }
 
     override fun onDisable() {
-        super.onDisable()
         if (lastCrystalAuraState) {
             lastCrystalAuraState = false
             AutoCrystal.enable()
@@ -127,6 +123,29 @@ object AnchorAura : Module(
         }
     }
 
+    init {
+        onMotion {
+            runCatching {
+                if (CombatSystem.eating && player.isUsingItem) return@onMotion
+                rawPosList = getPlaceablePos()
+                placeInfo = calcPlaceInfo()
+                placeInfo?.let { placeInfo ->
+                    if (rotate) RotationManager.addRotations(placeInfo.blockPos)
+                    globalPlace(placeInfo, true)
+                    checkGlowPlaceable(placeInfo, Items.GLOWSTONE)
+                    globalPlace(placeInfo, false)
+                    if (getTargetSpeed(placeInfo.target) < 10) {
+                        globalPlace(placeInfo, true)
+                    }
+                }
+            }
+        }
+
+        onRender3D { event ->
+            onRender3D(event, placeInfo)
+        }
+    }
+
     private fun toRenderBox(vec3d: Vec3d, scale: Float): Box {
         val halfSize = 0.5 * scale
         return Box(
@@ -140,24 +159,24 @@ object AnchorAura : Module(
     }
 
     private fun onRender3D(event: Render3DEvent, placeInfo: PlaceInfo?) {
-        val filled = fillColor.value.alpha > 0
-        val outline = lineColor.value.alpha > 0
+        val filled = fillColor.alpha > 0
+        val outline = lineColor.alpha > 0
         val flag = filled || outline
 
         if (flag) {
             try {
                 update(placeInfo)
                 scale = if (placeInfo != null) {
-                    Easing.OUT_CUBIC.inc(Easing.toDelta(startTime, fadeLength.value))
+                    Easing.OUT_CUBIC.inc(Easing.toDelta(startTime, fadeLength))
                 } else {
-                    Easing.IN_CUBIC.dec(Easing.toDelta(startTime, fadeLength.value))
+                    Easing.IN_CUBIC.dec(Easing.toDelta(startTime, fadeLength))
                 }
 
                 prevPos?.let { prevPos ->
                     currentPos?.let { currentPos ->
                         val multiplier = Easing.OUT_QUART.inc(
                             Easing.toDelta(
-                                lastUpdateTime, movingLength.value
+                                lastUpdateTime, movingLength
                             )
                         )
                         val motionRenderPos = prevPos.add(currentPos.subtract(prevPos).multiply(multiplier.toDouble()))
@@ -165,9 +184,9 @@ object AnchorAura : Module(
                         val box = toRenderBox(motionRenderPos, scale)
                         val renderer = ESPRenderer()
 
-                        renderer.aFilled = (fillColor.value.alpha * scale).toInt()
-                        renderer.aOutline = (lineColor.value.alpha * scale).toInt()
-                        renderer.add(box, fillColor.value, lineColor.value)
+                        renderer.aFilled = (fillColor.alpha * scale).toInt()
+                        renderer.aOutline = (lineColor.alpha * scale).toInt()
+                        renderer.add(box, fillColor, lineColor)
                         renderer.render(event.matrices, false)
 
                         lastRenderPos = motionRenderPos
@@ -185,10 +204,10 @@ object AnchorAura : Module(
                 .filter { world.isInBuildLimit(it.up()) && world.worldBorder.contains(it.up()) }
                 .filter { player.distanceSqToCenter(it.up()) <= CombatSystem.placeRange.sq }
                 .filter { world.isAir(it.up()) || world.getBlockState(it.up()).block is RespawnAnchorBlock }.filter {
-                    if (airPlace.value) {
+                    if (airPlace) {
                         true
                     } else {
-                        getNeighbor(it.up(), strictDirection.value) != null
+                        getNeighbor(it.up(), strictDirection) != null
                     }
                 }.sorted(Comparator.comparingInt { interactPriority(it.up()) }).collect(Collectors.toList())
         )
@@ -221,42 +240,45 @@ object AnchorAura : Module(
                 )
                 } && world.isAir(pos)) continue
             val selfDamage = anchorDamage(player, player.pos, player.boundingBox, blockPos)
-            if (player.scaledHealth - selfDamage <= noSuicide.value) continue
-            if (selfDamage > maxSelfDamage.value) continue
+            if (player.scaledHealth - selfDamage <= noSuicide) continue
+            if (selfDamage > maxSelfDamage) continue
 
             for ((target, targetPos, targetBox, currentPos) in targets) {
                 if (targetBox.intersects(placeBox)) continue
                 if (placeBox.intersects(targetPos, currentPos.toVec3dCenter())) continue
-                val targetDamage = anchorDamage(target, targetPos, targetBox, blockPos)
-                val minDamage = minDamage.value
+//                val targetDamage = anchorDamage(target, targetPos, targetBox, blockPos)
+                val targetDamage = anchorDamageNew(blockPos, target).toDouble()
+                val minDamage = minDamage
                 val balance = -8f
                 val headPos = target.blockPos.up(2)
-                if (!isBurrowBlock(target.blockPos) && world.entities.none {
-                        it !is ItemEntity;it.isAlive;it.boundingBox.intersects(
-                        Box(headPos)
-                    )
-                    } && (world.isAir(
-                        headPos
-                    ) || world.getBlockState(
-                        headPos
-                    ).block is RespawnAnchorBlock) && if (airPlace.value) true else (if (!strictDirection.value) getNeighbor(
-                        headPos, false
-                    ) != null else getAnchorBlock(headPos, true) != null) && player.distanceSqToCenter(
-                        headPos
-                    ) <= CombatSystem.placeRange.sq) {
-                    normal.update(
-                        target, headPos, selfDamage, targetDamage
-                    )
-                } else {
-                    if (targetDamage >= minDamage && targetDamage - selfDamage >= balance && (if (!strictDirection.value) getNeighbor(
-                            blockPos,
-                            false
-                        ) != null else getAnchorBlock(blockPos, true) != null || airPlace.value)
-                    ) {
-                        if (targetDamage > normal.targetDamage) {
-                            normal.update(
-                                target, blockPos, selfDamage, targetDamage
-                            )
+                if (!isBurrowBlock(target.blockPos, target)) {
+                    if (world.entities.none {
+                            it !is ItemEntity;it.isAlive;it.boundingBox.intersects(
+                            Box(headPos)
+                        )
+                        } && (world.isAir(
+                            headPos
+                        ) || world.getBlockState(
+                            headPos
+                        ).block is RespawnAnchorBlock) && if (airPlace) true else (if (!strictDirection) getNeighbor(
+                            headPos, false
+                        ) != null else getAnchorBlock(headPos, true) != null) && player.distanceSqToCenter(
+                            headPos
+                        ) <= CombatSystem.placeRange.sq) {
+                        normal.update(
+                            target, headPos, selfDamage, targetDamage
+                        )
+                    } else {
+                        if (targetDamage >= minDamage && targetDamage - selfDamage >= balance && (if (!strictDirection) getNeighbor(
+                                blockPos,
+                                false
+                            ) != null else getAnchorBlock(blockPos, true) != null || airPlace)
+                        ) {
+                            if (targetDamage > normal.targetDamage) {
+                                normal.update(
+                                    target, blockPos, selfDamage, targetDamage
+                                )
+                            }
                         }
                     }
                 }
@@ -267,62 +289,44 @@ object AnchorAura : Module(
         return placeInfo
     }
 
-    init {
-        safeConcurrentListener<RunGameLoopEvent.Tick> {
-            runCatching {
-                if (CombatSystem.eating && player.isUsingItem) return@safeConcurrentListener
-                rawPosList = getPlaceablePos()
-                placeInfo = calcPlaceInfo()
-                placeInfo?.let { placeInfo ->
-                    if (rotate.value) RotationManager.addRotations(placeInfo.blockPos)
-                    if (globalTimer.tickAndReset(globalDelay)) {
-                        globalPlace(Items.RESPAWN_ANCHOR, placeInfo, true)
-                        checkGlowPlaceable(placeInfo, Items.GLOWSTONE, true)
-                        globalPlace(Items.RESPAWN_ANCHOR, placeInfo, false)
-                        if (getTargetSpeed(placeInfo.target) < 10) {
-                            globalPlace(Items.RESPAWN_ANCHOR, placeInfo, true)
+    private fun SafeClientEvent.globalPlace(placeInfo: PlaceInfo, explode: Boolean) {
+        if (explode) {
+            if (anchorTimer.tickAndReset(anchorDelay) && world.isAir(placeInfo.blockPos)) {
+                AutoWeb.onAnchorPlacing = true
+                if (rotate) RotationManager.addRotations(placeInfo.blockPos)
+                player.spoofSneak {
+                    spoofHotbarWithSetting(Items.RESPAWN_ANCHOR) {
+                        sendSequencedPacket(world) {
+                            fastPos(
+                                placeInfo.blockPos,
+                                face = placeInfo.side,
+                                strictDirection = strictDirection,
+                                sequence = it,
+                                render = false
+                            )
                         }
                     }
                 }
+                swing()
+                AutoWeb.onAnchorPlacing = false
             }
-        }
-
-        onRender3D { event ->
-            onRender3D(event, placeInfo)
-        }
-    }
-
-    private fun SafeClientEvent.globalPlace(item: Item, placeInfo: PlaceInfo, explode: Boolean) {
-        if (explode) {
-            AutoWeb.onAnchorPlacing = true
-            player.spoofSneak {
-                spoofHotbarWithSetting(item) {
-                    sendSequencedPacket(world) {
-                        fastPos(
-                            placeInfo.blockPos,
-                            face = placeInfo.side,
-                            strictDirection = strictDirection.value,
-                            sequence = it,
-                            render = false
-                        )
-                    }
-                }
-            }
-            AutoWeb.onAnchorPlacing = false
         } else {
-            sendSequencedPacket(world) {
-                PlayerInteractBlockC2SPacket(
-                    Hand.MAIN_HAND, BlockHitResult(
-                        placeInfo.blockPos.toCenterPos(),
-                        getAnchorBlock(placeInfo.blockPos, strictDirection.value)?.clickFace ?: placeInfo.side,
-                        placeInfo.blockPos,
-                        true
-                    ), it
-                )
+            if (clickTimer.tickAndReset(clickDelay)) {
+                AutoWeb.onAnchorPlacing = true
+                if (rotate) RotationManager.addRotations(placeInfo.blockPos)
+                sendSequencedPacket(world) {
+                    PlayerInteractBlockC2SPacket(
+                        Hand.MAIN_HAND, BlockHitResult(
+                            placeInfo.blockPos.toCenterPos(),
+                            getAnchorBlock(placeInfo.blockPos, strictDirection)?.clickFace ?: placeInfo.side,
+                            placeInfo.blockPos,
+                            true
+                        ), it
+                    )
+                }
+                swing()
+                AutoWeb.onAnchorPlacing = false
             }
-        }
-        if (swing.value) {
-            if (packetSwing) connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND)) else player.swingHand(Hand.MAIN_HAND)
         }
     }
 
@@ -331,30 +335,31 @@ object AnchorAura : Module(
     ) {
         val currentBlockState = world.getBlockState(placeInfo.blockPos)
         if ((currentBlockState.block == Blocks.RESPAWN_ANCHOR && currentBlockState.get(Properties.CHARGES) < 1) || ignore) {
-            spoofHotbarWithSetting(item) {
-                sendSequencedPacket(world) {
-                    PlayerInteractBlockC2SPacket(
-                        Hand.MAIN_HAND, BlockHitResult(
-                            placeInfo.blockPos.toCenterPos(),
-                            getAnchorBlock(placeInfo.blockPos, strictDirection.value)?.clickFace ?: placeInfo.side,
-                            placeInfo.blockPos,
-                            true
-                        ), it
+            if (glowTimer.tickAndReset(glowDelay)) {
+                AutoWeb.onAnchorPlacing = true
+                if (rotate) RotationManager.addRotations(placeInfo.blockPos)
+                spoofHotbarWithSetting(item) {
+                    sendSequencedPacket(world) {
+                        PlayerInteractBlockC2SPacket(
+                            Hand.MAIN_HAND, BlockHitResult(
+                                placeInfo.blockPos.toCenterPos(),
+                                getAnchorBlock(placeInfo.blockPos, strictDirection)?.clickFace ?: placeInfo.side,
+                                placeInfo.blockPos,
+                                true
+                            ), it
+                        )
+                    }
+                    if (debug) ChatUtil.sendMessage(
+                        "[ANCHOR -> glowSide = ${
+                            getAnchorBlock(
+                                placeInfo.blockPos,
+                                strictDirection
+                            )?.clickFace ?: placeInfo.side
+                        }"
                     )
+                    swing()
                 }
-                if (debug.value) ChatUtil.sendMessage(
-                    "[ANCHOR -> glowSide = ${
-                        getAnchorBlock(
-                            placeInfo.blockPos,
-                            strictDirection.value
-                        )?.clickFace ?: placeInfo.side
-                    }"
-                )
-                if (swing.value) {
-                    if (packetSwing) connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND)) else player.swingHand(
-                        Hand.MAIN_HAND
-                    )
-                }
+                AutoWeb.onAnchorPlacing = false
             }
         }
     }
@@ -371,10 +376,10 @@ object AnchorAura : Module(
                 if (target.distanceSqTo(eyePos) > rangeSq) continue
                 if (FriendManager.isFriend(target.entityName)) continue
 
-                list.add(getPredictedTarget(target, predictTicks.value))
+                list.add(getPredictedTarget(target, CombatSystem.predictTicks))
             }
 
             return list.asSequence().filter { it.entity.isAlive }
-                .sortedWith(compareByDescending<TargetInfo> { it.entity.scaledHealth }).take(maxTargets.value)
+                .sortedWith(compareByDescending<TargetInfo> { it.entity.scaledHealth }).take(CombatSystem.maxTargets)
         }
 }

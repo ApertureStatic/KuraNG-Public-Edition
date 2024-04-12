@@ -19,6 +19,7 @@ import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.module.modules.player.AntiMinePlace
 import dev.dyzjct.kura.module.modules.player.PacketMine.hookPos
 import dev.dyzjct.kura.utils.TimerUtils
@@ -27,9 +28,7 @@ import net.minecraft.block.PistonBlock
 import net.minecraft.block.RedstoneBlock
 import net.minecraft.entity.ItemEntity
 import net.minecraft.item.Items
-import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
-import net.minecraft.util.Hand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
@@ -40,8 +39,6 @@ object HolePush : Module(
     category = Category.COMBAT,
     description = "Push the target away from the hole."
 ) {
-    private val swing = bsetting("Swing", true)
-    private val packet by bsetting("packet", true).isTrue(swing)
     private val rotate = bsetting("Rotation", false)
     private val side by bsetting("Side", false).isTrue(rotate)
     private val strictDirection = bsetting("StrictDirection", false)
@@ -221,7 +218,7 @@ object HolePush : Module(
                         connection.sendPacket(fastPos(if (!stone) blockPos else stonePos, strictDirection.value))
                     }
                 }
-                swingHand()
+                swing()
             }
             if (!stone) RotationManager.addRotations(blockPos, true)
             stage++
@@ -257,13 +254,6 @@ object HolePush : Module(
             }
             spoofPlace(stone = true, doToggle = false)
         }
-    }
-
-    private fun SafeClientEvent.swingHand() {
-        if (!swing.value) return
-        if (packet) {
-            connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
-        } else player.swingHand(Hand.MAIN_HAND)
     }
 
     private fun SafeClientEvent.getRedStonePos(pos: BlockPos, direction: Direction): StonePos? {
