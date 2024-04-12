@@ -14,7 +14,7 @@ import base.system.render.newfont.FontRenderers
 import base.system.render.shader.MSAAFramebuffer
 import net.minecraft.client.gui.DrawContext
 import org.lwjgl.opengl.GL11
-import base.KuraIdentifier
+import dev.dyzjct.kura.KuraIdentifier
 import java.awt.Color
 import java.util.*
 import java.util.function.Predicate

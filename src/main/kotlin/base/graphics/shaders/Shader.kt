@@ -9,7 +9,7 @@ import base.utils.interfaces.Helper
 import org.joml.Matrix4f
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL20.*
-import base.KuraIdentifier
+import dev.dyzjct.kura.KuraIdentifier
 import base.graphics.GLObject
 
 open class Shader(vertShaderId: KuraIdentifier, fragShaderId: KuraIdentifier) : GLObject, Helper {

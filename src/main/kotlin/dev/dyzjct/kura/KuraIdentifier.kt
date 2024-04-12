@@ -1,6 +1,5 @@
-package base
+package dev.dyzjct.kura
 
-import dev.dyzjct.kura.Kura
 import net.minecraft.util.Identifier
 import java.util.*
 

@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.hud
 
-import base.KuraIdentifier
+import dev.dyzjct.kura.KuraIdentifier
 import base.utils.chat.ChatUtil
 import com.mojang.blaze3d.systems.RenderSystem
 import dev.dyzjct.kura.gui.clickgui.ClickGuiScreen

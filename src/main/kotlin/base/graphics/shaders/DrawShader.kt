@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL20.glGetUniformLocation
 import org.lwjgl.opengl.GL41.glProgramUniformMatrix4fv
-import base.KuraIdentifier
+import dev.dyzjct.kura.KuraIdentifier
 import base.graphics.MatrixUtils
 import java.nio.FloatBuffer
 

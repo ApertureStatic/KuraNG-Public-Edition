@@ -9,7 +9,7 @@ import base.system.render.graphic.Render2DEngine
 import base.system.render.newfont.FontRenderers
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.math.RotationAxis
-import base.KuraIdentifier
+import dev.dyzjct.kura.KuraIdentifier
 import java.awt.Color
 
 class ModeButton(value: Setting<Enum<*>>, width: Double, height: Double, father: Panel?) : SettingButton<Enum<*>>() {

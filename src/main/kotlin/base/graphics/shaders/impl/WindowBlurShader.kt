@@ -12,7 +12,7 @@ import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL20.*
-import base.KuraIdentifier
+import dev.dyzjct.kura.KuraIdentifier
 import base.graphics.MatrixUtils
 import base.graphics.shaders.DrawShader
 import base.graphics.use

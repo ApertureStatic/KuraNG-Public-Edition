@@ -144,18 +144,16 @@ object HotbarManager : AlwaysListening {
                     ?.let { thisItem -> HotbarSlot(thisItem) }?.let { slot ->
                         notNullSlot = true
                         if (!isCheck) {
-                            synchronized(HotbarManager) {
-                                val swap = slot.hotbarSlot != serverSideHotbar
-                                if (swap) {
-                                    inventoryTaskNow {
-                                        val hotbarSlot = player.hotbarSlots[serverSideHotbar]
-                                        swapWith(slot, hotbarSlot)
-                                        action { block.invoke() }
-                                        swapWith(slot, hotbarSlot)
-                                    }
-                                } else {
-                                    block.invoke()
+                            val swap = slot.hotbarSlot != serverSideHotbar
+                            if (swap) {
+                                inventoryTaskNow {
+                                    val hotbarSlot = player.hotbarSlots[serverSideHotbar]
+                                    swapWith(slot, hotbarSlot)
+                                    action { block.invoke() }
+                                    swapWith(slot, hotbarSlot)
                                 }
+                            } else {
+                                block.invoke()
                             }
                         }
                     }
@@ -165,13 +163,11 @@ object HotbarManager : AlwaysListening {
                 findItemInInventory(item)?.let { slot ->
                     notNullSlot = true
                     if (!isCheck) {
-                        synchronized(HotbarManager) {
-                            val old = player.inventory.selectedSlot
-                            inventorySwap(slot)
-                            block.invoke()
-                            inventorySwap(slot)
-                            doSwap(old)
-                        }
+                        val old = player.inventory.selectedSlot
+                        inventorySwap(slot)
+                        block.invoke()
+                        inventorySwap(slot)
+                        doSwap(old)
                     }
                 }
             }

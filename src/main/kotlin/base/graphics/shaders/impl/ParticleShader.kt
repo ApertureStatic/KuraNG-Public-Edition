@@ -3,7 +3,7 @@ package base.graphics.shaders.impl
 import base.events.TickEvent
 import base.system.event.AlwaysListening
 import base.system.event.listener
-import base.KuraIdentifier
+import dev.dyzjct.kura.KuraIdentifier
 import base.graphics.shaders.GLSLSandbox
 
 object ParticleShader : GLSLSandbox(KuraIdentifier("shaders/particle.fsh")), AlwaysListening {

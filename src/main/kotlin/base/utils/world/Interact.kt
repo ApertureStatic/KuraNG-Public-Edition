@@ -1,15 +1,20 @@
 package base.utils.world
 
-import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.utils.animations.sq
-import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import base.system.event.SafeClientEvent
 import base.system.util.collections.EnumSet
 import base.utils.block.blockBlacklist
 import base.utils.block.getBlock
 import base.utils.block.isFullBox
 import base.utils.entity.EntityUtils.eyePosition
+import base.utils.math.distanceSqTo
+import base.utils.math.toVec3dCenter
+import base.utils.math.vector.Vec3f
+import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
+import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.utils.animations.sq
+import dev.dyzjct.kura.utils.inventory.HotbarSlot
+import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.item.BlockItem
 import net.minecraft.item.ItemPlacementContext
@@ -18,11 +23,11 @@ import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
 import net.minecraft.sound.SoundCategory
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
+import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
-import base.utils.math.toVec3dCenter
-import base.utils.math.vector.Vec3f
+import net.minecraft.world.RaycastContext
 import java.util.*
 
 fun SafeClientEvent.getNeighborSequence(
@@ -173,6 +178,40 @@ private fun SafeClientEvent.checkNeighbor(
 
     val hitVecOffset = getHitVecOffset(oppositeSide)
     return PlaceInfo(offsetPos, oppositeSide, dist, hitVecOffset, hitVec, pos)
+}
+
+fun SafeClientEvent.getClickSide(pos: BlockPos, strict: Boolean): Direction? {
+    var side: Direction? = null
+    for (i in Direction.entries) {
+        if (!canSee(pos, i)) continue
+        if (player.distanceSqTo(pos.offset(i)) > CombatSystem.interactRange.sq) continue
+        side = i
+    }
+    if (side != null) return side
+    side = Direction.UP
+    for (i in Direction.entries) {
+        if (strict) {
+            if (!isStrictDirection(pos, i)) continue
+            if (!world.isAir(pos.offset(i))) continue
+        }
+        if (player.distanceSqTo(pos.offset(i)) > CombatSystem.interactRange.sq) continue
+        side = i
+    }
+    return side
+}
+
+fun SafeClientEvent.canSee(pos: BlockPos, side: Direction): Boolean {
+    val testVec = pos.toCenterPos().add(side.vector.x * 0.5, side.vector.y * 0.5, side.vector.z * 0.5)
+    val result: HitResult = world.raycast(
+        RaycastContext(
+            player.eyePosition,
+            testVec,
+            RaycastContext.ShapeType.OUTLINE,
+            RaycastContext.FluidHandling.NONE,
+            player
+        )
+    )
+    return result == null || result.type == HitResult.Type.MISS
 }
 
 fun SafeClientEvent.getMiningSide(pos: BlockPos): Direction? {
@@ -340,3 +379,47 @@ fun PlaceInfo.toPlacePacket(hand: Hand, sequence: Int = 0) =
         BlockHitResult(hitVec, side, pos, false),
         sequence
     )
+
+fun SafeClientEvent.isStrictDirection(pos: BlockPos, side: Direction): Boolean {
+    val blockState: BlockState = world.getBlockState(pos)
+    val isFullBox = blockState.block === Blocks.AIR || blockState.isFullCube(
+        world,
+        pos
+    ) || world.getBlock(pos) === Blocks.COBWEB
+    return isStrictDirection(pos, side, isFullBox)
+}
+
+fun SafeClientEvent.isStrictDirection(pos: BlockPos, side: Direction, isFullBox: Boolean): Boolean {
+    if (player.blockPos.y - pos.y >= 0 && side == Direction.DOWN) return false
+    val blockCenter = pos.toCenterPos()
+    val validAxis = ArrayList<Direction>()
+    validAxis.addAll(checkAxis(player.eyePosition.x - blockCenter.x, Direction.WEST, Direction.EAST, !isFullBox))
+    validAxis.addAll(
+        checkAxis(
+            player.eyePosition.y - blockCenter.y, Direction.DOWN, Direction.UP,
+            world.getBlock(pos) !== Blocks.COBWEB
+        )
+    )
+    validAxis.addAll(checkAxis(player.eyePosition.z - blockCenter.z, Direction.NORTH, Direction.SOUTH, !isFullBox))
+    return validAxis.contains(side)
+}
+
+fun checkAxis(
+    diff: Double,
+    negativeSide: Direction,
+    positiveSide: Direction,
+    bothIfInRange: Boolean
+): ArrayList<Direction> {
+    val valid = ArrayList<Direction>()
+    if (diff < -0.5) {
+        valid.add(negativeSide)
+    }
+    if (diff > 0.5) {
+        valid.add(positiveSide)
+    }
+    if (bothIfInRange) {
+        if (!valid.contains(negativeSide)) valid.add(negativeSide)
+        if (!valid.contains(positiveSide)) valid.add(positiveSide)
+    }
+    return valid
+}

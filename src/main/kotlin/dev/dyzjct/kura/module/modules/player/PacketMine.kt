@@ -17,7 +17,7 @@ import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.distanceSqTo
 import base.utils.math.distanceSqToCenter
 import base.utils.math.scale
-import base.utils.world.getMiningSide
+import base.utils.world.getClickSide
 import dev.dyzjct.kura.manager.HotbarManager.resetHotbar
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
@@ -236,7 +236,11 @@ object PacketMine : Module(
         world.getBlockState(blockPos).onBlockBreakStart(world, blockPos, player)
         val vector = player.eyePosition.subtract(blockPos.x + 0.5, blockPos.y + 0.5, blockPos.z + 0.5)
         val side =
-            getMiningSide(blockPos) ?: Direction.getFacing(vector.x.toFloat(), vector.y.toFloat(), vector.z.toFloat())
+            getClickSide(blockPos, true) ?: Direction.getFacing(
+                vector.x.toFloat(),
+                vector.y.toFloat(),
+                vector.z.toFloat()
+            )
         BlockEvent(blockPos, side).post()
         timerReset()
     }
@@ -250,7 +254,6 @@ object PacketMine : Module(
     private fun SafeClientEvent.sendMinePacket(
         action: PacketType, blockData: BlockData, db: Boolean = false, force: Boolean = false
     ) {
-        if (world.getBlockState(blockData.blockPos).block is FireBlock || player.isUsingItem) return
         val toolSlot = blockData.mineTool ?: return
         if (db) {
             if (doubleBreak) {
@@ -263,7 +266,7 @@ object PacketMine : Module(
                     resetHotbar()
                     doubleData = null
                     return
-                } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime) && !player.usingItem && !onDoubleBreak) {
+                } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime) && !player.isUsingItem && !onDoubleBreak) {
                     onDoubleBreak = true
                     connection.sendPacket(CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId))
                     connection.sendPacket(UpdateSelectedSlotC2SPacket(toolSlot.hotbarSlot))
@@ -271,6 +274,7 @@ object PacketMine : Module(
                 }
             }
         } else {
+            if (world.getBlockState(blockData.blockPos).block is FireBlock || player.isUsingItem) return
             if ((action == Stop && !spamTimer.passed(if (mode0.ignoreCheck) spamDelay else 0)) || (world.isAir(blockData.blockPos) && !force && action == Stop)) return
             if (swing) connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
             if (switchMode0.spoof) {

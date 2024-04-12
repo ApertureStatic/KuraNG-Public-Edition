@@ -3,6 +3,7 @@ package dev.dyzjct.kura.module.modules.movement
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import base.utils.screen.ScreenUtils.notWhiteListScreen
+import dev.dyzjct.kura.gui.clickgui.ClickGuiScreen
 import net.minecraft.client.util.InputUtil
 
 object GUIMove : Module(
@@ -17,7 +18,7 @@ object GUIMove : Module(
         onMotion {
             val currentScreen = mc.currentScreen ?: return@onMotion
 
-            if (disableInClickGui && currentScreen is dev.dyzjct.kura.gui.clickgui.ClickGuiScreen) {
+            if (disableInClickGui && currentScreen is ClickGuiScreen) {
                 return@onMotion
             }
 

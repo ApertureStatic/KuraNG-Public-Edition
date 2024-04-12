@@ -1,13 +1,17 @@
 package base.system.render.graphic
 
-import com.mojang.blaze3d.platform.GlStateManager
-import com.mojang.blaze3d.systems.RenderSystem
+import dev.dyzjct.kura.KuraIdentifier
 import base.events.RunGameLoopEvent
 import base.events.render.Render3DEvent
+import base.graphics.shaders.DrawShader
+import base.graphics.shaders.DynamicVAO
+import base.graphics.use
 import base.system.event.AlwaysListening
 import base.system.event.safeEventListener
 import base.system.render.graphic.mask.DirectionMask
 import base.system.util.color.ColorRGB
+import com.mojang.blaze3d.platform.GlStateManager
+import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.render.BufferRenderer
 import net.minecraft.client.render.Tessellator
 import net.minecraft.client.render.VertexFormat
@@ -18,10 +22,6 @@ import net.minecraft.util.math.Vec3d
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL11C.glDrawArrays
 import org.lwjgl.opengl.GL32
-import base.KuraIdentifier
-import base.graphics.shaders.DrawShader
-import base.graphics.shaders.DynamicVAO
-import base.graphics.use
 
 object RenderUtils3D : AlwaysListening {
     var vertexSize = 0
@@ -137,12 +137,12 @@ object RenderUtils3D : AlwaysListening {
 
         DynamicVAO.POS3_COLOR.upload(vertexSize)
 
-        NiggerShader.use {
-            DynamicVAO.POS3_COLOR.useVao {
-                glDrawArrays(mode, 0, vertexSize)
-                //glDrawElements(mode, DynamicVAO.buffer)
-            }
+//        NiggerShader.use {
+        DynamicVAO.POS3_COLOR.useVao {
+            glDrawArrays(mode, 0, vertexSize)
+            //glDrawElements(mode, DynamicVAO.buffer)
         }
+//        }
 
         vertexSize = 0
     }

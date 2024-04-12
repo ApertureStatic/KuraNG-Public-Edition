@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.hud
 
-import base.KuraIdentifier
+import dev.dyzjct.kura.KuraIdentifier
 import base.system.render.graphic.Render2DEngine
 import base.system.render.newfont.FontRenderers
 import base.utils.combat.getTarget

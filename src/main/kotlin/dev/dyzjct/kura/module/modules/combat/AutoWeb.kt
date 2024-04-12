@@ -70,6 +70,7 @@ object AutoWeb : Module(
     init {
         onLoop {
             if (!player.isOnGround && ground.value) return@onLoop
+            if (CombatSystem.eating && player.isUsingItem) return@onLoop
             if (!spoofHotbarWithSetting(Items.COBWEB, true) {}) {
                 return@onLoop
             }
@@ -147,8 +148,6 @@ object AutoWeb : Module(
                         }
                     }
                 }
-
-                if (CombatSystem.eating && player.isUsingItem) return@onLoop
 
                 if (checkHole(it) != SurroundUtils.HoleType.NONE && it.onGround && holeCheck.value) return@onLoop
 

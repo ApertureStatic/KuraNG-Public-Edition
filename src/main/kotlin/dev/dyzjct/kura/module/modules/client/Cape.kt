@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.modules.client
 
-import base.KuraIdentifier
+import dev.dyzjct.kura.KuraIdentifier
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import net.minecraft.util.Identifier

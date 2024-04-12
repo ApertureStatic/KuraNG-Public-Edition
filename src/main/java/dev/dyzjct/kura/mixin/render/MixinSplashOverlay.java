@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import base.KuraIdentifier;
+import dev.dyzjct.kura.KuraIdentifier;
 
 import java.util.Optional;
 import java.util.function.Consumer;

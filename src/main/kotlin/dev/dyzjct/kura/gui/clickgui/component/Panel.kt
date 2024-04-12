@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.gui.clickgui.component
 
-import base.KuraIdentifier
+import dev.dyzjct.kura.KuraIdentifier
 import com.mojang.blaze3d.systems.RenderSystem
 import dev.dyzjct.kura.gui.clickgui.GuiScreen
 import dev.dyzjct.kura.gui.clickgui.render.Alignment

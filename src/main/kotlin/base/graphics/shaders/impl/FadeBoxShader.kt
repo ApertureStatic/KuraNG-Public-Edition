@@ -11,7 +11,7 @@ import net.minecraft.client.render.VertexFormats
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.math.Box
 import org.lwjgl.opengl.GL20
-import base.KuraIdentifier
+import dev.dyzjct.kura.KuraIdentifier
 import base.graphics.MatrixUtils
 import base.graphics.shaders.DrawShader
 import base.graphics.use

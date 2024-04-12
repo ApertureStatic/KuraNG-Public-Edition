@@ -1,6 +1,6 @@
 package base.graphics.shaders
 
-import base.KuraIdentifier
+import dev.dyzjct.kura.KuraIdentifier
 import base.graphics.use
 import base.system.render.graphic.Render2DEngine
 import dev.dyzjct.kura.module.modules.client.UiSetting
