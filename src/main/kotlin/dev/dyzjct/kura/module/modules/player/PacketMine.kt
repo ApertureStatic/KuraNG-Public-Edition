@@ -244,6 +244,7 @@ object PacketMine : Module(
     }
 
     fun SafeClientEvent.hookPos(blockPos: BlockPos, reset: Boolean = false) {
+        if (CombatSystem.eating && player.isUsingItem) return
         if (reset) blockData = null
         world.getBlockState(blockPos).onBlockBreakStart(world, blockPos, player)
         val vector = player.eyePosition.subtract(blockPos.x + 0.5, blockPos.y + 0.5, blockPos.z + 0.5)
@@ -278,7 +279,7 @@ object PacketMine : Module(
                     resetHotbar()
                     doubleData = null
                     return
-                } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime) && !onDoubleBreak) {
+                } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime) && !onDoubleBreak && !player.usingItem) {
                     onDoubleBreak = true
                     connection.sendPacket(CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId))
                     connection.sendPacket(UpdateSelectedSlotC2SPacket(toolSlot.hotbarSlot))

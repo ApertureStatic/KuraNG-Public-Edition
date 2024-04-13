@@ -3,7 +3,6 @@ package dev.dyzjct.kura.module.modules.misc
 import base.events.input.MouseClickEvent
 import base.system.event.SafeClientEvent
 import base.system.event.safeEventListener
-import base.utils.chat.ChatUtil
 import base.utils.screen.ScreenUtils.safeReturn
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
 import dev.dyzjct.kura.manager.RotationManager
@@ -20,12 +19,8 @@ object MCP : Module(
         safeEventListener<MouseClickEvent> {
             if (it.button == MouseClickEvent.MouseButton.MIDDLE && it.action == MouseClickEvent.MouseAction.PRESS) {
                 if (mc.currentScreen.safeReturn()) return@safeEventListener
-                if (mc.targetedEntity == null) {
-                    spoofHotbarNoAnyCheck(Items.ENDER_PEARL) {
-                        interactPearl()
-                    }
-                } else {
-                    ChatUtil.sendErrorMessage("Pearls will be thrown on mobs!!! Cancel throwing!!!")
+                spoofHotbarNoAnyCheck(Items.ENDER_PEARL) {
+                    interactPearl()
                 }
             }
         }
