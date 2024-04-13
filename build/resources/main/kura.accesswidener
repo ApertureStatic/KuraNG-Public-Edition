@@ -1,0 +1,176 @@
+accessWidener	v1	named
+
+accessible class net/minecraft/client/render/BackgroundRenderer$StatusEffectFogModifier
+
+accessible field net/minecraft/client/MinecraftClient itemUseCooldown I
+mutable field net/minecraft/client/MinecraftClient itemUseCooldown I
+accessible field net/minecraft/client/MinecraftClient session Lnet/minecraft/client/util/Session;
+mutable field net/minecraft/client/MinecraftClient session Lnet/minecraft/client/util/Session;
+accessible field net/minecraft/client/MinecraftClient sessionService Lcom/mojang/authlib/minecraft/MinecraftSessionService;
+mutable field net/minecraft/client/MinecraftClient sessionService Lcom/mojang/authlib/minecraft/MinecraftSessionService;
+accessible field net/minecraft/client/MinecraftClient renderTickCounter Lnet/minecraft/client/render/RenderTickCounter;
+mutable field net/minecraft/client/MinecraftClient renderTickCounter Lnet/minecraft/client/render/RenderTickCounter;
+
+accessible field net/minecraft/client/render/RenderTickCounter tickTime F
+mutable field net/minecraft/client/render/RenderTickCounter tickTime F
+
+accessible method net/minecraft/entity/LivingEntity tickActiveItemStack ()V
+
+mutable field net/minecraft/util/math/Vec3d x D
+mutable field net/minecraft/util/math/Vec3d y D
+mutable field net/minecraft/util/math/Vec3d z D
+
+accessible field net/minecraft/client/gl/Framebuffer useDepthAttachment Z
+mutable field net/minecraft/client/gl/Framebuffer useDepthAttachment Z
+
+accessible field net/minecraft/network/packet/c2s/play/KeepAliveC2SPacket id J
+mutable field net/minecraft/network/packet/c2s/play/KeepAliveC2SPacket id J
+
+accessible field net/minecraft/network/packet/c2s/play/PlayerInteractEntityC2SPacket entityId I
+mutable field net/minecraft/network/packet/c2s/play/PlayerInteractEntityC2SPacket entityId I
+
+accessible field net/minecraft/network/packet/s2c/play/PlayerPositionLookS2CPacket yaw F
+mutable field net/minecraft/network/packet/s2c/play/PlayerPositionLookS2CPacket yaw F
+accessible field net/minecraft/network/packet/s2c/play/PlayerPositionLookS2CPacket pitch F
+mutable field net/minecraft/network/packet/s2c/play/PlayerPositionLookS2CPacket pitch F
+
+accessible field net/minecraft/network/packet/c2s/play/ChatMessageC2SPacket chatMessage Ljava/lang/String;
+
+accessible field net/minecraft/client/network/ClientPlayerEntity lastX D
+accessible field net/minecraft/client/network/ClientPlayerEntity lastBaseY D
+accessible field net/minecraft/client/network/ClientPlayerEntity lastZ D
+accessible field net/minecraft/client/network/ClientPlayerEntity lastYaw F
+accessible field net/minecraft/client/network/ClientPlayerEntity lastPitch F
+accessible field net/minecraft/client/network/ClientPlayerEntity lastOnGround Z
+accessible field net/minecraft/client/network/ClientPlayerEntity inSneakingPose Z
+accessible field net/minecraft/client/network/ClientPlayerEntity lastSneaking Z
+accessible field net/minecraft/client/network/ClientPlayerEntity lastSprinting Z
+accessible field net/minecraft/client/network/ClientPlayerEntity ticksSinceLastPositionPacketSent I
+accessible field net/minecraft/client/network/ClientPlayerEntity usingItem Z
+accessible field net/minecraft/client/network/ClientPlayerEntity riding Z
+accessible field net/minecraft/client/network/ClientPlayerEntity activeHand Lnet/minecraft/util/Hand;
+accessible field net/minecraft/client/network/ClientPlayerEntity field_3938 I
+
+accessible field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket x D
+accessible field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket y D
+accessible field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket z D
+accessible field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket yaw F
+accessible field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket pitch F
+accessible field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket onGround Z
+accessible field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket changePosition Z
+accessible field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket changeLook Z
+
+mutable field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket x D
+mutable field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket y D
+mutable field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket z D
+mutable field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket yaw F
+mutable field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket pitch F
+mutable field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket onGround Z
+mutable field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket changePosition Z
+mutable field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket changeLook Z
+
+accessible field net/minecraft/client/network/ClientPlayerInteractionManager currentBreakingProgress F
+accessible field net/minecraft/client/network/ClientPlayerInteractionManager blockBreakingCooldown I
+accessible field net/minecraft/client/network/ClientPlayerInteractionManager lastSelectedSlot I
+
+accessible field net/minecraft/network/packet/c2s/play/ResourcePackStatusC2SPacket status Lnet/minecraft/network/packet/c2s/play/ResourcePackStatusC2SPacket$Status;
+
+accessible field net/minecraft/item/BucketItem fluid Lnet/minecraft/fluid/Fluid;
+
+accessible field net/minecraft/entity/Entity pos Lnet/minecraft/util/math/Vec3d;
+mutable field net/minecraft/entity/Entity pos Lnet/minecraft/util/math/Vec3d;
+accessible field net/minecraft/entity/Entity yaw F
+mutable field net/minecraft/entity/Entity yaw F
+accessible field net/minecraft/entity/Entity pitch F
+mutable field net/minecraft/entity/Entity pitch F
+accessible field net/minecraft/entity/Entity onGround Z
+mutable field net/minecraft/entity/Entity onGround Z
+
+accessible field net/minecraft/client/option/KeyBinding boundKey Lnet/minecraft/client/util/InputUtil$Key;
+accessible field net/minecraft/entity/LivingEntity lastAttackedTicks I
+accessible field net/minecraft/entity/LivingEntity jumping Z
+accessible field net/minecraft/entity/LivingEntity jumpingCooldown I
+accessible field net/minecraft/entity/projectile/PersistentProjectileEntity inGround Z
+
+accessible field net/minecraft/client/option/GameOptions enabledPlayerModelParts Ljava/util/Set;
+
+accessible field net/minecraft/network/packet/s2c/play/EntityStatusS2CPacket status B
+mutable field net/minecraft/network/packet/s2c/play/EntityStatusS2CPacket status B
+accessible field net/minecraft/network/packet/s2c/play/EntityStatusS2CPacket id I
+mutable field net/minecraft/network/packet/s2c/play/EntityStatusS2CPacket id I
+
+accessible field net/minecraft/network/packet/c2s/play/PlayerInteractBlockC2SPacket blockHitResult Lnet/minecraft/util/hit/BlockHitResult;
+mutable field net/minecraft/network/packet/c2s/play/PlayerInteractBlockC2SPacket blockHitResult Lnet/minecraft/util/hit/BlockHitResult;
+accessible field net/minecraft/network/packet/c2s/play/PlayerInteractBlockC2SPacket hand Lnet/minecraft/util/Hand;
+mutable field net/minecraft/network/packet/c2s/play/PlayerInteractBlockC2SPacket hand Lnet/minecraft/util/Hand;
+accessible field net/minecraft/network/packet/c2s/play/PlayerInteractBlockC2SPacket sequence I
+mutable field net/minecraft/network/packet/c2s/play/PlayerInteractBlockC2SPacket sequence I
+
+accessible method net/minecraft/entity/player/PlayerEntity getVelocityMultiplier ()F
+accessible method net/minecraft/entity/Entity movementInputToVelocity (Lnet/minecraft/util/math/Vec3d;FF)Lnet/minecraft/util/math/Vec3d;
+accessible method net/minecraft/util/math/Box traceCollisionSide (Lnet/minecraft/util/math/Box;Lnet/minecraft/util/math/Vec3d;[DLnet/minecraft/util/math/Direction;DDD)Lnet/minecraft/util/math/Direction;
+
+accessible field net/minecraft/network/packet/s2c/play/EntityVelocityUpdateS2CPacket velocityX I
+accessible field net/minecraft/network/packet/s2c/play/EntityVelocityUpdateS2CPacket velocityY I
+accessible field net/minecraft/network/packet/s2c/play/EntityVelocityUpdateS2CPacket velocityZ I
+
+mutable field net/minecraft/network/packet/s2c/play/EntityVelocityUpdateS2CPacket velocityX I
+mutable field net/minecraft/network/packet/s2c/play/EntityVelocityUpdateS2CPacket velocityY I
+mutable field net/minecraft/network/packet/s2c/play/EntityVelocityUpdateS2CPacket velocityZ I
+
+accessible field net/minecraft/network/packet/s2c/play/ExplosionS2CPacket playerVelocityX F
+accessible field net/minecraft/network/packet/s2c/play/ExplosionS2CPacket playerVelocityY F
+accessible field net/minecraft/network/packet/s2c/play/ExplosionS2CPacket playerVelocityZ F
+
+mutable field net/minecraft/network/packet/s2c/play/ExplosionS2CPacket playerVelocityX F
+mutable field net/minecraft/network/packet/s2c/play/ExplosionS2CPacket playerVelocityY F
+mutable field net/minecraft/network/packet/s2c/play/ExplosionS2CPacket playerVelocityZ F
+
+accessible field net/minecraft/client/font/TextRenderer fontHeight I
+mutable field net/minecraft/client/font/TextRenderer fontHeight I
+
+mutable field net/minecraft/network/packet/c2s/play/ChatMessageC2SPacket chatMessage Ljava/lang/String;
+
+accessible field net/minecraft/client/world/ClientChunkManager chunks Lnet/minecraft/client/world/ClientChunkManager$ClientChunkMap;
+accessible field net/minecraft/world/chunk/WorldChunk loadedToWorld Z
+accessible field net/minecraft/client/world/ClientChunkManager$ClientChunkMap chunks Ljava/util/concurrent/atomic/AtomicReferenceArray;
+
+accessible field net/minecraft/client/render/WorldRenderer entityOutlinesFramebuffer Lnet/minecraft/client/gl/Framebuffer;
+
+accessible field net/minecraft/client/world/ClientWorld pendingUpdateManager Lnet/minecraft/client/network/PendingUpdateManager;
+mutable field net/minecraft/client/world/ClientWorld pendingUpdateManager Lnet/minecraft/client/network/PendingUpdateManager;
+
+accessible field net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen selectedTab Lnet/minecraft/item/ItemGroup;
+mutable field net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen selectedTab Lnet/minecraft/item/ItemGroup;
+
+accessible field net/minecraft/entity/projectile/ProjectileEntity ownerUuid Ljava/util/UUID;
+
+accessible method net/minecraft/entity/LivingEntity getJumpVelocity ()F
+
+accessible method net/minecraft/client/render/Camera setPos (DDD)V
+accessible method net/minecraft/client/render/Camera setPos (Lnet/minecraft/util/math/Vec3d;)V
+
+accessible method net/minecraft/client/network/ClientPlayerInteractionManager sendSequencedPacket (Lnet/minecraft/client/world/ClientWorld;Lnet/minecraft/client/network/SequencedPacketCreator;)V
+
+accessible field net/minecraft/client/gui/screen/ChatScreen messageHistorySize I
+mutable field net/minecraft/client/gui/screen/ChatScreen messageHistorySize I
+accessible field net/minecraft/client/gui/screen/ChatScreen chatLastMessage Ljava/lang/String;
+mutable field net/minecraft/client/gui/screen/ChatScreen chatLastMessage Ljava/lang/String;
+
+accessible field net/minecraft/screen/HorseScreenHandler entity Lnet/minecraft/entity/passive/AbstractHorseEntity;
+mutable field net/minecraft/screen/HorseScreenHandler entity Lnet/minecraft/entity/passive/AbstractHorseEntity;
+
+accessible class net/minecraft/client/font/TextRenderer$Drawer
+accessible field net/minecraft/client/gui/widget/TextFieldWidget textRenderer Lnet/minecraft/client/font/TextRenderer;
+mutable field net/minecraft/client/gui/widget/TextFieldWidget textRenderer Lnet/minecraft/client/font/TextRenderer;
+accessible field net/minecraft/client/gui/widget/TextFieldWidget drawsBackground Z
+mutable field net/minecraft/client/gui/widget/TextFieldWidget drawsBackground Z
+
+accessible field net/minecraft/client/gl/PostEffectProcessor passes Ljava/util/List;
+
+accessible field net/minecraft/network/ClientConnection channel Lio/netty/channel/Channel;
+
+accessible method net/minecraft/client/input/KeyboardInput getMovementMultiplier (ZZ)F
+
+accessible field net/minecraft/client/gl/ShaderProgram loadedUniforms Ljava/util/Map;
+mutable field net/minecraft/client/gl/ShaderProgram loadedUniforms Ljava/util/Map;
