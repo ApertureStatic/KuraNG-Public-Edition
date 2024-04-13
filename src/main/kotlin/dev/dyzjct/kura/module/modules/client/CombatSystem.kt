@@ -30,6 +30,7 @@ object CombatSystem : Module(
         if (swing) {
             if (packetSwing) connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND)) else player.swingHand(
                 Hand.MAIN_HAND)
+            player.resetLastAttackedTicks()
         }
     }
     enum class SpoofMode {

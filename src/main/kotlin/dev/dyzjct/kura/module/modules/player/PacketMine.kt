@@ -35,6 +35,8 @@ import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.findBestItem
 import net.minecraft.block.CobwebBlock
 import net.minecraft.block.FireBlock
+import net.minecraft.entity.effect.StatusEffectInstance
+import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.item.SwordItem
 import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
@@ -56,9 +58,12 @@ object PacketMine : Module(
     private var switchMode0 = switchMode.value as SwitchMode
     var inventoryTool by bsetting("InvTool", false).enumIs(switchMode, SwitchMode.Bypass)
     var doubleBreak by bsetting("DoubleBreak", false)
-    private var setGround by bsetting("SetGround", true)
     private var startTime by isetting("StartTime", 0, 0, 1000).isTrue { doubleBreak }
     private var backTime by isetting("BackTime", 0, 0, 500).isTrue { doubleBreak }
+    private var haste by bsetting("Haste", false)
+    private val amplifier by isetting("Amplifier", 2, 1, 2).isTrue { haste }
+    private var setGround by bsetting("SetGround", true)
+    private var cancelAbort by bsetting("CancelAbortPacket", false)
     private var rotate = bsetting("Rotate", true)
     private var prio by bsetting("PrioRotate", true).isTrue(rotate)
     private var swing by bsetting("Swing", false)
@@ -99,7 +104,13 @@ object PacketMine : Module(
     }
 
     init {
+        onPacketSend {
+            if (it.packet is PlayerActionC2SPacket && it.packet.action == PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK && cancelAbort) {
+                it.cancelled = true
+            }
+        }
         safeEventListener<BlockEvent> { event ->
+            if (player.isUsingItem && CombatSystem.eating) return@safeEventListener
             BlockData(
                 event.pos, event.facing, findBestItem(event.pos, inventoryBypass)?.let {
                     if (inventoryBypass) player.allSlots.firstItem(it)
@@ -140,6 +151,7 @@ object PacketMine : Module(
         }
 
         onLoop {
+            addhaste(haste)
             blockData?.let { blockData ->
                 if (!world.isAir(blockData.blockPos)) {
                     packetSpamming = true
@@ -266,7 +278,7 @@ object PacketMine : Module(
                     resetHotbar()
                     doubleData = null
                     return
-                } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime) && !player.isUsingItem && !onDoubleBreak) {
+                } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime) && !onDoubleBreak) {
                     onDoubleBreak = true
                     connection.sendPacket(CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId))
                     connection.sendPacket(UpdateSelectedSlotC2SPacket(toolSlot.hotbarSlot))
@@ -303,6 +315,20 @@ object PacketMine : Module(
             }
             spamTimer.reset()
         }
+    }
+
+    private fun SafeClientEvent.addhaste(haste: Boolean) {
+        if (player.hasStatusEffect(StatusEffects.HASTE) || !haste) return
+        player.addStatusEffect(
+            StatusEffectInstance(
+                StatusEffects.HASTE,
+                1,
+                amplifier - 1,
+                false,
+                false,
+                true
+            )
+        )
     }
 
     @Suppress("UNUSED")

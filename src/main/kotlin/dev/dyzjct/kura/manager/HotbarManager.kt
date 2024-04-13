@@ -143,8 +143,8 @@ object HotbarManager : AlwaysListening {
                 player.allSlots.firstItem(item)
                     ?.let { thisItem -> HotbarSlot(thisItem) }?.let { slot ->
                         notNullSlot = true
+                        val swap = slot.hotbarSlot != serverSideHotbar
                         if (!isCheck) {
-                            val swap = slot.hotbarSlot != serverSideHotbar
                             if (swap) {
                                 inventoryTaskNow {
                                     val hotbarSlot = player.hotbarSlots[serverSideHotbar]
@@ -162,12 +162,17 @@ object HotbarManager : AlwaysListening {
             CombatSystem.SpoofMode.China -> {
                 findItemInInventory(item)?.let { slot ->
                     notNullSlot = true
+                    val swap = slot != serverSideHotbar
                     if (!isCheck) {
-                        val old = player.inventory.selectedSlot
-                        inventorySwap(slot)
-                        block.invoke()
-                        inventorySwap(slot)
-                        doSwap(old)
+                        if (swap) {
+                            val old = player.inventory.selectedSlot
+                            inventorySwap(slot)
+                            block.invoke()
+                            inventorySwap(slot)
+                            doSwap(old)
+                        } else {
+                            block.invoke()
+                        }
                     }
                 }
             }
@@ -199,19 +204,17 @@ object HotbarManager : AlwaysListening {
                 player.allSlots.firstItem(item)
                     ?.let { thisItem -> HotbarSlot(thisItem) }?.let { slot ->
                         notNullSlot = true
+                        val swap = slot.hotbarSlot != serverSideHotbar
                         if (!isCheck) {
-                            synchronized(HotbarManager) {
-                                val swap = slot.hotbarSlot != serverSideHotbar
-                                if (swap) {
-                                    inventoryTaskNow {
-                                        val hotbarSlot = player.hotbarSlots[serverSideHotbar]
-                                        swapWith(slot, hotbarSlot)
-                                        action { block.invoke() }
-                                        swapWith(slot, hotbarSlot)
-                                    }
-                                } else {
-                                    block.invoke()
+                            if (swap) {
+                                inventoryTaskNow {
+                                    val hotbarSlot = player.hotbarSlots[serverSideHotbar]
+                                    swapWith(slot, hotbarSlot)
+                                    action { block.invoke() }
+                                    swapWith(slot, hotbarSlot)
                                 }
+                            } else {
+                                block.invoke()
                             }
                         }
                     }
@@ -220,13 +223,16 @@ object HotbarManager : AlwaysListening {
             CombatSystem.SpoofMode.China -> {
                 findItemInInventory(item)?.let { slot ->
                     notNullSlot = true
+                    val swap = slot != serverSideHotbar
                     if (!isCheck) {
-                        synchronized(HotbarManager) {
+                        if (swap) {
                             val old = player.inventory.selectedSlot
                             inventorySwap(slot)
                             block.invoke()
                             inventorySwap(slot)
                             doSwap(old)
+                        } else {
+                            block.invoke()
                         }
                     }
                 }

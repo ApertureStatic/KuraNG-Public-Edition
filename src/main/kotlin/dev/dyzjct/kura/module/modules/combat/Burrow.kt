@@ -76,6 +76,8 @@ object Burrow : Module(
 
             if (cancelMotion) player.velocity.y = 0.0
 
+            breakCrystal()
+
             if (canPlace(player.blockPos.down())) {
                 val vec = player.pos.add(0.0, -1.0, 0.0)
                 if (rotate) RotationManager.addRotations(player.blockPos.down(), true)
@@ -91,7 +93,6 @@ object Burrow : Module(
                 cancelSneak()
             }
             val vec = player.pos
-            breakCrystal()
             if (player.onGround) {
                 when (fakeJumpMode.value) {
                     FakeJumpMode.Normal -> {
