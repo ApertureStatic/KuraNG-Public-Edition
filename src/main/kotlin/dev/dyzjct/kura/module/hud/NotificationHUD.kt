@@ -10,7 +10,6 @@ import java.awt.Color
 object NotificationHUD : HUDModule(
     name = "NotificationNew", langName = "通知界面", x = 300f, y = 150f
 ) {
-    //    private var notificationCount by isetting("NotificationCount", 4, 1, 12)
     private var interval by isetting("Interval", 0, 0, 20)
     var animationLength by isetting("AnimationLength", 15, 10, 100)
     private var blur by bsetting("Blur", false)

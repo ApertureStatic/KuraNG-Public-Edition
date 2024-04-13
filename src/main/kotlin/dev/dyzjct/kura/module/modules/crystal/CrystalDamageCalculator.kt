@@ -248,7 +248,8 @@ object CrystalDamageCalculator : AlwaysListening {
         target: PlayerEntity,
         power: Float
     ): Float {
-        if (world.difficulty === Difficulty.PEACEFUL) return 0f
+        var endDamage = 0f
+        if (world.difficulty === Difficulty.PEACEFUL) return endDamage
         (explosion as IExplosion)[explosionPos, power] = true
 
         if (!Box(
@@ -260,7 +261,7 @@ object CrystalDamageCalculator : AlwaysListening {
                 MathHelper.floor(explosionPos.z + 13.0).toDouble()
             ).intersects(target.boundingBox)
         ) {
-            return 0f
+            return endDamage
         }
 
         if (!target.isImmuneToExplosion && !target.isInvulnerable) {
@@ -286,7 +287,8 @@ object CrystalDamageCalculator : AlwaysListening {
                     toDamage = DamageUtil.getDamageLeft(
                         toDamage,
                         target.armor.toFloat(),
-                        (target.getAttributeInstance(EntityAttributes.GENERIC_ARMOR_TOUGHNESS)?.value ?: 1.0).toFloat()
+                        (target.getAttributeInstance(EntityAttributes.GENERIC_ARMOR_TOUGHNESS)?.value
+                            ?: 1.0).toFloat()
                     )
 
                     if (target.hasStatusEffect(StatusEffects.RESISTANCE)) {
@@ -307,10 +309,10 @@ object CrystalDamageCalculator : AlwaysListening {
                             toDamage = DamageUtil.getInflictedDamage(toDamage, protAmount.toFloat())
                         }
                     }
-                    return toDamage
+                    endDamage = toDamage
                 }
             }
         }
-        return 0f
+        return endDamage
     }
 }

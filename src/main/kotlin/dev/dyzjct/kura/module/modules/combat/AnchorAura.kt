@@ -50,12 +50,13 @@ import java.util.stream.Collectors
 object AnchorAura : Module(
     name = "AnchorAura", langName = "恶俗狗", category = Category.COMBAT, description = "Auto using crystals for pvp."
 ) {
-    private var noSuicide by fsetting("NoSuicide", 2f, 0f, 20f)
-    private var maxSelfDamage by isetting("MaxSelfDamage", 10, 0, 36)
     private var minDamage by dsetting("MinDamage", 4.0, 0.0, 36.0)
+    private var maxSelfDamage by isetting("MaxSelfDamage", 10, 0, 36)
+    private var noSuicide by fsetting("NoSuicide", 2f, 0f, 20f)
     private val glowDelay by isetting("GlowDelay", 50, 0, 500)
     private val anchorDelay by isetting("AnchorDelay", 50, 0, 500)
     private val clickDelay by isetting("ClickDelay", 50, 0, 500)
+    private val damageMode by msetting("DamageMode", DamageMode.Thunder)
     private var airPlace by bsetting("AirPlace", false)
     private val strictDirection by bsetting("StrictDirection", false)
     private val rotate by bsetting("Rotation", false)
@@ -125,18 +126,16 @@ object AnchorAura : Module(
 
     init {
         onMotion {
-            runCatching {
-                if (CombatSystem.eating && player.isUsingItem) return@onMotion
-                rawPosList = getPlaceablePos()
-                placeInfo = calcPlaceInfo()
-                placeInfo?.let { placeInfo ->
-                    if (rotate) RotationManager.addRotations(placeInfo.blockPos)
+            if (CombatSystem.eating && player.isUsingItem) return@onMotion
+            rawPosList = getPlaceablePos()
+            placeInfo = calcPlaceInfo()
+            placeInfo?.let { placeInfo ->
+                if (rotate) RotationManager.addRotations(placeInfo.blockPos)
+                globalPlace(placeInfo, true)
+                checkGlowPlaceable(placeInfo, Items.GLOWSTONE)
+                globalPlace(placeInfo, false)
+                if (getTargetSpeed(placeInfo.target) < 10) {
                     globalPlace(placeInfo, true)
-                    checkGlowPlaceable(placeInfo, Items.GLOWSTONE)
-                    globalPlace(placeInfo, false)
-                    if (getTargetSpeed(placeInfo.target) < 10) {
-                        globalPlace(placeInfo, true)
-                    }
                 }
             }
         }
@@ -230,7 +229,6 @@ object AnchorAura : Module(
         if (targets.isEmpty()) return null
 
         if (rawPosList.isEmpty()) return null
-
         outerList@ for (pos in rawPosList) {
             val blockPos = pos.toCenterPos().add(0.0, 0.5, 0.0).toBlockPos()
             val placeBox = Box(blockPos)
@@ -239,15 +237,31 @@ object AnchorAura : Module(
                     placeBox
                 )
                 } && world.isAir(pos)) continue
-            val selfDamage = anchorDamage(player, player.pos, player.boundingBox, blockPos)
+            val selfDamage = when (damageMode) {
+                DamageMode.Thunder -> {
+                    anchorDamageNew(blockPos, player).toDouble()
+                }
+
+                else -> {
+                    anchorDamage(player, player.pos, player.boundingBox, blockPos)
+                }
+            }
+
             if (player.scaledHealth - selfDamage <= noSuicide) continue
             if (selfDamage > maxSelfDamage) continue
 
             for ((target, targetPos, targetBox, currentPos) in targets) {
                 if (targetBox.intersects(placeBox)) continue
                 if (placeBox.intersects(targetPos, currentPos.toVec3dCenter())) continue
-//                val targetDamage = anchorDamage(target, targetPos, targetBox, blockPos)
-                val targetDamage = anchorDamageNew(blockPos, target).toDouble()
+                val targetDamage = when (damageMode) {
+                    DamageMode.Thunder -> {
+                        anchorDamageNew(blockPos, target).toDouble()
+                    }
+
+                    else -> {
+                        anchorDamage(target, targetPos, targetBox, blockPos)
+                    }
+                }
                 val minDamage = minDamage
                 val balance = -8f
                 val headPos = target.blockPos.up(2)
@@ -382,4 +396,9 @@ object AnchorAura : Module(
             return list.asSequence().filter { it.entity.isAlive }
                 .sortedWith(compareByDescending<TargetInfo> { it.entity.scaledHealth }).take(CombatSystem.maxTargets)
         }
+
+    @Suppress("UNUSED")
+    enum class DamageMode {
+        Melon, Thunder
+    }
 }
