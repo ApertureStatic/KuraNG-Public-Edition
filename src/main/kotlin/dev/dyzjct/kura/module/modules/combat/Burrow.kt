@@ -111,21 +111,9 @@ object Burrow : Module(
                     }
 
                     FakeJumpMode.Strict -> {
-                        fun checkHead(): Boolean {
-                            return ((isInBox(player.blockPos) && !world.isAir(player.blockPos.up(2))) || (isInBox(
-                                player.pos.add(0.3, 0.0, 0.3).toBlockPos()
-                            ) && !world.isAir(player.pos.add(0.3, 0.0, 0.3).toBlockPos().up(2))) || (isInBox(
-                                player.pos.add(-0.3, 0.0, 0.3).toBlockPos()
-                            ) && !world.isAir(player.pos.add(-0.3, 0.0, 0.3).toBlockPos().up(2))) || (isInBox(
-                                player.pos.add(-0.3, 0.0, -0.3).toBlockPos()
-                            ) && !world.isAir(player.pos.add(-0.3, 0.0, -0.3).toBlockPos().up(2))) || (isInBox(
-                                player.pos.add(0.3, 0.0, -0.3).toBlockPos()
-                            ) && !world.isAir(player.pos.add(0.3, 0.0, -0.3).toBlockPos().up(2))))
-                        }
-
-                        val selfPos = getFillBlock() ?: return@onMotion
-                        val fakeJumpOffset =
-                            getFakeJumpOffset(if (checkHead()) selfPos else player.blockPos, checkHead())
+                        val selfPos: BlockPos = getFillBlock() ?: return@onMotion
+                        val headFillMode: Boolean = selfPos.y > player.y
+                        val fakeJumpOffset = getFakeJumpOffset(selfPos, headFillMode)
                         doFakeJump(fakeJumpOffset)
                     }
                 }
