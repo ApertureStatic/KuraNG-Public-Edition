@@ -8,7 +8,7 @@ abstract class Module(
     category: Category,
     visible: Boolean = false,
     alwaysEnable: Boolean = false,
-    isHidden: Boolean = false
+    safeModule: Boolean = false
 ) : AbstractModule() {
 
     init {

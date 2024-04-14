@@ -35,6 +35,7 @@ abstract class AbstractModule : ListenerOwner() {
     var moduleCategory = dev.dyzjct.kura.module.Category.HIDDEN
     var alwaysEnable = false
     var isEnabled = false
+    var isSafe = false
     var isVisible = false
         set(value) {
             field = value
