@@ -46,6 +46,7 @@ object Burrow : Module(
     private var rotate by bsetting("Rotate", true)
     private var fakeJumpMode = msetting("FakeJumpMode", FakeJumpMode.Strict)
     private var packetMode = msetting("PacketMode", PacketMode.Normal)
+    private var sneak by bsetting("Sneak", false)
     private var bypass by bsetting("Bypass", false)
     private var cancelMotion by bsetting("CancelMotion", false)
     private var strictDirection by bsetting("StrictDirection", false)
@@ -574,12 +575,14 @@ object Burrow : Module(
     }
 
     private fun SafeClientEvent.doSneak() {
-        connection.sendPacket(
-            ClientCommandC2SPacket(
-                player,
-                ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY
+        if (sneak) {
+            connection.sendPacket(
+                ClientCommandC2SPacket(
+                    player,
+                    ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY
+                )
             )
-        )
+        }
     }
 
     private fun getFlooredPosition(entity: Entity): BlockPos {
