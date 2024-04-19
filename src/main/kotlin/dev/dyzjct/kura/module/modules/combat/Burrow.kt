@@ -5,7 +5,6 @@ import base.system.util.interfaces.DisplayEnum
 import base.utils.block.BlockUtil.getNeighbor
 import base.utils.block.isLiquidBlock
 import base.utils.block.isWater
-import base.utils.entity.EntityUtils.isInBox
 import base.utils.entity.EntityUtils.isInWeb
 import base.utils.extension.fastPos
 import base.utils.extension.position
@@ -14,6 +13,7 @@ import base.utils.extension.sendSequencedPacket
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.toBlockPos
+import base.utils.math.toBox
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
@@ -612,6 +612,21 @@ object Burrow : Module(
         )
     }
 
+    private fun SafeClientEvent.headCheck(): Boolean {
+        return (!world.isAir(
+            player.pos.add(-0.3, 2.0, 0.3).toBlockPos()
+        ) && player.boundingBox.intersects(player.pos.add(-0.3, 0.0, 0.3).toBlockPos().toBox())) ||
+                (!world.isAir(
+                    player.pos.add(0.3, 2.0, -0.3).toBlockPos()
+                ) && player.boundingBox.intersects(player.pos.add(0.3, 0.0, -0.3).toBlockPos().toBox())) ||
+                (!world.isAir(
+                    player.pos.add(-0.3, 2.0, 0.3).toBlockPos()
+                ) && player.boundingBox.intersects(player.pos.add(-0.3, 0.0, 0.3).toBlockPos().toBox())) ||
+                (!world.isAir(
+                    player.pos.add(-0.3, 2.0, -0.3).toBlockPos()
+                ) && player.boundingBox.intersects(player.pos.add(-0.3, 0.0, -0.3).toBlockPos().toBox())) ||
+                (!world.isAir(player.blockPos.up(2)) && player.boundingBox.intersects(player.blockPos.toBox()))
+    }
 
     private enum class PacketMode(override val displayName: CharSequence) : DisplayEnum {
         Normal("Normal"),
