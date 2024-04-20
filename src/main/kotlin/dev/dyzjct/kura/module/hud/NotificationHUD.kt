@@ -8,18 +8,21 @@ import net.minecraft.client.gui.DrawContext
 import java.awt.Color
 
 object NotificationHUD : HUDModule(
-    name = "NotificationNew", langName = "通知界面", x = 300f, y = 150f
+    name = "NotificationHUD", langName = "通知界面", x = 300f, y = 150f
 ) {
     private val mode by msetting("Mode", NoticeMode.Normal)
     private val interval by isetting("Interval", 0, 0, 20)
     val animationLength by isetting("AnimationLength", 15, 10, 100)
-    private val color by csetting("Color", Color(0, 0, 0))
+    val fadeFraction by fsetting("FractionOfLength", 6f, 1f, 8f)
+    private val color by csetting("MainColor", Color(0, 0, 0))
+    private val doubleColor by csetting("DoubleColor", Color(130, 255, 120))
+    private val fontColor by csetting("FontColor", Color(255, 255, 255))
     override fun onRender(context: DrawContext) {
-        width = 150f
-        height = 15f
+        width = 200f
+        height = 30f
         if (NotificationManager.taskList.isEmpty()) return
         try {
-            var count = 1f
+            var count = 0f
             for (notification in NotificationManager.taskList) {
                 if (notification.reversed && (notification.animation >= 1f)) {
                     count += 1f.symbolArranged(
@@ -29,10 +32,10 @@ object NotificationHUD : HUDModule(
                     NotificationManager.taskList.remove(notification)
                     continue
                 }
-                width =
-                    FontRenderers.cn.getStringWidth(notification.message) + 6 + if (mode == NoticeMode.SanLiuLing) 12 else 0
-                val offsetX = x + 150 - width
-                val animationXOffset = offsetX + width * notification.animation
+                val offsetWidth =
+                    FontRenderers.cn.getStringWidth(notification.message) + 32
+                val offsetX = x + 200 - offsetWidth
+                val animationXOffset = offsetX + (offsetWidth + 20) * notification.animation
                 val arrangedHeight = if (y < mc.window.scaledHeight / 2)
                     (height + 5 + interval) * count
                         .symbolArranged(
@@ -46,26 +49,33 @@ object NotificationHUD : HUDModule(
                             context.matrices,
                             animationXOffset,
                             y + arrangedHeight,
-                            width,
+                            offsetWidth,
                             height,
                             color
                         )
-
+                        Render2DEngine.drawRect(
+                            context.matrices,
+                            animationXOffset,
+                            y + arrangedHeight + height - (height / 10),
+                            offsetWidth * notification.animationNoReset,
+                            height / 10,
+                            doubleColor
+                        )
                         FontRenderers.cn.drawString(
                             context.matrices,
                             notification.message,
-                            animationXOffset + 3,
-                            y.symbolArranged(true, height / 2f) + arrangedHeight - 1.5f,
-                            Color(255, 255, 255).rgb
+                            animationXOffset + 16,
+                            y.symbolArranged(true, height / 2f) + arrangedHeight - 1.7f,
+                            fontColor.rgb
                         )
                     }
 
-                    NoticeMode.SanLiuLing -> {
+                    NoticeMode.New -> {
                         Render2DEngine.drawRect(
                             context.matrices,
                             animationXOffset,
                             y + arrangedHeight,
-                            width,
+                            offsetWidth,
                             height,
                             color
                         )
@@ -73,16 +83,16 @@ object NotificationHUD : HUDModule(
                             context.matrices,
                             animationXOffset,
                             y + arrangedHeight,
-                            width * notification.animation,
-                            height / 10,
-                            Color(130, 255, 120, color.alpha)
+                            offsetWidth * notification.animationNoReset,
+                            height,
+                            doubleColor
                         )
                         FontRenderers.cn.drawString(
                             context.matrices,
                             notification.message,
-                            animationXOffset + 3,
-                            y.symbolArranged(true, height / 2f) + arrangedHeight - 1.5f,
-                            Color(255, 255, 255).rgb
+                            animationXOffset + 16,
+                            y.symbolArranged(true, height / 2f) + arrangedHeight - 1.7f,
+                            fontColor.rgb
                         )
                     }
                 }
@@ -113,6 +123,6 @@ object NotificationHUD : HUDModule(
     }
 
     enum class NoticeMode {
-        Normal, SanLiuLing
+        Normal, New
     }
 }

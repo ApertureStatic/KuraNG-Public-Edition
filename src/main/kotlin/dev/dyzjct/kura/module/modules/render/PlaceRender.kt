@@ -1,12 +1,12 @@
 package dev.dyzjct.kura.module.modules.render
 
+import base.utils.graphics.ESPRenderer
+import base.utils.math.scale
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.animations.Easing
-import base.utils.graphics.ESPRenderer
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
-import base.utils.math.scale
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
@@ -30,7 +30,7 @@ object PlaceRender : Module(
                     if (System.currentTimeMillis() - time > fadeLength.value) {
                         renderBlocks.remove(pos)
                     } else {
-                        val scale = Easing.IN_CUBIC.dec(Easing.toDelta(time, fadeLength.value))
+                        val scale = Easing.IN_EXPO.dec(Easing.toDelta(time, fadeLength.value))
                         val renderer = ESPRenderer()
                         var box = Box(pos)
                         when (mode.value) {

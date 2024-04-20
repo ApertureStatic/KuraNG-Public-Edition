@@ -1,9 +1,5 @@
 package dev.dyzjct.kura.module.modules.player
 
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.utils.inventory.HotbarSlot
-import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
 import base.events.player.PlayerMoveEvent
 import base.system.event.SafeClientEvent
 import base.system.event.StageType
@@ -14,7 +10,13 @@ import base.utils.block.BlockUtil
 import base.utils.block.BlockUtil.checkNearBlocksExtended
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
+import base.utils.math.toVec3dCenter
 import base.utils.player.RotationUtils
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.render.PlaceRender
+import dev.dyzjct.kura.utils.inventory.HotbarSlot
+import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
 import net.minecraft.item.BlockItem
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
@@ -23,7 +25,6 @@ import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
-import base.utils.math.toVec3dCenter
 import java.awt.Color
 
 object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category = Category.PLAYER) {
@@ -35,6 +36,7 @@ object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category 
     private var tower by bsetting("Tower", true)
     private var safewalk by bsetting("SafeWalk", true)
     private var render by bsetting("Render", true)
+    private var ignorer by bsetting("IgnorerRender", true)
     private var testjump by bsetting("TestJump", true)
     private var currentblock: BlockUtil.BlockPosWithFacing? = null
     private var spoofSlot: HotbarSlot? = null
@@ -132,6 +134,10 @@ object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category 
                                             player.onGround
                                         )
                                     )
+                                }
+                                if (!ignorer) {
+                                    PlaceRender.renderBlocks[currentblock.position.offset(currentblock.facing)] =
+                                        System.currentTimeMillis()
                                 }
                             }
                             player.inventory.selectedSlot = oldSlot
