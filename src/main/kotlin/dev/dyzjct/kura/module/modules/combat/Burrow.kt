@@ -81,10 +81,8 @@ object Burrow : Module(
 
             if (canPlace(player.blockPos.down())) {
                 val vec = player.pos.add(0.0, -1.0, 0.0)
-                if (rotate) RotationManager.addRotations(player.blockPos.down(), true)
-                RotationManager.stopRotation()
                 sendPlayerRotation(player.yaw, 90f, false)
-                RotationManager.startRotation()
+                if (rotate) RotationManager.addRotations(player.blockPos.down(), true)
                 doSneak()
                 placeBlock(player.blockPos.down())
                 place(vec.add(0.3, 0.3, 0.3))
@@ -192,6 +190,8 @@ object Burrow : Module(
 
                 PacketMode.OFF -> {}
             }
+            timer.reset()
+            disable()
         }
 
         onPacketReceive { event ->
@@ -286,7 +286,7 @@ object Burrow : Module(
             ) || it.boundingBox.intersects(Box(player.pos.add(0.3, 0.0, -0.3).toBlockPos())))
         }) {
             if (entity is EndCrystalEntity) {
-                RotationManager.addRotations(entity.blockPos, true)
+                RotationManager.addRotations(entity.blockPos)
                 connection.sendPacket(
                     PlayerInteractEntityC2SPacket.attack(
                         world.getEntityById(entity.id), player.isSneaking

@@ -190,7 +190,6 @@ object PacketMine : Module(
                 }
                 if (player.distanceSqToCenter(data.blockPos) <= CombatSystem.interactRange.sq) {
                     if (((mode0.ignoreCheck && packetSpamming) || !fastSyncCheck) && !player.isUsingItem) {
-                        if (rotate.value) RotationManager.addRotations(data.blockPos, prio)
                         sendMinePacket(Stop, data)
                     }
                     if ((mode0.retry || forceRetry) && !player.isUsingItem) hookPos(data.blockPos, true)
@@ -208,7 +207,6 @@ object PacketMine : Module(
                 if (world.getBlockState(blockData.blockPos).block is FireBlock) doubleData = null
                 blockData.mineTool?.let {
                     if (player.distanceSqToCenter(blockData.blockPos) <= 5.15.sq) {
-                        if (rotate.value) RotationManager.addRotations(blockData.blockPos, prio)
                         sendMinePacket(Stop, blockData, true)
                     } else doubleData = null
                 }
@@ -271,7 +269,7 @@ object PacketMine : Module(
         if (db) {
             if (doubleBreak) {
                 if (onDoubleBreak) {
-                    doubleData?.let { RotationManager.addRotations(it.blockPos) }
+                    doubleData?.let { RotationManager.addRotations(it.blockPos, prio) }
                 }
                 if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime + backTime) && onDoubleBreak) {
                     onDoubleBreak = false
@@ -289,6 +287,7 @@ object PacketMine : Module(
         } else {
             if (world.getBlockState(blockData.blockPos).block is FireBlock || player.isUsingItem) return
             if ((action == Stop && !spamTimer.passed(if (mode0.ignoreCheck) spamDelay else 0)) || (world.isAir(blockData.blockPos) && !force && action == Stop)) return
+            if (rotate.value) RotationManager.addRotations(blockData.blockPos, prio)
             if (swing) connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
             if (switchMode0.spoof) {
                 if (!switchMode0.bypass) {

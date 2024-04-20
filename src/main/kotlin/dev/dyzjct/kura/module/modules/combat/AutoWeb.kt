@@ -7,6 +7,7 @@ import base.utils.combat.getPredictedTarget
 import base.utils.combat.getTarget
 import base.utils.concurrent.threads.onMainThread
 import base.utils.concurrent.threads.runSafe
+import base.utils.entity.EntityUtils.isInWeb
 import base.utils.entity.EntityUtils.spoofSneak
 import base.utils.extension.fastPos
 import base.utils.hole.SurroundUtils
@@ -41,6 +42,7 @@ object AutoWeb : Module(
     private var betterAnchor = bsetting("BetterAnchor", true)
     private var facePlace = bsetting("FacePlace", false)
     private var multiPlace = bsetting("MultiPlace", true)
+    private var webCheck = bsetting("WebCheck", true)
     private var ground = bsetting("OnlyGround", true)
     private var inside = bsetting("Inside", false)
     private var strictDirection = bsetting("StrictDirection", false)
@@ -92,6 +94,8 @@ object AutoWeb : Module(
                         AntiMinePlace.mineMap[pos]?.let { mine ->
                             if (System.currentTimeMillis() - mine.start >= mine.mine) return@onPacket
                         }
+
+                        if (isInWeb(it) && webCheck.value) return
 
                         if (world.isAir(pos) && (getNeighbor(
                                 pos,
