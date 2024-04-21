@@ -1,19 +1,19 @@
 package dev.dyzjct.kura.gui.clickgui
 
+import base.utils.chat.ChatUtil
 import dev.dyzjct.kura.gui.clickgui.component.Panel
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.ModuleManager
 import dev.dyzjct.kura.module.modules.client.ClickGui
 import dev.dyzjct.kura.module.modules.client.UiSetting
-import dev.dyzjct.kura.module.modules.movement.GUIMove
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
 
 object ClickGuiScreen : GuiScreen() {
+    var inSearching = false
     private var queryString = ""
-    private var inSearch = false
     private val mc = MinecraftClient.getInstance()
 
     init {
@@ -73,8 +73,14 @@ object ClickGuiScreen : GuiScreen() {
             return true
         }
 
+        if (keyCode == 257) inSearching = true
+
+        if (UiSetting.searchDebug) ChatUtil.sendMessage(keyCode.toString())
+
+        if (!inSearching) return false
+
         if (UiSetting.disableSearch) {
-            inSearch = false
+            inSearching = false
             return false
         }
 
@@ -83,22 +89,15 @@ object ClickGuiScreen : GuiScreen() {
             if (queryString.isNotEmpty()) {
                 queryString = ""
                 updatePanelModule()
+                inSearching = false
                 return true
             } else {
-                inSearch = false
+                inSearching = false
                 return false
             }
         }
 
-
-        if (keyCode == 108) inSearch = true
-
-        if (!GUIMove.disableInClickGui) {
-            inSearch = false
-            return false
-        }
-
-        if (inSearch) when (keyCode) {
+        when (keyCode) {
             GLFW.GLFW_KEY_BACKSPACE -> {
                 queryString =
                     queryString.dropLast(1)
@@ -121,10 +120,9 @@ object ClickGuiScreen : GuiScreen() {
     }
 
     private fun updatePanelModule() {
-        val queryStringLowercase = queryString.lowercase()
         elements.mapNotNull { it as? Panel }.forEach {
             it.filterModules { moduleName ->
-                moduleName.lowercase().startsWith(queryStringLowercase)
+                moduleName.lowercase().contains(queryString)
             }
         }
     }

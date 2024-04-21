@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.module.modules.movement
 
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
 import base.utils.screen.ScreenUtils.notWhiteListScreen
 import dev.dyzjct.kura.gui.clickgui.ClickGuiScreen
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
 import net.minecraft.client.util.InputUtil
 
 object GUIMove : Module(
@@ -12,13 +12,12 @@ object GUIMove : Module(
     category = Category.MOVEMENT,
     description = "Moving when Gui is open."
 ) {
-    val disableInClickGui by bsetting("DisableInClickGui", true)
 
     init {
         onMotion {
             val currentScreen = mc.currentScreen ?: return@onMotion
 
-            if (disableInClickGui && currentScreen is ClickGuiScreen) {
+            if (ClickGuiScreen.inSearching && currentScreen is ClickGuiScreen) {
                 return@onMotion
             }
 

@@ -51,6 +51,7 @@ object UiSetting : Module(
     val animationLength by isetting("AnimationTime", 150, 100, 1000).enumIsNot(type0, AnimationType.NONE)
 
     val scalaDirection by msetting("Direction", Alignment.CENTER).isTrue { type == AnimationType.SCALA }
+    val searchDebug by bsetting("Search.Debug",false).isFalse { disableSearch }
 
     init {
         type0.onChange<BooleanSetting> { value: Enum<*> ->
