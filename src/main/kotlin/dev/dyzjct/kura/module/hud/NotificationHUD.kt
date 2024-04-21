@@ -3,6 +3,7 @@ package dev.dyzjct.kura.module.hud
 import base.notification.NotificationManager
 import base.system.render.graphic.Render2DEngine
 import base.system.render.newfont.FontRenderers
+import base.utils.chat.ChatUtil
 import dev.dyzjct.kura.module.HUDModule
 import net.minecraft.client.gui.DrawContext
 import java.awt.Color
@@ -16,7 +17,7 @@ object NotificationHUD : HUDModule(
     val fadeFraction by fsetting("FractionOfLength", 6f, 1f, 8f)
     private val color by csetting("MainColor", Color(0, 0, 0))
     private val doubleColor by csetting("DoubleColor", Color(130, 255, 120))
-    private val fontColor by csetting("FontColor", Color(255, 255, 255))
+    private val fontMode by msetting("FontColorMode", FontColorMode.Light)
     override fun onRender(context: DrawContext) {
         width = 200f
         height = 30f
@@ -66,7 +67,7 @@ object NotificationHUD : HUDModule(
                             notification.message,
                             animationXOffset + 16,
                             y.symbolArranged(true, height / 2f) + arrangedHeight - 1.7f,
-                            fontColor.rgb
+                            Color(255,255,255).rgb
                         )
                     }
 
@@ -92,7 +93,7 @@ object NotificationHUD : HUDModule(
                             notification.message,
                             animationXOffset + 16,
                             y.symbolArranged(true, height / 2f) + arrangedHeight - 1.7f,
-                            fontColor.rgb
+                            Color(255,255,255).rgb
                         )
                     }
                 }
@@ -114,6 +115,14 @@ object NotificationHUD : HUDModule(
         }
     }
 
+    fun defaultFontColor():String {
+        return when (fontMode) {
+            FontColorMode.Light -> ChatUtil.WHITE
+            FontColorMode.Dark -> ChatUtil.BLACK
+            else -> ChatUtil.WHITE
+        }
+    }
+
     override fun onEnable() {
         NotificationManager.taskList.clear()
     }
@@ -124,5 +133,9 @@ object NotificationHUD : HUDModule(
 
     enum class NoticeMode {
         Normal, New
+    }
+
+    enum class FontColorMode {
+        Light,Dark
     }
 }

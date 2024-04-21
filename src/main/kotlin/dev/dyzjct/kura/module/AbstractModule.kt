@@ -67,7 +67,7 @@ abstract class AbstractModule : ListenerOwner() {
                 11451
             )
             if (NotificationHUD.isEnabled) NotificationManager.addNotification(
-                (ChatUtil.WHITE + "[ " + ChatUtil.RED + if (ClickGui.chinese.value) moduleCName else moduleName) + ChatUtil.WHITE + " ] " + "has been " + ChatUtil.GREEN + "Enable!"
+                (NotificationHUD.defaultFontColor() + "[ " + ChatUtil.RED + if (ClickGui.chinese.value) moduleCName else moduleName) + NotificationHUD.defaultFontColor() + " ] " + "has been " + ChatUtil.GREEN + "Enable!"
             )
             if (Sound.isEnabled) {
                 Kura::class.java.getResourceAsStream("/assets/kura/sounds/Sigma_Enable.wav")?.let { sigma ->
@@ -102,7 +102,7 @@ abstract class AbstractModule : ListenerOwner() {
         if (laoded) {
             if (ClickGui.chat.value) ChatUtil.sendMessageWithID(moduleName + " is " + ChatUtil.RED + "Disabled!", 11451)
             if (NotificationHUD.isEnabled) NotificationManager.addNotification(
-                (ChatUtil.WHITE + "[ " + ChatUtil.RED + if (ClickGui.chinese.value) moduleCName else moduleName) + ChatUtil.WHITE + " ] " + "has been " + ChatUtil.RED + "Disable!"
+                (NotificationHUD.defaultFontColor() + "[ " + ChatUtil.RED + if (ClickGui.chinese.value) moduleCName else moduleName) + NotificationHUD.defaultFontColor() + " ] " + "has been " + ChatUtil.RED + "Disable!"
             )
             if (Sound.isEnabled) {
                 Kura::class.java.getResourceAsStream("/assets/kura/sounds/Sigma_Disable.wav")?.let { sigma ->

@@ -10,6 +10,7 @@ import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.FriendManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.hud.NotificationHUD
 import dev.dyzjct.kura.module.modules.client.Sound
 import net.minecraft.entity.EntityStatuses
 import net.minecraft.entity.player.PlayerEntity
@@ -47,27 +48,27 @@ object TotemPopCounter : Module(
                     if (players.isAlive) {
                         if (FriendManager.isFriend(name) && player != players) {
                             if (mode.value == Mode.Chat || mode.value == Mode.Both) {
-                                ChatUtil.sendMessage("Your Friend $name Popped ${ChatUtil.YELLOW}$pop ${ChatUtil.WHITE} Totem!")
+                                ChatUtil.sendMessage("Your Friend $name Popped ${ChatUtil.YELLOW}$pop ${NotificationHUD.defaultFontColor()} Totem!")
                                 NotificationManager.addNotification(
-                                    "${name}Popped ${ChatUtil.colorKANJI}$pop ${ChatUtil.WHITE} Totem!"
+                                    "${name}Popped ${ChatUtil.colorKANJI}$pop ${NotificationHUD.defaultFontColor()} Totem!"
                                 )
                             }
                         } else if (player == players) {
                             if (mode.value == Mode.Chat || mode.value == Mode.Both) {
-                                ChatUtil.sendMessage("I Popped ${ChatUtil.colorKANJI}$pop ${ChatUtil.WHITE}Totem!")
+                                ChatUtil.sendMessage("I Popped ${ChatUtil.colorKANJI}$pop ${NotificationHUD.defaultFontColor()}Totem!")
                             }
                             if (mode.value == Mode.Notification || mode.value == Mode.Both) {
                                 NotificationManager.addNotification(
-                                    "I Popped ${ChatUtil.RED}$pop ${ChatUtil.WHITE}Totem!"
+                                    "I Popped ${ChatUtil.RED}$pop ${NotificationHUD.defaultFontColor()}Totem!"
                                 )
                             }
                         } else {
                             if (mode.value == Mode.Chat || mode.value == Mode.Both) {
-                                ChatUtil.sendMessage("$name Popped ${ChatUtil.colorKANJI}$pop ${ChatUtil.WHITE} Totem!")
+                                ChatUtil.sendMessage("$name Popped ${ChatUtil.colorKANJI}$pop ${NotificationHUD.defaultFontColor()} Totem!")
                             }
                             if (mode.value == Mode.Notification || mode.value == Mode.Both) {
                                 NotificationManager.addNotification(
-                                    "$name Popped ${ChatUtil.colorKANJI}$pop ${ChatUtil.WHITE} Totem!"
+                                    "$name Popped ${ChatUtil.colorKANJI}$pop ${NotificationHUD.defaultFontColor()} Totem!"
                                 )
                             }
                         }
