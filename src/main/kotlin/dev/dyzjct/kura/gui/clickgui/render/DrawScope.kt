@@ -1,6 +1,5 @@
 package dev.dyzjct.kura.gui.clickgui.render
 
-import dev.dyzjct.kura.module.modules.client.UiSetting
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.util.math.MatrixStack
 import java.awt.Color

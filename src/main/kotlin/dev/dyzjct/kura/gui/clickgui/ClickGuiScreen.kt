@@ -13,6 +13,7 @@ import java.awt.Color
 
 object ClickGuiScreen : GuiScreen() {
     private var queryString = ""
+    private var inSearch = false
     private val mc = MinecraftClient.getInstance()
 
     init {
@@ -73,6 +74,7 @@ object ClickGuiScreen : GuiScreen() {
         }
 
         if (UiSetting.disableSearch) {
+            inSearch = false
             return false
         }
 
@@ -83,15 +85,20 @@ object ClickGuiScreen : GuiScreen() {
                 updatePanelModule()
                 return true
             } else {
+                inSearch = false
                 return false
             }
         }
 
+
+        if (keyCode == 108) inSearch = true
+
         if (!GUIMove.disableInClickGui) {
+            inSearch = false
             return false
         }
 
-        when (keyCode) {
+        if (inSearch) when (keyCode) {
             GLFW.GLFW_KEY_BACKSPACE -> {
                 queryString =
                     queryString.dropLast(1)
