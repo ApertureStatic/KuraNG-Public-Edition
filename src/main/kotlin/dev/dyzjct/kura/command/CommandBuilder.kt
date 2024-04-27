@@ -27,6 +27,11 @@ class CommandBuilder(
         appendArgument(AnyArgument(nextIndex), block)
     }
 
+    fun irc(block: CommandBuilder.(AnyArgument) -> Unit) {
+        appendArgument(AnyArgument(nextIndex), block)
+    }
+
+
     fun module(block: CommandBuilder.(ModuleArgument) -> Unit) {
         appendArgument(ModuleArgument(nextIndex), block)
     }

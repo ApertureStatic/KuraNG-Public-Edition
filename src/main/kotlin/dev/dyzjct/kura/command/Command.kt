@@ -9,7 +9,7 @@ abstract class Command(
     final override val alias: Array<out String> = emptyArray(),
     val description: String = "Empty"
 ) : Alias {
-    private val root = ArgumentTree(StringArgument(0, name, alias, true))
+    val root = ArgumentTree(StringArgument(0, name, alias, true))
     protected val builder = CommandBuilder(0, root)
 
     fun complete(args: List<String>): List<String> {

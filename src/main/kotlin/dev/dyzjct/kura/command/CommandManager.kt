@@ -17,6 +17,7 @@ object CommandManager {
         addCommand(PrefixCommand)
         addCommand(ResetUiCommand)
         addCommand(ConfigCommand)
+        addCommand(IRCCommand)
     }
 
     fun addCommand(command: Command) {

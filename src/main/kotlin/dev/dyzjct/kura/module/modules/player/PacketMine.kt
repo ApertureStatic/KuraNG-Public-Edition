@@ -125,10 +125,10 @@ object PacketMine : Module(
                 if (doubleBreak) {
                     val blockData = blockData
                     val doubleData = doubleData
-                    if (blockData != null && !world.isAir(blockData.blockPos) && doubleData == null) {
+                    if (blockData != null && !world.isAir(blockData.blockPos) && doubleData == null && blockData.blockPos != this.blockPos) {
                         sendMinePacket(Stop, blockData, force = true)
-                        timerReset()
                         PacketMine.doubleData = blockData
+                        timerReset()
                     }
                 }
                 if (world.getBlockState(blockPos).block is CobwebBlock && findBestItem(
@@ -144,6 +144,9 @@ object PacketMine : Module(
                     return@safeEventListener
                 }
                 blockData = this
+                doubleData?.let {
+                    doubleData!!.startTime = this.startTime
+                }
                 sendMinePacket(Start, this)
                 timerReset()
                 packetSpamming = true
@@ -286,7 +289,10 @@ object PacketMine : Module(
             }
         } else {
             if (world.getBlockState(blockData.blockPos).block is FireBlock || player.isUsingItem) return
-            if ((action == Stop && !spamTimer.passed(if (mode0.ignoreCheck) spamDelay else 0)) || (world.isAir(blockData.blockPos) && !force && action == Stop)) return
+            if (((action == Stop && !spamTimer.passed(if (mode0.ignoreCheck) spamDelay else 0)) || (world.isAir(
+                    blockData.blockPos
+                ) && action == Stop)) && !force
+            ) return
             if (rotate.value) RotationManager.addRotations(blockData.blockPos, prio)
             if (swing) connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
             if (switchMode0.spoof) {
@@ -352,7 +358,7 @@ object PacketMine : Module(
         val blockPos: BlockPos,
         val facing: Direction,
         val mineTool: HotbarSlot?,
-        val startTime: Long,
+        var startTime: Long,
         val breakTime: Float
     )
 }
