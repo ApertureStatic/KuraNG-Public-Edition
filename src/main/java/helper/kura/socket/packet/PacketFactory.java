@@ -17,6 +17,8 @@ public class PacketFactory {
 //        packetMap.put(0, TokenPacket.class);
         packetMap.put(1, UserInfoPacket.class);
         packetMap.put(2, GameInfoPacket.class);
+        //这些为啥注释了 这些是赵宏伟写的
+
 //        packetMap.put(3, OnlineUsersPacket.class);
         packetMap.put(4, MessagePacket.class);
         packetMap.put(5, ChatMessagePacket.class);

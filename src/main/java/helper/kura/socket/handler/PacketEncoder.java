@@ -21,3 +21,5 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
         packet.encode(buffer);
     }
 }
+
+//我看看有什么功能

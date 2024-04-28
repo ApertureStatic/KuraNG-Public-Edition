@@ -31,7 +31,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<Packet> {
         InetAddress address = InetAddress.getLocalHost();
         try {
             ctx.writeAndFlush(new UserInfoPacket(
-                    ClientType.NEVER,
+                    ClientType.Kura,
                     0,
                     "§d" + address.getHostAddress() + "§f" + Wrapper.getPlayer().getName().getString(),
                     Rank.USER,

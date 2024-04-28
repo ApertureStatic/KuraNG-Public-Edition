@@ -11,6 +11,7 @@ import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.command.Command
 import dev.dyzjct.kura.module.modules.client.IRC
 import dev.dyzjct.kura.module.modules.client.IRC.mode
+import helper.kura.socket.SocketManager
 
 
 object IRCCommand : Command("irc") {
@@ -18,18 +19,8 @@ object IRCCommand : Command("irc") {
         builder.literal {
             irc { message ->
                 executor {
+                    // 我下个断点看看
                     Kura.ircSocket.chat(message.value())
-                    Wrapper.player?.let { player ->
-                        when (mode as IRC.Mode) {
-                            IRC.Mode.Both -> {
-                                sendMessage(DARK_AQUA + "[IRC] " + DARK_BLUE + "[" + BLUE + "Kura" + DARK_BLUE + "] " + WHITE + player.name.string + " say: " + message.value())
-                                addNotification(DARK_AQUA + "[IRC] " + DARK_BLUE + "[" + BLUE + "Kura" + DARK_BLUE + "] " + WHITE + player.name.string + " say: " + message.value())
-                            }
-
-                            IRC.Mode.Chat -> sendMessage(DARK_AQUA + "[IRC] " + DARK_BLUE + "[" + BLUE + "Kura" + DARK_BLUE + "] " + WHITE + player.name.string + " say: " + message.value())
-                            IRC.Mode.Notification -> addNotification(DARK_AQUA + "[IRC] " + DARK_BLUE + "[" + BLUE + "Kura" + DARK_BLUE + "] " + WHITE + player.name.string + " say: " + message.value())
-                        }
-                    }
                 }
             }
         }

