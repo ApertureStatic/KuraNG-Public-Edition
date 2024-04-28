@@ -31,7 +31,8 @@ class Kura : AlwaysListening {
 
         var ircSocket = SocketManager()
 
-        //如果是Dev版本就改成"正数" User版本就改成负数
+        // 如果是Dev版本就改成"正数" User版本就改成负数
+        // 考虑对接SDK
         var verifiedState = 1
 
         // Root Dir Save

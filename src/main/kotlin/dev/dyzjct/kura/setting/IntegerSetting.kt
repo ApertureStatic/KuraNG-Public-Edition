@@ -4,7 +4,7 @@ import dev.dyzjct.kura.module.AbstractModule
 
 class IntegerSetting(
     name: String,
-    contain: dev.dyzjct.kura.module.AbstractModule,
+    contain: AbstractModule,
     defaultValue: Int,
     override var min: Int,
     override var max: Int,

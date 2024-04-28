@@ -10,7 +10,6 @@ abstract class NumberSetting<T : Number>(
     abstract var max: T
     abstract var min: T
 
-    @Suppress("UNCHECKED_CAST")
     var percent: Float
         get() = ((value.toFloat() - min.toFloat()) / (max.toFloat() - min.toFloat())).coerceIn(0f, 1f)
         set(percent) {

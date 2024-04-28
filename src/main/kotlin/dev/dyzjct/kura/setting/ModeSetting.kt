@@ -2,6 +2,7 @@ package dev.dyzjct.kura.setting
 
 import dev.dyzjct.kura.module.AbstractModule
 
+@Suppress("UNCHECKED_CAST")
 class ModeSetting<T : Enum<*>>(modeName: String, contain: AbstractModule, clazz: T) :
     Setting<T>(modeName, contain, clazz),
     SettingVisibility<ModeSetting<T>> {

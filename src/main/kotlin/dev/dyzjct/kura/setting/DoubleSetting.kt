@@ -4,7 +4,7 @@ import dev.dyzjct.kura.module.AbstractModule
 
 class DoubleSetting(
     name: String,
-    contain: dev.dyzjct.kura.module.AbstractModule,
+    contain: AbstractModule,
     defaultValue: Double,
     override var min: Double,
     override var max: Double,

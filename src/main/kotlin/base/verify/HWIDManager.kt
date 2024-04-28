@@ -17,7 +17,7 @@ object HWIDManager {
         return messageDigest.digest(input.toByteArray())
     }
 
-    private fun convertByteArrayToInt(byteArray: ByteArray): Int {
+    private fun toInt(byteArray: ByteArray): Int {
         var result = 0
         for (i in byteArray.indices) {
             val byteValue = byteArray[i].toInt() and 0xFF // Convert signed byte to unsigned int
@@ -27,6 +27,6 @@ object HWIDManager {
     }
 
     fun encryptedHWID(): Int {
-        return convertByteArrayToInt(encryptBySHA512(getHWID()))
+        return toInt(encryptBySHA512(getHWID()))
     }
 }

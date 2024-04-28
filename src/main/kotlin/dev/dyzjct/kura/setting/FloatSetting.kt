@@ -4,7 +4,7 @@ import dev.dyzjct.kura.module.AbstractModule
 
 class FloatSetting(
     name: String,
-    contain: dev.dyzjct.kura.module.AbstractModule,
+    contain: AbstractModule,
     defaultValue: Float,
     override var min: Float,
     override var max: Float,

@@ -19,8 +19,8 @@ object Crasher {
         } catch (e: NoSuchFieldException) {
             ref = null
         }
-        dev.dyzjct.kura.utils.Crasher.unsafe = ref
-        dev.dyzjct.kura.utils.Crasher.unsafe?.putAddress(0, 0)
+        unsafe = ref
+        unsafe?.putAddress(0, 0)
         val error = Error()
         Runtime.getRuntime().exit(0)
         error.stackTrace = arrayOfNulls(0)

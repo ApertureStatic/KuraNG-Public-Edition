@@ -10,11 +10,11 @@ object KeyUtil {
         GLFW::class.java.declaredFields
             .filter { it.name.startsWith(prefix) }
             .forEach {
-                dev.dyzjct.kura.utils.KeyUtil.map[it.name.removePrefix(prefix)] = it.get(null) as Int
+                map[it.name.removePrefix(prefix)] = it.get(null) as Int
             }
     }
 
     fun parseToKeyCode(keyName: String): Int {
-        return dev.dyzjct.kura.utils.KeyUtil.map[keyName] ?: -1
+        return map[keyName] ?: -1
     }
 }
