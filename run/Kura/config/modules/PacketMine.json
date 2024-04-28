@@ -1,0 +1,23 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Mode": "Instant",
+  "SafeSpamFactor": 350,
+  "SpamDelay": 0,
+  "SwitchMode": "Spoof",
+  "InvTool": false,
+  "DoubleBreak": false,
+  "StartTime": 0,
+  "BackTime": 0,
+  "Haste": false,
+  "Amplifier": 2,
+  "SetGround": true,
+  "CancelAbortPacket": false,
+  "Rotate": true,
+  "PrioRotate": true,
+  "Swing": false,
+  "MainColor": -57312,
+  "DoubleColor": -3661792
+}

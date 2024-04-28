@@ -1,0 +1,22 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "BedrockHole": true,
+  "ObbyHole": true,
+  "2BlocksHole": true,
+  "4BlocksHole": true,
+  "DetectRange": 5.0,
+  "HRange": 0.5,
+  "VRange": 3.0,
+  "DistanceBalance": 1.0,
+  "FillDelay": 50,
+  "FillTimeout": 100,
+  "Rotation": true,
+  "WebFill": false,
+  "SwitchBypass": false,
+  "TargetColor": 841023264,
+  "OtherColor": 855629344,
+  "FilledColor": 855580704
+}

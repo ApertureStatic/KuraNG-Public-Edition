@@ -1,0 +1,12 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Range": 5,
+  "TimerVal": 3.4,
+  "TimeOutTicks": 60,
+  "EnableStep": true,
+  "DisableSpeed": false,
+  "AntiAim": true
+}

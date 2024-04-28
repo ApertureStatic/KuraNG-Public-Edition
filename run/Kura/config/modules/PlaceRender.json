@@ -1,0 +1,11 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Color": -1,
+  "Mode": "Fade",
+  "FadeLength": 200,
+  "FillAlpha": 80,
+  "LineAlpha": 255
+}

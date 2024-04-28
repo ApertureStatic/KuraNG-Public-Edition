@@ -1,0 +1,21 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Rotate": false,
+  "HoleCheck": true,
+  "BetterPush": true,
+  "BetterAnchor": true,
+  "FacePlace": false,
+  "MultiPlace": true,
+  "WebCheck": true,
+  "OnlyGround": true,
+  "Inside": false,
+  "StrictDirection": false,
+  "AirPlace": false,
+  "SmartDelay": false,
+  "minDelay": 25,
+  "MaxDelay": 400,
+  "Debug": false
+}

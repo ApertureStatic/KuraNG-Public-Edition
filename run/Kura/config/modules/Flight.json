@@ -1,0 +1,12 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Mode": "Vanilla",
+  "Horizontal": 1.0,
+  "Vertical": 1.0,
+  "Glide": true,
+  "GlideSpeed": 0.0,
+  "AutoToggle": false
+}

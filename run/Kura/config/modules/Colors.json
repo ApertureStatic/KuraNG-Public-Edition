@@ -1,0 +1,19 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "ColorMode": "Static",
+  "ColorSpeed": 18,
+  "Saturation": 0.65,
+  "Brightness": 1.0,
+  "Color": -2988891,
+  "Color2": -4561710,
+  "FadeColor": -10177070,
+  "FontColor": -1,
+  "HudColor": -1,
+  "EnableGuiColor": false,
+  "EnableColor": -13377537,
+  "SetPanelColor": false,
+  "PanelColor": -2988891
+}

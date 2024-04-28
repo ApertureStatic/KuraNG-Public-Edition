@@ -1,0 +1,11 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Mode": "NORMAL",
+  "DamageBoost": false,
+  "EatingCheck": true,
+  "BurrowDetect": true,
+  "BMode": "Slow"
+}

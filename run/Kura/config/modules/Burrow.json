@@ -1,0 +1,14 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Rotate": true,
+  "FakeJumpMode": "Strict",
+  "PacketMode": "Normal",
+  "Sneak": false,
+  "Bypass": false,
+  "CancelMotion": false,
+  "StrictDirection": false,
+  "Delay": 50
+}

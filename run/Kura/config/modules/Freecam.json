@@ -1,0 +1,9 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "CancelPackets": true,
+  "Rotate": false,
+  "Speed": 1.0
+}

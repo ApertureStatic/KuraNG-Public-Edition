@@ -1,0 +1,15 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Rotation": false,
+  "Side": false,
+  "StrictDirection": false,
+  "CheckDown": false,
+  "Delay": 50.0,
+  "AirPlace": false,
+  "AutoToggle": true,
+  "PushDelay": 250.0,
+  "Debug": false
+}

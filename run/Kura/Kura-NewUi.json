@@ -1,0 +1,37 @@
+{
+  "COMBAT": {
+    "x": 5.0,
+    "y": 5.0,
+    "isOpened": true
+  },
+  "MOVEMENT": {
+    "x": 235.0,
+    "y": 5.0,
+    "isOpened": true
+  },
+  "PLAYER": {
+    "x": 350.0,
+    "y": 5.0,
+    "isOpened": true
+  },
+  "MISC": {
+    "x": 120.0,
+    "y": 5.0,
+    "isOpened": true
+  },
+  "RENDER": {
+    "x": 465.0,
+    "y": 5.0,
+    "isOpened": true
+  },
+  "CLIENT": {
+    "x": 580.0,
+    "y": 5.0,
+    "isOpened": true
+  },
+  "HUD": {
+    "x": 636.0,
+    "y": 73.8999,
+    "isOpened": true
+  }
+}

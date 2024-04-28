@@ -1,0 +1,14 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Range": 12,
+  "Mode": "Normal",
+  "Points": 20,
+  "Interval": 2,
+  "LineWidth": 2.0,
+  "AnimationTime": 500,
+  "FadeSpeed": 500.0,
+  "Color": -1
+}

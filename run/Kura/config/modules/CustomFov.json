@@ -1,0 +1,9 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Fov": 120.0,
+  "ItemFov": false,
+  "ItemModifier": 120.0
+}

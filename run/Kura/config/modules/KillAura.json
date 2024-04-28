@@ -1,0 +1,15 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Animals": false,
+  "Mobs": false,
+  "SwapWeapon": false,
+  "OnlySword": true,
+  "PauseIfCA": true,
+  "AutoBlock": false,
+  "ABRange": 3.5,
+  "ABPauseInHit": false,
+  "Render": false
+}

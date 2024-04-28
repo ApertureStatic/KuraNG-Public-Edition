@@ -1,0 +1,9 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Text": "",
+  "Delay(S)": 60,
+  "Anti Kick": true
+}

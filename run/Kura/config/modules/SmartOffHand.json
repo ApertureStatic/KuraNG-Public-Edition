@@ -1,0 +1,16 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Mode": "Crystal",
+  "Delay": 0,
+  "SwitchTotem": true,
+  "Health": 11.0,
+  "SwitchGap": true,
+  "CheckElytra": true,
+  "CheckHole": false,
+  "HoleHealth": 8.0,
+  "CalculateDmg": true,
+  "MaxSelfDmg": 26.0
+}

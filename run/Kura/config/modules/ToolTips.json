@@ -1,0 +1,10 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "MiddleClickOpen": true,
+  "Storage": true,
+  "Maps": true,
+  "ShulkerRegear": true
+}

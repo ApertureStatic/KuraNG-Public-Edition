@@ -1,0 +1,10 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Mode": "Normal",
+  "PlaceRange": 4,
+  "PlaceDelay": 10,
+  "Rotate": false
+}

@@ -1,0 +1,14 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "RenderMode": "Percent",
+  "RenderSelf": false,
+  "RenderAir": false,
+  "Range": 5,
+  "FriendColor": 2030028494,
+  "TargetColor": 2019697318,
+  "TextColor": 2019751200,
+  "StatusColor": 2019751200
+}

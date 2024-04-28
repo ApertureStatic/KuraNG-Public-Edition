@@ -1,0 +1,16 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Color": -16711936,
+  "Rotate": true,
+  "StrictRotate": false,
+  "RotateSide": false,
+  "AllowShift": false,
+  "Tower": true,
+  "SafeWalk": true,
+  "Render": true,
+  "IgnorerRender": true,
+  "TestJump": true
+}

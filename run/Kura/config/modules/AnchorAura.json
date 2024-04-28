@@ -1,0 +1,21 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "MinDamage": 4.0,
+  "MaxSelfDamage": 10,
+  "NoSuicide": 2.0,
+  "GlowDelay": 50,
+  "AnchorDelay": 50,
+  "ClickDelay": 50,
+  "DamageMode": "Thunder",
+  "AirPlace": false,
+  "StrictDirection": false,
+  "Rotation": false,
+  "FillColor": 855638015,
+  "LineColor": -1,
+  "MovingLength": 400,
+  "FadeLength": 200,
+  "Debug": false
+}

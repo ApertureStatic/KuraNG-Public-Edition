@@ -1,0 +1,11 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "LookBetter": true,
+  "BedRock": false,
+  "OneHeight": true,
+  "SafeMode": "Center",
+  "Boundary": false
+}

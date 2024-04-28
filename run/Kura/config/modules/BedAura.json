@@ -1,0 +1,19 @@
+{
+  "Enable": false,
+  "Visible": false,
+  "HoldEnable": false,
+  "Bind": 0,
+  "Range": 5,
+  "MinDMG": 4,
+  "MaxSelfDmg": 4,
+  "PredictedTicks": 1,
+  "IgnoreBox": true,
+  "PlaceDelay": 15,
+  "ClickDelay": 15,
+  "InvClickDelay": 5,
+  "EatingPause": false,
+  "Rotation": false,
+  "MotionRender": false,
+  "Color": -8104838,
+  "LineColor": -8104838
+}
