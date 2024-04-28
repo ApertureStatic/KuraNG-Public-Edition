@@ -68,7 +68,7 @@ public abstract class MixinChatHud implements IChatHud {
     public void kuraAddMessage(Text message, int id) {
         nextId = id;
         addMessage(message);
-        nextId = Integer.MIN_VALUE;
+        nextId = 0;
     }
 
     /**
@@ -118,9 +118,9 @@ public abstract class MixinChatHud implements IChatHud {
     @Inject(at = @At("HEAD"), method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;ILnet/minecraft/client/gui/hud/MessageIndicator;Z)V")
     private void onAddMessage(Text message, @Nullable MessageSignatureData signature, int ticks, @Nullable MessageIndicator indicator, boolean refresh, CallbackInfo info) {
         try {
-            visibleMessages.removeIf(msg -> ((IChatHudLine) (Object) msg).getId() == nextId && nextId != Integer.MIN_VALUE);
+            visibleMessages.removeIf(msg -> ((IChatHudLine) (Object) msg).getId() == nextId && nextId != 0);
             for (int i = messages.size() - 1; i > -1; i--) {
-                if (((IChatHudLine) (Object) messages.get(i)).getId() == nextId && nextId != Integer.MIN_VALUE) {
+                if (((IChatHudLine) (Object) messages.get(i)).getId() == nextId && nextId != 0) {
                     messages.remove(i);
                 }
             }

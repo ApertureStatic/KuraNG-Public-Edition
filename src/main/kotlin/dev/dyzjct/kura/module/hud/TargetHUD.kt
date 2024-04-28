@@ -25,6 +25,7 @@ object TargetHUD : HUDModule(
 ) {
     private val range by dsetting("TargetRange", 8.0, 1.0, 12.0)
     private val color by csetting("Color", Color(76, 179, 208, 150))
+    private val color2 by csetting("HealthColor", Color(117, 39, 198))
     private val fadeLength by isetting("FadeLength", 200, 0, 1000)
     private var lastTarget: PlayerEntity? = null
     private var isTargetNull = true
@@ -123,7 +124,7 @@ object TargetHUD : HUDModule(
                     color
                 )
 
-                drawRoundRect(x + 45, y + 25, width * healthPercentage / 1.65f, height / 4, Color.RED)
+                drawRoundRect(x + 45, y + 25, width * healthPercentage / 1.65f, height / 4, color2)
 
                 FontRenderers.cn.drawString(
                     context.matrices,
@@ -165,6 +166,7 @@ object TargetHUD : HUDModule(
             }
         }
     }
+
 
     private fun drawTargetFace(context: DrawContext, target: PlayerEntity, x: Double, y: Double) {
         context.matrices.push()
