@@ -26,6 +26,8 @@ object Cape : Module(
         LUNAR_LIGHT("lunar_light_cape.png"),
         LUNAR_DARK("lunar_dark_cape.png"),
         Mojang("mojang_cape.png"),
+        Sakura("sakura.png"),
+        Long("Long.png"),
         NovoLine("novoline_cape.png"),
         Sagiri("sagiri_cape.png"),
     }
