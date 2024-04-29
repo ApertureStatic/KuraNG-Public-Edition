@@ -1,18 +1,16 @@
 package dev.dyzjct.kura.module.hud
 
-import dev.dyzjct.kura.KuraIdentifier
 import base.system.render.graphic.Render2DEngine
 import base.system.render.newfont.FontRenderers
 import base.utils.combat.getTarget
 import base.utils.concurrent.threads.runSafe
 import base.utils.math.MathUtils.clamp
 import com.mojang.blaze3d.systems.RenderSystem
+import dev.dyzjct.kura.KuraIdentifier
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.client.UiSetting
-import dev.dyzjct.kura.module.modules.client.UiSetting.SytMode
 import dev.dyzjct.kura.module.modules.client.UiSetting.Theme
-import dev.dyzjct.kura.module.modules.client.UiSetting.ThemesSetting
 import dev.dyzjct.kura.module.modules.client.UiSetting.theme
 import dev.dyzjct.kura.utils.animations.Easing
 import net.minecraft.client.gui.DrawContext
@@ -62,21 +60,27 @@ object TargetHUD : HUDModule(
 
 
     override fun DrawScope.renderOnGame() {
-        if (theme.value == Theme.Rimuru){
-            color = Color(86, 190, 208, 140)
-            color2 = Color(76, 179, 208, 250)
-        }else if (theme.value == Theme.Arona){
-            color = Color(144, 204, 236, 250)
-            color2 = Color(213, 236, 252, 140)
-        }else if (theme.value == Theme.Mahiro){
-            color = Color(245, 176, 166, 250)
-            color2 = Color(253, 235, 241, 200)
-        }else if (theme.value == Theme.Roxy){
-            color = Color(117, 106, 171, 250)
-            color2 = Color(89, 77, 89, 200)
-        }else{
-            color = Color(UiSetting.getThemeSetting().targetcolor.red, UiSetting.getThemeSetting().targetcolor.green, UiSetting.getThemeSetting().targetcolor.blue, 250)
-            color2 = Color(UiSetting.getThemeSetting().targethealthcolor.red, UiSetting.getThemeSetting().targethealthcolor.green, UiSetting.getThemeSetting().targethealthcolor.blue, 250)
+        when (theme.value) {
+            Theme.Rimuru -> {
+                color = Color(86, 190, 208, 140)
+                color2 = Color(76, 179, 208, 250)
+            }
+            Theme.Arona -> {
+                color = Color(144, 204, 236, 250)
+                color2 = Color(213, 236, 252, 140)
+            }
+            Theme.Mahiro -> {
+                color = Color(245, 176, 166, 250)
+                color2 = Color(253, 235, 241, 200)
+            }
+            Theme.Roxy -> {
+                color = Color(117, 106, 171, 250)
+                color2 = Color(89, 77, 89, 200)
+            }
+            else -> {
+                color = Color(UiSetting.getThemeSetting().targetcolor.red, UiSetting.getThemeSetting().targetcolor.green, UiSetting.getThemeSetting().targetcolor.blue, 250)
+                color2 = Color(UiSetting.getThemeSetting().targethealthcolor.red, UiSetting.getThemeSetting().targethealthcolor.green, UiSetting.getThemeSetting().targethealthcolor.blue, 250)
+            }
         }
         if (!isTargetNull) {
             if (started) {

@@ -103,8 +103,8 @@ object UiSetting : Module(
                     particle = particle,
                     pRainbow = particleRainbow,
                     pColor = particleColor,
-                   targetcolor =  Color(144, 204, 236, 250),
-                   targethealthcolor =  Color(213, 236, 252, 140),
+                    targetcolor =  Color(144, 204, 236, 250),
+                    targethealthcolor =  Color(213, 236, 252, 140),
                 )
             }
 
@@ -122,8 +122,8 @@ object UiSetting : Module(
                     particle = particle,
                     pRainbow = particleRainbow,
                     pColor = particleColor,
-                   targetcolor = Color(245, 176, 166, 250),
-                   targethealthcolor = Color(253, 235, 241, 200),
+                    targetcolor = Color(245, 176, 166, 250),
+                    targethealthcolor = Color(253, 235, 241, 200),
                 )
             }
 
@@ -141,8 +141,8 @@ object UiSetting : Module(
                     particle = particle,
                     pRainbow = particleRainbow,
                     pColor = particleColor,
-                   targetcolor = Color(117, 106, 171, 250),
-                   targethealthcolor =  Color(89, 77, 89, 200),
+                    targetcolor = Color(117, 106, 171, 250),
+                    targethealthcolor =  Color(89, 77, 89, 200),
                 )
             }
 

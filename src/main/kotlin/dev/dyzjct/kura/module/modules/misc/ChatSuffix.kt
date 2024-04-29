@@ -10,24 +10,27 @@ import dev.dyzjct.kura.module.modules.client.UiSetting.theme
 
 object ChatSuffix : Module(name = "ChatSuffix", langName = "后缀", category = Category.MISC) {
     val chat = msetting("Chat", Chat.Text)
+
     init {
         safeEventListener<MessageSentEvent>(true) { event ->
             if (isEnabled) {
+                var message = event.message;
                 when (chat.value) {
                     Chat.Kura -> {
-                        event.message += " Φ kนrค"
+                        message += " Φ kนrค"
                     }
                     Chat.Icon -> {
-                        event.message += " ⚜ⓀⓊⓇⒶ⚜"
+                        message += " ⚜ⓀⓊⓇⒶ⚜"
                     }
                     Chat.Text -> {
-                        event.message += " | \uD835\uDD76\uD835\uDD9A\uD835\uDD97\uD835\uDD86.\uD835\uDD89\uD835\uDD8A\uD835\uDD9B"
+                        message += " | \uD835\uDD76\uD835\uDD9A\uD835\uDD97\uD835\uDD86.\uD835\uDD89\uD835\uDD8A\uD835\uDD9B"
                     }
                 }
             }
         }
     }
+
     enum class Chat {
-        Icon,Kura,Text
+        Icon, Kura, Text
     }
-    }
+}
