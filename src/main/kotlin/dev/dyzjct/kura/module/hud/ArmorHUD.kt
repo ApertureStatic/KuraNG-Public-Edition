@@ -7,7 +7,7 @@ import base.system.render.newfont.FontRenderers
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.item.ItemStack
 
-object ArmourHUD : HUDModule(name = "ArmourHUD", langName = "装备渲染", category = Category.HUD) {
+object ArmorHUD : HUDModule(name = "ArmorHUD", langName = "装备渲染", category = Category.HUD) {
     private var damage = bsetting("RenderDamage", true)
 
     override var width = 80f

@@ -172,7 +172,7 @@ object ModuleManager : AlwaysListening {
     }
 
     private fun loadHUDs() {
-        registerModule(ArmourHUD)
+        registerModule(ArmorHUD)
         registerModule(CoordsHUD)
         registerModule(ModuleListHUD)
         registerModule(FpsHUD)
