@@ -9,6 +9,11 @@ import base.utils.math.MathUtils.clamp
 import com.mojang.blaze3d.systems.RenderSystem
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope
 import dev.dyzjct.kura.module.HUDModule
+import dev.dyzjct.kura.module.modules.client.UiSetting
+import dev.dyzjct.kura.module.modules.client.UiSetting.SytMode
+import dev.dyzjct.kura.module.modules.client.UiSetting.Theme
+import dev.dyzjct.kura.module.modules.client.UiSetting.ThemesSetting
+import dev.dyzjct.kura.module.modules.client.UiSetting.theme
 import dev.dyzjct.kura.utils.animations.Easing
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.PlayerSkinDrawer
@@ -24,13 +29,14 @@ object TargetHUD : HUDModule(
     255f
 ) {
     private val range by dsetting("TargetRange", 8.0, 1.0, 12.0)
-    private val color by csetting("Color", Color(76, 179, 208, 150))
-    private val color2 by csetting("HealthColor", Color(117, 39, 198))
     private val fadeLength by isetting("FadeLength", 200, 0, 1000)
     private var lastTarget: PlayerEntity? = null
     private var isTargetNull = true
     private var started = false
     private var startTime = 0L
+
+    var color  = Color(0,0,0,0)
+    var color2  = Color(0,0,0,0)
 
     init {
         onMotion {
@@ -54,7 +60,24 @@ object TargetHUD : HUDModule(
         height = 45f
     }
 
+
     override fun DrawScope.renderOnGame() {
+        if (theme.value == Theme.Rimuru){
+            color = Color(86, 190, 208, 140)
+            color2 = Color(76, 179, 208, 250)
+        }else if (theme.value == Theme.Arona){
+            color = Color(144, 204, 236, 250)
+            color2 = Color(213, 236, 252, 140)
+        }else if (theme.value == Theme.Mahiro){
+            color = Color(245, 176, 166, 250)
+            color2 = Color(253, 235, 241, 200)
+        }else if (theme.value == Theme.Roxy){
+            color = Color(117, 106, 171, 250)
+            color2 = Color(89, 77, 89, 200)
+        }else{
+            color = Color(UiSetting.getThemeSetting().targetcolor.red, UiSetting.getThemeSetting().targetcolor.green, UiSetting.getThemeSetting().targetcolor.blue, 250)
+            color2 = Color(UiSetting.getThemeSetting().targethealthcolor.red, UiSetting.getThemeSetting().targethealthcolor.green, UiSetting.getThemeSetting().targethealthcolor.blue, 250)
+        }
         if (!isTargetNull) {
             if (started) {
 
@@ -121,8 +144,8 @@ object TargetHUD : HUDModule(
                     width,
                     height,
                     16,
-                    color
-                )
+                   color)
+
 
                 drawRoundRect(x + 45, y + 25, width * healthPercentage / 1.65f, height / 4, color2)
 
@@ -146,18 +169,20 @@ object TargetHUD : HUDModule(
                     32f,
                     Color(255, 0, 0, (150 * hurtPercentage).toInt())
                 )
+                if (theme.value == Theme.Rimuru) {
+                    context.drawTexture(
+                        KuraIdentifier("textures/slm.png"),
+                        x.toInt() - 6,
+                        y.toInt() - 12,
+                        0F,
+                        0F,
+                        28,
+                        28,
+                        28,
+                        28
+                    )
+                }
 
-                context.drawTexture(
-                    KuraIdentifier("textures/slm.png"),
-                    x.toInt() - 6,
-                    y.toInt() - 12,
-                    0F,
-                    0F,
-                    28,
-                    28,
-                    28,
-                    28
-                )
 
                 matrixStack.pop()
 

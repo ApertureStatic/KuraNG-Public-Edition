@@ -11,6 +11,7 @@ import dev.dyzjct.kura.gui.clickgui.render.Alignment
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.hud.Image
+import dev.dyzjct.kura.module.hud.TargetHUD
 import dev.dyzjct.kura.setting.BooleanSetting
 import java.awt.Color
 
@@ -24,7 +25,7 @@ object UiSetting : Module(
     val disableSearch by bsetting("DisableSearch", false)
 
     //    Theme type
-    val theme = msetting("Theme", Theme.Custom)
+    val theme = msetting("Theme", Theme.Mahiro)
 
     //    Ui colors
     private val primaryColor = csetting("Primary", Color(240, 100, 255, 200)).enumIs(theme, Theme.Custom)
@@ -32,6 +33,8 @@ object UiSetting : Module(
     private val settingPanelColor = csetting("SettingPanel", Color(10, 10, 10, 200)).enumIs(theme, Theme.Custom)
     private val fillPanelTitle = bsetting("FillPanelTitle", true).enumIs(theme, Theme.Custom)
     private val panelBorder = bsetting("PanelBorder", true).enumIs(theme, Theme.Custom)
+    private val targetcolor = csetting("TargetColor", Color(76, 179, 208, 150)).enumIs(theme, Theme.Custom)
+    private val targethealthcolor = csetting("TargetHealthColor", Color(117, 39, 198,255)).enumIs(theme, Theme.Custom)
 
     //    SytRender Type
     private val sytRender by bsetting("SytRender", false).enumIs(theme, Theme.Custom)
@@ -53,6 +56,7 @@ object UiSetting : Module(
     val scalaDirection by msetting("Direction", Alignment.CENTER).isTrue { type == AnimationType.SCALA }
     val searchDebug by bsetting("Search.Debug",false).isFalse { disableSearch }
 
+
     init {
         type0.onChange<BooleanSetting> { value: Enum<*> ->
             ClickGuiScreen.animationStrategy = (value as AnimationType).createInstance()
@@ -70,7 +74,7 @@ object UiSetting : Module(
                 Image.mode.setValueByString("Rimuru")
                 return ThemesSetting(
                     Color(76, 179, 208, 250),
-                    Color(25, 25, 25, 200),
+                    Color(76, 179, 208, 250),
                     Color(10, 10, 10, 200),
                     fillPanelTitle = true,
                     panelBorder = true,
@@ -80,6 +84,8 @@ object UiSetting : Module(
                     particle = true,
                     pRainbow = false,
                     pColor = Color(137, 185, 189, 100),
+                    targetcolor =  Color(76, 179, 208, 250),
+                    targethealthcolor =  Color(76, 179, 208, 250),
                 )
             }
 
@@ -97,6 +103,8 @@ object UiSetting : Module(
                     particle = particle,
                     pRainbow = particleRainbow,
                     pColor = particleColor,
+                   targetcolor =  Color(144, 204, 236, 250),
+                   targethealthcolor =  Color(213, 236, 252, 140),
                 )
             }
 
@@ -114,6 +122,8 @@ object UiSetting : Module(
                     particle = particle,
                     pRainbow = particleRainbow,
                     pColor = particleColor,
+                   targetcolor = Color(245, 176, 166, 250),
+                   targethealthcolor = Color(253, 235, 241, 200),
                 )
             }
 
@@ -131,6 +141,8 @@ object UiSetting : Module(
                     particle = particle,
                     pRainbow = particleRainbow,
                     pColor = particleColor,
+                   targetcolor = Color(117, 106, 171, 250),
+                   targethealthcolor =  Color(89, 77, 89, 200),
                 )
             }
 
@@ -147,6 +159,8 @@ object UiSetting : Module(
                     particle,
                     particleRainbow,
                     particleColor,
+                    targetcolor.value,
+                    targethealthcolor.value,
                 )
             }
         }
@@ -163,7 +177,9 @@ object UiSetting : Module(
         val sytColor: Color,
         val particle: Boolean,
         val pRainbow: Boolean,
-        val pColor: Color
+        val pColor: Color,
+        val targetcolor: Color,
+        val targethealthcolor: Color,
     )
 
     enum class Theme {
