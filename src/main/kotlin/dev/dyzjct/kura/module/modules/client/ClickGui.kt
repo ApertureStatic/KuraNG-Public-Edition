@@ -14,7 +14,7 @@ object ClickGui : Module(
     name = "ClickGUI",
     langName = "ClickGUI",
     category = Category.CLIENT,
-    keyCode = InputUtil.GLFW_KEY_U,
+    keyCode = InputUtil.GLFW_KEY_RIGHT_SHIFT,
     visible = true
 ) {
     var chinese = bsetting("ChineseUI", false)

@@ -5,6 +5,8 @@ import base.system.render.graphic.Render2DEngine
 import base.system.render.newfont.FontRenderers
 import base.utils.chat.ChatUtil
 import dev.dyzjct.kura.module.HUDModule
+import dev.dyzjct.kura.module.modules.client.UiSetting
+import dev.dyzjct.kura.module.modules.client.UiSetting.theme
 import net.minecraft.client.gui.DrawContext
 import java.awt.Color
 
@@ -15,12 +17,21 @@ object NotificationHUD : HUDModule(
     private val interval by isetting("Interval", 0, 0, 20)
     val animationLength by isetting("AnimationLength", 15, 10, 100)
     val fadeFraction by fsetting("FractionOfLength", 6f, 1f, 8f)
-    private val color by csetting("MainColor", Color(0, 0, 0))
-    private val doubleColor by csetting("DoubleColor", Color(130, 255, 120))
+    private val color by csetting("MainColor", Color(0, 0, 0,120))
+    private var doubleColor by csetting("DoubleColor", Color(130, 255, 120)).enumIs(theme, UiSetting.Theme.Custom)
     private val fontMode by msetting("FontColorMode", FontColorMode.Light)
     override fun onRender(context: DrawContext) {
         width = 200f
         height = 30f
+        when (theme.value) {
+            UiSetting.Theme.Custom -> {
+                doubleColor = doubleColor
+            }
+  else -> {
+        doubleColor = TargetHUD.color
+  }
+
+            }
         if (NotificationManager.taskList.isEmpty()) return
         try {
             var count = 0f
