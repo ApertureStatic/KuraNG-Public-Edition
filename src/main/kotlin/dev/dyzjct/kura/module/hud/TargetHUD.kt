@@ -9,6 +9,7 @@ import com.mojang.blaze3d.systems.RenderSystem
 import dev.dyzjct.kura.KuraIdentifier
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope
 import dev.dyzjct.kura.module.HUDModule
+import dev.dyzjct.kura.module.modules.client.UiSetting
 import dev.dyzjct.kura.module.modules.client.UiSetting.Theme
 import dev.dyzjct.kura.module.modules.client.UiSetting.theme
 import dev.dyzjct.kura.utils.animations.Easing
@@ -27,12 +28,13 @@ object TargetHUD : HUDModule(
 ) {
     private val range by dsetting("TargetRange", 8.0, 1.0, 12.0)
     private val fadeLength by isetting("FadeLength", 200, 0, 1000)
-    private val targetColor by csetting("TargetColor", Color(76, 179, 208, 150)).isTrue { theme == Theme.Custom }
-    private val healthColor by csetting("TargetHealthColor", Color(117, 39, 198, 255)).isTrue { theme == Theme.Custom }
     private var lastTarget: PlayerEntity? = null
     private var isTargetNull = true
     private var started = false
     private var startTime = 0L
+
+    var color  = Color(0,0,0,0)
+    var color2  = Color(0,0,0,0)
 
     init {
         onMotion {
@@ -58,6 +60,49 @@ object TargetHUD : HUDModule(
 
 
     override fun DrawScope.renderOnGame() {
+        when (theme.value) {
+            Theme.Rimuru -> {
+                color = Color(86, 190, 208, 140)
+                color2 = Color(76, 179, 208, 250)
+            }
+            Theme.Arona -> {
+                color = Color(144, 204, 236, 250)
+                color2 = Color(213, 236, 252, 140)
+            }
+            Theme.Mahiro -> {
+                color = Color(245, 176, 166, 250)
+                color2 = Color(253, 235, 241, 200)
+            }
+            Theme.Roxy -> {
+                color = Color(117, 106, 171, 250)
+                color2 = Color(89, 77, 89, 200)
+            }
+            Theme.Mahiru -> {
+                color =   Color(218, 165, 32, 200)
+                color2 =   Color(254, 220, 189, 200)
+            }
+            Theme.Gura -> {
+              color =   Color(51, 153, 189, 200)
+              color2 =     Color(204, 255, 255, 200)
+            }
+            Theme.Mikoto -> {
+               color   =    Color(109, 68, 55, 250)
+               color2   =     Color(255, 255, 255, 150)
+            }
+            Theme.Miku -> {
+               color   =     Color(228, 142, 151, 250)
+               color2   =      Color(187, 209, 248, 200)
+            }
+            Theme.Ayachinene -> {
+                color = Color(64,68,93, 250)
+                color2 = Color(255,255,255,200)
+
+            }
+            else -> {
+                color = Color(UiSetting.getThemeSetting().targetcolor.red, UiSetting.getThemeSetting().targetcolor.green, UiSetting.getThemeSetting().targetcolor.blue, 250)
+                color2 = Color(UiSetting.getThemeSetting().targethealthcolor.red, UiSetting.getThemeSetting().targethealthcolor.green, UiSetting.getThemeSetting().targethealthcolor.blue, 250)
+            }
+        }
         if (!isTargetNull) {
             if (started) {
 
@@ -115,7 +160,7 @@ object TargetHUD : HUDModule(
                     0.0f
                 ) else matrixStack.translate((x / animationScale) - x, (y / animationScale) - y, 0.0f)
 
-                drawRoundRect(x, y, width, height, getTargetColor().color1)
+                drawRoundRect(x, y, width, height, color)
 
                 Render2DEngine.drawRectBlurredShadow(
                     context.matrices,
@@ -124,11 +169,10 @@ object TargetHUD : HUDModule(
                     width,
                     height,
                     16,
-                    getTargetColor().color1
-                )
+                   color)
 
 
-                drawRoundRect(x + 45, y + 25, width * healthPercentage / 1.65f, height / 4, getTargetColor().color2)
+                drawRoundRect(x + 45, y + 25, width * healthPercentage / 1.65f, height / 4, color2)
 
                 FontRenderers.cn.drawString(
                     context.matrices,
@@ -150,7 +194,7 @@ object TargetHUD : HUDModule(
                     32f,
                     Color(255, 0, 0, (150 * hurtPercentage).toInt())
                 )
-                if (theme == Theme.Rimuru) {
+                if (theme.value == Theme.Rimuru) {
                     context.drawTexture(
                         KuraIdentifier("textures/slm.png"),
                         x.toInt() - 6,
@@ -173,91 +217,6 @@ object TargetHUD : HUDModule(
         }
     }
 
-    fun getTargetColor(): TargetColor {
-        return when (theme) {
-            Theme.Rimuru -> {
-                TargetColor(
-                    Color(76, 179, 208, 140),
-                    Color(22, 116, 255, 250)
-                )
-            }
-
-            Theme.Arona -> {
-                TargetColor(
-                    Color(144, 204, 236, 250),
-                    Color(213, 236, 252, 140)
-                )
-            }
-
-            Theme.Mahiro -> {
-                TargetColor(
-                    Color(245, 176, 166, 250),
-                    Color(253, 235, 241, 200)
-                )
-            }
-
-            Theme.Roxy -> {
-                TargetColor(
-                    Color(117, 106, 171, 250),
-                    Color(89, 77, 89, 200)
-                )
-            }
-
-            Theme.Mahiru -> {
-                TargetColor(
-                    Color(218, 165, 32, 200),
-                    Color(254, 220, 189, 200)
-                )
-            }
-
-            Theme.Gura -> {
-                TargetColor(
-                    Color(51, 153, 189, 200),
-                    Color(204, 255, 255, 200)
-                )
-            }
-
-            Theme.Mikoto -> {
-                TargetColor(
-                    Color(109, 68, 55, 250),
-                    Color(255, 255, 255, 150)
-                )
-            }
-
-            Theme.Miku -> {
-                TargetColor(
-                    Color(228, 142, 151, 250),
-                    Color(187, 209, 248, 200)
-                )
-            }
-
-            Theme.Ayachinene -> {
-                TargetColor(
-                    Color(64, 68, 93, 250),
-                    Color(255, 255, 255, 200)
-                )
-            }
-
-            else -> {
-                TargetColor(
-                    Color(
-                        targetColor.red,
-                        targetColor.green,
-                        targetColor.blue,
-                        250
-                    ),
-                    Color(
-                        healthColor.red,
-                        healthColor.green,
-                        healthColor.blue,
-                        250
-                    )
-                )
-            }
-        }
-    }
-
-    data class TargetColor(val color1: Color, val color2: Color)
 
     private fun drawTargetFace(context: DrawContext, target: PlayerEntity, x: Double, y: Double) {
         context.matrices.push()

@@ -17,27 +17,21 @@ object NotificationHUD : HUDModule(
     private val interval by isetting("Interval", 0, 0, 20)
     val animationLength by isetting("AnimationLength", 15, 10, 100)
     val fadeFraction by fsetting("FractionOfLength", 6f, 1f, 8f)
-    private val color by csetting("MainColor", Color(0, 0, 0, 120))
+    private val color by csetting("MainColor", Color(0, 0, 0,120))
     private var doubleColor by csetting("DoubleColor", Color(130, 255, 120)).enumIs(theme, UiSetting.Theme.Custom)
     private val fontMode by msetting("FontColorMode", FontColorMode.Light)
     override fun onRender(context: DrawContext) {
         width = 200f
         height = 30f
-        doubleColor = when (theme) {
+        when (theme.value) {
             UiSetting.Theme.Custom -> {
-                doubleColor
+                doubleColor = doubleColor
             }
+  else -> {
+        doubleColor = TargetHUD.color
+  }
 
-            else -> {
-                Color(
-                    TargetHUD.getTargetColor().color1.red,
-                    TargetHUD.getTargetColor().color1.green,
-                    TargetHUD.getTargetColor().color1.blue,
-                    color.alpha
-                )
             }
-
-        }
         if (NotificationManager.taskList.isEmpty()) return
         try {
             var count = 0f
@@ -84,7 +78,7 @@ object NotificationHUD : HUDModule(
                             notification.message,
                             animationXOffset + 16,
                             y.symbolArranged(true, height / 2f) + arrangedHeight - 1.7f,
-                            Color(255, 255, 255).rgb
+                            Color(255,255,255).rgb
                         )
                     }
 
@@ -110,7 +104,7 @@ object NotificationHUD : HUDModule(
                             notification.message,
                             animationXOffset + 16,
                             y.symbolArranged(true, height / 2f) + arrangedHeight - 1.7f,
-                            Color(255, 255, 255).rgb
+                            Color(255,255,255).rgb
                         )
                     }
                 }
@@ -132,7 +126,7 @@ object NotificationHUD : HUDModule(
         }
     }
 
-    fun defaultFontColor(): String {
+    fun defaultFontColor():String {
         return when (fontMode) {
             FontColorMode.Light -> ChatUtil.WHITE
             FontColorMode.Dark -> ChatUtil.BLACK
@@ -153,6 +147,6 @@ object NotificationHUD : HUDModule(
     }
 
     enum class FontColorMode {
-        Light, Dark
+        Light,Dark
     }
 }

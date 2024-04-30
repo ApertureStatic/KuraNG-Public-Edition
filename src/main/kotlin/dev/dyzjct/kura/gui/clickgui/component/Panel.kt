@@ -97,7 +97,7 @@ class Panel(
 
         renderChildElements(mouseX, mouseY)
 
-        if (UiSetting.theme == UiSetting.Theme.Rimuru) {
+        if (UiSetting.theme.value == UiSetting.Theme.Rimuru) {
             RenderSystem.disableBlend()
             context.drawTexture(img, x.toInt() - 4, y.toInt() - 8, 0F, 0F, 30, 30, 30, 30)
             RenderSystem.enableBlend()
