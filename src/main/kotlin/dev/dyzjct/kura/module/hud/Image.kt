@@ -8,23 +8,19 @@ import dev.dyzjct.kura.gui.clickgui.HudEditorScreen
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.client.UiSetting
+import dev.dyzjct.kura.module.modules.client.UiSetting.Theme
+import dev.dyzjct.kura.module.modules.client.UiSetting.theme
 import dev.dyzjct.kura.utils.animations.Easing
 import net.minecraft.client.gui.DrawContext
+import java.awt.Color
 
 object Image : HUDModule(name = "Image", langName = "二次元小图片", category = Category.HUD, x = 150f, y = 150f) {
     val mode = msetting("Mode", Mode.Rimuru)
     private val scale by fsetting("Scale", 1.0f, 0.0f, 2.0f)
     private val animation by msetting("AnimationType", AnimationType.Center)
-    private val rimuru = KuraIdentifier("textures/rimuru.png")
-    private val arona = KuraIdentifier("textures/arona.png")
-    private val mahiro = KuraIdentifier("textures/mahiro.png")
-    private val mahiru = KuraIdentifier("textures/mahiru.png")
-    private val roxy = KuraIdentifier("textures/roxy.png")
-    private val gura = KuraIdentifier("textures/gura.png")
-    private val mikoto = KuraIdentifier("textures/mikoto.png")
-    private val ayachinene = KuraIdentifier("textures/ayachinene.png")
-    private val miku = KuraIdentifier("textures/miku.png")
+
     var startTime = System.currentTimeMillis()
+
     override fun onRender(context: DrawContext) {
         val img = when (mode.value) {
             Mode.Rimuru -> rimuru
@@ -71,9 +67,19 @@ object Image : HUDModule(name = "Image", langName = "二次元小图片", catego
         }
     }
 
+    private val rimuru = KuraIdentifier("textures/rimuru.png")
+    private val arona = KuraIdentifier("textures/arona.png")
+    private val mahiro = KuraIdentifier("textures/mahiro.png")
+    private val mahiru = KuraIdentifier("textures/mahiru.png")
+    private val roxy = KuraIdentifier("textures/roxy.png")
+    private val gura = KuraIdentifier("textures/gura.png")
+    private val mikoto = KuraIdentifier("textures/mikoto.png")
+    private val ayachinene = KuraIdentifier("textures/ayachinene.png")
+    private val miku = KuraIdentifier("textures/miku.png")
+
     @Suppress("UNUSED")
     enum class Mode {
-        Rimuru, Arona, Mahiro, Roxy, Mahiru, Gura, Mikoto ,Miku ,Ayachinene
+        Rimuru, Arona, Mahiro, Roxy, Mahiru, Gura, Mikoto, Miku, Ayachinene
     }
 
     @Suppress("UNUSED")

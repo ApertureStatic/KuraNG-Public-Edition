@@ -35,7 +35,7 @@ public abstract class MixinTitleScreen {
     @Inject(method = "init", at = @At("HEAD"))
     private void modifyTitle(CallbackInfo ci) {
         // 實際上不需要使用全局變量，直接獲取即可，修復了賦值一次導致的始終無法切換的bug
-        this.splashText = new SplashTextRenderer(UiSetting.splashtext());
+        this.splashText = new SplashTextRenderer(UiSetting.getSlashText());
     }
 
     @Inject(method = "render", at = @At("HEAD"))
@@ -56,7 +56,7 @@ public abstract class MixinTitleScreen {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, f);
 
         // 同上
-        context.drawTexture(new KuraIdentifier("background/"+ UiSetting.splashimg() + ".png"), 0, 0, 0, 0, width, height, width, height);
+        context.drawTexture(new KuraIdentifier("background/"+ UiSetting.splashImg() + ".png"), 0, 0, 0, 0, width, height, width, height);
 
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableBlend();
