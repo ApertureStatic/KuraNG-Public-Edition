@@ -4,3 +4,5 @@
 /build
 /.kotlin
 /run
+.gitattributes
+.gitignore
