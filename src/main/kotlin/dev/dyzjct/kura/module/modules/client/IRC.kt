@@ -40,9 +40,16 @@ object IRC : Module(
     // 你去問問其他人吧     你需要什么？ 我需要你编写出正确的event写法
     // xianzheyangba
     /*
-        要在init里面写
-         safeEventListener<Event> { 不写这条默认为it ->
-        }
+        TODO:要在init里面写
+         safeEventListener<Event> { 不写这条默认为it -> 内容 }
+
+        function名字前面@SafeClientEvent之后可以直接使用
+            player.XXX
+            world.xxx
+            mc.xxx
+            mc.interactionManager可以使用playerController代替
+
+        TODO:正常的function不可以调用标有@SafeClientEvent的function 需要添加@SafeClientEvent
      */
     fun onRender3D(event: Render3DEvent) {
         val nameStr: Text? = mc.player?.name
