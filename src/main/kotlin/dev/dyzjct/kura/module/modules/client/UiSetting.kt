@@ -32,7 +32,7 @@ object UiSetting : Module(
     private val splashMode by msetting(
         "SplashMode",
         Splash.Rimuru
-    ).isTrue { theme == Theme.Custom || theme == Theme.Ayachinene }
+    ).isTrue { theme == Theme.Custom}
 
 
     //    Ui colors
@@ -248,21 +248,22 @@ object UiSetting : Module(
 
     @JvmStatic
     fun splashImg(): String {
-        if (theme == Theme.Custom || theme == Theme.Ayachinene) return splashMode.name.lowercase(Locale.getDefault())
+        if (theme == Theme.Custom) return splashMode.name.lowercase(Locale.getDefault())
         return theme.name.lowercase(Locale.getDefault())
     }
 
     @JvmStatic
     fun getSlashText(): String {
         return when (theme) {
-            Theme.Mikoto -> "Mikoto~"
-            Theme.Miku -> "Miku~"
+            Theme.Mikoto -> "君指先跃动の光は、私の一生不変の信仰に、唯私の超电磁炮永世生き。"
+            Theme.Miku -> "おしまいです。"
             Theme.Gura -> "Guwr Gura!"
-            Theme.Mahiro -> "Mahiro~"
+            Theme.Mahiro -> "每个人都有权享受自己的兴趣"
             Theme.Arona -> "Arona~"
             Theme.Rimuru -> "Rimuru Sama~"
             Theme.Roxy -> "Roxy KAMI!"
             Theme.Ayachinene -> "Ayachinene!"
+            Theme.Mahiru -> "ロードエンジェル!"
             else -> "Kura Client!"
         }
     }
@@ -287,7 +288,7 @@ object UiSetting : Module(
 
     @Suppress("UNUSED")
     enum class Splash {
-        Custom, Rimuru, Mahiro, Arona, Roxy, Mahiru, Gura, Mikoto, Miku
+        Custom, Rimuru, Mahiro, Arona, Roxy, Mahiru, Gura, Mikoto, Miku, Ayachinene
     }
 
     enum class SytMode {
