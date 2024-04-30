@@ -18,7 +18,7 @@ object FastUse :
         onMotion {
             if (player.mainHandStack.item == Items.EXPERIENCE_BOTTLE && exp.value ||
                 player.mainHandStack.item == Items.BOW && bow.value ||
-                player.mainHandStack.item is BlockItem) {
+                player.mainHandStack.item is BlockItem && block.value) {
                 mc.itemUseCooldown =
                     mc.itemUseCooldown.coerceAtMost(delay.value)
             }
