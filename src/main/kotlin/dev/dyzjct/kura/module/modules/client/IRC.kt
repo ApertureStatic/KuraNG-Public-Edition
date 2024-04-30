@@ -1,6 +1,8 @@
 package dev.dyzjct.kura.module.modules.client
 
+import base.events.RunGameLoopEvent
 import base.events.render.Render3DEvent
+import base.system.event.safeEventListener
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -37,6 +39,11 @@ object IRC : Module(
     // 你沒有
     // 你去問問其他人吧     你需要什么？ 我需要你编写出正确的event写法
     // xianzheyangba
+    /*
+        要在init里面写
+         safeEventListener<Event> { 不写这条默认为it ->
+        }
+     */
     fun onRender3D(event: Render3DEvent) {
         val nameStr: Text? = mc.player?.name
 
