@@ -93,6 +93,11 @@ object TargetHUD : HUDModule(
                color   =     Color(228, 142, 151, 250)
                color2   =      Color(187, 209, 248, 200)
             }
+            Theme.Ayachinene -> {
+                color = Color(64,68,93, 250)
+                color2 = Color(255,255,255,200)
+
+            }
             else -> {
                 color = Color(UiSetting.getThemeSetting().targetcolor.red, UiSetting.getThemeSetting().targetcolor.green, UiSetting.getThemeSetting().targetcolor.blue, 250)
                 color2 = Color(UiSetting.getThemeSetting().targethealthcolor.red, UiSetting.getThemeSetting().targethealthcolor.green, UiSetting.getThemeSetting().targethealthcolor.blue, 250)

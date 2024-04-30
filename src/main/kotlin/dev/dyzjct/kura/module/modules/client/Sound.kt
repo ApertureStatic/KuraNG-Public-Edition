@@ -14,6 +14,6 @@ object Sound : Module(
     val ezz by bsetting("EZZ", true)
 
     enum class SoundMode {
-        Sigma, FDP
+        Sigma, FDP ,Never
     }
 }
