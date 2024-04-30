@@ -22,6 +22,7 @@ object Image : HUDModule(name = "Image", langName = "二次元小图片", catego
     private val roxy = KuraIdentifier("textures/roxy.png")
     private val gura = KuraIdentifier("textures/gura.png")
     private val mikoto = KuraIdentifier("textures/mikoto.png")
+    private val ayachinene = KuraIdentifier("textures/ayachinene.png")
     private val miku = KuraIdentifier("textures/miku.png")
     var startTime = System.currentTimeMillis()
     override fun onRender(context: DrawContext) {
@@ -33,6 +34,7 @@ object Image : HUDModule(name = "Image", langName = "二次元小图片", catego
             Mode.Gura -> gura
             Mode.Mikoto -> mikoto
             Mode.Miku -> miku
+            Mode.Ayachinene -> ayachinene
             else -> mahiro
         }
         try {
@@ -71,7 +73,7 @@ object Image : HUDModule(name = "Image", langName = "二次元小图片", catego
 
     @Suppress("UNUSED")
     enum class Mode {
-        Rimuru, Arona, Mahiro, Roxy, Mahiru, Gura, Mikoto ,Miku
+        Rimuru, Arona, Mahiro, Roxy, Mahiru, Gura, Mikoto ,Miku ,Ayachinene
     }
 
     @Suppress("UNUSED")

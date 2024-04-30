@@ -27,7 +27,7 @@ object UiSetting : Module(
     val disableSearch by bsetting("DisableSearch", false)
 
     //    Theme type
-    val theme = msetting("Theme", Theme.Mikoto)
+    val theme = msetting("Theme", Theme.Miku)
 
 
     //    Ui colors
@@ -235,6 +235,26 @@ object UiSetting : Module(
                     Color(187, 209, 248, 200),
                 )
             }
+            Theme.Ayachinene -> {
+                Image.mode.setValueByString("Ayachinene")
+                splashimg.equals("Mahiro")
+                splashtext.equals("Ayachinene!!!")
+                return ThemesSetting(
+                    Color(64,68,93, 250),
+                    Color(165,157,178, 200),
+                    Color(255,255,255,200),
+                    fillPanelTitle = true,
+                    panelBorder = true,
+                    syt = false,
+                    sytMode = SytMode.Down,
+                    sytColor = sytColor,
+                    particle = particle,
+                    pRainbow = particleRainbow,
+                    pColor = particleColor,
+                    Color(64,68,93, 250),
+                    Color(255,255,255,200),
+                )
+            }
 
 
 
@@ -296,7 +316,7 @@ return splashimg
     )
 
     enum class Theme {
-        Custom, Rimuru, Mahiro, Arona, Roxy, Mahiru, Gura ,Mikoto ,Miku
+        Custom, Rimuru, Mahiro, Arona, Roxy, Mahiru, Gura ,Mikoto ,Miku ,Ayachinene
     }
 
     enum class SytMode {

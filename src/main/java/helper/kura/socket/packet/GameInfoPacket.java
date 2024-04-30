@@ -8,7 +8,8 @@ import io.netty.channel.ChannelHandlerContext;
  * @since 4/8/2024
  */
 public class GameInfoPacket extends Packet {
-    private String inGameName;//   private String token;
+    private String inGameName;
+    //   private String token;
     private String uuid;
     private long lastUpdateTime;
 
