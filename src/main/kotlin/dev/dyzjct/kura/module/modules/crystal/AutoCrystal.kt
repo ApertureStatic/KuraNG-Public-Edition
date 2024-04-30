@@ -45,8 +45,11 @@ import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.hud.TargetHUD
 import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
+import dev.dyzjct.kura.module.modules.client.UiSetting
+import dev.dyzjct.kura.module.modules.client.UiSetting.theme
 import dev.dyzjct.kura.module.modules.combat.AnchorAura
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.isResistant
@@ -164,8 +167,8 @@ object AutoCrystal : Module(
     private var motionRender = bsetting("MotionRender", true).enumIs(p, Page.RENDER)
     private var fadeRender = bsetting("FadeRender", false).enumIs(p, Page.RENDER)
     private var fadeAlpha = isetting("FadeAlpha", 80, 0, 255, 1).isTrue(fadeRender).enumIs(p, Page.RENDER)
-    private var fillColor = csetting("FillColor", Color(20, 225, 219, 50)).enumIs(p, Page.RENDER)
-    private var outlineColor = csetting("LineColor", Color(20, 225, 219, 200)).enumIs(p, Page.RENDER)
+    private var fillColor = csetting("FillColor", Color(20, 225, 219, 50)).enumIs(p, Page.RENDER).enumIs(theme, UiSetting.Theme.Custom)
+    private var outlineColor = csetting("LineColor", Color(20, 225, 219, 200)).enumIs(p, Page.RENDER).enumIs(theme, UiSetting.Theme.Custom)
     private val movingLength = isetting("MovingLength", 400, 0, 1000).enumIs(p, Page.RENDER)
     private val fadeLength = isetting("FadeLength", 200, 0, 1000).enumIs(p, Page.RENDER)
     private var offsetFacing = arrayOf(Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST)
@@ -213,6 +216,19 @@ object AutoCrystal : Module(
         } ?: emptyList()
     }
 
+    fun render() {
+        when (theme.value) {
+            UiSetting.Theme.Custom -> {
+                fillColor = fillColor
+                outlineColor = outlineColor
+            }
+else -> {
+                fillColor.value = TargetHUD.color
+                fillColor.value = TargetHUD.color2
+}
+            }
+
+    }
     init {
         onRender3D {
             onRender3D(it, placeInfo)
