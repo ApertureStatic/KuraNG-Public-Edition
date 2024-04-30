@@ -78,7 +78,7 @@ object UiSetting : Module(
                 return ThemesSetting(
                     Color(76, 179, 208, 250),
                     Color(25, 25, 25, 200),
-                    Color(76, 179, 208, 200),
+                    Color(76, 179, 208, 120),
                     fillPanelTitle = true,
                     panelBorder = true,
                     syt = true,
