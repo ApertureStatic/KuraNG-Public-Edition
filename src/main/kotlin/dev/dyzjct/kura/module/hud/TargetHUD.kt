@@ -77,6 +77,22 @@ object TargetHUD : HUDModule(
                 color = Color(117, 106, 171, 250)
                 color2 = Color(89, 77, 89, 200)
             }
+            Theme.Mahiru -> {
+                color =   Color(218, 165, 32, 200)
+                color2 =   Color(254, 220, 189, 200)
+            }
+            Theme.Gura -> {
+              color =   Color(51, 153, 189, 200)
+              color2 =     Color(204, 255, 255, 200)
+            }
+            Theme.Mikoto -> {
+               color   =    Color(109, 68, 55, 250)
+               color2   =     Color(255, 255, 255, 150)
+            }
+            Theme.Miku -> {
+               color   =     Color(228, 142, 151, 250)
+               color2   =      Color(187, 209, 248, 200)
+            }
             else -> {
                 color = Color(UiSetting.getThemeSetting().targetcolor.red, UiSetting.getThemeSetting().targetcolor.green, UiSetting.getThemeSetting().targetcolor.blue, 250)
                 color2 = Color(UiSetting.getThemeSetting().targethealthcolor.red, UiSetting.getThemeSetting().targethealthcolor.green, UiSetting.getThemeSetting().targethealthcolor.blue, 250)
