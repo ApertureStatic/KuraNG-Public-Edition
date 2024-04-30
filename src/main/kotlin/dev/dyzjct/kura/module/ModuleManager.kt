@@ -120,7 +120,7 @@ object ModuleManager : AlwaysListening {
 
     private fun loadCategoryPlayer() {
         registerModule(PacketMine)
-        registerModule(AutoArmour)
+        registerModule(AutoArmor)
         registerModule(NoEntityTrace)
         registerModule(NoRotate)
         registerModule(Timer)

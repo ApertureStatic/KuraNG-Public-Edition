@@ -9,14 +9,15 @@ import base.system.event.SafeClientEvent
 import base.utils.concurrent.threads.runSafe
 import base.utils.inventory.InvUtils
 import net.minecraft.enchantment.Enchantment
+import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.Enchantments
 import net.minecraft.item.*
 import net.minecraft.registry.Registries
 import net.minecraft.util.Identifier
 import java.util.*
 
-object AutoArmour : Module(
-    name = "AutoArmour",
+object AutoArmor : Module(
+    name = "AutoArmor",
     langName = "自动穿甲",
     category = Category.PLAYER,
     description = "Automatically equips armour"
@@ -55,7 +56,7 @@ object AutoArmour : Module(
                     .ifPresent { enchantment: Enchantment? ->
                         enchantments.put(
                             enchantment,
-                            tag.getInt("lvl")
+                            EnchantmentHelper.getLevel(Enchantments.BLAST_PROTECTION, itemStack)
                         )
                     }
             }

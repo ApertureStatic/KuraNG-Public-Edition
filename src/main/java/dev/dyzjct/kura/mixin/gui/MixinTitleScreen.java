@@ -18,8 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(TitleScreen.class)
 public abstract class MixinTitleScreen {
-    private static String splashimg = UiSetting.splashimg();
-    private static String splashtext = UiSetting.splashtext();
     @Mutable
     @Final
     @Shadow
@@ -36,7 +34,8 @@ public abstract class MixinTitleScreen {
 
     @Inject(method = "init", at = @At("HEAD"))
     private void modifyTitle(CallbackInfo ci) {
-        this.splashText = new SplashTextRenderer(splashtext);
+        // 實際上不需要使用全局變量，直接獲取即可，修復了賦值一次導致的始終無法切換的bug
+        this.splashText = new SplashTextRenderer(UiSetting.splashtext());
     }
 
     @Inject(method = "render", at = @At("HEAD"))
@@ -56,7 +55,8 @@ public abstract class MixinTitleScreen {
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, f);
 
-        context.drawTexture(new KuraIdentifier("background/"+splashimg+".png"), 0, 0, 0, 0, width, height, width, height);
+        // 同上
+        context.drawTexture(new KuraIdentifier("background/"+ UiSetting.splashimg() + ".png"), 0, 0, 0, 0, width, height, width, height);
 
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableBlend();
