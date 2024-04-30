@@ -23,13 +23,18 @@ object NotificationHUD : HUDModule(
     override fun onRender(context: DrawContext) {
         width = 200f
         height = 30f
-        when (theme) {
+        doubleColor = when (theme) {
             UiSetting.Theme.Custom -> {
-                doubleColor = doubleColor
+                doubleColor
             }
 
             else -> {
-                doubleColor = TargetHUD.getTargetColor().color1
+                Color(
+                    TargetHUD.getTargetColor().color1.red,
+                    TargetHUD.getTargetColor().color1.green,
+                    TargetHUD.getTargetColor().color1.blue,
+                    color.alpha
+                )
             }
 
         }

@@ -177,8 +177,8 @@ object TargetHUD : HUDModule(
         return when (theme) {
             Theme.Rimuru -> {
                 TargetColor(
-                    Color(86, 190, 208, 140),
-                    Color(76, 179, 208, 250)
+                    Color(76, 179, 208, 140),
+                    Color(22, 116, 255, 250)
                 )
             }
 
