@@ -12,6 +12,7 @@ object FontRenderers {
     lateinit var lexend: FontAdapter
     lateinit var jbMono: FontAdapter
     lateinit var icons: FontAdapter
+    lateinit var never: FontAdapter
     lateinit var mid_icons: FontAdapter
     lateinit var big_icons: FontAdapter
 

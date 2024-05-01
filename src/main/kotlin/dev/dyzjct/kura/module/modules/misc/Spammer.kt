@@ -7,7 +7,7 @@ import net.minecraft.text.Text
 import kotlin.random.Random
 
 object Spammer : Module(name = "Spammer", langName = "刷屏", category = Category.MISC) {
-    private val text by ssetting("Text", "")
+    private val text by addStringSetting("Text", "")
     private val delay by isetting("Delay(S)", 60, 1, 600)
     private val antiKick by bsetting("Anti Kick", true)
 

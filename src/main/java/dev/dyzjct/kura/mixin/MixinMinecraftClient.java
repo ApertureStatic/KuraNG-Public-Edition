@@ -100,6 +100,7 @@ public abstract class MixinMinecraftClient {
                 FontRenderers.INSTANCE.setCn(FontRenderers.INSTANCE.createDefault(16f, "chinese"));
                 FontRenderers.INSTANCE.setLexend(FontRenderers.INSTANCE.createDefault(16f, "lexenddeca-regular"));
                 FontRenderers.INSTANCE.setJbMono(FontRenderers.INSTANCE.createDefault(72, "JetBrainsMono-Bold"));
+                FontRenderers.INSTANCE.setNever(FontRenderers.INSTANCE.createDefault(72, "DancingScript-Medium"));
                 FontRenderers.INSTANCE.setIcons(FontRenderers.INSTANCE.createIcons(20));
                 FontRenderers.INSTANCE.setMid_icons(FontRenderers.INSTANCE.createIcons(46f));
                 FontRenderers.INSTANCE.setBig_icons(FontRenderers.INSTANCE.createIcons(72f));

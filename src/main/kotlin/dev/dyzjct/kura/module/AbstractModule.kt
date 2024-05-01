@@ -247,11 +247,17 @@ abstract class AbstractModule : ListenerOwner() {
         return value
     }
 
-    fun ssetting(name: String, defaultValue: String): StringSetting {
-        val value = StringSetting(name, this, defaultValue)
+    fun ssetting(settingName: String, defaultSettingValue: String): StringSetting {
+        val setting = StringSetting(settingName, this, defaultSettingValue)
+        settingList.add(setting)
+        return setting
+    }
+    fun addStringSetting(setting_name: String, default_value: String): StringSetting {
+        val value = StringSetting(setting_name, this, default_value)
         settingList.add(value)
         return value
     }
+
 
     fun csetting(name: String, defaultValue: Color): ColorSetting {
         val value = ColorSetting(name, this, defaultValue)

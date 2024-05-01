@@ -11,7 +11,7 @@ import java.util.*
 
 object FakePlayer : Module(name = "FakePlayer", langName = "假人" , category = Category.MISC, description = "Spawns a fake Player") {
     private var health: Setting<Int> = isetting("Health", 12, 0, 36)
-    private var fpName: Setting<String> = ssetting("Name", "Ab_noJB")
+    private var fpName: Setting<String> = addStringSetting("Name", "Ab_noJB")
     private var fakePlayer: OtherClientPlayerEntity? = null
 
     override fun getHudInfo(): String {
