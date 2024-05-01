@@ -44,6 +44,7 @@ class Kura : AlwaysListening {
         var hasPostInit = false
         var called = false
         var id = ""
+        
 
         fun onManagersInit() {
             if (hasInit) return

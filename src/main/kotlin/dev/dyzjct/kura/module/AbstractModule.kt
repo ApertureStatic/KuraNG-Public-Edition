@@ -70,6 +70,7 @@ abstract class AbstractModule : ListenerOwner() {
                 (NotificationHUD.defaultFontColor() + "[ " + ChatUtil.RED + if (ClickGui.chinese.value) moduleCName else moduleName) + NotificationHUD.defaultFontColor() + " ] " + "has been " + ChatUtil.GREEN + "Enable!"
             )
             if (Sound.isEnabled) {
+                Kura::class.java.getResourceAsStream("/assets/kura/sounds/Neverenable.wav")?.let { never ->
                 Kura::class.java.getResourceAsStream("/assets/kura/sounds/Sigma_Enable.wav")?.let { sigma ->
                     Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleEnable.wav")?.let { fdp ->
                         when (Sound.mode.value) {
@@ -80,6 +81,11 @@ abstract class AbstractModule : ListenerOwner() {
                             Sound.SoundMode.FDP -> {
                                 SoundPlayer(fdp).play(Sound.volume)
                             }
+
+                            Sound.SoundMode.Never -> {
+                                SoundPlayer(never).play(Sound.volume)
+                            }
+                        }
                         }
                     } ?: run {
                         NotificationManager.addNotification(ChatUtil.YELLOW + "SoundFailed!")
@@ -105,6 +111,7 @@ abstract class AbstractModule : ListenerOwner() {
                 (NotificationHUD.defaultFontColor() + "[ " + ChatUtil.RED + if (ClickGui.chinese.value) moduleCName else moduleName) + NotificationHUD.defaultFontColor() + " ] " + "has been " + ChatUtil.RED + "Disable!"
             )
             if (Sound.isEnabled) {
+                Kura::class.java.getResourceAsStream("/assets/kura/sounds/Neverdisable.wav")?.let { never ->
                 Kura::class.java.getResourceAsStream("/assets/kura/sounds/Sigma_Disable.wav")?.let { sigma ->
                     Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleDisable.wav")?.let { fdp ->
                         when (Sound.mode.value) {
@@ -115,6 +122,11 @@ abstract class AbstractModule : ListenerOwner() {
                             Sound.SoundMode.FDP -> {
                                 SoundPlayer(fdp).play(Sound.volume)
                             }
+                            Sound.SoundMode.Never -> {
+                                SoundPlayer(never).play(Sound.volume)
+
+                            }
+                        }
                         }
                     } ?: run {
                         NotificationManager.addNotification(ChatUtil.YELLOW + "SoundFailed!")
