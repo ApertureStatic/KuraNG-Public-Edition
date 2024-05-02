@@ -28,7 +28,7 @@ object UiSetting : Module(
     val disableSearch by bsetting("DisableSearch", false)
 
     //    Theme type
-    val theme by msetting("Theme", Theme.Rimuru)
+    val theme by msetting("Theme", Theme.Ayachinene )
     private val splashMode by msetting(
         "SplashMode",
         Splash.Rimuru
