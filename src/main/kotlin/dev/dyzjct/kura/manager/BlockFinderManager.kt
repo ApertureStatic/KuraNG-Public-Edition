@@ -1,17 +1,19 @@
 package dev.dyzjct.kura.manager
 
-import dev.dyzjct.kura.module.modules.render.PortalESP
-import dev.dyzjct.kura.module.modules.render.Xray
-import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.extension.sq
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import base.events.TickEvent
 import base.system.event.AlwaysListening
 import base.system.event.SafeClientEvent
 import base.system.event.safeBackGroundTaskListener
 import base.utils.concurrent.threads.defaultScope
 import base.utils.extension.sendSequencedPacket
+import base.utils.math.distanceSqToCenter
+import dev.dyzjct.kura.module.modules.render.ChestESP
+import dev.dyzjct.kura.module.modules.render.PortalESP
+import dev.dyzjct.kura.module.modules.render.Xray
+import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.extension.sq
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import net.minecraft.block.Block
 import net.minecraft.block.Blocks
 import net.minecraft.block.EndPortalBlock
@@ -20,8 +22,6 @@ import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket
 import net.minecraft.util.Hand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
-import base.utils.math.distanceSqToCenter
-import dev.dyzjct.kura.module.modules.render.ChestESP
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.max
 
