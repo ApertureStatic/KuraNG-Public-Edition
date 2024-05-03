@@ -77,18 +77,24 @@ object BlockFinderManager : AlwaysListening {
         safeBackGroundTaskListener<TickEvent.Pre>(true) {
             if (PortalESP.isDisabled && Xray.isDisabled && ChestESP.isDisabled) return@safeBackGroundTaskListener
             val range = max(
-                if (PortalESP.isEnabled) PortalESP.distance else 0,
-                if (ChestESP.isEnabled) ChestESP.distance else 0,
-                if (Xray.isEnabled) Xray.distance else 0,
+                max(
+                    if (PortalESP.isEnabled) PortalESP.distance else 0,
+                    if (ChestESP.isEnabled) ChestESP.distance else 0
+                ), if (Xray.isEnabled) Xray.distance else 0
             )
-            defaultScope.launch { findBlocks(range, PortalESP.isEnabled, Xray.isEnabled,ChestESP.isEnabled) }
+            defaultScope.launch { findBlocks(range, PortalESP.isEnabled, Xray.isEnabled, ChestESP.isEnabled) }
             portalBlockList.removeIf { it == null || player.distanceSqToCenter(it) > range.sq || world.isAir(it) }
             espBlockList.removeIf { it == null || player.distanceSqToCenter(it) > range.sq || world.isAir(it) }
             oreBlockList.removeIf { it == null || player.distanceSqToCenter(it) > range.sq || world.isAir(it) }
         }
     }
 
-    private suspend fun SafeClientEvent.findBlocks(distance: Int, portalMode: Boolean, xrayMode: Boolean,esp: Boolean) =
+    private suspend fun SafeClientEvent.findBlocks(
+        distance: Int,
+        portalMode: Boolean,
+        xrayMode: Boolean,
+        esp: Boolean
+    ) =
         coroutineScope {
             launch {
                 for (x in player.x.toInt() - distance..player.x.toInt() + distance) {
@@ -161,7 +167,10 @@ object BlockFinderManager : AlwaysListening {
                             }
                             val blockState = world.getBlockState(pos) ?: continue
                             val block = blockState.block ?: continue
-                            if ((portalMode && portalBlockList.contains(pos)) || (xrayMode && oreBlockList.contains(pos))|| (esp && espBlockList.contains(pos))) continue
+                            if ((portalMode && portalBlockList.contains(pos)) || (xrayMode && oreBlockList.contains(pos)) || (esp && espBlockList.contains(
+                                    pos
+                                ))
+                            ) continue
                             when (block) {
                                 is NetherPortalBlock -> if (portalMode) portalBlockList.add(pos)
                                 is EndPortalBlock -> if (portalMode) portalBlockList.add(pos)
