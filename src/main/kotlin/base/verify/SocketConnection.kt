@@ -15,7 +15,7 @@ import java.security.MessageDigest
 
 object SocketConnection {
     private const val domain = "43.248.189.42" //"liumenglong.tk"
-    private const val port = 12344
+    private const val port = 7890
     private lateinit var socket: Socket
     private lateinit var inputStream: DataInputStream
     private lateinit var outputStream: DataOutputStream

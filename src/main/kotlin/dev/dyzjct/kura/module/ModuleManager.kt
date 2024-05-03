@@ -8,6 +8,7 @@ import base.system.render.newfont.FontRenderers
 import base.utils.concurrent.threads.IOScope
 import base.utils.math.DamageCalculator
 import base.verify.VerificationManager
+import java.util.ServiceLoader
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.hud.*
 import dev.dyzjct.kura.module.modules.client.*
@@ -37,6 +38,7 @@ object ModuleManager : AlwaysListening {
             }
         }
     }
+
 
     fun init() {
         loadModules()

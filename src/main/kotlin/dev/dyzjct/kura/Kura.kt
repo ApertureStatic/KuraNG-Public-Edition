@@ -14,7 +14,6 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.net.Socket
 import kotlin.io.path.Path
-
 class Kura : AlwaysListening {
     enum class UserType(val userType: String) {
         User("User"), Beta("Beta"), Nigger("NIGGER")
