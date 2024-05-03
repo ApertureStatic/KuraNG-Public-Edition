@@ -50,12 +50,14 @@ object BlockFinderManager : AlwaysListening {
         Blocks.NETHER_QUARTZ_ORE,
         Blocks.ANCIENT_DEBRIS,
     )
+    // 我承认这个命名很大神
     private val espBlocks = mutableListOf<Block>(
         Blocks.CHEST,
         Blocks.SHULKER_BOX,
         Blocks.RED_SHULKER_BOX,
         Blocks.BLACK_SHULKER_BOX,
         Blocks.BLUE_SHULKER_BOX,
+        Blocks.WHITE_SHULKER_BOX,
         Blocks.BROWN_SHULKER_BOX,
         Blocks.CYAN_SHULKER_BOX,
         Blocks.GRAY_SHULKER_BOX,
@@ -67,19 +69,20 @@ object BlockFinderManager : AlwaysListening {
         Blocks.ORANGE_SHULKER_BOX,
         Blocks.PINK_SHULKER_BOX,
         Blocks.PURPLE_SHULKER_BOX,
-        Blocks.RED_TERRACOTTA,
-        Blocks.WHITE_TERRACOTTA,
-        Blocks.YELLOW_SHULKER_BOX
+        Blocks.YELLOW_SHULKER_BOX,
+        Blocks.ENDER_CHEST
     )
+
 
 
     fun onInit() {
         safeBackGroundTaskListener<TickEvent.Pre>(true) {
             if (PortalESP.isDisabled && Xray.isDisabled && ChestESP.isDisabled) return@safeBackGroundTaskListener
             val range = max(
-                if (PortalESP.isEnabled) PortalESP.distance else 0,
-                if (ChestESP.isEnabled) ChestESP.distance else 0,
-                if (Xray.isEnabled) Xray.distance else 0,
+                max(
+                    if (PortalESP.isEnabled) PortalESP.distance else 0,
+                    if (ChestESP.isEnabled) ChestESP.distance else 0
+                ), if (Xray.isEnabled) Xray.distance else 0
             )
             defaultScope.launch { findBlocks(range, PortalESP.isEnabled, Xray.isEnabled,ChestESP.isEnabled) }
             portalBlockList.removeIf { it == null || player.distanceSqToCenter(it) > range.sq || world.isAir(it) }
