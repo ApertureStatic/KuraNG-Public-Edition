@@ -5,13 +5,10 @@ import base.events.TickEvent;
 import base.events.screen.GuiScreenEvent;
 import base.system.antileak.AntiLeak;
 import base.system.render.newfont.FontRenderers;
-import base.utils.concurrent.threads.CoroutineUtilsKt;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.dyzjct.kura.Kura;
 import dev.dyzjct.kura.manager.FileManager;
 import dev.dyzjct.kura.module.AbstractModule;
-import kotlinx.coroutines.BuildersKt;
-import kotlinx.coroutines.CoroutineStart;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
@@ -86,7 +83,7 @@ public abstract class MixinMinecraftClient {
 
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/telemetry/GameLoadTimeEvent;startTimer(Lnet/minecraft/client/util/telemetry/TelemetryEventProperty;)V", shift = At.Shift.AFTER))
     public void onInit(RunArgs args, CallbackInfo ci) {
-        BuildersKt.launch(CoroutineUtilsKt.getIOScope(), CoroutineUtilsKt.getIOScope().getCoroutineContext(), CoroutineStart.DEFAULT, (coroutineScope, continuation) -> Kura.Companion);
+//        BuildersKt.launch(CoroutineUtilsKt.getIOScope(), CoroutineUtilsKt.getIOScope().getCoroutineContext(), CoroutineStart.DEFAULT, (coroutineScope, continuation) -> Kura.Companion);
         Kura.Companion.onManagersInit();
     }
 
