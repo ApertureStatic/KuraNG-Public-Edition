@@ -1,11 +1,12 @@
 package dev.dyzjct.kura.mixin.chat;
 
-import dev.dyzjct.kura.Kura;
-import dev.dyzjct.kura.command.CommandManager;
-import dev.dyzjct.kura.gui.chat.GuiChat;
 import base.events.chat.MessageSentEvent;
 import base.utils.Wrapper;
 import base.utils.chat.ChatUtil;
+import dev.dyzjct.kura.Kura;
+import dev.dyzjct.kura.command.CommandManager;
+import dev.dyzjct.kura.gui.chat.GuiChat;
+import dev.dyzjct.kura.module.modules.misc.ChatSuffix;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -13,6 +14,7 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.StringHelper;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -55,7 +57,7 @@ public class MixinChatScreen extends Screen {
      * @reason FUCK EVENT MANAGER
      */
     @Overwrite
-    public boolean sendMessage(String message, boolean addToHistory) {
+    public boolean sendMessage(@NotNull String message, boolean addToHistory) {
         if (message.startsWith(Kura.Companion.getCommandPrefix().getValue())) {
             //ChatUtil.INSTANCE.sendMessage("Command Debug!");
             try {
@@ -83,6 +85,7 @@ public class MixinChatScreen extends Screen {
             return true;
         }
         MessageSentEvent messageSentEvent = new MessageSentEvent(message);
+        if (ChatSuffix.INSTANCE.getDebug().getValue()) ChatUtil.INSTANCE.sendMessage("MessageSentEvent Posted!!");
         messageSentEvent.post();
         if (messageSentEvent.getCancelled()) {
             return false;

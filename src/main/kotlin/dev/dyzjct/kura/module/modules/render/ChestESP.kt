@@ -31,7 +31,7 @@ object ChestESP : Module(
 
     init {
         onRender3D { event ->
-            BlockFinderManager.Chest.forEach { blockPos ->
+            BlockFinderManager.espBlockList.forEach { blockPos ->
                 val color = when (world.getBlockState(blockPos).block) {
                     Blocks.COAL_ORE -> if (coal) Color(0, 0, 0) else null
                     Blocks.DEEPSLATE_COAL_ORE -> if (coal) Color(0, 0, 0) else null

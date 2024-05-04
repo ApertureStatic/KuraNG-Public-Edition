@@ -67,8 +67,7 @@ object BlockFinderManager : AlwaysListening {
         Blocks.ORANGE_SHULKER_BOX,
         Blocks.PINK_SHULKER_BOX,
         Blocks.PURPLE_SHULKER_BOX,
-        Blocks.RED_TERRACOTTA,
-        Blocks.WHITE_TERRACOTTA,
+        Blocks.WHITE_SHULKER_BOX,
         Blocks.YELLOW_SHULKER_BOX
     )
 
