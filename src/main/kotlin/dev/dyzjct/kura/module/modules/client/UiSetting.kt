@@ -1,4 +1,3 @@
-
 package dev.dyzjct.kura.module.modules.client
 
 import dev.dyzjct.kura.gui.clickgui.AlphaAnimationDrawDelegate
@@ -28,31 +27,32 @@ object UiSetting : Module(
     val disableSearch by bsetting("DisableSearch", false)
 
     //    Theme type
-    val theme by msetting("Theme", Theme.Ayachinene )
+    val theme by msetting("Theme", Theme.Ayachinene)
     private val splashMode by msetting(
         "SplashMode",
         Splash.Rimuru
-    ).isTrue { theme == Theme.Custom}
+    ).isTrue { theme == Theme.Custom }
 
 
     //    Ui colors
-    private val primaryColor by csetting("Primary", Color(240, 100, 255, 200)).enumIs(theme, Theme.Custom)
-    private val secondaryColor by csetting("Secondary", Color(25, 25, 25, 200)).enumIs(theme, Theme.Custom)
-    private val settingPanelColor by csetting("SettingPanel", Color(10, 10, 10, 200)).enumIs(theme, Theme.Custom)
-    private val fillPanelTitle by bsetting("FillPanelTitle", true).enumIs(theme, Theme.Custom)
-    private val panelBorder by bsetting("PanelBorder", true).enumIs(theme, Theme.Custom)
+    private val primaryColor by csetting("Primary", Color(240, 100, 255, 200)).isTrue { theme == Theme.Custom }
+    private val secondaryColor by csetting("Secondary", Color(25, 25, 25, 200)).isTrue { theme == Theme.Custom }
+    private val settingPanelColor by csetting("SettingPanel", Color(10, 10, 10, 200)).isTrue { theme == Theme.Custom }
+    private val fillPanelTitle by bsetting("FillPanelTitle", true).isTrue { theme == Theme.Custom }
+    private val panelBorder by bsetting("PanelBorder", true).isTrue { theme == Theme.Custom }
 
     //    SytRender Type
-    private val sytRender by bsetting("SytRender", false).enumIs(theme, Theme.Custom)
-    private val sytMode by msetting("SytMode", SytMode.Down).enumIs(theme, Theme.Custom)
-    private val sytColor by csetting("SytColor", Color(255, 255, 255, 150)).enumIs(theme, Theme.Custom)
+    private val sytRender by bsetting("SytRender", false).isTrue { theme == Theme.Custom }
+    private val sytMode by msetting("SytMode", SytMode.Down).isTrue { theme == Theme.Custom }
+    private val sytColor by csetting("SytColor", Color(255, 255, 255, 150)).isTrue { theme == Theme.Custom }
 
     //    Particle Type
-    private val particle by bsetting("Particle", true).enumIs(theme, Theme.Custom)
-    private val particleRainbow by bsetting("ParticleRainbow", true).isTrue { particle }.enumIs(theme, Theme.Custom)
+    private val particle by bsetting("Particle", true).isTrue { theme == Theme.Custom }
+    private val particleRainbow by bsetting("ParticleRainbow", true).isTrue { particle }
+        .isTrue { theme == Theme.Custom }
     private val particleColor by csetting("ParticleColor", Color(255, 255, 255)).isTrue { particle }
         .isFalse { particleRainbow }
-        .enumIs(theme, Theme.Custom)
+        .isTrue { theme == Theme.Custom }
 
     //    Animation type
     private val type0 = msetting("Type", AnimationType.NONE)

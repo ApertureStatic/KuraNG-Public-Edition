@@ -69,9 +69,7 @@ object HoleMiner : Module(
                     }
                     if (raytrace && getMiningSide(pos) == null) continue
                     if (!pass()) return@onMotion
-                    if (PacketMine.doubleData != null) {
-                        if (PacketMine.doubleData!!.blockPos == pos) continue
-                    }
+                    if (PacketMine.doubleData != null) continue
                     if (PacketMine.blockData == null) {
                         if (timer.tickAndReset(delay)) hookPos(pos)
                     }

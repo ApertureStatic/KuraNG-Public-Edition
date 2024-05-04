@@ -4,7 +4,7 @@ import dev.dyzjct.kura.module.AbstractModule
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-abstract class Setting<T: Any>(val name: String, var contain: dev.dyzjct.kura.module.AbstractModule?, val defaultValue: T) : ReadWriteProperty<Any, T>,
+abstract class Setting<T: Any>(val name: String, var contain: AbstractModule?, val defaultValue: T) : ReadWriteProperty<Any, T>,
     ISettingVisibility {
 
     val visibility = ArrayList<() -> Boolean>()
