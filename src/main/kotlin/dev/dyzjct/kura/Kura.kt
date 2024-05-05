@@ -6,13 +6,13 @@ import dev.dyzjct.kura.command.CommandManager
 import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.module.ModuleManager
 import dev.dyzjct.kura.module.modules.client.ClickGui
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.client.HUDEditor
 import dev.dyzjct.kura.setting.StringSetting
 import dev.dyzjct.kura.utils.math.LagCompensator
 import helper.kura.socket.SocketManager
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.net.Socket
 import kotlin.io.path.Path
 class Kura : AlwaysListening {
     enum class UserType(val userType: String) {
@@ -57,7 +57,8 @@ class Kura : AlwaysListening {
             CommandManager.onInit()
             RotationManager.onInit()
             FileManager.onInit()
-            FileManager.loadAll()
+            FileManager.loadCombatSystem()
+            FileManager.loadAll(CombatSystem.combatMode.name)
             InventoryTaskManager.onInit()
             CrystalManager.onInit()
             HotbarManager.onInit()

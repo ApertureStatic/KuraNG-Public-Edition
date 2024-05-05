@@ -15,6 +15,7 @@ object ClickGui : Module(
     langName = "ClickGUI",
     category = Category.CLIENT,
     keyCode = InputUtil.GLFW_KEY_RIGHT_SHIFT,
+    safeModule = true,
     visible = true
 ) {
     var chinese = bsetting("ChineseUI", false)
@@ -48,7 +49,7 @@ object ClickGui : Module(
             if (mc.currentScreen is ClickGuiScreen) {
                 mc.setScreen(null)
             }
-            saveAll()
+            saveAll(CombatSystem.combatMode.name)
         }
     }
 }

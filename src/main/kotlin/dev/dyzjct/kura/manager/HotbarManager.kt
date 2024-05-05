@@ -125,7 +125,7 @@ object HotbarManager : AlwaysListening {
         if (CombatSystem.eating && player.isUsingItem) return false
         if (PacketMine.isEnabled && PacketMine.doubleBreak && PacketMine.onDoubleBreak) return false
         var notNullSlot = false
-        when (CombatSystem.mode.value) {
+        when (CombatSystem.spoofMode.value) {
             CombatSystem.SpoofMode.Normal -> {
                 player.hotbarSlots.firstItem(item)?.let { slot ->
                     notNullSlot = true
@@ -186,7 +186,7 @@ object HotbarManager : AlwaysListening {
         crossinline block: () -> Unit
     ): Boolean {
         var notNullSlot = false
-        when (CombatSystem.mode.value) {
+        when (CombatSystem.spoofMode.value) {
             CombatSystem.SpoofMode.Normal -> {
                 player.hotbarSlots.firstItem(item)?.let { slot ->
                     notNullSlot = true

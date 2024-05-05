@@ -33,6 +33,6 @@ object HUDEditor : Module(name = "HUDEditor", langName = "HUD编辑器", categor
         if (mc.currentScreen is HudEditorScreen) {
             mc.setScreen(null)
         }
-        saveAll()
+        saveAll(CombatSystem.combatMode.name)
     }
 }

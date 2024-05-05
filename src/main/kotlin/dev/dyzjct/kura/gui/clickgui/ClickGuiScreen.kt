@@ -5,6 +5,7 @@ import dev.dyzjct.kura.gui.clickgui.component.Panel
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.ModuleManager
 import dev.dyzjct.kura.module.modules.client.ClickGui
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.client.UiSetting
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
@@ -23,7 +24,9 @@ object ClickGuiScreen : GuiScreen() {
                 continue
             }
 
-            val modules = ModuleManager.moduleList.filter { it.moduleCategory == category }
+            var modules = ModuleManager.moduleList.filter { it.moduleCategory == category }
+
+            if (CombatSystem.combatMode.value == CombatSystem.CombatMode.Ghost) modules = modules.filter { it.isSafe }
 
             elements.add(
                 Panel(

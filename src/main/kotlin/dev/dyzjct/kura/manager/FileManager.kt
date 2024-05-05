@@ -1,5 +1,6 @@
 package dev.dyzjct.kura.manager
 
+import base.utils.chat.ChatUtil
 import base.utils.concurrent.threads.IOScope
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
@@ -16,6 +17,7 @@ import dev.dyzjct.kura.module.ModuleManager.getHUDByName
 import dev.dyzjct.kura.module.ModuleManager.getModuleByName
 import dev.dyzjct.kura.module.ModuleManager.getModules
 import dev.dyzjct.kura.module.ModuleManager.hUDModules
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.client.NullHUD
 import dev.dyzjct.kura.setting.*
 import kotlinx.coroutines.launch
@@ -193,11 +195,48 @@ object FileManager {
         }
     }
 
-    private fun saveModule() {
+    private fun saveCombatSystem() {
+        try {
+            val father = JsonObject()
+            val module = CombatSystem
+            val moduleFile = File("Kura/config/" + module.moduleName + ".json")
+            checkFile(moduleFile)
+            val jsonModule = JsonObject()
+            jsonModule.addProperty("Enable", module.isEnabled)
+            jsonModule.addProperty("Visible", module.isVisible)
+            jsonModule.addProperty("HoldEnable", module.holdToEnable)
+            jsonModule.addProperty("Bind", module.bind)
+            if (module.settingList.isNotEmpty()) {
+                for (setting in module.settingList) {
+                    when (setting) {
+                        is StringSetting -> jsonModule.addProperty(setting.name, setting.value)
+                        is BooleanSetting -> jsonModule.addProperty(setting.name, setting.value)
+                        is IntegerSetting -> jsonModule.addProperty(setting.name, setting.value)
+                        is FloatSetting -> jsonModule.addProperty(setting.name, setting.value)
+                        is DoubleSetting -> jsonModule.addProperty(setting.name, setting.value)
+                        is ColorSetting -> jsonModule.addProperty(setting.name, setting.value.rgb)
+                        is ModeSetting<*> -> jsonModule.addProperty(setting.name, setting.valueAsString)
+                    }
+                }
+            }
+            val saveJSon = PrintWriter(OutputStreamWriter(FileOutputStream(moduleFile), StandardCharsets.UTF_8))
+            saveJSon.println(gsonPretty!!.toJson(jsonModule))
+            saveJSon.close()
+            module.onConfigSave()
+            father.add(module.moduleName, jsonModule)
+
+        } catch (e: Exception) {
+            Kura.logger.error("Error while saving module config!")
+            e.printStackTrace()
+        }
+    }
+
+    private fun saveModule(combatMode: String) {
         try {
             val father = JsonObject()
             for (module in getModules()) {
-                val moduleFile = File("Kura/config/modules/" + module.moduleName + ".json")
+                if (module == CombatSystem) continue
+                val moduleFile = File("Kura/config/" + combatMode + "/modules/" + module.moduleName + ".json")
                 checkFile(moduleFile)
                 val jsonModule = JsonObject()
                 jsonModule.addProperty("Enable", module.isEnabled)
@@ -223,6 +262,7 @@ object FileManager {
                 module.onConfigSave()
                 father.add(module.moduleName, jsonModule)
             }
+            if (CombatSystem.debug) ChatUtil.sendMessage("Saving Modules")
         } catch (e: Exception) {
             Kura.logger.error("Error while saving module config!")
             e.printStackTrace()
@@ -335,11 +375,53 @@ object FileManager {
         }
     }
 
-    private fun loadModule() {
+
+    fun loadCombatSystem() {
+        val module = CombatSystem
+        IOScope.launch {
+            val modulefile =
+                File("Kura/config/" + module.moduleName + ".json").takeIf { it.exists() } ?: return@launch
+            val moduleJason =
+                modulefile.bufferedReader(StandardCharsets.UTF_8).use { JsonParser.parseReader(it) } as? JsonObject
+                    ?: return@launch
+            launch {
+                runCatching {
+                    if (moduleJason["Visible"] == null) {
+                        moduleJason.addProperty("Visible", module.isVisible)
+                    }
+                    if (moduleJason["HoldEnable"] == null) {
+                        moduleJason.addProperty("HoldEnable", module.holdToEnable)
+                    }
+                    val jsonModule = getModuleByName(module.moduleName)
+                    val enabled = moduleJason["Enable"].asBoolean
+                    val visible = moduleJason["Visible"].asBoolean
+                    if (jsonModule.isEnabled && !enabled) {
+                        jsonModule.disable()
+                    }
+                    if (jsonModule.isDisabled && enabled) {
+                        jsonModule.enable()
+                    }
+                    jsonModule.holdToEnable = moduleJason["HoldEnable"].asBoolean
+                    jsonModule.isVisible = visible
+                    if (jsonModule.settingList.isNotEmpty()) {
+                        trySet(jsonModule, moduleJason)
+                    }
+                    jsonModule.onConfigLoad()
+                    jsonModule.bind = moduleJason["Bind"].asInt
+                }
+            }
+        }
+        if (CombatSystem.debug) ChatUtil.sendMessage("Loaded CombatSystem")
+    }
+
+
+    private fun loadModule(combatMode: String) {
         for (module in CopyOnWriteArrayList(getModules())) {
+            if (module == CombatSystem) continue
             IOScope.launch {
                 val modulefile =
-                    File("Kura/config/modules/" + module.moduleName + ".json").takeIf { it.exists() } ?: return@launch
+                    File("Kura/config/" + combatMode + "/modules/" + module.moduleName + ".json").takeIf { it.exists() }
+                        ?: return@launch
                 val moduleJason =
                     modulefile.bufferedReader(StandardCharsets.UTF_8).use { JsonParser.parseReader(it) } as? JsonObject
                         ?: return@launch
@@ -367,6 +449,7 @@ object FileManager {
                         }
                         jsonModule.onConfigLoad()
                         jsonModule.bind = moduleJason["Bind"].asInt
+                        if (CombatSystem.debug) ChatUtil.sendMessage("Loading Modules")
                     }
                 }
             }
@@ -477,23 +560,27 @@ object FileManager {
     private var gsonPretty = GsonBuilder().setPrettyPrinting().create()
     private var jsonParser = JsonParser()
 
+
     @JvmStatic
-    fun saveAll() {
+    fun saveAll(combatMode: String) {
         saveClient()
         saveFriend()
         saveGUI()
         saveHUD()
-        saveModule()
+        saveCombatSystem()
+        saveModule(combatMode)
         saveNewUiConfig()
+        if (CombatSystem.debug) ChatUtil.sendMessage("Saved All")
     }
 
     @JvmStatic
-    fun loadAll() {
+    fun loadAll(combatMode: String) {
         loadClient()
         loadFriend()
         loadGUI()
         loadHUD()
-        loadModule()
+        loadModule(combatMode)
         loadNewUiConfig()
+        if (CombatSystem.debug) ChatUtil.sendMessage("Loaded All")
     }
 }

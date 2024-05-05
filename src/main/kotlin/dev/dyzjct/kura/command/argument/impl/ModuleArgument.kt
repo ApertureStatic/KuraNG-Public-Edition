@@ -11,7 +11,7 @@ class ModuleArgument(index: Int) : Argument<AbstractModule>(index) {
             .filter { it.startsWith(input, true) }
     }
 
-    override fun convertToType(input: String): dev.dyzjct.kura.module.AbstractModule? {
+    override fun convertToType(input: String): AbstractModule? {
         return ModuleManager.moduleList
             .firstOrNull { it.moduleName.equals(input, true) }
     }

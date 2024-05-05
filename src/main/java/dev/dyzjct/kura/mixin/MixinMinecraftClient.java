@@ -9,6 +9,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.dyzjct.kura.Kura;
 import dev.dyzjct.kura.manager.FileManager;
 import dev.dyzjct.kura.module.AbstractModule;
+import dev.dyzjct.kura.module.modules.client.CombatSystem;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
@@ -201,7 +202,7 @@ public abstract class MixinMinecraftClient {
     @Inject(method = "run", at = @At("RETURN"))
     public void shutdown(CallbackInfo info) {
         Kura.Companion.getLogger().warn("Saving Kura configuration please wait...");
-        FileManager.saveAll();
+        FileManager.saveAll(CombatSystem.INSTANCE.getCombatMode().getName());
         Kura.Companion.getLogger().warn("Configuration saved!");
     }
 

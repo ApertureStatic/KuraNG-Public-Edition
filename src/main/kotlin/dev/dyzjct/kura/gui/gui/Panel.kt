@@ -1,5 +1,9 @@
 package dev.dyzjct.kura.gui.gui
 
+import base.system.render.graphic.Render2DEngine
+import base.system.render.newfont.FontRenderers
+import base.system.render.shader.MSAAFramebuffer
+import dev.dyzjct.kura.KuraIdentifier
 import dev.dyzjct.kura.gui.gui.component.Component
 import dev.dyzjct.kura.gui.gui.component.ModuleButton
 import dev.dyzjct.kura.gui.gui.component.SettingButton
@@ -7,14 +11,11 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.ModuleManager
 import dev.dyzjct.kura.module.modules.client.Colors
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.utils.animations.Animation
 import dev.dyzjct.kura.utils.animations.EaseBackIn
-import base.system.render.graphic.Render2DEngine
-import base.system.render.newfont.FontRenderers
-import base.system.render.shader.MSAAFramebuffer
 import net.minecraft.client.gui.DrawContext
 import org.lwjgl.opengl.GL11
-import dev.dyzjct.kura.KuraIdentifier
 import java.awt.Color
 import java.util.*
 import java.util.function.Predicate
@@ -61,7 +62,7 @@ class Panel(var category: Category, var x: Double, var y: Double, var width: Dou
 
         var startY = y + height + 2
         if (elements.isNotEmpty()) {
-            for (button in elements) {
+            for (button in elements.filter { CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong || it.module.isSafe || category == Category.HUD }) {
                 if (!extended || !animation.finished(Animation.Direction.FORWARDS)) continue
                 button.solvePos()
                 button.y = startY
@@ -114,19 +115,19 @@ class Panel(var category: Category, var x: Double, var y: Double, var width: Dou
         if (state == 0) {
             dragging = false
         }
-        for (component in elements) {
+        for (component in elements.filter { CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong || it.module.isSafe || category == Category.HUD }) {
             component.mouseReleased(mouseX, mouseY, state)
         }
     }
 
     fun keyTyped(typedChar: Char, keyCode: Int) {
-        for (component in elements) {
+        for (component in elements.filter { CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong || it.module.isSafe || category == Category.HUD }) {
             component.keyTyped(typedChar, keyCode)
         }
     }
 
     fun onClose() {
-        for (component in elements) {
+        for (component in elements.filter { CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong || it.module.isSafe || category == Category.HUD }) {
             component.close()
         }
     }

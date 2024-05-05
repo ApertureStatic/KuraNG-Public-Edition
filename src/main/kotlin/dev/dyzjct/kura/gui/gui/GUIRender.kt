@@ -1,6 +1,7 @@
 package dev.dyzjct.kura.gui.gui
 
 import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
@@ -36,7 +37,7 @@ object GUIRender : Screen(Text.empty()) {
                 return
             }
             if (!panel.extended) continue
-            for (part in panel.elements) {
+            for (part in panel.elements.filter { CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong || it.module.isSafe}) {
                 if (part.mouseClicked(mouseX, mouseY, mouseButton)) {
                     return
                 }
