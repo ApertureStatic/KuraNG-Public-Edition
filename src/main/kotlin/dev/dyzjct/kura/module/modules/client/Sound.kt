@@ -7,7 +7,8 @@ object Sound : Module(
     name = "Sound",
     langName = "播放音频",
     category = Category.CLIENT,
-    description = "Play Sound."
+    description = "Play Sound.",
+    safeModule = true
 ) {
     val volume by fsetting("Volume", 0.5f, 0.0f, 1.0f)
     val mode = msetting("Mode", SoundMode.Sigma)

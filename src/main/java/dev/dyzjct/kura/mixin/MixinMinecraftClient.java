@@ -202,7 +202,7 @@ public abstract class MixinMinecraftClient {
     @Inject(method = "run", at = @At("RETURN"))
     public void shutdown(CallbackInfo info) {
         Kura.Companion.getLogger().warn("Saving Kura configuration please wait...");
-        FileManager.saveAll(CombatSystem.INSTANCE.getCombatMode().getName());
+        FileManager.saveAll(CombatSystem.INSTANCE.getCombatMode().getValue().name());
         Kura.Companion.getLogger().warn("Configuration saved!");
     }
 

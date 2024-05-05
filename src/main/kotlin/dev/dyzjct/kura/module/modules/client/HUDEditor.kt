@@ -9,7 +9,7 @@ import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.hud.Image
 import dev.dyzjct.kura.utils.animations.Easing
 
-object HUDEditor : Module(name = "HUDEditor", langName = "HUD编辑器", category = Category.CLIENT, visible = false) {
+object HUDEditor : Module(name = "HUDEditor", langName = "HUD编辑器", category = Category.CLIENT, visible = false, safeModule = true) {
 
     override fun onEnable() {
         if (mc.currentScreen == ClickGuiScreen) {
@@ -33,6 +33,6 @@ object HUDEditor : Module(name = "HUDEditor", langName = "HUD编辑器", categor
         if (mc.currentScreen is HudEditorScreen) {
             mc.setScreen(null)
         }
-        saveAll(CombatSystem.combatMode.name)
+        saveAll(CombatSystem.combatMode.value.name)
     }
 }

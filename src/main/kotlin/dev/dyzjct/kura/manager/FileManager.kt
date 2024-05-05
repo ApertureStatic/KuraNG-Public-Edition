@@ -18,7 +18,7 @@ import dev.dyzjct.kura.module.ModuleManager.getModuleByName
 import dev.dyzjct.kura.module.ModuleManager.getModules
 import dev.dyzjct.kura.module.ModuleManager.hudModules
 import dev.dyzjct.kura.module.modules.client.CombatSystem
-import dev.dyzjct.kura.module.modules.client.NullHUD
+import dev.dyzjct.kura.module.hud.NullHUD
 import dev.dyzjct.kura.setting.*
 import kotlinx.coroutines.launch
 import java.awt.Color
@@ -32,6 +32,8 @@ object FileManager {
     private var FRIEND_FILE: File? = null
     private var GUI_FILE: File? = null
     private var HUD_FILE: File? = null
+
+    var changing = false
 
     fun onInit() {
         if (!tryLoad()) {
@@ -377,6 +379,7 @@ object FileManager {
 
 
     fun loadCombatSystem() {
+        changing = true
         val module = CombatSystem
         IOScope.launch {
             val modulefile =
@@ -412,10 +415,12 @@ object FileManager {
             }
         }
         if (CombatSystem.debug) ChatUtil.sendMessage("Loaded CombatSystem")
+        changing = false
     }
 
 
     private fun loadModule(combatMode: String) {
+        changing = true
         for (module in CopyOnWriteArrayList(getModules())) {
             if (module == CombatSystem) continue
             IOScope.launch {
@@ -454,6 +459,7 @@ object FileManager {
                 }
             }
         }
+        changing = false
     }
 
     private fun tryLoad(): Boolean {

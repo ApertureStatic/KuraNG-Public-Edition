@@ -6,7 +6,7 @@ import base.system.render.graphic.Render2DEngine
 import java.awt.Color
 
 object Colors :
-    Module(name = "Colors", langName = "主题颜色", category = Category.CLIENT, visible = false, alwaysEnable = true) {
+    Module(name = "Colors", langName = "主题颜色", category = Category.CLIENT, visible = false, alwaysEnable = true, safeModule = true) {
     private val colorMode = msetting("ColorMode", ColorMode.Static)
     private var colorSpeed = isetting("ColorSpeed", 18, 2, 54)
     private var rainbowSaturation = this.fsetting("Saturation", 0.65f, 0.0f, 1.0f)

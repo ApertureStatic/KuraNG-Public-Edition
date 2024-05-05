@@ -58,7 +58,6 @@ object ModuleManager : AlwaysListening {
         registerModule(ClickGui)
         registerModule(HUDEditor)
         registerModule(Colors)
-        registerModule(OverrideFont)
         registerModule(UiSetting)
         registerModule(Cape)
         registerModule(LoadingMenu)

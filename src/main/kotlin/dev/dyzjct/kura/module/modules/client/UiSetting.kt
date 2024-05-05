@@ -21,6 +21,7 @@ object UiSetting : Module(
     langName = "界面设置",
     description = "Color settings",
     category = Category.CLIENT,
+    safeModule = true,
     alwaysEnable = true
 ) {
     @JvmStatic

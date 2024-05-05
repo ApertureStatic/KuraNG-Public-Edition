@@ -1,4 +1,4 @@
-package dev.dyzjct.kura.module.modules.client
+package dev.dyzjct.kura.module.hud
 
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule

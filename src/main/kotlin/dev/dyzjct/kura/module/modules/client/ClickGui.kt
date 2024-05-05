@@ -49,7 +49,7 @@ object ClickGui : Module(
             if (mc.currentScreen is ClickGuiScreen) {
                 mc.setScreen(null)
             }
-            saveAll(CombatSystem.combatMode.name)
+            saveAll(CombatSystem.combatMode.value.name)
         }
     }
 }

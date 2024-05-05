@@ -58,7 +58,7 @@ class Kura : AlwaysListening {
             RotationManager.onInit()
             FileManager.onInit()
             FileManager.loadCombatSystem()
-            FileManager.loadAll(CombatSystem.combatMode.name)
+            FileManager.loadAll(CombatSystem.combatMode.value.name)
             InventoryTaskManager.onInit()
             CrystalManager.onInit()
             HotbarManager.onInit()

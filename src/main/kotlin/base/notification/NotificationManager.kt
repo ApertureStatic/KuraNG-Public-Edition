@@ -1,5 +1,6 @@
 package base.notification
 
+import dev.dyzjct.kura.manager.FileManager
 import dev.dyzjct.kura.module.hud.NotificationHUD
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
@@ -9,6 +10,7 @@ object NotificationManager {
     val taskList = CopyOnWriteArrayList<NewNotification>()
 
     fun addNotification(message: String) {
+        if (FileManager.changing) return
         taskList.add(NewNotification(message))
     }
 

@@ -6,7 +6,7 @@ import dev.dyzjct.kura.utils.animations.AnimationFlag
 import dev.dyzjct.kura.utils.animations.Easing
 import base.utils.concurrent.threads.runSafe
 
-object GameAnimation : Module(name = "GameAnimation", langName = "游戏动画", category = Category.CLIENT) {
+object GameAnimation : Module(name = "GameAnimation", langName = "游戏动画", category = Category.CLIENT, safeModule = true) {
     private var hotbarAnimation = AnimationFlag(Easing.OUT_CUBIC, 200.0f)
     var hotbar = bsetting("Hotbar", true)
 

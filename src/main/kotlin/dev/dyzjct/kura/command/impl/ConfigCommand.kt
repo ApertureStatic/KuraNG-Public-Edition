@@ -10,7 +10,7 @@ object ConfigCommand : Command("config", description = "Config Command (save, re
         builder.literal {
             match("save") {
                 executor {
-                    FileManager.saveAll(CombatSystem.combatMode.name)
+                    FileManager.saveAll(CombatSystem.combatMode.value.name)
                     ChatUtil.sendMessage("Saved Config!")
                 }
             }
@@ -18,7 +18,7 @@ object ConfigCommand : Command("config", description = "Config Command (save, re
             match("reload") {
                 executor {
                     FileManager.loadCombatSystem()
-                    FileManager.loadAll(CombatSystem.combatMode.name)
+                    FileManager.loadAll(CombatSystem.combatMode.value.name)
                     ChatUtil.sendMessage("Config Reloaded!")
                 }
             }
