@@ -11,7 +11,6 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.ModuleManager
 import dev.dyzjct.kura.module.modules.client.Colors
-import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.utils.animations.Animation
 import dev.dyzjct.kura.utils.animations.EaseBackIn
 import net.minecraft.client.gui.DrawContext
@@ -62,7 +61,8 @@ class Panel(var category: Category, var x: Double, var y: Double, var width: Dou
 
         var startY = y + height + 2
         if (elements.isNotEmpty()) {
-            for (button in elements.filter { CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong || it.module.isSafe || category == Category.HUD }) {
+            for (button in elements) {
+//            for (button in elements) {
                 if (!extended || !animation.finished(Animation.Direction.FORWARDS)) continue
                 button.solvePos()
                 button.y = startY
@@ -115,19 +115,19 @@ class Panel(var category: Category, var x: Double, var y: Double, var width: Dou
         if (state == 0) {
             dragging = false
         }
-        for (component in elements.filter { CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong || it.module.isSafe || category == Category.HUD }) {
+        for (component in elements) {
             component.mouseReleased(mouseX, mouseY, state)
         }
     }
 
     fun keyTyped(typedChar: Char, keyCode: Int) {
-        for (component in elements.filter { CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong || it.module.isSafe || category == Category.HUD }) {
+        for (component in elements) {
             component.keyTyped(typedChar, keyCode)
         }
     }
 
     fun onClose() {
-        for (component in elements.filter { CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong || it.module.isSafe || category == Category.HUD }) {
+        for (component in elements) {
             component.close()
         }
     }

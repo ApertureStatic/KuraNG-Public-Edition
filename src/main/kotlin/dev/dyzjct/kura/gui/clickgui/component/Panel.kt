@@ -1,13 +1,14 @@
 package dev.dyzjct.kura.gui.clickgui.component
 
-import dev.dyzjct.kura.KuraIdentifier
 import com.mojang.blaze3d.systems.RenderSystem
+import dev.dyzjct.kura.KuraIdentifier
 import dev.dyzjct.kura.gui.clickgui.GuiScreen
 import dev.dyzjct.kura.gui.clickgui.render.Alignment
 import dev.dyzjct.kura.gui.clickgui.render.DrawDelegate
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope
 import dev.dyzjct.kura.module.AbstractModule
 import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.client.UiSetting
 import java.awt.Color
 
@@ -40,9 +41,16 @@ class Panel(
         rearrange()
     }
 
-    fun filterModules(condition: (String) -> Boolean) {
+    fun filterModulesByName(condition: (String) -> Boolean) {
         elements.clear()
         elements.addAll(beforeFilterModuleComponents.filter { condition(it.module.moduleName) })
+        playingAnimation = true
+        rearrange()
+    }
+
+    fun filterModules() {
+        elements.clear()
+        elements.addAll(beforeFilterModuleComponents.filter { CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong || it.module.isSafe })
         playingAnimation = true
         rearrange()
     }

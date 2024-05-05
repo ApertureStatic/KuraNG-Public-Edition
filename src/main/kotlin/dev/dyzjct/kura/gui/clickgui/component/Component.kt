@@ -2,6 +2,7 @@ package dev.dyzjct.kura.gui.clickgui.component
 
 import dev.dyzjct.kura.gui.clickgui.render.DrawDelegate
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope
+import dev.dyzjct.kura.module.AbstractModule
 import net.minecraft.client.gui.DrawContext
 
 interface Component {

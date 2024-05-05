@@ -227,7 +227,7 @@ object ModuleManager : AlwaysListening {
     }
 
     @JvmStatic
-    val hUDModules: List<HUDModule>
+    val hudModules: List<HUDModule>
         get() = moduleList.filterIsInstance<HUDModule>().toList()
 
     @JvmStatic
@@ -250,7 +250,7 @@ object ModuleManager : AlwaysListening {
 
     @JvmStatic
     fun getHUDByName(targetName: String?): HUDModule {
-        for (iModule in hUDModules) {
+        for (iModule in hudModules) {
             if (!iModule.moduleName.equals(targetName, ignoreCase = true)) continue
             return iModule
         }
@@ -292,7 +292,7 @@ object ModuleManager : AlwaysListening {
     }
 
     fun onRenderHUD(context: DrawContext) {
-        hUDModules.forEach {
+        hudModules.forEach {
             if (it.isEnabled) {
                 it.renderDelegateOnGame(context)
             }

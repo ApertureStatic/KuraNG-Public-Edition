@@ -37,7 +37,7 @@ object GUIRender : Screen(Text.empty()) {
                 return
             }
             if (!panel.extended) continue
-            for (part in panel.elements.filter { CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong || it.module.isSafe}) {
+            for (part in panel.elements) {
                 if (part.mouseClicked(mouseX, mouseY, mouseButton)) {
                     return
                 }

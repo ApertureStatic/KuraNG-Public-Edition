@@ -5,7 +5,6 @@ import dev.dyzjct.kura.gui.clickgui.component.Panel
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.ModuleManager
 import dev.dyzjct.kura.module.modules.client.ClickGui
-import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.client.UiSetting
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
@@ -24,9 +23,7 @@ object ClickGuiScreen : GuiScreen() {
                 continue
             }
 
-            var modules = ModuleManager.moduleList.filter { it.moduleCategory == category }
-
-            if (CombatSystem.combatMode.value == CombatSystem.CombatMode.Ghost) modules = modules.filter { it.isSafe }
+            val modules = ModuleManager.moduleList.filter { it.moduleCategory == category }
 
             elements.add(
                 Panel(
@@ -124,9 +121,15 @@ object ClickGuiScreen : GuiScreen() {
 
     private fun updatePanelModule() {
         elements.mapNotNull { it as? Panel }.forEach {
-            it.filterModules { moduleName ->
+            it.filterModulesByName { moduleName ->
                 moduleName.lowercase().contains(queryString)
             }
+        }
+    }
+
+    fun updatePanelModuleOnModeChange() {
+        elements.mapNotNull { it as? Panel }.forEach {
+            it.filterModules()
         }
     }
 }

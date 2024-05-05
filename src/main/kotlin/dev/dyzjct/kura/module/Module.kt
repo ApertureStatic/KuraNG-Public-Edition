@@ -19,5 +19,6 @@ abstract class Module(
         this.isVisible = visible
         this.alwaysEnable = alwaysEnable
         this.description = description
+        this.isSafe = safeModule
     }
 }
