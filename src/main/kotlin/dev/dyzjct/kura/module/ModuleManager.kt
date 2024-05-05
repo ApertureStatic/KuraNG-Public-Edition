@@ -147,6 +147,7 @@ object ModuleManager : AlwaysListening {
         registerModule(ToolTips)
         registerModule(PortalESP)
         registerModule(CrystalRender)
+        registerModule(ChestESP)
         registerModule(LogESP)
         registerModule(Chams)
         registerModule(CameraClip)
