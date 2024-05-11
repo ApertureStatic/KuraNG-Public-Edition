@@ -16,7 +16,7 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 
-object Freecam : Module(name = "Freecam", langName = "灵魂出窍", category = Category.PLAYER) {
+object Freecam : Module(name = "Freecam", langName = "灵魂出窍", category = Category.PLAYER, safeModule = true) {
     private var cancelPackets = bsetting("CancelPackets", true)
     private var rotate = bsetting("Rotate", false)
     private var speed = dsetting("Speed", 1.0, 0.1, 10.0)

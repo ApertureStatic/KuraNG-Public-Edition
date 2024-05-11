@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.misc
 
 import base.events.TickEvent
-import base.notification.NotificationManager
+import dev.dyzjct.kura.manager.NotificationManager
 import base.system.event.safeEventListener
 import base.utils.chat.ChatUtil
 import base.utils.sound.SoundPlayer
@@ -21,7 +21,8 @@ object TotemPopCounter : Module(
     name = "TotemPopCounter",
     langName = "图腾爆炸提示",
     description = "Counts how many times players pop",
-    category = Category.MISC
+    category = Category.MISC,
+    safeModule = true
 ) {
     private var mode = msetting("Mode", Mode.Both)
     private var playerList = ConcurrentHashMap<PlayerEntity, Int>()

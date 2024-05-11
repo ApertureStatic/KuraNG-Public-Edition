@@ -1,6 +1,5 @@
-package base.notification
+package dev.dyzjct.kura.manager
 
-import dev.dyzjct.kura.manager.FileManager
 import dev.dyzjct.kura.module.hud.NotificationHUD
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
@@ -32,7 +31,7 @@ object NotificationManager {
                 Easing.IN_OUT_CIRC.inc(Easing.toDelta(startTime, length / NotificationHUD.fadeFraction))
             }.coerceIn(0f, 1f)
         val animationNoReset
-            get() = Easing.OUT_SINE.dec(Easing.toDelta(noResetTime, length))
+            get() = Easing.OUT_SINE.dec(Easing.toDelta(noResetTime, (length / NotificationHUD.fadeFraction) * 2))
                 .coerceIn(0f, 1f)
     }
 }

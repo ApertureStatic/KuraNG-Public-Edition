@@ -8,7 +8,7 @@ import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.entity.player.PlayerEntity
 import java.awt.Color
 
-object Chams : Module(name = "Chams", langName = "实体渲染", category = Category.RENDER) {
+object Chams : Module(name = "Chams", langName = "实体渲染", category = Category.RENDER, safeModule = true) {
     var players by bsetting("PLayers", true)
     private var playerColor by csetting("PlayerColor", Color(132, 123, 54, 120))
     private var friendColor by csetting("FriendColor", Color(0, 255, 255, 120))

@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.module.hud
 
-import base.notification.NotificationManager
 import base.system.render.graphic.Render2DEngine
 import base.system.render.newfont.FontRenderers
 import base.utils.chat.ChatUtil
+import dev.dyzjct.kura.manager.NotificationManager
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.client.UiSetting
 import dev.dyzjct.kura.module.modules.client.UiSetting.theme
@@ -18,14 +18,20 @@ object NotificationHUD : HUDModule(
     val animationLength by isetting("AnimationLength", 15, 10, 100)
     val fadeFraction by fsetting("FractionOfLength", 6f, 1f, 8f)
     private val color by csetting("MainColor", Color(0, 0, 0, 120))
-    private var doubleColor by csetting("DoubleColor", Color(130, 255, 120)).enumIs(theme, UiSetting.Theme.Custom)
+    private val doubleColorSetting by csetting(
+        "DoubleColor",
+        Color(130, 255, 120)
+    ).isTrue { theme == UiSetting.Theme.Custom }
+    private val direction by msetting("FadeDirection", Direction.Left)
     private val fontMode by msetting("FontColorMode", FontColorMode.Light)
+
+    private var doubleColor = doubleColorSetting
     override fun onRender(context: DrawContext) {
         width = 200f
         height = 30f
         doubleColor = when (theme) {
             UiSetting.Theme.Custom -> {
-                doubleColor
+                doubleColorSetting
             }
 
             else -> {
@@ -61,6 +67,9 @@ object NotificationHUD : HUDModule(
                             notification.animation
                         ) else -(height + 5 + interval) * count
                     .symbolArranged(!notification.reversed, notification.animation)
+                val doubleFadeEasing = if (direction == Direction.Left) {
+                    notification.animationNoReset
+                } else (1f - notification.animationNoReset)
                 when (mode) {
                     NoticeMode.Normal -> {
                         Render2DEngine.drawRect(
@@ -75,7 +84,7 @@ object NotificationHUD : HUDModule(
                             context.matrices,
                             animationXOffset,
                             y + arrangedHeight + height - (height / 10),
-                            offsetWidth * notification.animationNoReset,
+                            offsetWidth * doubleFadeEasing,
                             height / 10,
                             doubleColor
                         )
@@ -101,7 +110,7 @@ object NotificationHUD : HUDModule(
                             context.matrices,
                             animationXOffset,
                             y + arrangedHeight,
-                            offsetWidth * notification.animationNoReset,
+                            offsetWidth * doubleFadeEasing,
                             height,
                             doubleColor
                         )
@@ -154,5 +163,10 @@ object NotificationHUD : HUDModule(
 
     enum class FontColorMode {
         Light, Dark
+    }
+
+    @Suppress("UNUSED")
+    enum class Direction {
+        Left, Right
     }
 }

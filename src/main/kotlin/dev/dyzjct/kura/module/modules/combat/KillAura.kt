@@ -23,7 +23,7 @@ import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
 import net.minecraft.util.Hand
 import kotlin.math.max
 
-object KillAura : Module(name = "KillAura", langName = "杀戮", category = Category.COMBAT) {
+object KillAura : Module(name = "KillAura", langName = "杀戮", category = Category.COMBAT, safeModule = true) {
     private var animals by bsetting("Animals", false)
     private var mobs by bsetting("Mobs", false)
     private var swapWeapon by bsetting("SwapWeapon", false)

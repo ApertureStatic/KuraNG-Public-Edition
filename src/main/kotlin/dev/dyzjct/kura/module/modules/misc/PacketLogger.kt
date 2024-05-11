@@ -8,7 +8,7 @@ import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 
-object PacketLogger : Module("PacketLogger", langName = "抓包", category = Category.MISC) {
+object PacketLogger : Module("PacketLogger", langName = "抓包", category = Category.MISC, description = "Draw Packet Name in Chat.", safeModule = true) {
     private var jump by bsetting("Jump", false)
     private var move by bsetting("Move", false)
     private var place by bsetting("Place", false)

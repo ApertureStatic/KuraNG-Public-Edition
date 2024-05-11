@@ -9,7 +9,7 @@ import base.utils.math.toBox
 import java.awt.Color
 
 object Xray : Module(
-    name = "Xray", langName = "矿物透视", description = "AutoSearch For Ores!", category = Category.RENDER
+    name = "Xray", langName = "矿物透视", description = "AutoSearch For Ores!", category = Category.RENDER, safeModule = true
 ) {
     val distance by isetting("Distance", 25, 1, 80)
     private val coal by bsetting("Coal", false)

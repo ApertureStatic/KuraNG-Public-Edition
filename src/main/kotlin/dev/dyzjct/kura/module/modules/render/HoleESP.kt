@@ -14,7 +14,7 @@ import net.minecraft.util.math.Box
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 
-object HoleESP : Module(name = "HoleESP", langName = "坑渲染", category = Category.RENDER) {
+object HoleESP : Module(name = "HoleESP", langName = "坑渲染", category = Category.RENDER, safeModule = true) {
     private val positions = CopyOnWriteArrayList<PosWithColor>()
     private val mode = msetting("Mode", Mode.CubeOutline)
     private val rangeXZ = isetting("RangeXY", 10, 1, 128)

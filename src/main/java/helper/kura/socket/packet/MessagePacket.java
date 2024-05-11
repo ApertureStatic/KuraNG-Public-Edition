@@ -1,6 +1,6 @@
 package helper.kura.socket.packet;
 
-import base.notification.NotificationManager;
+import dev.dyzjct.kura.manager.NotificationManager;
 import base.utils.chat.ChatUtil;
 import dev.dyzjct.kura.module.modules.client.IRC;
 import helper.kura.socket.handler.ClientHandler;

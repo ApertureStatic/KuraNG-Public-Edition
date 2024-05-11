@@ -13,6 +13,7 @@ object FontRenderers {
     lateinit var jbMono: FontAdapter
     lateinit var icons: FontAdapter
     lateinit var never: FontAdapter
+    lateinit var big_default: FontAdapter
     lateinit var mid_icons: FontAdapter
     lateinit var big_icons: FontAdapter
 

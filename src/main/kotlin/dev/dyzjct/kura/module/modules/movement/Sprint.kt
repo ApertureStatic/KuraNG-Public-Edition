@@ -10,7 +10,8 @@ object Sprint : Module(
     name = "Sprint",
     description = "Automatically makes the player sprint",
     langName = "强制疾跑",
-    category = Category.MOVEMENT
+    category = Category.MOVEMENT,
+    safeModule = true
 ) {
     private var legit = bsetting("Legit", false)
 

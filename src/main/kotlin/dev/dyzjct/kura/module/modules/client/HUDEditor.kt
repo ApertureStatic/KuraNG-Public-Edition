@@ -8,8 +8,16 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.hud.Image
 import dev.dyzjct.kura.utils.animations.Easing
+import net.minecraft.client.util.InputUtil
 
-object HUDEditor : Module(name = "HUDEditor", langName = "HUD编辑器", category = Category.CLIENT, visible = false, safeModule = true) {
+object HUDEditor : Module(
+    name = "HUDEditor",
+    langName = "HUD编辑器",
+    category = Category.CLIENT,
+    visible = false,
+    keyCode = InputUtil.GLFW_KEY_GRAVE_ACCENT,
+    safeModule = true
+) {
 
     override fun onEnable() {
         if (mc.currentScreen == ClickGuiScreen) {

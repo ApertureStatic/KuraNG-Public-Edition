@@ -11,7 +11,8 @@ object AutoRespawn : Module(
     name = "AutoRespawn",
     langName = "自动重生",
     description = "Automatic respawn",
-    category = Category.MISC
+    category = Category.MISC,
+    safeModule = true
 ) {
 
     init {

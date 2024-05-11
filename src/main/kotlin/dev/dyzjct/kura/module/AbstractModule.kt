@@ -8,7 +8,7 @@ import base.events.input.BindEvent
 import base.events.player.PlayerMotionEvent
 import base.events.render.Render2DEvent
 import base.events.render.Render3DEvent
-import base.notification.NotificationManager
+import dev.dyzjct.kura.manager.NotificationManager
 import base.system.event.ListenerOwner
 import base.system.event.SafeClientEvent
 import base.system.event.safeConcurrentListener
@@ -71,21 +71,21 @@ abstract class AbstractModule : ListenerOwner() {
             )
             if (Sound.isEnabled) {
                 Kura::class.java.getResourceAsStream("/assets/kura/sounds/Neverenable.wav")?.let { never ->
-                Kura::class.java.getResourceAsStream("/assets/kura/sounds/Sigma_Enable.wav")?.let { sigma ->
-                    Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleEnable.wav")?.let { fdp ->
-                        when (Sound.mode.value) {
-                            Sound.SoundMode.Sigma -> {
-                                SoundPlayer(sigma).play(Sound.volume)
-                            }
+                    Kura::class.java.getResourceAsStream("/assets/kura/sounds/Sigma_Enable.wav")?.let { sigma ->
+                        Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleEnable.wav")?.let { fdp ->
+                            when (Sound.mode.value) {
+                                Sound.SoundMode.Sigma -> {
+                                    SoundPlayer(sigma).play(Sound.volume)
+                                }
 
-                            Sound.SoundMode.FDP -> {
-                                SoundPlayer(fdp).play(Sound.volume)
-                            }
+                                Sound.SoundMode.FDP -> {
+                                    SoundPlayer(fdp).play(Sound.volume)
+                                }
 
-                            Sound.SoundMode.Never -> {
-                                SoundPlayer(never).play(Sound.volume)
+                                Sound.SoundMode.Never -> {
+                                    SoundPlayer(never).play(Sound.volume)
+                                }
                             }
-                        }
                         }
                     } ?: run {
                         NotificationManager.addNotification(ChatUtil.YELLOW + "SoundFailed!")
@@ -112,21 +112,22 @@ abstract class AbstractModule : ListenerOwner() {
             )
             if (Sound.isEnabled) {
                 Kura::class.java.getResourceAsStream("/assets/kura/sounds/Neverdisable.wav")?.let { never ->
-                Kura::class.java.getResourceAsStream("/assets/kura/sounds/Sigma_Disable.wav")?.let { sigma ->
-                    Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleDisable.wav")?.let { fdp ->
-                        when (Sound.mode.value) {
-                            Sound.SoundMode.Sigma -> {
-                                SoundPlayer(sigma).play(Sound.volume)
-                            }
+                    Kura::class.java.getResourceAsStream("/assets/kura/sounds/Sigma_Disable.wav")?.let { sigma ->
+                        Kura::class.java.getResourceAsStream("/assets/kura/sounds/ModuleDisable.wav")?.let { fdp ->
+                            when (Sound.mode.value) {
+                                Sound.SoundMode.Sigma -> {
+                                    SoundPlayer(sigma).play(Sound.volume)
+                                }
 
-                            Sound.SoundMode.FDP -> {
-                                SoundPlayer(fdp).play(Sound.volume)
-                            }
-                            Sound.SoundMode.Never -> {
-                                SoundPlayer(never).play(Sound.volume)
+                                Sound.SoundMode.FDP -> {
+                                    SoundPlayer(fdp).play(Sound.volume)
+                                }
 
+                                Sound.SoundMode.Never -> {
+                                    SoundPlayer(never).play(Sound.volume)
+
+                                }
                             }
-                        }
                         }
                     } ?: run {
                         NotificationManager.addNotification(ChatUtil.YELLOW + "SoundFailed!")
@@ -252,12 +253,6 @@ abstract class AbstractModule : ListenerOwner() {
         settingList.add(setting)
         return setting
     }
-    fun addStringSetting(setting_name: String, default_value: String): StringSetting {
-        val value = StringSetting(setting_name, this, default_value)
-        settingList.add(value)
-        return value
-    }
-
 
     fun csetting(name: String, defaultValue: Color): ColorSetting {
         val value = ColorSetting(name, this, defaultValue)
