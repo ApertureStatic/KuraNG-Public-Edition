@@ -1,7 +1,14 @@
 package dev.dyzjct.kura.mixin.render;
 
+import base.events.render.Render3DEvent;
+import base.system.render.graphic.ProjectionUtils;
+import base.system.render.graphic.Render3DEngine;
+import base.system.render.graphic.RenderUtils3D;
+import base.system.render.shader.GlProgram;
+import base.system.render.shader.MSAAFramebuffer;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.systems.VertexSorter;
 import com.mojang.datafixers.util.Pair;
 import dev.dyzjct.kura.module.modules.player.NoEntityTrace;
 import dev.dyzjct.kura.module.modules.render.Aspect;
@@ -9,28 +16,26 @@ import dev.dyzjct.kura.module.modules.render.CustomFov;
 import dev.dyzjct.kura.module.modules.render.NoRender;
 import dev.dyzjct.kura.module.modules.render.Zoom;
 import dev.dyzjct.kura.utils.math.FrameRateCounter;
-import base.events.render.Render3DEvent;
-import base.system.render.graphic.ProjectionUtils;
-import base.system.render.graphic.Render3DEngine;
-import base.system.render.graphic.RenderUtils3D;
-import base.system.render.shader.GlProgram;
-import base.system.render.shader.MSAAFramebuffer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.gl.ShaderStage;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.gui.hud.InGameOverlayRenderer;
+import net.minecraft.client.render.*;
+import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.resource.ResourceFactory;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
+import net.minecraft.world.GameMode;
 import org.joml.Matrix4f;
 import org.objectweb.asm.Opcodes;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -42,19 +47,41 @@ import java.util.function.Consumer;
 
 @Mixin(GameRenderer.class)
 public class MixinGameRenderer {
+    @Mutable
+    @Final
+    @Shadow
+    public final HeldItemRenderer firstPersonRenderer;
+    @Mutable
+    @Final
+    @Shadow
+    private final LightmapTextureManager lightmapTextureManager;
+    @Mutable
+    @Final
+    @Shadow
+    private final BufferBuilderStorage buffers;
     @Shadow
     @Final
     MinecraftClient client;
     @Shadow
     private float zoom;
-
     @Shadow
     private float zoomX;
-
     @Shadow
     private float zoomY;
     @Shadow
     private float viewDistance;
+    @Shadow
+    private boolean renderingPanorama;
+    @Shadow
+    private float lastFovMultiplier;
+    @Shadow
+    private float fovMultiplier;
+
+    public MixinGameRenderer(LightmapTextureManager lightmapTextureManager, HeldItemRenderer firstPersonRenderer, BufferBuilderStorage buffers) {
+        this.lightmapTextureManager = lightmapTextureManager;
+        this.firstPersonRenderer = firstPersonRenderer;
+        this.buffers = buffers;
+    }
 
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;pop()V", shift = At.Shift.BEFORE))
@@ -76,6 +103,40 @@ public class MixinGameRenderer {
         }
     }
 
+    /**
+     * @author dyzjct
+     * @reason fuck u mojang.
+     */
+    @Overwrite
+    public void renderHand(MatrixStack matrices, Camera camera, float tickDelta) {
+        if (!this.renderingPanorama) {
+            this.loadProjectionMatrix(getBasicProjectionMatrixKura(getFov(camera, tickDelta, false)));
+            matrices.loadIdentity();
+            matrices.push();
+            this.tiltViewWhenHurt(matrices, tickDelta);
+            if (this.client.options.getBobView().getValue()) {
+                this.bobView(matrices, tickDelta);
+            }
+
+            boolean bl = this.client.getCameraEntity() instanceof LivingEntity && ((LivingEntity) this.client.getCameraEntity()).isSleeping();
+            if (this.client.options.getPerspective().isFirstPerson() && !bl && !this.client.options.hudHidden && this.client.interactionManager.getCurrentGameMode() != GameMode.SPECTATOR) {
+                this.lightmapTextureManager.enable();
+                this.firstPersonRenderer.renderItem(tickDelta, matrices, this.buffers.getEntityVertexConsumers(), this.client.player, this.client.getEntityRenderDispatcher().getLight(this.client.player, tickDelta));
+                this.lightmapTextureManager.disable();
+            }
+
+            matrices.pop();
+            if (this.client.options.getPerspective().isFirstPerson() && !bl) {
+                InGameOverlayRenderer.renderOverlays(this.client, matrices);
+                this.tiltViewWhenHurt(matrices, tickDelta);
+            }
+
+            if (this.client.options.getBobView().getValue()) {
+                this.bobView(matrices, tickDelta);
+            }
+        }
+    }
+
     @Inject(method = "renderWorld", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/GameRenderer;renderHand:Z", opcode = Opcodes.GETFIELD, ordinal = 0))
     public void render3dHook(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo ci) {
         client.getProfiler().push("KuraRender3D");
@@ -93,7 +154,6 @@ public class MixinGameRenderer {
         });
         RenderSystem.applyModelViewMatrix();
         client.getProfiler().pop();
-
     }
 
     @Inject(method = "tiltViewWhenHurt", at = @At("HEAD"), cancellable = true)
@@ -136,6 +196,43 @@ public class MixinGameRenderer {
         }
     }
 
+    @Unique
+    private void bobView(MatrixStack matrices, float tickDelta) {
+        if (this.client.getCameraEntity() instanceof PlayerEntity playerEntity) {
+            float f = playerEntity.horizontalSpeed - playerEntity.prevHorizontalSpeed;
+            float g = -(playerEntity.horizontalSpeed + f * tickDelta);
+            float h = MathHelper.lerp(tickDelta, playerEntity.prevStrideDistance, playerEntity.strideDistance);
+            matrices.translate(MathHelper.sin(g * 3.1415927F) * h * 0.5F, -Math.abs(MathHelper.cos(g * 3.1415927F) * h), 0.0F);
+            matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(MathHelper.sin(g * 3.1415927F) * h * 3.0F));
+            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(Math.abs(MathHelper.cos(g * 3.1415927F - 0.2F) * h) * 5.0F));
+        }
+    }
+
+    @Unique
+    private double getFov(Camera camera, float tickDelta, boolean changingFov) {
+        if (this.renderingPanorama) {
+            return 90.0;
+        } else {
+            double d = 70.0;
+            if (changingFov) {
+                d = (double) this.client.options.getFov().getValue();
+                d *= MathHelper.lerp(tickDelta, this.lastFovMultiplier, this.fovMultiplier);
+            }
+
+            if (camera.getFocusedEntity() instanceof LivingEntity && ((LivingEntity) camera.getFocusedEntity()).isDead()) {
+                float f = Math.min((float) ((LivingEntity) camera.getFocusedEntity()).deathTime + tickDelta, 20.0F);
+                d /= (1.0F - 500.0F / (f + 500.0F)) * 2.0F + 1.0F;
+            }
+
+            CameraSubmersionType cameraSubmersionType = camera.getSubmersionType();
+            if (cameraSubmersionType == CameraSubmersionType.LAVA || cameraSubmersionType == CameraSubmersionType.WATER) {
+                d *= MathHelper.lerp(this.client.options.getFovEffectScale().getValue(), 1.0, 0.8571428656578064);
+            }
+
+            return d;
+        }
+    }
+
     @Inject(method = "updateTargetedEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/ProjectileUtil;raycast(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Box;Ljava/util/function/Predicate;D)Lnet/minecraft/util/hit/EntityHitResult;"), cancellable = true)
     private void onUpdateTargetedEntity(float tickDelta, CallbackInfo info) {
         if (client.player != null) {
@@ -146,5 +243,53 @@ public class MixinGameRenderer {
                 info.cancel();
             }
         }
+    }
+
+    @Unique
+    public Matrix4f getBasicProjectionMatrixKura(double fov) {
+        MatrixStack matrixStack = new MatrixStack();
+        matrixStack.peek().getPositionMatrix().identity();
+        if (this.zoom != 1.0F) {
+            matrixStack.translate(this.zoomX, -this.zoomY, 0.0F);
+            matrixStack.scale(this.zoom, this.zoom, 1.0F);
+        }
+
+        matrixStack.peek().getPositionMatrix().mul((new Matrix4f()).setPerspective((float) (fov * 0.01745329238474369), (float) this.client.getWindow().getFramebufferWidth() / (float) this.client.getWindow().getFramebufferHeight(), 0.05F, this.getFarPlaneDistance()));
+        return matrixStack.peek().getPositionMatrix();
+    }
+
+    @Unique
+    private void tiltViewWhenHurt(MatrixStack matrices, float tickDelta) {
+        if (this.client.getCameraEntity() instanceof LivingEntity livingEntity) {
+            float f = (float) livingEntity.hurtTime - tickDelta;
+            float g;
+            if (livingEntity.isDead()) {
+                g = Math.min((float) livingEntity.deathTime + tickDelta, 20.0F);
+                matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(40.0F - 8000.0F / (g + 200.0F)));
+            }
+
+            if (f < 0.0F) {
+                return;
+            }
+
+            f /= (float) livingEntity.maxHurtTime;
+            f = MathHelper.sin(f * f * f * f * 3.1415927F);
+            g = livingEntity.getDamageTiltYaw();
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-g));
+            float h = (float) ((double) (-f) * 14.0 * this.client.options.getDamageTiltStrength().getValue());
+            matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(h));
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(g));
+        }
+
+    }
+
+    @Unique
+    public void loadProjectionMatrix(Matrix4f projectionMatrix) {
+        RenderSystem.setProjectionMatrix(projectionMatrix, VertexSorter.BY_DISTANCE);
+    }
+
+    @Unique
+    public float getFarPlaneDistance() {
+        return this.viewDistance * 4.0F;
     }
 }
