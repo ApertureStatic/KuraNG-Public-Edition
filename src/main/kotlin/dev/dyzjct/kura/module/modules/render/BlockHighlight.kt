@@ -9,6 +9,7 @@ import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import base.utils.math.scale
 import base.utils.math.toBox
+import dev.dyzjct.kura.module.modules.misc.AirPlace
 import java.awt.Color
 
 object BlockHighlight : Module(name = "BlockHighlight", langName = "方块渲染", category = Category.RENDER, safeModule = true) {
@@ -16,7 +17,6 @@ object BlockHighlight : Module(name = "BlockHighlight", langName = "方块渲染
     private val fadeLength by isetting("FadeLength", 200, 0, 1000)
     private val fillColor by csetting("FillColor", Color(255, 255, 255, 50))
     private val lineColor by csetting("LineColor", Color(255, 255, 255, 255))
-    private val airPlace by bsetting("AirPlace", false)
 
     private var blockRenderSmooth = BlockEasingRender(movingLength.toFloat(), fadeLength.toFloat())
     private var startTime = 0L
@@ -29,7 +29,7 @@ object BlockHighlight : Module(name = "BlockHighlight", langName = "方块渲染
             val blockPos = (mc.crosshairTarget as? BlockHitResult)?.blockPos ?: return@onRender3D
             val isAir = world.isAir(blockPos)
 
-            if (!isAir && !airPlace) {
+            if (!isAir && AirPlace.isDisabled) {
                 if (first) {
                     startTime = System.currentTimeMillis()
                     blockRenderSmooth.forceUpdatePos(blockPos)
@@ -40,9 +40,9 @@ object BlockHighlight : Module(name = "BlockHighlight", langName = "方块渲染
                 first = true
             }
 
-            lastUpdatePos = if (!isAir || airPlace) blockPos else lastUpdatePos
+            lastUpdatePos = if (!isAir || AirPlace.isEnabled) blockPos else lastUpdatePos
 
-            val scale = if (airPlace) { 1.0f } else {
+            val scale = if (AirPlace.isEnabled) { 1.0f } else {
                 if (isAir) {
                     Easing.IN_CUBIC.dec(Easing.toDelta(startTime, fadeLength))
                 } else {
