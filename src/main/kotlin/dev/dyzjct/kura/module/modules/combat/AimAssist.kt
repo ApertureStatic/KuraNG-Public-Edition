@@ -15,10 +15,7 @@ object AimAssist : Module(
     type = Type.Both
 ) {
     private val range by dsetting("Range", 5.0, 1.0, 8.0)
-    private val speed by dsetting("Speed", 1.0, 0.0, 5.0)
-//    private val speed by isetting("Speed", 400, 0, 1000)
-
-    private var lastUpdateTime = 0L
+    private val speed by dsetting("Speed", 1.0, 0.0, 20.0)
 
     init {
         onLoop {
@@ -27,27 +24,25 @@ object AimAssist : Module(
                     return@onLoop
                 }
                 val currentYaw = getYawToEntityNew(target)
-                fun lerpYaw(yaw1: Float, yaw2: Float, t: Float): Float {
-                    var result = yaw2 - yaw1
-                    if (result > 180.0f) {
-                        result -= 360.0f
-                    } else if (result < -180.0f) {
-                        result += 360.0f
-                    }
-
-                    return yaw1 + result * t
-                }
-
-                if (player.yaw != currentYaw) {
-                    val t = speed / abs(player.yaw - currentYaw)
-                    if (t > 1.0f) {
-                        player.setYaw(currentYaw)
-                    } else {
-                        player.setYaw(lerpYaw(player.yaw, currentYaw, t.toFloat()))
-                    }
+                val playerYaw = player.getYaw()
+                val t = speed.toFloat() / abs(playerYaw - currentYaw)
+                if (t > 1.0f) {
+                    player.setYaw(currentYaw)
+                } else {
+                    player.setYaw(lerpYaw(playerYaw, currentYaw, t))
                 }
             }
         }
+    }
+
+    private fun lerpYaw(yaw1: Float, yaw2: Float, t: Float): Float {
+        var result = yaw2 - yaw1
+        if (result > 180.0f) {
+            result -= 360.0f
+        } else if (result < -180.0f) {
+            result += 360.0f
+        }
+        return yaw1 + result * t
     }
 
     private fun SafeClientEvent.getYawToEntityNew(entity: Entity): Float {
