@@ -3,7 +3,7 @@ package dev.dyzjct.kura.module.modules.render
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 
-object NoRender : Module(name = "NoRender", langName = "移除渲染" , category = Category.RENDER, description = "Ignore Some Effects", safeModule = true) {
+object NoRender : Module(name = "NoRender", langName = "移除渲染" , category = Category.RENDER, description = "Ignore Some Effects", type = Type.Both) {
     var noHurtCam = bsetting("NoHurtCam", true)
     val blockLayer = bsetting("BlockLayer", true)
     var totemPops = bsetting("Totem", false)

@@ -14,7 +14,7 @@ object CombatSystem : Module(
     name = "CombatSystem",
     langName = "战斗系统",
     category = Category.CLIENT,
-    safeModule = true
+    type = Type.Both
 ) {
     val combatMode = msetting("CombatMode", CombatMode.Strong)
     val spoofMode = msetting("SpoofMode", SpoofMode.Normal).enumIs(combatMode, CombatMode.Strong)

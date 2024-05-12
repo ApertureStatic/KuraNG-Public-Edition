@@ -17,7 +17,7 @@ import java.awt.Color
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-object LogESP : Module(name = "LogESP", langName = "下线位置", category = Category.RENDER, safeModule = true) {
+object LogESP : Module(name = "LogESP", langName = "下线位置", category = Category.RENDER, type = Type.Both) {
     private val playerCache = ConcurrentHashMap<UUID, PlayerEntity>()
     private val logoutCache = ConcurrentHashMap<UUID, PlayerEntity>()
     var color by csetting("Color", Color(-0x77ff0100))

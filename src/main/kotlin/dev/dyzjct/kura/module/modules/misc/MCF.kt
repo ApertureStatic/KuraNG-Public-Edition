@@ -14,7 +14,7 @@ object MCF : Module(
     langName = "中键添加好友",
     description = "Middle click to add friends",
     category = Category.MISC,
-    safeModule = true
+    type = Type.Both
 ) {
     init {
         safeEventListener<MouseClickEvent> {

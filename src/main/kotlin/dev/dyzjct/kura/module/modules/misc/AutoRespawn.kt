@@ -12,7 +12,7 @@ object AutoRespawn : Module(
     langName = "自动重生",
     description = "Automatic respawn",
     category = Category.MISC,
-    safeModule = true
+    type = Type.Both
 ) {
 
     init {

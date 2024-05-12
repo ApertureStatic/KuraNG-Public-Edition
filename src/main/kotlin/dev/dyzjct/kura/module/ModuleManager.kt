@@ -87,6 +87,7 @@ object ModuleManager : AlwaysListening {
         registerModule(HeadTrap)
         registerModule(InfiniteAura)
         registerModule(HoleMiner)
+        registerModule(AimBot)
     }
 
     private fun loadCategoryMisc() {

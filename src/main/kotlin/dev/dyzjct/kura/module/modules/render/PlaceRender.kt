@@ -15,7 +15,7 @@ object PlaceRender : Module(
     langName = "放置渲染",
     description = "Draw Module's PlacePacket.",
     category = Category.RENDER,
-    safeModule = true
+    type = Type.Both
 ) {
     private val color = csetting("Color", Color(255, 255, 255))
     private val mode = msetting("Mode", Mode.Fade)

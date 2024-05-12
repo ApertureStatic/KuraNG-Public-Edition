@@ -1,20 +1,20 @@
 package dev.dyzjct.kura.module.modules.render
 
-import com.mojang.blaze3d.systems.RenderSystem
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
 import base.events.TickEvent
 import base.system.event.SafeClientEvent
 import base.system.event.safeConcurrentListener
 import base.system.render.graphic.Render2DEngine
 import base.system.render.graphic.Render3DEngine
+import com.mojang.blaze3d.systems.RenderSystem
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
 import net.minecraft.block.Blocks
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 
-object HoleESP : Module(name = "HoleESP", langName = "坑渲染", category = Category.RENDER, safeModule = true) {
+object HoleESP : Module(name = "HoleESP", langName = "坑渲染", category = Category.RENDER, type = Type.Both) {
     private val positions = CopyOnWriteArrayList<PosWithColor>()
     private val mode = msetting("Mode", Mode.CubeOutline)
     private val rangeXZ = isetting("RangeXY", 10, 1, 128)

@@ -10,7 +10,7 @@ object IRC : Module(
     name = "IRC",
     langName = "在线聊天",
     category = Category.CLIENT,
-    safeModule = true
+    type = Type.Both
 ) {
     val mode by msetting("NoticeMode", Mode.Chat)
 

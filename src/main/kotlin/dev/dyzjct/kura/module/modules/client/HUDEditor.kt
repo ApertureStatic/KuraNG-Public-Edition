@@ -16,7 +16,7 @@ object HUDEditor : Module(
     category = Category.CLIENT,
     visible = false,
     keyCode = InputUtil.GLFW_KEY_GRAVE_ACCENT,
-    safeModule = true
+    type = Type.Both
 ) {
 
     override fun onEnable() {

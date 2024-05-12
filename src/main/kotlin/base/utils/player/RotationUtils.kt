@@ -2,13 +2,11 @@ package base.utils.player
 
 import base.system.event.SafeClientEvent
 import base.utils.Wrapper
+import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.hypot
-import kotlin.math.sin
+import kotlin.math.*
 
 object RotationUtils {
 
@@ -100,5 +98,9 @@ object RotationUtils {
         }
 
         return angle
+    }
+
+    fun SafeClientEvent.fovCheck(pos: Vec3d, fov: Float): Boolean {
+        return abs(player.renderYaw - getRotationTo(pos).x) <= fov
     }
 }

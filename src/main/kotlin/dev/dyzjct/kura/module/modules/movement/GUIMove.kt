@@ -13,7 +13,7 @@ object GUIMove : Module(
     langName = "背包移动",
     category = Category.MOVEMENT,
     description = "Moving when Gui is open.",
-    safeModule = true
+    type = Type.Both
 ) {
 
     init {

@@ -32,10 +32,15 @@ abstract class AbstractModule : ListenerOwner() {
     val settingList = ArrayList<Setting<*>>()
     var moduleName = ""
     var moduleCName = ""
-    var moduleCategory = dev.dyzjct.kura.module.Category.HIDDEN
+    var moduleCategory = Category.HIDDEN
     var alwaysEnable = false
     var isEnabled = false
-    var isSafe = false
+    var moduleType = Type.StrongOnly
+
+    enum class Type {
+        Both,SafeOnly,StrongOnly
+    }
+
     var isVisible = false
         set(value) {
             field = value

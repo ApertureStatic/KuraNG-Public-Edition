@@ -8,7 +8,7 @@ import net.minecraft.item.BowItem
 import net.minecraft.item.Items
 
 object FastUse :
-    Module(category = Category.COMBAT, langName = "快速使用物品", description = "Use items faster", name = "FastUse", safeModule = true) {
+    Module(category = Category.COMBAT, langName = "快速使用物品", description = "Use items faster", name = "FastUse", type = Type.Both) {
     private val delay = isetting("Delay", 1, 0, 10)
     private val exp = bsetting("XP", true)
 

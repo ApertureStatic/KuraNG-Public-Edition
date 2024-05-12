@@ -29,7 +29,7 @@ object PopChams : Module(
     langName = "图腾爆炸渲染",
     description = "Rendering on totem pop.",
     category = Category.RENDER,
-    safeModule = true
+    type = Type.Both
 ) {
     private val colorFill by csetting("ColorFill", Color(255, 255, 255, 200))
     private val fadeLength by isetting("FadeLength", 200, 0, 1000)

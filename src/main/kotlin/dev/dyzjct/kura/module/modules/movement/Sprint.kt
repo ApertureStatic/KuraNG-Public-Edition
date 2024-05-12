@@ -11,7 +11,7 @@ object Sprint : Module(
     description = "Automatically makes the player sprint",
     langName = "强制疾跑",
     category = Category.MOVEMENT,
-    safeModule = true
+    type = Type.Both
 ) {
     private var legit = bsetting("Legit", false)
 

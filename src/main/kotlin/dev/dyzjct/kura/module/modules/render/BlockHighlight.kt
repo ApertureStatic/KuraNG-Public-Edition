@@ -12,7 +12,7 @@ import base.utils.math.toBox
 import dev.dyzjct.kura.module.modules.misc.AirPlace
 import java.awt.Color
 
-object BlockHighlight : Module(name = "BlockHighlight", langName = "方块渲染", category = Category.RENDER, safeModule = true) {
+object BlockHighlight : Module(name = "BlockHighlight", langName = "方块渲染", category = Category.RENDER, type = Type.Both) {
     private val movingLength by isetting("MovingLength", 400, 0, 1000)
     private val fadeLength by isetting("FadeLength", 200, 0, 1000)
     private val fillColor by csetting("FillColor", Color(255, 255, 255, 50))

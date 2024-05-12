@@ -1,9 +1,10 @@
 package base.utils.combat
 
+import base.system.event.SafeClientEvent
+import base.utils.math.distanceSqToCenter
 import dev.dyzjct.kura.manager.FriendManager
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.canMove
 import dev.dyzjct.kura.utils.animations.sq
-import base.system.event.SafeClientEvent
 import net.minecraft.entity.Entity
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.passive.AnimalEntity
@@ -11,7 +12,6 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
-import base.utils.math.distanceSqToCenter
 
 fun SafeClientEvent.getTarget(range: Double): PlayerEntity? {
     for (ent in world.entities.filter {

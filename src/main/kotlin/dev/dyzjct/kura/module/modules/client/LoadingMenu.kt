@@ -11,7 +11,7 @@ object LoadingMenu: Module(
     langName = "加载界面",
     category = Category.CLIENT,
     description = "Loading menu",
-    safeModule = true
+    type = Type.Both
 ) {
 
     val mode = msetting("Mode", LoadingMenuMode.Kura)

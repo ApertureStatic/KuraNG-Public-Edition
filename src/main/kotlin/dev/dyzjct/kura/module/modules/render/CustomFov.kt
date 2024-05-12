@@ -8,7 +8,7 @@ object CustomFov : Module(
     langName = "自定义Fov",
     category = Category.RENDER,
     description = "Custom Minecraft Fov",
-    safeModule = true
+    type = Type.Both
 ) {
     var fov = dsetting("Fov", 120.0, 0.0, 160.0)
     var itemFov = bsetting("ItemFov", false)

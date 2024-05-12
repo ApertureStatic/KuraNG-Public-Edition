@@ -16,7 +16,7 @@ import base.utils.math.distanceSqToCenter
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
-object CrystalRender : Module(name = "CrystalRender", langName = "水晶渲染", category = Category.RENDER, safeModule = true) {
+object CrystalRender : Module(name = "CrystalRender", langName = "水晶渲染", category = Category.RENDER, type = Type.Both) {
     private val range = isetting("Range", 12, 0, 30)
     private val mode = msetting("Mode", Mode.Normal)
     private val points = isetting("Points", 20, 1, 100).enumIs(mode, Mode.New)

@@ -12,7 +12,7 @@ object PortalESP : Module(
     langName = "地狱门透视",
     category = Category.RENDER,
     description = "AutoSearch For Portal Blocks!",
-    safeModule = true
+    type = Type.Both
 ) {
     val distance by isetting("Range", 50, 1, 80)
     private var lineWidth by fsetting("LineWidth", 1.5f, 0f, 5f)

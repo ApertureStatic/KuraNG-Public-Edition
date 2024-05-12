@@ -6,7 +6,7 @@ import dev.dyzjct.kura.module.Module
 import net.minecraft.util.Identifier
 
 object Cape : Module(
-    "Cape", langName = "披风", category = Category.CLIENT, safeModule = true
+    "Cape", langName = "披风", category = Category.CLIENT, type = Type.Both
 ) {
     private val capeEnum by msetting("Type", Cape.Rimuru)
 

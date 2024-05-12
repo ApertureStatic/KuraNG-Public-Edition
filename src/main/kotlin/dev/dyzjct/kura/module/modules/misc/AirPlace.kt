@@ -9,7 +9,7 @@ import net.minecraft.item.BlockItem
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 
-object AirPlace : Module(name = "AirPlace", langName = "空放", category = Category.MISC, description = "Place Block on the AirBlock.", safeModule = true) {
+object AirPlace : Module(name = "AirPlace", langName = "空放", category = Category.MISC, description = "Place Block on the AirBlock.", type = Type.Both) {
     private var placeDelay = TimerUtils()
 
     init {

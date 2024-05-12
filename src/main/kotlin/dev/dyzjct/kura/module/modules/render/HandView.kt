@@ -10,7 +10,7 @@ import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.util.Hand
 
 
-object HandView : Module(name = "HandView", "手部渲染", category = Category.RENDER, safeModule = true) {
+object HandView : Module(name = "HandView", "手部渲染", category = Category.RENDER, type = Type.Both) {
 
     val swingSpeed by isetting("SlowVL", 6, 0, 20)
     val oldSwing by bsetting("OldSwing", true)

@@ -8,7 +8,7 @@ abstract class Module(
     category: Category,
     visible: Boolean = false,
     alwaysEnable: Boolean = false,
-    safeModule: Boolean = false
+    type: Type = Type.StrongOnly
 ) : AbstractModule() {
 
     init {
@@ -19,6 +19,6 @@ abstract class Module(
         this.isVisible = visible
         this.alwaysEnable = alwaysEnable
         this.description = description
-        this.isSafe = safeModule
+        this.moduleType = type
     }
 }

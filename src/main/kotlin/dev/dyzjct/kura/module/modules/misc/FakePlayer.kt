@@ -13,7 +13,7 @@ object FakePlayer : Module(
     langName = "假人",
     category = Category.MISC,
     description = "Spawns a fake Player",
-    safeModule = true
+    type = Type.Both
 ) {
     private var health by isetting("Health", 12, 0, 36)
     private var fpName by ssetting("Name", "Ab_noJB")

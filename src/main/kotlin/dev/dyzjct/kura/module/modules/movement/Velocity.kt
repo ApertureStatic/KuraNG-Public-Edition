@@ -7,7 +7,7 @@ import base.system.event.safeEventListener
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket
 import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket
 
-object Velocity : Module(name = "Velocity", langName = "防击退", category = Category.MOVEMENT, safeModule = true) {
+object Velocity : Module(name = "Velocity", langName = "防击退", category = Category.MOVEMENT, type = Type.Both) {
     var noPush = bsetting("NoPush", true)
     private var horizontal = fsetting("Horizontal", 0f, 0f, 100f)
     private var vertical = fsetting("Vertical", 0f, 0f, 100f)

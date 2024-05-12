@@ -12,7 +12,7 @@ object AntiHunger :
         langName = "防饥饿",
         category = Category.PLAYER,
         description = "Anti Hunger.",
-        safeModule = true
+        type = Type.Both
     ) {
     private val noSprint by bsetting("NoSprint", false)
 
