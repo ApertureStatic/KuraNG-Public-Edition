@@ -7,8 +7,8 @@ import dev.dyzjct.kura.module.Module
 import net.minecraft.entity.Entity
 import net.minecraft.util.math.MathHelper
 
-object AimBot : Module(
-    name = "AimBot",
+object AimAssist : Module(
+    name = "AimAssist",
     langName = "自动瞄准",
     category = Category.COMBAT,
     type = Type.Both
