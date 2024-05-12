@@ -4,8 +4,9 @@ import base.system.event.SafeClientEvent
 import base.utils.combat.getTarget
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.utils.math.RotationUtils.getRotationToEntity
 import net.minecraft.entity.Entity
-import net.minecraft.util.math.MathHelper
+import kotlin.math.abs
 
 object AimAssist : Module(
     name = "AimAssist",
@@ -14,41 +15,42 @@ object AimAssist : Module(
     type = Type.Both
 ) {
     private val range by dsetting("Range", 5.0, 1.0, 8.0)
+    private val speed by dsetting("Speed", 1.0, 0.0, 5.0)
+//    private val speed by isetting("Speed", 400, 0, 1000)
 
-    private var lastTarget: Entity? = null
+    private var lastUpdateTime = 0L
 
     init {
-        onRender3D {
-            lastTarget = getTarget(range)
-            lastTarget?.let { target ->
-                if (!target.isAlive) {
-                    lastTarget = null
-                    return@onRender3D
-                }
-                player.setYaw(getYawToEntityNew(target))
-            }
-        }
         onLoop {
-            lastTarget = getTarget(range)
-            lastTarget?.let { target ->
+            getTarget(range)?.let { target ->
                 if (!target.isAlive) {
-                    lastTarget = null
                     return@onLoop
                 }
-                player.setYaw(getYawToEntityNew(target))
+                val currentYaw = getYawToEntityNew(target)
+                fun lerpYaw(yaw1: Float, yaw2: Float, t: Float): Float {
+                    var result = yaw2 - yaw1
+                    if (result > 180.0f) {
+                        result -= 360.0f
+                    } else if (result < -180.0f) {
+                        result += 360.0f
+                    }
+
+                    return yaw1 + result * t
+                }
+
+                if (player.yaw != currentYaw) {
+                    val t = speed / abs(player.yaw - currentYaw)
+                    if (t > 1.0f) {
+                        player.setYaw(currentYaw)
+                    } else {
+                        player.setYaw(lerpYaw(player.yaw, currentYaw, t.toFloat()))
+                    }
+                }
             }
         }
     }
 
     private fun SafeClientEvent.getYawToEntityNew(entity: Entity): Float {
-        return getYawBetween(player.yaw, player.x, player.z, entity.x, entity.z)
+        return getRotationToEntity(entity).x
     }
-
-    private fun getYawBetween(yaw: Float, srcX: Double, srcZ: Double, destX: Double, destZ: Double): Float {
-        val xDist = destX - srcX
-        val zDist = destZ - srcZ
-        val yaw1 = (StrictMath.atan2(zDist, xDist) * 180.0 / 3.141592653589793).toFloat() - 90.0f
-        return yaw + MathHelper.wrapDegrees(yaw1 - yaw)
-    }
-
 }
