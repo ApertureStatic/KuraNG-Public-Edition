@@ -142,7 +142,6 @@ object AutoCrystal : Module(
 
     //Page Calculation
     private var debug = bsetting("Debug", false).enumIs(p, Page.CALCULATION)
-    private var enemyRange = isetting("EnemyRange", 8, 1, 10).enumIs(p, Page.CALCULATION)
     private var noSuicide = fsetting("NoSuicide", 2f, 0f, 20f).enumIs(p, Page.CALCULATION)
     var ownPredictTicks = isetting("OwnPredictTicks", 2, 0, 20).enumIs(p, Page.CALCULATION)
 
@@ -313,7 +312,7 @@ object AutoCrystal : Module(
         }
 
         safeEventListener<WorldEvent.ClientBlockUpdate>(114514) {
-            if (player.distanceSqToCenter(it.pos) < (CombatSystem.placeRange.ceilToInt() + 1).sq && isResistant(it.oldState) != isResistant(
+            if (player.distanceSqToCenter(it.pos) < (CombatSystem.placeRange.sq.ceilToInt() + 1).sq && isResistant(it.oldState) != isResistant(
                     it.newState
                 )
             ) {
@@ -695,7 +694,7 @@ object AutoCrystal : Module(
 
     private val SafeClientEvent.targetList: Sequence<TargetInfo>
         get() {
-            val rangeSq = enemyRange.value.sq
+            val rangeSq = CombatSystem.targetRange.sq
             val list = ObjectArrayList<TargetInfo>().synchronized()
             val eyePos = CrystalManager.eyePosition
 
@@ -1063,7 +1062,7 @@ object AutoCrystal : Module(
                 val crystalZ = it.z + 0.5
                 player.distanceSqTo(
                     crystalX, crystalY, crystalZ
-                ) <= CombatSystem.placeRange.sq && (!old.value || player.distanceSqTo(it.toCenterPos()) <= wallRange.value || canSee(
+                ) <= CombatSystem.placeRange.sq && (!old.value || player.distanceSqTo(it.toCenterPos()) <= wallRange.value.sq || canSee(
                     it.x.toDouble(), it.y.toDouble(), it.z.toDouble()
                 ))
             }.filter { canPlaceCrystal(it, prio, old.value) }.collect(Collectors.toList())

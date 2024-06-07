@@ -131,9 +131,9 @@ object HotbarManager : AlwaysListening {
                     notNullSlot = true
                     synchronized(HotbarManager) {
                         if (!isCheck) {
-                            spoofHotbar(slot)
-                            block.invoke()
-                            resetHotbar()
+                            spoofHotbar(slot) {
+                                block.invoke()
+                            }
                         }
                     }
                 }
@@ -192,9 +192,9 @@ object HotbarManager : AlwaysListening {
                     notNullSlot = true
                     synchronized(HotbarManager) {
                         if (!isCheck) {
-                            spoofHotbar(slot)
-                            block.invoke()
-                            resetHotbar()
+                            spoofHotbar(slot) {
+                                block.invoke()
+                            }
                         }
                     }
                 }
