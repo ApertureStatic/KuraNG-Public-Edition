@@ -88,6 +88,7 @@ object ModuleManager : AlwaysListening {
         registerModule(InfiniteAura)
         registerModule(HoleMiner)
         registerModule(CrystalBasePlacer)
+        registerModule(AutoPot)
     }
 
     private fun loadCategoryMisc() {

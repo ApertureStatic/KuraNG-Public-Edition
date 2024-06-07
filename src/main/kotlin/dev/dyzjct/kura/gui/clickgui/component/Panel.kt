@@ -50,7 +50,7 @@ class Panel(
 
     fun filterModules() {
         elements.clear()
-        elements.addAll(beforeFilterModuleComponents.filter { CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong && it.module.moduleType == AbstractModule.Type.StrongOnly || CombatSystem.combatMode.value == CombatSystem.CombatMode.Ghost && it.module.moduleType == AbstractModule.Type.SafeOnly || it.module.moduleType == AbstractModule.Type.Both })
+        elements.addAll(beforeFilterModuleComponents.filter { (CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong && it.module.moduleType == AbstractModule.Type.StrongOnly) || (CombatSystem.combatMode.value == CombatSystem.CombatMode.Ghost && it.module.moduleType == AbstractModule.Type.SafeOnly) || it.module.moduleType == AbstractModule.Type.Both })
         playingAnimation = true
         rearrange()
     }
