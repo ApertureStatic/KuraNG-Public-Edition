@@ -167,9 +167,10 @@ object AutoCrystal : Module(
     private var fadeRender = bsetting("FadeRender", false).enumIs(p, Page.RENDER)
     private var fadeAlpha = isetting("FadeAlpha", 80, 0, 255, 1).isTrue(fadeRender).enumIs(p, Page.RENDER)
     private var fillColor =
-        csetting("FillColor", Color(20, 225, 219, 50)).enumIs(p, Page.RENDER).enumIs(theme, UiSetting.Theme.Custom)
+        csetting("FillColor", Color(20, 225, 219, 50)).enumIs(p, Page.RENDER).isTrue { theme == UiSetting.Theme.Custom }
     private var outlineColor =
-        csetting("LineColor", Color(20, 225, 219, 200)).enumIs(p, Page.RENDER).enumIs(theme, UiSetting.Theme.Custom)
+        csetting("LineColor", Color(20, 225, 219, 200)).enumIs(p, Page.RENDER)
+            .isTrue { theme == UiSetting.Theme.Custom }
     private val movingLength = isetting("MovingLength", 400, 0, 1000).enumIs(p, Page.RENDER)
     private val fadeLength = isetting("FadeLength", 200, 0, 1000).enumIs(p, Page.RENDER)
     private var offsetFacing = arrayOf(Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST)
