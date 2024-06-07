@@ -123,7 +123,7 @@ interface SettingVisibility<S : Setting<out Any>> : ISettingVisibility {
     }
 
     fun enumIs(value: Enum<*>, target: Enum<*>): S {
-        return addVisibility { value == target }
+        return addVisibility { value === target }
     }
 
     fun enumIsNot(value: Setting<out Enum<*>>, target: Enum<*>): S {
