@@ -38,7 +38,7 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
                 matrixStack.push();
                 matrixStack.translate(0.0F, 0.0F, 0.125F);
                 if (AnimationRemover.INSTANCE.getFakeSneak() && AnimationRemover.INSTANCE.isEnabled() && !abstractClientPlayerEntity.isInSneakingPose()) {
-                    matrixStack.translate(0.0F, 0.125F, 0.125F);
+                    matrixStack.translate(0.0F, 0.250F, 0.125F);
                 }
                 double d = MathHelper.lerp(h, abstractClientPlayerEntity.prevCapeX, abstractClientPlayerEntity.capeX) - MathHelper.lerp(h, abstractClientPlayerEntity.prevX, abstractClientPlayerEntity.getX());
                 double e = MathHelper.lerp(h, abstractClientPlayerEntity.prevCapeY, abstractClientPlayerEntity.capeY) - MathHelper.lerp(h, abstractClientPlayerEntity.prevY, abstractClientPlayerEntity.getY());

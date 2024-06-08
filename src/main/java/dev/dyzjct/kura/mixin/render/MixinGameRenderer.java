@@ -260,6 +260,9 @@ public class MixinGameRenderer {
 
     @Unique
     private void tiltViewWhenHurt(MatrixStack matrices, float tickDelta) {
+        if (NoRender.INSTANCE.isEnabled() && NoRender.INSTANCE.getNoHurtCam().getValue()) {
+            return;
+        }
         if (this.client.getCameraEntity() instanceof LivingEntity livingEntity) {
             float f = (float) livingEntity.hurtTime - tickDelta;
             float g;
