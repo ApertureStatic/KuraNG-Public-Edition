@@ -22,6 +22,7 @@
     "render.MixinBufferRenderer",
     "render.MixinCamera",
     "render.MixinCapabilityTracker",
+    "render.MixinCapeFeatureRenderer",
     "render.MixinEndCrystalEntityRenderer",
     "render.MixinEntityRenderer",
     "render.MixinGameRenderer",

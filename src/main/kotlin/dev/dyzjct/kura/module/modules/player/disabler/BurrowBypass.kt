@@ -42,9 +42,9 @@ object BurrowBypass: ListenerOwner() {
             if (it.packet !is PlayerPositionLookS2CPacket) return@safeEventListener
             it.packet.yaw = player.yaw
             it.packet.pitch = player.pitch
-            it.packet.x = player.x
-            it.packet.y = player.y
-            it.packet.z = player.z
+//            it.packet.x = player.x
+//            it.packet.y = player.y
+//            it.packet.z = player.z
         }
 
         safeEventListener<PacketEvents.Receive> {

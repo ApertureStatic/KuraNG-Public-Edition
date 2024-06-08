@@ -65,69 +65,24 @@ public class MixinBipedEntityModel<T extends LivingEntity> {
         if (livingEntity != null && AnimationRemover.INSTANCE.isEnabled() && EventAccessManager.INSTANCE.getData() != null && livingEntity instanceof PlayerEntity && (AnimationRemover.INSTANCE.getRemoveSelf() || livingEntity != MinecraftClient.getInstance().player)) {
             if (AnimationRemover.INSTANCE.getFakeSneak()) {
                 if (head != null) {
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("head.pivotX " + head.pivotX);
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("head.pivotY " + head.pivotY);
                     head.pivotY = 4.2f;
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("head.pivotZ " + head.pivotZ);
-                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("head.yaw " + head.yaw);
-                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("head.pitch " + head.pitch);
-                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("head.roll " + head.roll);
                 }
                 if (body != null) {
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("body.pivotX " + body.pivotX);
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("body.pivotY " + body.pivotY);
                     body.pivotY = 3.2f;
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("body.pivotZ " + body.pivotZ);
-                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("body.yaw " + body.yaw);
-                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("body.pitch " + body.pitch);
                     body.pitch = 0.5f;
-                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("body.roll " + body.roll);
                 }
                 if (leftLeg != null) {
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("leftLeg.pivotX " + leftLeg.pivotX);
                     leftLeg.pivotX = 1.9f;
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("leftLeg.pivotY " + leftLeg.pivotY);
                     leftLeg.pivotY = 12.2f;
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("leftLeg.pivotZ " + leftLeg.pivotZ);
                     leftLeg.pivotZ = 4.0f;
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("leftLeg.yaw" + leftLeg.yaw);
                     leftLeg.yaw = -0.005f;
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("leftLeg.pitch " + leftLeg.pitch);
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("leftLeg.roll " + leftLeg.roll);
                 }
                 if (leftArm != null) {
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("leftArm.pivotX " + leftArm.pivotX);
                     leftArm.pivotX = 5.0f;
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("leftArm.pivotY " + leftArm.pivotY);
                     leftArm.pivotY = 5.2f;
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("leftArm.pivotZ " + leftArm.pivotZ);
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("leftArm.yaw " + leftArm.yaw);
-                    if (AnimationRemover.INSTANCE.getDebug())
-                        ChatUtil.INSTANCE.sendMessage("leftArm.roll " + leftArm.roll);
                 }
                 if (hat != null) {
-                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.pivotX " + hat.pivotX);
-                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.pivotY " + hat.pivotY);
                     hat.pivotY = 4.2f;
-                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.pivotZ " + hat.pivotZ);
-                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.yaw " + hat.yaw);
-                    if (AnimationRemover.INSTANCE.getDebug()) ChatUtil.INSTANCE.sendMessage("hat.roll " + hat.roll);
                 }
                 if (rightLeg != null) {
                     rightLeg.pivotY = 12.2f;
