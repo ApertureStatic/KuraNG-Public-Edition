@@ -82,7 +82,6 @@ object Surround : Module(
     private var inHoleTimeout = isetting("InHoleTimeOut", 50, 1, 100).isTrue(enableInHole)
     private var superSafe = bsetting("SuperSafe", false)
     private var attackCrystal = bsetting("AttackCrystal", false)
-    private val spoofBypass = bsetting("SpoofBypass", false)
     private val placing = EnumMap<SurroundOffset, List<PlaceInfo>>().synchronized()
     private val placingSet = LongOpenHashSet()
     private val pendingPlacing = Long2LongMaps.synchronize(Long2LongOpenHashMap()).apply { defaultReturnValue(-1L) }
