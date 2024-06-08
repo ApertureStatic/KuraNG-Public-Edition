@@ -9,7 +9,7 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.getPredictedTarget
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.getPredictedTarget
 import dev.dyzjct.kura.utils.TimerUtils
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.decoration.EndCrystalEntity

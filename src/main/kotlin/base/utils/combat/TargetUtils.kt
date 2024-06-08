@@ -3,7 +3,7 @@ package base.utils.combat
 import base.system.event.SafeClientEvent
 import base.utils.math.distanceSqToCenter
 import dev.dyzjct.kura.manager.FriendManager
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.canMove
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.canMove
 import dev.dyzjct.kura.utils.animations.sq
 import net.minecraft.entity.Entity
 import net.minecraft.entity.mob.MobEntity

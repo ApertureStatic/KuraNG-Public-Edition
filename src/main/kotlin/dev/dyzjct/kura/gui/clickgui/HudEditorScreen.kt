@@ -9,7 +9,7 @@ object HudEditorScreen : GuiScreen() {
     init {
         elements.add(
             Panel(
-                ModuleManager.hUDModules,
+                ModuleManager.hudModules,
                 Category.HUD,
                 this,
                 5f,

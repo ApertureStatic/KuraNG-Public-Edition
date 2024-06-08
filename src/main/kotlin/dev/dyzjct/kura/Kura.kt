@@ -22,11 +22,6 @@ class Kura : AlwaysListening {
     companion object {
         const val MOD_NAME = "Kura"
         const val VERSION = "1.0"
-        const val DevList = """
-            DevList:
-            - DreamDev
-            - Dyzjct
-        """
         var userState = UserType.Beta
         var logger: Logger = LogManager.getLogger("Kura")
         var commandPrefix = StringSetting("CommandPrefix", null, ".")

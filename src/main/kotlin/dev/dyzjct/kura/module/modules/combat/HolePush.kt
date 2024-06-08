@@ -1,14 +1,5 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.RotationManager
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.player.AntiMinePlace
-import dev.dyzjct.kura.module.modules.player.PacketMine.hookPos
-import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.animations.sq
-import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import base.system.event.SafeClientEvent
 import base.utils.block.BlockUtil.getNeighbor
 import base.utils.chat.ChatUtil
@@ -20,20 +11,24 @@ import base.utils.entity.EntityUtils.spoofSneak
 import base.utils.extension.fastPos
 import base.utils.hole.SurroundUtils
 import base.utils.hole.SurroundUtils.checkHole
-import base.utils.inventory.slot.allSlots
-import base.utils.inventory.slot.firstItem
-import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.distanceSqToCenter
+import base.utils.math.sq
 import base.utils.world.noCollision
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
+import dev.dyzjct.kura.module.modules.player.AntiMinePlace
+import dev.dyzjct.kura.module.modules.player.PacketMine.hookPos
+import dev.dyzjct.kura.utils.TimerUtils
 import net.minecraft.block.Blocks
 import net.minecraft.block.PistonBlock
 import net.minecraft.block.RedstoneBlock
 import net.minecraft.entity.ItemEntity
 import net.minecraft.item.Items
-import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
-import net.minecraft.util.Hand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
@@ -44,14 +39,8 @@ object HolePush : Module(
     category = Category.COMBAT,
     description = "Push the target away from the hole."
 ) {
-    private val targetRange = dsetting("TargetRange", 7.0, 0.0, 10.0)
-    private val range by isetting("Range", 5, 0, 6)
-    private val swing = bsetting("Swing", true)
-    private val packet by bsetting("packet", true).isTrue(swing)
     private val rotate = bsetting("Rotation", false)
     private val side by bsetting("Side", false).isTrue(rotate)
-    private val spoofBypass = bsetting("SpoofBypass", false)
-    private val invSwap by bsetting("InvSwap", false)
     private val strictDirection = bsetting("StrictDirection", false)
     private val checkDown by bsetting("CheckDown", false)
     private val delay by dsetting("Delay", 50.0, 0.0, 250.0)
@@ -75,21 +64,15 @@ object HolePush : Module(
 
     init {
         onMotion {
-            var pistonSlot =
-                player.hotbarSlots.firstItem(Items.STICKY_PISTON) ?: player.hotbarSlots.firstItem(Items.PISTON)
-            var stoneSlot = player.hotbarSlots.firstItem(
-                Items.REDSTONE_BLOCK
-            )
-            if (spoofBypass.value && invSwap) {
-                pistonSlot = player.allSlots.firstItem(Items.STICKY_PISTON)
-                    ?.let { item -> HotbarSlot(item) } ?: player.allSlots.firstItem(Items.PISTON)
-                    ?.let { item -> HotbarSlot(item) } ?: pistonSlot
-                stoneSlot = player.allSlots.firstItem(Items.REDSTONE_BLOCK)
-                    ?.let { item -> HotbarSlot(item) } ?: stoneSlot
-            }
-            val target = getTarget(targetRange.value)
+            val target = getTarget(CombatSystem.targetRange)
 
-            if (pistonSlot == null || stoneSlot == null || target == null) {
+            if ((!spoofHotbarWithSetting(Items.PISTON, true) {} && !spoofHotbarWithSetting(
+                    Items.STICKY_PISTON,
+                    true
+                ) {}) || !spoofHotbarWithSetting(
+                    Items.REDSTONE_BLOCK, true
+                ) {} || target == null
+            ) {
                 if (autoToggle.value) {
                     toggle()
                 }
@@ -108,8 +91,8 @@ object HolePush : Module(
             if (pushTimer.passedMs(pushDelay.toLong())) {
                 if (!world.isAir(targetUp.up())) return@onMotion
                 if (isInWeb(target)) return@onMotion
-                doHolePush(targetUp, true, pistonSlot, stoneSlot)
-                if (!world.isAir(target.blockPos)) doHolePush(targetUp, false, pistonSlot, stoneSlot)
+                doHolePush(targetUp, true)
+                if (!world.isAir(target.blockPos)) doHolePush(targetUp, false)
             }
         }
     }
@@ -117,8 +100,7 @@ object HolePush : Module(
     fun SafeClientEvent.doHolePush(
         targetPos: BlockPos,
         check: Boolean,
-        pistonSlot: HotbarSlot?,
-        stoneSlot: HotbarSlot?
+        test: Boolean = false
     ): BlockPos? {
         fun checkPull(face: Direction): Boolean {
             val opposite = targetPos.offset(face.opposite)
@@ -160,40 +142,33 @@ object HolePush : Module(
                     )
                 )
                 }) continue
-//            if (!world.noCollision(targetPos.offset(face)) && world.getBlockState(targetPos.offset(face)).block !is PistonBlock) continue
             if (!world.isAir(targetPos.offset(face)) && world.getBlockState(targetPos.offset(face)).block !is PistonBlock) continue
             getRedStonePos(targetPos.offset(face), face)?.let {
                 if (!world.isAir(it.pos.down()) || !checkDown) {
-                    if (pistonSlot != null && stoneSlot != null) {
-                        placeBlock(
-                            targetPos.offset(face),
-                            it.pos,
-                            face,
-                            pistonSlot,
-                            stoneSlot,
-                            !check
-                        )
+                    if (!test) {
+                        if ((spoofHotbarWithSetting(Items.PISTON, true) {} || spoofHotbarWithSetting(
+                                Items.STICKY_PISTON,
+                                true
+                            ) {}) && spoofHotbarWithSetting(
+                                Items.REDSTONE_BLOCK, true
+                            ) {}
+                        ) {
+                            placeBlock(
+                                targetPos.offset(face),
+                                it.pos,
+                                face,
+                                !check
+                            )
+                        }
                     }
                     return it.pos
                 } else if (!world.isAir(it.pos.down(2)) && checkDown && it.direction == Direction.DOWN) {
-                    if (timer.tickAndReset(delay)) {
-                        if (rotate.value) RotationManager.addRotations(it.pos.down())
-                        player.spoofSneak {
-                            var slot =
-                                player.hotbarSlots.firstItem(Items.OBSIDIAN)
-                            if (spoofBypass.value && invSwap) {
-                                slot = player.allSlots.firstItem(Items.OBSIDIAN)
-                                    ?.let { item -> HotbarSlot(item) } ?: stoneSlot
-                            }
-                            slot?.let { obs ->
-                                if (spoofBypass.value) {
-                                    spoofHotbarBypass(obs) {
-                                        connection.sendPacket(fastPos(it.pos.down(), strictDirection.value))
-                                    }
-                                } else {
-                                    spoofHotbar(obs) {
-                                        connection.sendPacket(fastPos(it.pos.down(), strictDirection.value))
-                                    }
+                    if (!test) {
+                        if (timer.tickAndReset(delay)) {
+                            if (rotate.value) RotationManager.addRotations(it.pos.down())
+                            player.spoofSneak {
+                                spoofHotbarWithSetting(Items.OBSIDIAN) {
+                                    connection.sendPacket(fastPos(it.pos.down(), strictDirection.value))
                                 }
                             }
                         }
@@ -208,8 +183,6 @@ object HolePush : Module(
         blockPos: BlockPos,
         stonePos: BlockPos,
         face: Direction,
-        pistonSlot: HotbarSlot,
-        stoneSlot: HotbarSlot,
         mine: Boolean = false
     ) {
         if (!timer.passedMs(delay.toLong())) return
@@ -235,17 +208,17 @@ object HolePush : Module(
             if (!stone) RotationManager.addRotations(blockPos, true)
             if (!stone || world.isAir(stonePos)) {
                 player.spoofSneak {
-                    if (spoofBypass.value) {
-                        spoofHotbarBypass(if (!stone) pistonSlot else stoneSlot) {
-                            connection.sendPacket(fastPos(if (!stone) blockPos else stonePos, strictDirection.value))
-                        }
-                    } else {
-                        spoofHotbar(if (!stone) pistonSlot else stoneSlot) {
-                            connection.sendPacket(fastPos(if (!stone) blockPos else stonePos, strictDirection.value))
-                        }
+                    spoofHotbarWithSetting(
+                        if (!stone) (if (spoofHotbarWithSetting(
+                                Items.PISTON,
+                                true
+                            ) {}
+                        ) Items.PISTON else Items.STICKY_PISTON) else Items.REDSTONE_BLOCK
+                    ) {
+                        connection.sendPacket(fastPos(if (!stone) blockPos else stonePos, strictDirection.value))
                     }
                 }
-                swingHand()
+                swing()
             }
             if (!stone) RotationManager.addRotations(blockPos, true)
             stage++
@@ -283,14 +256,7 @@ object HolePush : Module(
         }
     }
 
-    private fun SafeClientEvent.swingHand() {
-        if (!swing.value) return
-        if (packet) {
-            connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
-        } else player.swingHand(Hand.MAIN_HAND)
-    }
-
-    fun SafeClientEvent.getRedStonePos(pos: BlockPos, direction: Direction): StonePos? {
+    private fun SafeClientEvent.getRedStonePos(pos: BlockPos, direction: Direction): StonePos? {
         val face = when (direction) {
             Direction.EAST -> Direction.WEST
             Direction.WEST -> Direction.EAST
@@ -303,7 +269,7 @@ object HolePush : Module(
                 return StonePos(pos.offset(facing), facing)
             }
             if (facing != face) {
-                if (player.distanceSqToCenter(pos.offset(facing)) > range.sq) continue
+                if (player.distanceSqToCenter(pos.offset(facing)) > CombatSystem.placeRange.sq) continue
                 if (!boxCheck(Box(pos.offset(facing)))) continue
                 if (!world.noCollision(pos.offset(facing))) continue
                 if (!world.isAir(pos.offset(facing))) continue

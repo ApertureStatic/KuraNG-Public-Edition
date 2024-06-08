@@ -8,7 +8,7 @@ import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.FriendManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.scaledHealth
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.scaledHealth
 import dev.dyzjct.kura.utils.animations.MathUtils
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.Formatting

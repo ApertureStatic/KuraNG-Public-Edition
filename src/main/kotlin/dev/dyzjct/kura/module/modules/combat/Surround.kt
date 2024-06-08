@@ -1,26 +1,5 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.manager.CrystalManager
-import dev.dyzjct.kura.manager.EntityManager
-import dev.dyzjct.kura.manager.HoleManager
-import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
-import dev.dyzjct.kura.manager.RotationManager
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.realSpeed
-import dev.dyzjct.kura.module.modules.movement.Step
-import dev.dyzjct.kura.module.modules.player.PacketMine
-import dev.dyzjct.kura.module.modules.render.PlaceRender
-import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.extension.sq
-import dev.dyzjct.kura.utils.inventory.HotbarSlot
-import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
-import it.unimi.dsi.fastutil.longs.Long2LongMaps
-import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet
-import it.unimi.dsi.fastutil.longs.LongSets
 import base.events.*
 import base.events.block.BlockBreakEvent
 import base.events.player.PlayerMoveEvent
@@ -46,10 +25,35 @@ import base.utils.hole.HoleType
 import base.utils.hole.SurroundUtils.betterPosition
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
+import base.utils.math.distanceSqTo
+import base.utils.math.isInSight
+import base.utils.math.vector.Vec2f
 import base.utils.world.*
+import dev.dyzjct.kura.manager.CrystalManager
+import dev.dyzjct.kura.manager.EntityManager
+import dev.dyzjct.kura.manager.HoleManager
+import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.realSpeed
+import dev.dyzjct.kura.module.modules.movement.Step
+import dev.dyzjct.kura.module.modules.player.PacketMine
+import dev.dyzjct.kura.module.modules.render.PlaceRender
+import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.extension.sq
+import dev.dyzjct.kura.utils.inventory.HotbarSlot
+import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
+import it.unimi.dsi.fastutil.longs.Long2LongMaps
+import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet
+import it.unimi.dsi.fastutil.longs.LongSets
 import net.minecraft.block.Blocks
 import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.item.ItemPlacementContext
+import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
 import net.minecraft.sound.SoundCategory
@@ -60,9 +64,6 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
-import base.utils.math.distanceSqTo
-import base.utils.math.isInSight
-import base.utils.math.vector.Vec2f
 
 object Surround : Module(
     name = "Surround",
@@ -422,19 +423,13 @@ object Surround : Module(
                         ), true
                     )
                 }
-                if (spoofBypass.value) {
-                    swapSpoof(slot) {
-                        sendSequencedPacket(world) {
-                            placeInfo.toPlacePacket(Hand.MAIN_HAND, sequence = it)
-                        }
-                    }
-                } else {
-                    spoofHotbar(slot) {
-                        sendSequencedPacket(world) {
-                            placeInfo.toPlacePacket(Hand.MAIN_HAND, sequence = it)
-                        }
+
+                spoofHotbarWithSetting(Items.OBSIDIAN) {
+                    sendSequencedPacket(world) {
+                        placeInfo.toPlacePacket(Hand.MAIN_HAND, sequence = it)
                     }
                 }
+
                 connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
                 PlaceRender.renderBlocks[placeInfo.placedPos] = System.currentTimeMillis()
             }

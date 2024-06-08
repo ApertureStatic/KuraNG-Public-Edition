@@ -6,8 +6,8 @@ import dev.dyzjct.kura.manager.SphereCalculatorManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.getPredictedPos
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.scaledHealth
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.getPredictedPos
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.scaledHealth
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
 import dev.dyzjct.kura.utils.animations.sq

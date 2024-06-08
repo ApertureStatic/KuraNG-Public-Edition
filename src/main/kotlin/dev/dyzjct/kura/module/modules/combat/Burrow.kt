@@ -5,6 +5,7 @@ import base.system.util.interfaces.DisplayEnum
 import base.utils.block.BlockUtil.getNeighbor
 import base.utils.block.isLiquidBlock
 import base.utils.block.isWater
+import base.utils.entity.EntityUtils.isInWeb
 import base.utils.extension.fastPos
 import base.utils.extension.position
 import base.utils.extension.positionRotation
@@ -12,22 +13,23 @@ import base.utils.extension.sendSequencedPacket
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.toBlockPos
-import dev.dyzjct.kura.manager.DisablerManager.flagPacket
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import base.utils.math.toBox
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import net.minecraft.block.*
 import net.minecraft.entity.Entity
 import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket
+import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
+import net.minecraft.util.Hand
 import net.minecraft.util.math.*
 import java.util.*
 import java.util.function.Consumer
@@ -45,12 +47,11 @@ object Burrow : Module(
     private var rotate by bsetting("Rotate", true)
     private var fakeJumpMode = msetting("FakeJumpMode", FakeJumpMode.Strict)
     private var packetMode = msetting("PacketMode", PacketMode.Normal)
+    private var sneak by bsetting("Sneak", false)
     private var bypass by bsetting("Bypass", false)
     private var cancelMotion by bsetting("CancelMotion", false)
-    private var spoofBypass by bsetting("SpoofBypass", false)
     private var strictDirection by bsetting("StrictDirection", false)
     private var delay by isetting("Delay", 50, 0, 250)
-    private var disabler by bsetting("Disabler", false)
     private var timer = TimerUtils()
     private var ignore = false
 
@@ -71,24 +72,27 @@ object Burrow : Module(
                 return@onMotion
             }
 
+            if (isInWeb(player)) return@onMotion
+
+            if (!spoofHotbarNoAnyCheck(Items.OBSIDIAN, true) {}) return@onMotion
+
             if (cancelMotion) player.velocity.y = 0.0
+
+            breakCrystal()
 
             if (canPlace(player.blockPos.down())) {
                 val vec = player.pos.add(0.0, -1.0, 0.0)
-                if (rotate) RotationManager.addRotations(player.blockPos.down(), true)
-                RotationManager.stopRotation()
                 sendPlayerRotation(player.yaw, 90f, false)
-                RotationManager.startRotation()
+                if (rotate) RotationManager.addRotations(player.blockPos.down(), true)
                 doSneak()
-                placeBlock(player.blockPos.down(), slot)
-                place(vec.add(0.3, 0.3, 0.3), slot)
-                place(vec.add(-0.3, 0.3, -0.3), slot)
-                place(vec.add(-0.3, 0.3, 0.3), slot)
-                place(vec.add(0.3, 0.3, -0.3), slot)
+                placeBlock(player.blockPos.down())
+                place(vec.add(0.3, 0.3, 0.3))
+                place(vec.add(-0.3, 0.3, -0.3))
+                place(vec.add(-0.3, 0.3, 0.3))
+                place(vec.add(0.3, 0.3, -0.3))
                 cancelSneak()
             }
             val vec = player.pos
-            breakCrystal()
             if (player.onGround) {
                 when (fakeJumpMode.value) {
                     FakeJumpMode.Normal -> {
@@ -114,20 +118,16 @@ object Burrow : Module(
                     }
                 }
             }
-            if (rotate) RotationManager.addRotations(player.yaw, 90f, true)
-            RotationManager.stopRotation()
-            sendPlayerRotation(90f, 90f, false)
+
+            if (rotate) sendPlayerRotation(player.yaw, 90f, player.onGround)
             doSneak()
-            place(player.pos, slot)
-            place(vec.add(0.3, 0.3, 0.3), slot)
-            place(vec.add(-.3, 0.3, -0.3), slot)
-            place(vec.add(-0.3, 0.3, 0.3), slot)
-            place(vec.add(0.3, 0.3, -0.3), slot)
+            place(player.pos)
+            place(vec.add(0.3, 0.3, 0.3))
+            place(vec.add(-.3, 0.3, -0.3))
+            place(vec.add(-0.3, 0.3, 0.3))
+            place(vec.add(0.3, 0.3, -0.3))
             cancelSneak()
 
-            // stop move
-            // player.input.resetMove()
-            if (disabler) flagPacket(10000, vec.toBlockPos())
             when (packetMode.value) {
                 PacketMode.Normal -> {
                     val clip: Vec3i = getClip()
@@ -141,8 +141,11 @@ object Burrow : Module(
                 }
 
                 PacketMode.Strict -> {
-                    connection.sendPacket(positionRotation(sendPackets()))
+                    connection.sendPacket(positionRotation(1.266109260938214))
                     connection.sendPacket(positionRotation(3.000000458100))
+                    connection.sendPacket(positionRotation(-2.26158745548))
+                    connection.sendPacket(positionRotation(1.000000000000414))
+                    connection.sendPacket(positionRotation(-1.000000000000414))
                 }
 
                 PacketMode.NCP -> {
@@ -188,7 +191,7 @@ object Burrow : Module(
 
                 PacketMode.OFF -> {}
             }
-            RotationManager.startRotation()
+            timer.reset()
             disable()
         }
 
@@ -227,7 +230,7 @@ object Burrow : Module(
         timer.reset()
     }
 
-    private fun SafeClientEvent.place(vec3d: Vec3d, slot: HotbarSlot) {
+    private fun SafeClientEvent.place(vec3d: Vec3d) {
         if (getNeighbor(
                 vec3d.toBlockPos(), strictDirection
             ) == null
@@ -236,7 +239,9 @@ object Burrow : Module(
         }
         val pos = vec3d.toBlockPos()
 
-        placeBlock(pos.down(), slot)
+        if (rotate) RotationManager.addRotations(player.yaw, 90f, true)
+
+        placeBlock(pos.down())
         if (!canPlace(pos)) {
             return
         }
@@ -244,28 +249,20 @@ object Burrow : Module(
         if (rotate) {
             RotationManager.addRotations(player.yaw, 90.0f, true)
         }
-        if (spoofBypass) {
-            spoofHotbarBypass(slot) {
-                sendSequencedPacket(world) {
-                    fastPos(pos, strictDirection, sequence = it)
-                }
-            }
-        } else {
-            spoofHotbar(slot) {
-                sendSequencedPacket(world) {
-                    fastPos(pos, strictDirection, sequence = it)
-                }
+        spoofHotbarNoAnyCheck(Items.OBSIDIAN) {
+            sendSequencedPacket(world) {
+                fastPos(pos, strictDirection, sequence = it)
             }
         }
         swing()
     }
 
-    private fun SafeClientEvent.placeBlock(pos: BlockPos, slot: HotbarSlot) {
+    private fun SafeClientEvent.placeBlock(pos: BlockPos) {
         if (!canPlace(pos)) return
         if (rotate) {
             RotationManager.addRotations(player.yaw, 90.0f, true)
         }
-        spoofHotbar(slot) {
+        spoofHotbarNoAnyCheck(Items.OBSIDIAN) {
             sendSequencedPacket(world) {
                 fastPos(pos, strictDirection, sequence = it)
             }
@@ -290,13 +287,13 @@ object Burrow : Module(
             ) || it.boundingBox.intersects(Box(player.pos.add(0.3, 0.0, -0.3).toBlockPos())))
         }) {
             if (entity is EndCrystalEntity) {
-                RotationManager.addRotations(entity.blockPos, true)
+                RotationManager.addRotations(entity.blockPos)
                 connection.sendPacket(
                     PlayerInteractEntityC2SPacket.attack(
                         world.getEntityById(entity.id), player.isSneaking
                     )
                 )
-                swing()
+                connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
             }
         }
     }
@@ -546,12 +543,7 @@ object Burrow : Module(
                 return 2.2 + i - 4.0
             }
         }
-        for (i in 6..7) {
-            if (solid(playerPos(player).multiply(i))) {
-                return 3.1 + i - 6.0
-            }
-        }
-        return 8.0
+        return 10.0
     }
 
     private fun SafeClientEvent.solid(blockPos: BlockPos?): Boolean {
@@ -584,12 +576,14 @@ object Burrow : Module(
     }
 
     private fun SafeClientEvent.doSneak() {
-        connection.sendPacket(
-            ClientCommandC2SPacket(
-                player,
-                ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY
+        if (sneak) {
+            connection.sendPacket(
+                ClientCommandC2SPacket(
+                    player,
+                    ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY
+                )
             )
-        )
+        }
     }
 
     private fun getFlooredPosition(entity: Entity): BlockPos {
@@ -619,6 +613,21 @@ object Burrow : Module(
         )
     }
 
+    private fun SafeClientEvent.headCheck(): Boolean {
+        return (!world.isAir(
+            player.pos.add(-0.3, 2.0, 0.3).toBlockPos()
+        ) && player.boundingBox.intersects(player.pos.add(-0.3, 0.0, 0.3).toBlockPos().toBox())) ||
+                (!world.isAir(
+                    player.pos.add(0.3, 2.0, -0.3).toBlockPos()
+                ) && player.boundingBox.intersects(player.pos.add(0.3, 0.0, -0.3).toBlockPos().toBox())) ||
+                (!world.isAir(
+                    player.pos.add(-0.3, 2.0, 0.3).toBlockPos()
+                ) && player.boundingBox.intersects(player.pos.add(-0.3, 0.0, 0.3).toBlockPos().toBox())) ||
+                (!world.isAir(
+                    player.pos.add(-0.3, 2.0, -0.3).toBlockPos()
+                ) && player.boundingBox.intersects(player.pos.add(-0.3, 0.0, -0.3).toBlockPos().toBox())) ||
+                (!world.isAir(player.blockPos.up(2)) && player.boundingBox.intersects(player.blockPos.toBox()))
+    }
 
     private enum class PacketMode(override val displayName: CharSequence) : DisplayEnum {
         Normal("Normal"),

@@ -14,7 +14,6 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
 import base.utils.math.vector.Vec3f
-import dev.dyzjct.kura.module.modules.crystal2.PlaceInfo
 
 open class PlaceInfo(
     open val target: LivingEntity,
@@ -73,7 +72,7 @@ open class PlaceInfo(
             update(player, BlockPos.ORIGIN, Double.MAX_VALUE, AutoCrystal.forcePlaceDmg.value)
         }
 
-        fun takeValid(): dev.dyzjct.kura.module.modules.crystal.PlaceInfo.Mutable? {
+        fun takeValid(): Mutable? {
             return this.takeIf {
                 target != Wrapper.player
                         && selfDamage != Float.MAX_VALUE

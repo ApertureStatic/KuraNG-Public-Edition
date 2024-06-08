@@ -26,7 +26,6 @@ object UiSetting : Module(
 ) {
     @JvmStatic
     val disableSearch by bsetting("DisableSearch", false)
-    val particleRender by bsetting("ParticleRender", true)
 
     //    Theme type
     val theme by msetting("Theme", Theme.Ayachinene)
@@ -81,7 +80,6 @@ object UiSetting : Module(
                 return ThemesSetting(
                     Color(76, 179, 208, 250),
                     Color(76, 179, 208, 120),
-                    rect = true,
                     Color(76, 179, 208, 200),
                     fillPanelTitle = true,
                     panelBorder = true,
@@ -90,8 +88,7 @@ object UiSetting : Module(
                     sytColor = Color(183, 245, 255, 55),
                     particle = true,
                     pRainbow = false,
-                    pColor = Color(116, 245, 255, 100),
-                    rounded = true
+                    pColor = Color(116, 245, 255, 100)
                 )
             }
 
@@ -100,7 +97,6 @@ object UiSetting : Module(
                 return ThemesSetting(
                     Color(144, 204, 236, 250),
                     Color(213, 236, 252, 140),
-                    rect = true,
                     Color(91, 128, 185, 200),
                     fillPanelTitle = true,
                     panelBorder = false,
@@ -109,8 +105,7 @@ object UiSetting : Module(
                     sytColor = sytColor,
                     particle = particle,
                     pRainbow = particleRainbow,
-                    pColor = particleColor,
-                    rounded = true
+                    pColor = particleColor
                 )
             }
 
@@ -119,7 +114,6 @@ object UiSetting : Module(
                 return ThemesSetting(
                     Color(245, 176, 166, 250),
                     Color(253, 235, 241, 200),
-                    rect = true,
                     Color(241, 219, 206, 200),
                     fillPanelTitle = true,
                     panelBorder = false,
@@ -128,8 +122,7 @@ object UiSetting : Module(
                     sytColor = sytColor,
                     particle = particle,
                     pRainbow = particleRainbow,
-                    pColor = particleColor,
-                    rounded = true
+                    pColor = particleColor
                 )
             }
 
@@ -138,7 +131,6 @@ object UiSetting : Module(
                 return ThemesSetting(
                     Color(117, 106, 171, 250),
                     Color(89, 77, 89, 200),
-                    rect = true,
                     Color(48, 39, 42, 200),
                     fillPanelTitle = true,
                     panelBorder = true,
@@ -147,8 +139,7 @@ object UiSetting : Module(
                     sytColor = sytColor,
                     particle = particle,
                     pRainbow = particleRainbow,
-                    pColor = particleColor,
-                    rounded = true
+                    pColor = particleColor
                 )
             }
 
@@ -157,7 +148,6 @@ object UiSetting : Module(
                 return ThemesSetting(
                     Color(223, 194, 152, 250),
                     Color(254, 220, 189, 200),
-                    rect = true,
                     Color(218, 165, 32, 200),
                     fillPanelTitle = true,
                     panelBorder = true,
@@ -166,8 +156,7 @@ object UiSetting : Module(
                     sytColor = sytColor,
                     particle = particle,
                     pRainbow = particleRainbow,
-                    pColor = particleColor,
-                    rounded = true
+                    pColor = particleColor
                 )
             }
 
@@ -176,7 +165,6 @@ object UiSetting : Module(
                 return ThemesSetting(
                     Color(0, 128, 240, 250),
                     Color(51, 153, 189, 200),
-                    rect = true,
                     Color(204, 255, 255, 200),
                     fillPanelTitle = true,
                     panelBorder = true,
@@ -185,8 +173,7 @@ object UiSetting : Module(
                     sytColor = sytColor,
                     particle = particle,
                     pRainbow = particleRainbow,
-                    pColor = particleColor,
-                    rounded = true
+                    pColor = particleColor
                 )
             }
 
@@ -195,7 +182,6 @@ object UiSetting : Module(
                 return ThemesSetting(
                     Color(109, 68, 55, 250),
                     Color(124, 75, 71, 200),
-                    rect = true,
                     Color(255, 255, 255, 150),
                     fillPanelTitle = true,
                     panelBorder = true,
@@ -204,8 +190,7 @@ object UiSetting : Module(
                     sytColor = sytColor,
                     particle = particle,
                     pRainbow = particleRainbow,
-                    pColor = particleColor,
-                    rounded = true
+                    pColor = particleColor
                 )
             }
 
@@ -214,7 +199,6 @@ object UiSetting : Module(
                 return ThemesSetting(
                     Color(228, 142, 151, 250),
                     Color(187, 209, 248, 200),
-                    rect = true,
                     Color(222, 126, 234, 150),
                     fillPanelTitle = true,
                     panelBorder = true,
@@ -223,8 +207,7 @@ object UiSetting : Module(
                     sytColor = sytColor,
                     particle = particle,
                     pRainbow = particleRainbow,
-                    pColor = particleColor,
-                    rounded = true
+                    pColor = particleColor
                 )
             }
 
@@ -233,7 +216,6 @@ object UiSetting : Module(
                 return ThemesSetting(
                     Color(64, 68, 93, 250),
                     Color(165, 157, 178, 200),
-                    rect = true,
                     Color(255, 255, 255, 200),
                     fillPanelTitle = true,
                     panelBorder = true,
@@ -242,8 +224,7 @@ object UiSetting : Module(
                     sytColor = sytColor,
                     particle = particle,
                     pRainbow = particleRainbow,
-                    pColor = particleColor,
-                    rounded = true
+                    pColor = particleColor
                 )
             }
 
@@ -252,7 +233,6 @@ object UiSetting : Module(
                 return ThemesSetting(
                     primaryColor,
                     secondaryColor,
-                    rect = true,
                     settingPanelColor,
                     fillPanelTitle,
                     panelBorder,
@@ -261,8 +241,7 @@ object UiSetting : Module(
                     sytColor,
                     particle,
                     particleRainbow,
-                    particleColor,
-                    rounded = true
+                    particleColor
                 )
             }
         }
@@ -293,7 +272,6 @@ object UiSetting : Module(
     data class ThemesSetting(
         val primary: Color,
         val secondary: Color,
-        val rect: Boolean,
         val setting: Color,
         val fillPanelTitle: Boolean,
         val panelBorder: Boolean,
@@ -302,8 +280,7 @@ object UiSetting : Module(
         val sytColor: Color,
         val particle: Boolean,
         val pRainbow: Boolean,
-        val pColor: Color,
-        val rounded: Boolean
+        val pColor: Color
     )
 
     enum class Theme {

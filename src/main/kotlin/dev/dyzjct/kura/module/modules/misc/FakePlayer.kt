@@ -27,7 +27,7 @@ object FakePlayer : Module(
         runSafe {
             fakePlayer = OtherClientPlayerEntity(
                 world,
-                GameProfile(UUID.fromString("5778d3c8-3739-472b-852c-268cf22dce4f"), fpName)
+                GameProfile(UUID.fromString("60569353-f22b-42da-b84b-d706a65c5ddf"), fpName)
             )
             fakePlayer?.let { fakePlayer ->
                 fakePlayer.copyPositionAndRotation(player)

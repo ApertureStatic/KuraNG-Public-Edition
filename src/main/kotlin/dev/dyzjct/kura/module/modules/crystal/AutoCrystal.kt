@@ -53,15 +53,13 @@ import dev.dyzjct.kura.module.modules.client.UiSetting.theme
 import dev.dyzjct.kura.module.modules.combat.AnchorAura
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.isResistant
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.calcCollidingCrystalDamage
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.canMove
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.checkBreakRange
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.isReplaceable
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.realSpeed
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.scaledHealth
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.totalHealth
-import dev.dyzjct.kura.module.modules.crystal2.CrystalFadeRender
-import dev.dyzjct.kura.module.modules.crystal2.PlaceInfo
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.calcCollidingCrystalDamage
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.canMove
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.checkBreakRange
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.isReplaceable
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.realSpeed
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.scaledHealth
+import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.totalHealth
 import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
@@ -144,7 +142,6 @@ object AutoCrystal : Module(
 
     //Page Calculation
     private var debug = bsetting("Debug", false).enumIs(p, Page.CALCULATION)
-    private var enemyRange = isetting("EnemyRange", 8, 1, 10).enumIs(p, Page.CALCULATION)
     private var noSuicide = fsetting("NoSuicide", 2f, 0f, 20f).enumIs(p, Page.CALCULATION)
     var ownPredictTicks = isetting("OwnPredictTicks", 2, 0, 20).enumIs(p, Page.CALCULATION)
 
@@ -170,9 +167,10 @@ object AutoCrystal : Module(
     private var fadeRender = bsetting("FadeRender", false).enumIs(p, Page.RENDER)
     private var fadeAlpha = isetting("FadeAlpha", 80, 0, 255, 1).isTrue(fadeRender).enumIs(p, Page.RENDER)
     private var fillColor =
-        csetting("FillColor", Color(20, 225, 219, 50)).enumIs(p, Page.RENDER).enumIs(theme, UiSetting.Theme.Custom)
+        csetting("FillColor", Color(20, 225, 219, 50)).enumIs(p, Page.RENDER).isTrue { theme == UiSetting.Theme.Custom }
     private var outlineColor =
-        csetting("LineColor", Color(20, 225, 219, 200)).enumIs(p, Page.RENDER).enumIs(theme, UiSetting.Theme.Custom)
+        csetting("LineColor", Color(20, 225, 219, 200)).enumIs(p, Page.RENDER)
+            .isTrue { theme == UiSetting.Theme.Custom }
     private val movingLength = isetting("MovingLength", 400, 0, 1000).enumIs(p, Page.RENDER)
     private val fadeLength = isetting("FadeLength", 200, 0, 1000).enumIs(p, Page.RENDER)
     private var offsetFacing = arrayOf(Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST)
@@ -315,7 +313,7 @@ object AutoCrystal : Module(
         }
 
         safeEventListener<WorldEvent.ClientBlockUpdate>(114514) {
-            if (player.distanceSqToCenter(it.pos) < (CombatSystem.placeRange.ceilToInt() + 1).sq && isResistant(it.oldState) != isResistant(
+            if (player.distanceSqToCenter(it.pos) < (CombatSystem.placeRange.sq.ceilToInt() + 1).sq && isResistant(it.oldState) != isResistant(
                     it.newState
                 )
             ) {
@@ -697,7 +695,7 @@ object AutoCrystal : Module(
 
     private val SafeClientEvent.targetList: Sequence<TargetInfo>
         get() {
-            val rangeSq = enemyRange.value.sq
+            val rangeSq = CombatSystem.targetRange.sq
             val list = ObjectArrayList<TargetInfo>().synchronized()
             val eyePos = CrystalManager.eyePosition
 
@@ -1065,7 +1063,7 @@ object AutoCrystal : Module(
                 val crystalZ = it.z + 0.5
                 player.distanceSqTo(
                     crystalX, crystalY, crystalZ
-                ) <= CombatSystem.placeRange.sq && (!old.value || player.distanceSqTo(it.toCenterPos()) <= wallRange.value || canSee(
+                ) <= CombatSystem.placeRange.sq && (!old.value || player.distanceSqTo(it.toCenterPos()) <= wallRange.value.sq || canSee(
                     it.x.toDouble(), it.y.toDouble(), it.z.toDouble()
                 ))
             }.filter { canPlaceCrystal(it, prio, old.value) }.collect(Collectors.toList())
