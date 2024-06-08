@@ -1,5 +1,38 @@
-package dev.dyzjct.kura.module.modules.crystal
+package dev.dyzjct.kura.module.modules.crystal2
 
+import dev.dyzjct.kura.manager.*
+import dev.dyzjct.kura.manager.FriendManager.isFriend
+import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import dev.dyzjct.kura.manager.HotbarManager.spoofInvBypass
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.crystal2.CrystalDamageCalculator.calcDamage
+import dev.dyzjct.kura.module.modules.crystal2.CrystalDamageCalculator.isResistant
+import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.calcCollidingCrystalDamage
+import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.canMove
+import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.checkBreakRange
+import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.getCrystalSlot
+import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.getMaxCrystalSlot
+import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.isReplaceable
+import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.realSpeed
+import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.scaledHealth
+import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.totalHealth
+import dev.dyzjct.kura.module.modules.player.PacketMine
+import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.animations.Easing
+import dev.dyzjct.kura.utils.animations.sq
+import dev.dyzjct.kura.utils.extension.ceilToInt
+import dev.dyzjct.kura.utils.extension.synchronized
+import dev.dyzjct.kura.utils.extension.toDegree
+import dev.dyzjct.kura.utils.inventory.HotbarSlot
+import dev.dyzjct.kura.utils.math.RotationUtils
+import dev.dyzjct.kura.utils.math.RotationUtils.normalizeAngle
+import it.unimi.dsi.fastutil.ints.Int2LongMaps
+import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap
+import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import base.events.RunGameLoopEvent
 import base.events.TickEvent
 import base.events.WorldEvent
@@ -13,6 +46,8 @@ import base.system.render.graphic.Render2DEngine
 import base.system.render.graphic.Render3DEngine
 import base.system.util.color.ColorRGB
 import base.system.util.delegate.CachedValueN
+import base.system.util.interfaces.DisplayEnum
+import base.utils.block.BlockUtil.canBreak
 import base.utils.block.BlockUtil.canSee
 import base.utils.chat.ChatUtil
 import base.utils.combat.CrystalUtils
@@ -24,59 +59,15 @@ import base.utils.concurrent.threads.runSynchronized
 import base.utils.entity.EntityUtils.eyePosition
 import base.utils.entity.EntityUtils.isntValid
 import base.utils.extension.fastPos
-import base.utils.extension.minePacket
 import base.utils.extension.sendSequencedPacket
 import base.utils.graphics.ESPRenderer
-import base.utils.inventory.slot.firstBlock
-import base.utils.inventory.slot.hotbarSlots
+import base.utils.inventory.slot.*
 import base.utils.item.attackDamage
 import base.utils.item.duraPercentage
-import base.utils.math.distanceSq
-import base.utils.math.distanceSqTo
-import base.utils.math.distanceSqToCenter
-import base.utils.math.toVec3dCenter
+import base.utils.math.*
 import base.utils.math.vector.Vec2f
 import base.utils.world.getMiningSide
 import base.utils.world.noCollision
-import dev.dyzjct.kura.manager.*
-import dev.dyzjct.kura.manager.FriendManager.isFriend
-import dev.dyzjct.kura.manager.HotbarManager.doSwap
-import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.hud.TargetHUD
-import dev.dyzjct.kura.module.modules.client.CombatSystem
-import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
-import dev.dyzjct.kura.module.modules.client.UiSetting
-import dev.dyzjct.kura.module.modules.client.UiSetting.theme
-import dev.dyzjct.kura.module.modules.combat.AnchorAura
-import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
-import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.isResistant
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.calcCollidingCrystalDamage
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.canMove
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.checkBreakRange
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.isReplaceable
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.realSpeed
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.scaledHealth
-import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.totalHealth
-import dev.dyzjct.kura.module.modules.crystal2.CrystalFadeRender
-import dev.dyzjct.kura.module.modules.crystal2.PlaceInfo
-import dev.dyzjct.kura.module.modules.player.PacketMine
-import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.animations.Easing
-import dev.dyzjct.kura.utils.animations.sq
-import dev.dyzjct.kura.utils.extension.ceilToInt
-import dev.dyzjct.kura.utils.extension.synchronized
-import dev.dyzjct.kura.utils.extension.toDegree
-import dev.dyzjct.kura.utils.inventory.HotbarSlot
-import dev.dyzjct.kura.utils.inventory.InventoryUtil.findItemInInventory
-import dev.dyzjct.kura.utils.math.RotationUtils
-import dev.dyzjct.kura.utils.math.RotationUtils.normalizeAngle
-import it.unimi.dsi.fastutil.ints.Int2LongMaps
-import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap
-import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import net.minecraft.block.Blocks
 import net.minecraft.block.FireBlock
 import net.minecraft.client.network.ClientPlayerEntity
@@ -86,10 +77,11 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.ItemStack
+import net.minecraft.item.EnchantedGoldenAppleItem
 import net.minecraft.item.Items
 import net.minecraft.item.SwordItem
 import net.minecraft.item.ToolItem
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket
@@ -107,19 +99,26 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.stream.Collectors
 import kotlin.math.*
 
-object AutoCrystal : Module(
-    name = "AutoCrystal", langName = "自动水晶", category = Category.COMBAT, description = "Help u play crystal pvp."
+/**
+ * Created by zenhao on 18/12/2022.
+ * Updated by zenhao on 22/07/2023.
+ */
+object AutoCrystal2 : Module(
+    name = "AutoCrystal2", langName = "自动水晶", category = Category.COMBAT, description = "Auto using crystals for pvp."
 ) {
     private var p = msetting("Page", Page.GENERAL)
 
     //Page GENERAL
     var damageMode = msetting("DamageMode", DamageMode.PPBP).enumIs(p, Page.GENERAL)
+    private var switchMode0 = msetting("Switch", Switch.SpoofBypass).enumIs(p, Page.GENERAL)
+    private var switchMode = (switchMode0.value as Switch)
+    private var antiWeakness = msetting("AntiWeakness", AntiWeaknessMode.Spoof).enumIs(p, Page.GENERAL)
+    private var swingMode = msetting("Swing", SwingMode.Off).enumIs(p, Page.GENERAL)
     private var strictDirection = bsetting("StrictDirection", false).enumIs(p, Page.GENERAL)
-    private var antiWeak = bsetting("AntiWeakness", true).enumIs(p, Page.GENERAL)
-    private var ghostHand = bsetting("GhostHand", true).enumIs(p, Page.GENERAL)
     private var rotate = bsetting("Rotate", false).enumIs(p, Page.GENERAL)
     private var yawSpeed = fsetting("YawSpeed", 30.0f, 5.0f, 180f, 1f).isTrue(rotate).enumIs(p, Page.GENERAL)
-    private var rotateDiff = fsetting("RotationDiff", 1f, 0f, 2f).isTrue(rotate).enumIs(p, Page.GENERAL)
+    private var rotateDiff = isetting("RotationDiff", 2, 0, 180).isTrue(rotate).enumIs(p, Page.GENERAL)
+    private var eatingPause = bsetting("EatingPause", false).enumIs(p, Page.GENERAL)
     private var old = bsetting("OldPlace", false).enumIs(p, Page.GENERAL)
     private var wallRange = dsetting("WallRange", 3.0, 0.0, 6.0).isTrue(old).enumIs(p, Page.GENERAL)
 
@@ -128,21 +127,29 @@ object AutoCrystal : Module(
     private var packetPlace0 = (packetPlaceMode.value as PacketPlaceMode)
     private var placeSwing = bsetting("PlaceSwing", false).enumIs(p, Page.PLACE)
     private var placeDelay = isetting("PlaceDelay", 45, 1, 1000).enumIs(p, Page.PLACE)
+    var placeRange = dsetting("PlaceRange", 5.5, 1.0, 6.0).enumIs(p, Page.PLACE)
     private var placeMinDmg = dsetting("PlaceMinDmg", 4.0, 0.0, 36.0).enumIs(p, Page.PLACE)
     private var placeMaxSelf = isetting("PlaceMaxSelfDmg", 10, 0, 36).enumIs(p, Page.PLACE)
     private var placeBalance = fsetting("PlaceBalance", -3f, -10f, 10f).enumIs(p, Page.PLACE)
 
     //Page Break
     private var explodeMode = msetting("ExplodeMode", ExplodeMode.Normal).enumIs(p, Page.BREAK)
+    private var packetSync by bsetting(
+        "PacketSync", false
+    ).isTrue { explodeMode.value == ExplodeMode.Sync || explodeMode.value == ExplodeMode.Both }.enumIs(p, Page.BREAK)
     private var packetDelay by isetting(
         "PacketDelay", 35, 0, 50, 1
     ).isTrue { explodeMode.value == ExplodeMode.Sync || explodeMode.value == ExplodeMode.Both }.enumIs(p, Page.BREAK)
     private var hitDelay = isetting("HitDelay", 55, 0, 500, 1).enumIs(p, Page.BREAK)
+    private var breakRange = fsetting("BreakRange", 5.5f, 1f, 6f).enumIs(p, Page.BREAK)
     private var breakMinDmg = dsetting("BreakMinDmg", 1.0, 0.0, 36.0).enumIs(p, Page.BREAK)
     private var breakMaxSelf = isetting("BreakMaxSelf", 12, 0, 36).enumIs(p, Page.BREAK)
     private val breakBalance = fsetting("BreakBalance", -7.0f, -10.0f, 10.0f).enumIs(p, Page.BREAK)
 
     //Page Calculation
+    private var maxTargets = isetting("MaxTarget", 3, 1, 8).enumIs(p, Page.CALCULATION)
+    private var motionPredict = bsetting("MotionPredict", true).enumIs(p, Page.CALCULATION)
+    private var predictTicks = isetting("PredictTicks", 12, 1, 20).isTrue(motionPredict).enumIs(p, Page.CALCULATION)
     private var debug = bsetting("Debug", false).enumIs(p, Page.CALCULATION)
     private var enemyRange = isetting("EnemyRange", 8, 1, 10).enumIs(p, Page.CALCULATION)
     private var noSuicide = fsetting("NoSuicide", 2f, 0f, 20f).enumIs(p, Page.CALCULATION)
@@ -162,6 +169,7 @@ object AutoCrystal : Module(
     private val ddosDamageStep = fsetting("DdosDamageStep", 0.1f, 0.1f, 5.0f).isTrue(armorDdos).enumIs(p, Page.FORCE)
 
     //Page Lethal
+    private var antiSurround = bsetting("AntiSurround", false).enumIs(p, Page.LETHAL)
     private var blockBoost = bsetting("BlockBoost", false).enumIs(p, Page.LETHAL)
 
     //Page Render
@@ -169,10 +177,8 @@ object AutoCrystal : Module(
     private var motionRender = bsetting("MotionRender", true).enumIs(p, Page.RENDER)
     private var fadeRender = bsetting("FadeRender", false).enumIs(p, Page.RENDER)
     private var fadeAlpha = isetting("FadeAlpha", 80, 0, 255, 1).isTrue(fadeRender).enumIs(p, Page.RENDER)
-    private var fillColor =
-        csetting("FillColor", Color(20, 225, 219, 50)).enumIs(p, Page.RENDER).enumIs(theme, UiSetting.Theme.Custom)
-    private var outlineColor =
-        csetting("LineColor", Color(20, 225, 219, 200)).enumIs(p, Page.RENDER).enumIs(theme, UiSetting.Theme.Custom)
+    private var fillColor = csetting("FillColor", Color(20, 225, 219, 50)).enumIs(p, Page.RENDER)
+    private var outlineColor = csetting("LineColor", Color(20, 225, 219, 200)).enumIs(p, Page.RENDER)
     private val movingLength = isetting("MovingLength", 400, 0, 1000).enumIs(p, Page.RENDER)
     private val fadeLength = isetting("FadeLength", 200, 0, 1000).enumIs(p, Page.RENDER)
     private var offsetFacing = arrayOf(Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST)
@@ -191,9 +197,10 @@ object AutoCrystal : Module(
     private var fpTimer = TimerUtils()
 
     private var crystalInteracting: EndCrystalEntity? = null
+    private var weaponSlot: HotbarSlot? = null
     private var obiSlot: HotbarSlot? = null
+    private var cSlot: HotbarSlot? = null
     private var render: BlockPos? = null
-    private var lastAnchorAuraState = false
     private var isFacePlacing = false
     private var bypassPacket = false
     private var ddosArmor = false
@@ -205,6 +212,7 @@ object AutoCrystal : Module(
     var crystalPriority = Priority.Crystal
     var placeInfo: PlaceInfo? = null
 
+    //RenderNew
     private var lastBlockPos: BlockPos? = null
     private var lastRenderPos: Vec3d? = null
     private var prevPos: Vec3d? = null
@@ -218,19 +226,6 @@ object AutoCrystal : Module(
         runSafe {
             getRawPosList()
         } ?: emptyList()
-    }
-
-    fun render() {
-        when (theme) {
-            UiSetting.Theme.Custom -> {
-            }
-
-            else -> {
-                fillColor.value = TargetHUD.getTargetColor().color1
-                fillColor.value = TargetHUD.getTargetColor().color2
-            }
-        }
-
     }
 
     init {
@@ -247,6 +242,14 @@ object AutoCrystal : Module(
                         }
                     }
                 }
+
+                is PlayerActionC2SPacket -> {
+                    val action = event.packet.action
+                    if (action == PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK || action == PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) {
+                        doAntiSurround(event.packet.pos)
+                    }
+                }
+
             }
         }
 
@@ -283,15 +286,25 @@ object AutoCrystal : Module(
         }
 
         safeConcurrentListener<RunGameLoopEvent.Tick> {
+            if (returnNeeded()) return@safeConcurrentListener
             rawPosList.updateForce()
             placeInfo = calcPlaceInfo()
             crystalList = CopyOnWriteArrayList(getCrystalList())
         }
 
         safeConcurrentListener<PlayerMotionEvent> {
+            if (returnNeeded()) return@safeConcurrentListener
             updateFade(render)
             packetPlace0 = (packetPlaceMode.value as PacketPlaceMode)
+            switchMode = (switchMode0.value as Switch)
+            weaponSlot = getWeaponSlot()
+            cSlot = if (switchMode.onPickSilent) player.allSlots.firstItem(Items.END_CRYSTAL)?.let { HotbarSlot(it) }
+            else player.hotbarSlots.firstItem(Items.END_CRYSTAL)
             obiSlot = player.hotbarSlots.firstBlock(Blocks.OBSIDIAN)
+            if (packetBypassTimer.tickAndReset(packetDelay * (20f / TpsCalculator.tickRate)) && packetSync) {
+                bypassPacket = true
+                if (debug.value) ChatUtil.sendMessage("BypassPacket Synced")
+            }
             if (timeoutTimer.tickAndReset(5L)) {
                 updateTimeouts()
             }
@@ -302,7 +315,9 @@ object AutoCrystal : Module(
                         ) !in 450L..500L)
                     ) {
                         doRotate()
-                        doBreak()
+                        if (explodeMode.value == ExplodeMode.Normal || explodeMode.value == ExplodeMode.Both) {
+                            doBreak()
+                        }
                         doPlace()
                     }
                 }
@@ -310,12 +325,27 @@ object AutoCrystal : Module(
         }
 
         safeParallelListener<TickEvent.Pre> {
+            if (returnNeeded()) return@safeParallelListener
             updateDdosQueue()
             blockBoost()
+            for (target in EntityManager.players) {
+                if (isntValid(target, placeRange.value, old.value, wallRange.value)) continue
+                if (PacketMine.isEnabled) {
+                    PacketMine.blockData?.let {
+                        val holeInfo = HoleManager.getHoleInfo(target)
+                        if ((holeInfo.isHole && holeInfo.surroundPos.contains(it.blockPos)) || (canBreak(
+                                target.blockPos, false
+                            ) && it.blockPos == target.blockPos)
+                        ) {
+                            doAntiSurround(it.blockPos)
+                        }
+                    }
+                }
+            }
         }
 
         safeEventListener<WorldEvent.ClientBlockUpdate>(114514) {
-            if (player.distanceSqToCenter(it.pos) < (CombatSystem.placeRange.ceilToInt() + 1).sq && isResistant(it.oldState) != isResistant(
+            if (player.distanceSqToCenter(it.pos) < (placeRange.value.ceilToInt() + 1).sq && isResistant(it.oldState) != isResistant(
                     it.newState
                 )
             ) {
@@ -337,13 +367,13 @@ object AutoCrystal : Module(
                 }
             }
             if (explodeMode.value == ExplodeMode.Sync || explodeMode.value == ExplodeMode.Both) {
-                if ((packetExplodeTimer.tickAndReset(packetDelay))) {
+                if ((packetExplodeTimer.tickAndReset(packetDelay) && !packetSync) || (packetSync && bypassPacket)) {
                     placeInfo?.let {
                         if (crystalPlaceBoxIntersectsCrystalBox(
                                 it.blockPos, event.entity.x, event.entity.y, event.entity.z
                             ) || checkBreakDamage(event.entity.x, event.entity.y, event.entity.z, BlockPos.Mutable())
                         ) {
-                            breakDirect(event.entity.x, event.entity.y, event.entity.z, event.entity)
+                            breakDirect(event.entity.x, event.entity.y, event.entity.z, event.entity, false)
                             if (debug.value) {
                                 ChatUtil.sendMessage("PacketExplode")
                             }
@@ -352,6 +382,14 @@ object AutoCrystal : Module(
                 }
             }
         }
+    }
+
+    private fun SafeClientEvent.returnNeeded(): Boolean {
+        return if (eatingPause.value && player.isUsingItem) {
+            placeInfo = null
+            crystalList.clear()
+            true
+        } else false
     }
 
     private fun SafeClientEvent.doRotate(tempState: CurrentState? = null, tempPos: BlockPos? = null) {
@@ -410,11 +448,48 @@ object AutoCrystal : Module(
         return Vec2f(yaw, pitch)
     }
 
+    private fun SafeClientEvent.doAntiSurround(pos: BlockPos?) {
+        if (antiSurround.value) {
+            if (EntityManager.players.isEmpty()) return
+            if (pos == null) return
+            for (target in EntityManager.players) {
+                if (isntValid(target, placeRange.value, old.value, wallRange.value)) continue
+                if (target.pos.y != pos.y.toDouble()) continue
+                val burrowPos = target.blockPos
+                val holeInfo = HoleManager.getHoleInfo(target)
+                val finalPos = if (canBreak(burrowPos, false)) {
+                    burrowPos
+                } else {
+                    pos
+                }
+                val isBurrowPos = finalPos == burrowPos
+                for (facing in offsetFacing) {
+                    if (!holeInfo.isHole && !isBurrowPos) continue
+                    val placePos = finalPos.offset(facing)
+                    if (!getAntiSurroundPos(placePos)) continue
+                    if (!world.noCollision(placePos)) continue
+                    if (debug.value) {
+                        ChatUtil.sendMessage("AntiSurrounding")
+                    }
+                    doPlace(placePos.down()) {
+                        doRotate(CurrentState.Placing, placePos.down())
+                    }
+                    render = placePos.down()
+                    break
+                }
+            }
+        }
+    }
+
+    private fun SafeClientEvent.getAntiSurroundPos(posOffset: BlockPos): Boolean {
+        return world.isAir(posOffset) && canPlaceCrystal(posOffset.down(), oldPlace = old.value)
+    }
+
     private fun SafeClientEvent.blockBoost() {
         if (blockBoost.value) {
             if (EntityManager.players.isEmpty()) return
             for (target in EntityManager.players) {
-                if (isntValid(target, CombatSystem.placeRange, old.value, wallRange.value)) continue
+                if (isntValid(target, placeRange.value, old.value, wallRange.value)) continue
                 val calcOffset = target.blockPos
 
                 for (facing in offsetFacing) {
@@ -468,14 +543,27 @@ object AutoCrystal : Module(
                                 if (world.isAir(pos)) {
                                     crystalPriority = prio
                                     if (!world.noCollision(pos)) continue
-                                    doRotate(CurrentState.Blocking, pos)
-                                    spoofHotbarWithSetting(Items.OBSIDIAN) {
-                                        sendSequencedPacket(world) { sequence ->
-                                            fastPos(pos, strictDirection.value, sequence = sequence)
-                                        }
-                                    }
+                                    obiSlot?.let {
+                                        doRotate(CurrentState.Blocking, pos)
+                                        when (switchMode0.value) {
+                                            Switch.SpoofBypass -> {
+                                                spoofHotbarBypass(it) {
+                                                    sendSequencedPacket(world) { sequence ->
+                                                        fastPos(pos, strictDirection.value, sequence = sequence)
+                                                    }
+                                                }
+                                            }
 
-                                    render = pos
+                                            else -> {
+                                                spoofHotbar(it) {
+                                                    sendSequencedPacket(world) { sequence ->
+                                                        fastPos(pos, strictDirection.value, sequence = sequence)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        render = pos
+                                    }
                                     crystalPriority = Priority.Crystal
                                     blockBoostList.clear()
                                     if (debug.value) {
@@ -549,23 +637,36 @@ object AutoCrystal : Module(
                     if (player.offHandStack.item == Items.END_CRYSTAL) {
                         sendPacket()
                     } else {
-                        if (!ghostHand.value) {
-                            if (player.mainHandStack.item == Items.END_CRYSTAL) {
-                                sendPacket()
-                            } else if (CombatSystem.autoSwitch) {
-                                findItemInInventory(Items.END_CRYSTAL)?.let { slot ->
-                                    doSwap(slot)
-                                }
+                        if (switchMode.onSwitch) {
+                            val slot = player.getCrystalSlot() ?: return@onMainThread
+                            if (player.mainHandStack.item is EnchantedGoldenAppleItem && player.usingItem && player.offHandStack.item != Items.END_CRYSTAL) {
+                                return@onMainThread
                             }
-                            return@onMainThread
+                            swapToSlot(slot)
+                            sendPacket()
+                        } else if (switchMode.onSpoof) {
+                            val slot = player.getCrystalSlot() ?: return@onMainThread
+                            spoofHotbar(slot) {
+                                sendPacket()
+                            }
+                        } else if (switchMode.onBypassSpoof) {
+                            val slot = player.getMaxCrystalSlot() ?: return@onMainThread
+                            spoofHotbarBypass(slot) {
+                                sendPacket()
+                            }
+                        } else if (switchMode.onPickSilent) {
+                            val slot = player.allSlots.firstItem(Items.END_CRYSTAL)?.let { HotbarSlot(it) } ?: return@onMainThread
+                            spoofInvBypass(slot) {
+                                sendPacket()
+                            }
                         } else {
-                            spoofHotbarWithSetting(Items.END_CRYSTAL) {
-                                sendPacket()
-                            }
+                            sendPacket()
                         }
                     }
-                    if (placeSwing.value) {
-                        swing()
+                }
+                if (placeSwing.value) {
+                    onMainThread {
+                        swingArm()
                     }
                 }
             }
@@ -601,7 +702,7 @@ object AutoCrystal : Module(
             return null
         }
 
-        if (!spoofHotbarWithSetting(Items.END_CRYSTAL, true) {} && player.offHandStack.item != Items.END_CRYSTAL) {
+        if (cSlot == null && player.offHandStack.item != Items.END_CRYSTAL) {
             return null
         }
         for (blockPos in targetBlocks) {
@@ -634,18 +735,6 @@ object AutoCrystal : Module(
                     ).toDouble()
                     if (selfDamage > placeMaxSelf.value) continue
 
-                    if (world.getBlockState(blockPos).block is FireBlock) sendSequencedPacket(world) { id ->
-                        minePacket(
-                            PacketMine.PacketType.Stop,
-                            PacketMine.BlockData(
-                                blockPos,
-                                Direction.UP,
-                                null,
-                                System.currentTimeMillis(),
-                                0f
-                            ), id
-                        )
-                    }
                     damageCA = targetDamage
                     val holeInfo = HoleManager.getHoleInfo(target)
                     isFacePlacing = holeInfo.isHole && !ddosArmor
@@ -695,9 +784,26 @@ object AutoCrystal : Module(
         return minDura
     }
 
+    private fun SafeClientEvent.swingArm() {
+        when (swingMode.value) {
+            SwingMode.Offhand -> {
+                player.swingHand(Hand.OFF_HAND)
+            }
+
+            SwingMode.Mainhand -> {
+                player.swingHand(Hand.MAIN_HAND)
+            }
+
+            SwingMode.Auto -> {
+                player.swingHand(if (player.offHandStack.item == Items.END_CRYSTAL) Hand.OFF_HAND else Hand.MAIN_HAND)
+            }
+        }
+    }
+
     private val SafeClientEvent.targetList: Sequence<TargetInfo>
         get() {
             val rangeSq = enemyRange.value.sq
+            val ticks = if (motionPredict.value) predictTicks.value else 0
             val list = ObjectArrayList<TargetInfo>().synchronized()
             val eyePos = CrystalManager.eyePosition
 
@@ -707,7 +813,7 @@ object AutoCrystal : Module(
                 if (target.distanceSqTo(eyePos) > rangeSq) continue
                 if (isFriend(target.entityName)) continue
 
-                list.add(getPredictedTarget(target, CombatSystem.predictTicks))
+                list.add(getPredictedTarget(target, ticks))
             }
 
             return list.asSequence().filter { it.entity.isAlive }
@@ -715,7 +821,7 @@ object AutoCrystal : Module(
                     player.distanceSqTo(
                         it.predictMotion
                     )
-                }).take(CombatSystem.maxTargets)
+                }).take(maxTargets.value)
         }
 
     private fun SafeClientEvent.doBreak() {
@@ -723,27 +829,47 @@ object AutoCrystal : Module(
 
         crystal?.let {
             if (!flagged && explodeTimer.tickAndReset(hitDelay.value)) {
-                breakDirect(it.x, it.y, it.z, it)
-                if (explodeMode.value == ExplodeMode.Sync) packetExplodeTimer.reset()
+                breakDirect(it.x, it.y, it.z, it, true)
             }
         }
     }
 
     private fun SafeClientEvent.breakDirect(
-        x: Double, y: Double, z: Double, endCrystal: EndCrystalEntity
+        x: Double, y: Double, z: Double, endCrystal: EndCrystalEntity, packetPrio: Boolean
     ) {
-        if (player.isWeaknessActive() && !isHoldingTool() && antiWeak.value) {
-            onMainThread {
-                getWeaponSlot()?.let { stack ->
-                    spoofHotbarWithSetting(stack.item) {
-                        runExplode(endCrystal)
-                        swing()
+        if (player.isWeaknessActive() && !isHoldingTool()) {
+            weaponSlot?.let {
+                onMainThread {
+                    when (antiWeakness.value) {
+                        AntiWeaknessMode.Off -> {
+                            return@onMainThread
+                        }
+
+                        AntiWeaknessMode.Swap -> {
+                            swapToSlot(it)
+                            runExplode(endCrystal, packetPrio)
+                            swingArm()
+                        }
+
+                        AntiWeaknessMode.Spoof -> {
+                            spoofHotbar(it) {
+                                runExplode(endCrystal, packetPrio)
+                                swingArm()
+                            }
+                        }
+
+                        AntiWeaknessMode.Bypass -> {
+                            spoofHotbarBypass(it) {
+                                runExplode(endCrystal, packetPrio)
+                                swingArm()
+                            }
+                        }
                     }
                 }
             }
         } else {
-            runExplode(endCrystal)
-            swing()
+            runExplode(endCrystal, packetPrio)
+            swingArm()
         }
 
         placeInfo?.let {
@@ -772,7 +898,7 @@ object AutoCrystal : Module(
     private fun SafeClientEvent.getCrystalList(): List<EndCrystalEntity> {
         return EntityManager.entity.asSequence().filterIsInstance<EndCrystalEntity>().filter { it.isAlive }.filter {
             checkBreakRange(
-                it, CombatSystem.attackRange.toFloat(), old.value, wallRange.value
+                it, breakRange.value, old.value, wallRange.value
             )
         }.toList()
     }
@@ -827,14 +953,19 @@ object AutoCrystal : Module(
     }
 
     private fun SafeClientEvent.runExplode(
-        endCrystal: EndCrystalEntity, rotationInvoke: (() -> Unit)? = null
+        endCrystal: EndCrystalEntity, packetPrio: Boolean = true, rotationInvoke: (() -> Unit)? = null
     ) {
         runCatching {
             onMainThread {
                 crystalState.set(CurrentState.Breaking)
                 rotationInvoke?.invoke()
                 connection.sendPacket(PlayerInteractEntityC2SPacket.attack(endCrystal, player.isSneaking))
-                swing()
+                if (bypassPacket && packetSync && packetPrio) {
+                    if (debug.value) ChatUtil.sendMessage("BypassPacket Reset")
+                    packetBypassTimer.reset()
+                    bypassPacket = false
+                }
+                swingArm()
             }
         }
     }
@@ -1039,36 +1170,31 @@ object AutoCrystal : Module(
         return item is SwordItem || item is ToolItem
     }
 
-    private fun SafeClientEvent.getWeaponSlot(): ItemStack? {
-        var bestItem: ItemStack? = null
-        for (i in 0..44) {
-            if (player.inventory.getStack(i).item is SwordItem || player.inventory.getStack(i).item is ToolItem) {
-                bestItem?.let {
-                    if (player.inventory.getStack(i).attackDamage > it.damage) bestItem = player.inventory.getStack(i)
-                } ?: run {
-                    bestItem = player.inventory.getStack(i)
-                }
-            }
+    private fun SafeClientEvent.getWeaponSlot(): HotbarSlot? {
+        return player.hotbarSlots.filterByStack {
+            val item = it.item
+            item is SwordItem || item is ToolItem
+        }.maxByOrNull {
+            val itemStack = it.stack
+            itemStack.attackDamage
         }
-        return bestItem
     }
 
     private fun SafeClientEvent.getRawPosList(prio: Priority = Priority.Crystal): List<BlockPos> {
         val positions = CopyOnWriteArrayList<BlockPos>()
 
-        positions.addAll(
-            SphereCalculatorManager.sphereList.stream().filter {
-                world.isInBuildLimit(it) && world.worldBorder.contains(it)
-            }.filter {
-                val crystalX = it.x + 0.5
-                val crystalY = it.y + 1.0
-                val crystalZ = it.z + 0.5
-                player.distanceSqTo(
-                    crystalX, crystalY, crystalZ
-                ) <= CombatSystem.placeRange.sq && (!old.value || player.distanceSqTo(it.toCenterPos()) <= wallRange.value || canSee(
-                    it.x.toDouble(), it.y.toDouble(), it.z.toDouble()
-                ))
-            }.filter { canPlaceCrystal(it, prio, old.value) }.collect(Collectors.toList())
+        positions.addAll(SphereCalculatorManager.sphereList.stream().filter {
+            world.isInBuildLimit(it) && world.worldBorder.contains(it)
+        }.filter {
+            val crystalX = it.x + 0.5
+            val crystalY = it.y + 1.0
+            val crystalZ = it.z + 0.5
+            player.distanceSqTo(
+                crystalX, crystalY, crystalZ
+            ) <= placeRange.value.sq && (!old.value || player.distanceSqTo(it.toCenterPos()) <= wallRange.value || canSee(
+                it.x.toDouble(), it.y.toDouble(), it.z.toDouble()
+            ))
+        }.filter { canPlaceCrystal(it, prio, old.value) }.collect(Collectors.toList())
         )
 
         return positions
@@ -1080,7 +1206,6 @@ object AutoCrystal : Module(
         val boost = blockPos.add(0, if (priority == Priority.Block) 2 else 1, 0)
         val base = world.getBlockState(blockPos).block
         val b1 = world.getBlockState(boost).block
-        if (world.getBlockState(blockPos.up()).block is FireBlock) return false
         if (blockBoost.value && priority == Priority.Block) {
             return true
         } else if (base !== Blocks.BEDROCK && base !== Blocks.OBSIDIAN) {
@@ -1109,7 +1234,7 @@ object AutoCrystal : Module(
             if (entity.boundingBox.intersects(box)) return false
             if (entity.boundingBox.intersects(upBox)) return false
         }
-        return true
+        return base !is FireBlock
     }
 
     private fun SafeClientEvent.updateDdosQueue() {
@@ -1184,6 +1309,7 @@ object AutoCrystal : Module(
 
     override fun onEnable() {
         runSafe {
+            cSlot = null
             isFacePlacing = false
             bypassPacket = false
             flagged = false
@@ -1193,10 +1319,6 @@ object AutoCrystal : Module(
             placeTimer.reset()
             calcTimer.reset()
             fpTimer.reset()
-            if (CombatSystem.autoToggle && AnchorAura.isEnabled) {
-                if (CombatSystem.mainToggle != CombatSystem.MainToggle.Crystal) lastAnchorAuraState = true
-                AnchorAura.disable()
-            }
         }
     }
 
@@ -1214,10 +1336,6 @@ object AutoCrystal : Module(
             lastUpdateTime = 0L
             startTime = 0L
             scale = 0.0f
-            if (lastAnchorAuraState) {
-                lastAnchorAuraState = false
-                AnchorAura.enable()
-            }
         }
     }
 
@@ -1228,32 +1346,67 @@ object AutoCrystal : Module(
     }
 
     @Suppress("unused")
-    enum class PacketPlaceMode(val onRemove: Boolean, val onBreak: Boolean) {
-        Off(false, false), Weak(true, false), Strong(true, true)
+    enum class PacketPlaceMode(override val displayName: CharSequence, val onRemove: Boolean, val onBreak: Boolean): DisplayEnum {
+        Off("Off", false, false),
+        Weak("Weak", true, false),
+        Strong("Strong", true, true)
     }
 
-    enum class DamageMode {
-        Auto, PPBP, BBBB
+    @Suppress("unused")
+    enum class Switch(override val displayName: CharSequence, val onSpoof: Boolean, val onSwitch: Boolean, val onBypassSpoof: Boolean, val onPickSilent: Boolean): DisplayEnum {
+        AutoSwitch("AutoSwitch", false, true, false, false),
+        PacketSpoof("PacketSpoof", true, false, false, false),
+        SpoofBypass("SpoofBypass", false, false, true, false),
+        PickSpoof("PickSpoof", false, false, false, true),
+        Off("Off", false, false, false, false)
     }
 
-    enum class Page {
-        GENERAL, CALCULATION, PLACE, BREAK, FORCE, LETHAL, RENDER
+    enum class DamageMode(override val displayName: CharSequence): DisplayEnum {
+        Auto("Auto"),
+        PPBP("PPBP"),
+        BBBB("BBBB")
     }
 
-    enum class ExplodeMode {
-        Normal, Sync, Both
+    enum class Page(override val displayName: CharSequence): DisplayEnum {
+        GENERAL("General"),
+        CALCULATION("Calculation"),
+        PLACE("Place"),
+        BREAK("Break"),
+        FORCE("Force"),
+        LETHAL("Lethal"),
+        RENDER("Render")
     }
 
-    enum class SwingMode {
-        Offhand, Mainhand, Auto, Off
+    enum class AntiWeaknessMode(override val displayName: CharSequence): DisplayEnum {
+        Swap("Swap"),
+        Spoof("Spoof"),
+        Bypass("Bypass"),
+        Off("Off")
+    }
+
+    enum class ExplodeMode(override val displayName: CharSequence): DisplayEnum {
+        Normal("Normal"),
+        Sync("Sync"),
+        Both("Both")
+    }
+
+    enum class SwingMode(override val displayName: CharSequence): DisplayEnum {
+        Offhand("Offhand"),
+        Mainhand("Mainhand"),
+        Auto("Auto"),
+        Off("Off")
     }
 
     enum class CurrentState {
-        Placing, Breaking, Blocking, Waiting
+        Placing,
+        Breaking,
+        Blocking,
+        Waiting
     }
 
     enum class Priority {
-        Block, Crystal
+        Block,
+        Crystal
     }
 
     private fun SafeClientEvent.getPredictedTarget(entity: PlayerEntity, ticks: Int): TargetInfo {

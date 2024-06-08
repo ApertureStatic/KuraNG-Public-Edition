@@ -16,6 +16,7 @@ object GUIMove : Module(
     type = Type.Both
 ) {
 
+
     init {
         onMotion {
             val currentScreen = mc.currentScreen ?: return@onMotion

@@ -17,7 +17,6 @@ object Speed :
     private var damageBoost by bsetting("DamageBoost", true)
     private var strict by bsetting("Strict", true)
     private var useTimer by bsetting("UseTimer", true)
-    private var slowness by bsetting("Slowness",false)
     private var burrowDetect by bsetting("BurrowDetect", true)
     private var baseSpeed = 0.0
     private var stage = 0
@@ -71,7 +70,7 @@ object Speed :
                     baseStrictSpeed *= 1 + 0.2 * (amplifier + 1)
                     baseRestrictedSpeed *= 1 + 0.2 * (amplifier + 1)
                 }
-                if (player.hasStatusEffect(StatusEffects.SLOWNESS) && slowness) {
+                if (player.hasStatusEffect(StatusEffects.SLOWNESS)) {
                     val amplifier = player.getStatusEffect(StatusEffects.SLOWNESS)!!.amplifier.toDouble()
                     baseStrictSpeed /= 1 + 0.2 * (amplifier + 1)
                     baseRestrictedSpeed /= 1 + 0.2 * (amplifier + 1)

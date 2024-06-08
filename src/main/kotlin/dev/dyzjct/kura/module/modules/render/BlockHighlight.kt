@@ -26,13 +26,7 @@ object BlockHighlight : Module(name = "BlockHighlight", langName = "方块渲染
     init {
 
         onRender3D { event ->
-            val blockPos = (mc.crosshairTarget as? BlockHitResult)?.blockPos ?: kotlin.run {
-                if (!first) {
-                    startTime = System.currentTimeMillis()
-                    first = true
-                }
-                return@onRender3D
-            }
+            val blockPos = (mc.crosshairTarget as? BlockHitResult)?.blockPos ?: return@onRender3D
             val isAir = world.isAir(blockPos)
 
             if (!isAir && AirPlace.isDisabled) {

@@ -2,7 +2,7 @@ package dev.dyzjct.kura.manager
 
 import com.google.common.collect.MapMaker
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamage
-import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.setAndAdd
+import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.setAndAdd
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
 import dev.dyzjct.kura.utils.animations.fastFloor
 import it.unimi.dsi.fastutil.ints.*

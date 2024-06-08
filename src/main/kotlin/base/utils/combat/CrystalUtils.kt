@@ -1,7 +1,7 @@
 package base.utils.combat
 
 import dev.dyzjct.kura.manager.EntityManager
-import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.setAndAdd
+import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.setAndAdd
 import dev.dyzjct.kura.utils.animations.fastFloor
 import dev.dyzjct.kura.utils.extension.sq
 import base.system.event.SafeClientEvent

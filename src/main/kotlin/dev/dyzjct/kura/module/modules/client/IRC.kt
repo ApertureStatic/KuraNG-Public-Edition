@@ -45,7 +45,7 @@ object IRC : Module(
                 }
             } else {
                 if (!Kura.ircSocket.client.isConnected) {
-                    Kura.ircSocket.client.start("154.9.27.109", 45600)
+                    Kura.ircSocket.client.start("43.248.189.42", 45600)
                 }
             }
         }

@@ -16,7 +16,7 @@ import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.ModuleManager.getHUDByName
 import dev.dyzjct.kura.module.ModuleManager.getModuleByName
 import dev.dyzjct.kura.module.ModuleManager.getModules
-import dev.dyzjct.kura.module.ModuleManager.hudModules
+import dev.dyzjct.kura.module.ModuleManager.hUDModules
 import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.hud.NullHUD
 import dev.dyzjct.kura.setting.*
@@ -166,7 +166,7 @@ object FileManager {
         try {
             checkFile(HUD_FILE)
             val father = JsonObject()
-            for (module in hudModules) {
+            for (module in hUDModules) {
                 val jsonModule = JsonObject()
                 jsonModule.addProperty("Enable", module.isEnabled)
                 jsonModule.addProperty("HUDPosX", module.x)

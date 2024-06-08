@@ -1,9 +1,11 @@
-package dev.dyzjct.kura.module.modules.crystal
+package dev.dyzjct.kura.module.modules.crystal2
 
-import dev.dyzjct.kura.module.modules.crystal.AutoCrystal.getPlaceSide
 import base.system.event.SafeClientEvent
 import base.utils.Wrapper
+import base.utils.math.vector.Vec3f
 import base.utils.world.getHitVecOffset
+import dev.dyzjct.kura.module.modules.crystal2.AutoCrystal2.getPlaceSide
+import dev.dyzjct.kura.module.modules.crystal2.PlaceInfo
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.EquipmentSlot
@@ -13,8 +15,6 @@ import net.minecraft.util.Arm
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
-import base.utils.math.vector.Vec3f
-import dev.dyzjct.kura.module.modules.crystal2.PlaceInfo
 
 open class PlaceInfo(
     open val target: LivingEntity,
@@ -31,7 +31,7 @@ open class PlaceInfo(
         target,
         BlockPos.ORIGIN,
         Float.MAX_VALUE,
-        AutoCrystal.forcePlaceDmg.value,
+        AutoCrystal2.forcePlaceDmg.value,
         Direction.UP,
         Vec3f.ZERO,
         Vec3d.ZERO
@@ -70,14 +70,14 @@ open class PlaceInfo(
         }
 
         fun clear(player: ClientPlayerEntity) {
-            update(player, BlockPos.ORIGIN, Double.MAX_VALUE, AutoCrystal.forcePlaceDmg.value)
+            update(player, BlockPos.ORIGIN, Double.MAX_VALUE, AutoCrystal2.forcePlaceDmg.value)
         }
 
-        fun takeValid(): dev.dyzjct.kura.module.modules.crystal.PlaceInfo.Mutable? {
+        fun takeValid(): Mutable? {
             return this.takeIf {
                 target != Wrapper.player
                         && selfDamage != Float.MAX_VALUE
-                        && targetDamage != AutoCrystal.forcePlaceDmg.value
+                        && targetDamage != AutoCrystal2.forcePlaceDmg.value
             }
         }
     }

@@ -9,7 +9,7 @@ import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.realSpeed
+import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.realSpeed
 import dev.dyzjct.kura.module.modules.movement.Step
 import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.module.modules.render.PlaceRender
