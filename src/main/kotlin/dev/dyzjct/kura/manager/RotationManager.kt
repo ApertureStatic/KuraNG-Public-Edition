@@ -40,7 +40,6 @@ object RotationManager : AlwaysListening {
             spoofMap.forEach {
                 when (event.packet) {
                     is PlayerMoveC2SPacket -> {
-                        val packet = it
                         event.packet.yaw = rotateYaw
                         event.packet.pitch = rotatePitch
                     }
