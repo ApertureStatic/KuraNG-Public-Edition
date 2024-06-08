@@ -5,8 +5,8 @@ import base.system.render.newfont.FontRenderers
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
-import dev.dyzjct.kura.module.modules.client.Colors
 import net.minecraft.client.gui.DrawContext
+import java.awt.Color
 
 object WaterMarkHUD :
     HUDModule(name = "WaterMarkHUD", langName = "标题显示", category = Category.HUD, x = 100f, y = 100f) {
@@ -15,11 +15,12 @@ object WaterMarkHUD :
     private val watermark by ssetting("TitleName", Kura.MOD_NAME + " Client").isTrue { custom }
     private val fonts by msetting("Fonts", FontMode.Default)
     private val rainbow by bsetting("Rainbow", false)
+    private val color by csetting("Color", Color(255, 255, 255)).isFalse { rainbow }
     private val speed by isetting("Speed", 18, 2, 54)
     private val saturation by fsetting("Saturation", 0.65f, 0.0f, 1.0f).isTrue { rainbow }
     private val brightness by fsetting("Brightness", 1.0f, 0.0f, 1.0f).isTrue { rainbow }
     override fun onRender(context: DrawContext) {
-        val fontColor = if (!rainbow) Colors.hudColor.value.rgb else Render2DEngine.rainbow(
+        val fontColor = if (!rainbow) color.rgb else Render2DEngine.rainbow(
             speed,
             0,
             saturation,

@@ -31,6 +31,7 @@ object CombatSystem : Module(
     val kaRange by dsetting("KARange", 6.0, 0.0, 8.0)
     private val swing by bsetting("Swing", true)
     private val packetSwing by bsetting("PacketSwing", true).isTrue { swing }
+    private val swingHand by msetting("SwingHand", SwingHand.MainHand).isTrue { swing }
     val debug by bsetting("Debug", false)
 
     init {
@@ -43,19 +44,11 @@ object CombatSystem : Module(
         if (value == CombatMode.Strong) {
             if (debug) ChatUtil.sendMessage("Turn To Strong")
             FileManager.saveAll(CombatMode.Ghost.name)
-//                for (modules in ModuleManager.moduleList) {
-//                    if (modules != CombatSystem) ModuleManager.moduleList.remove(modules)
-//                    if (debug) ChatUtil.sendMessage("Removed Modules")
-//                }
             FileManager.loadCombatSystem()
             FileManager.loadAll(CombatMode.Strong.name)
         } else {
             if (debug) ChatUtil.sendMessage("Turn To Ghost")
             FileManager.saveAll(CombatMode.Strong.name)
-//                for (modules in ModuleManager.moduleList) {
-//                    if (modules != CombatSystem) ModuleManager.moduleList.remove(modules)
-//                    if (debug) ChatUtil.sendMessage("Removed Modules")
-//                }
             FileManager.loadCombatSystem()
             FileManager.loadAll(CombatMode.Ghost.name)
         }
@@ -64,8 +57,18 @@ object CombatSystem : Module(
 
     fun SafeClientEvent.swing() {
         if (swing) {
-            if (packetSwing) connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND)) else player.swingHand(
-                Hand.MAIN_HAND
+            if (packetSwing) connection.sendPacket(
+                HandSwingC2SPacket(
+                    when (swingHand) {
+                        SwingHand.OffHand -> Hand.OFF_HAND
+                        else -> Hand.MAIN_HAND
+                    }
+                )
+            ) else player.swingHand(
+                when (swingHand) {
+                    SwingHand.OffHand -> Hand.OFF_HAND
+                    else -> Hand.MAIN_HAND
+                }
             )
             player.resetLastAttackedTicks()
         }
@@ -81,5 +84,9 @@ object CombatSystem : Module(
 
     enum class MainToggle {
         Crystal, Anchor
+    }
+
+    enum class SwingHand {
+        MainHand, OffHand
     }
 }

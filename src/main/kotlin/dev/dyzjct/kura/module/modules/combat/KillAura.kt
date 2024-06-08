@@ -11,6 +11,7 @@ import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.module.modules.client.UiSetting
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
 import dev.dyzjct.kura.utils.animations.sq
@@ -72,7 +73,7 @@ object KillAura : Module(name = "KillAura", langName = "杀戮", category = Cate
                     }
                 }
                 connection.sendPacket(PlayerInteractEntityC2SPacket.attack(target, player.isSneaking))
-                player.swingHand(Hand.MAIN_HAND)
+                swing()
                 player.resetLastAttackedTicks()
                 stop = true
             }

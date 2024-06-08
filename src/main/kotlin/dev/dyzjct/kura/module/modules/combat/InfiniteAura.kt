@@ -14,6 +14,7 @@ import base.utils.combat.getEntityTarget
 import base.utils.concurrent.threads.runSafe
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
+import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import net.minecraft.entity.Entity
 import net.minecraft.item.ShieldItem
 import net.minecraft.item.SwordItem
@@ -74,7 +75,7 @@ object InfiniteAura : Module(name = "InfiniteAura", langName = "百米大刀", c
                             )
                         )
                         playerController.attackEntity(player, target)
-                        player.swingHand(Hand.MAIN_HAND)
+                        swing()
                         if (path) teleportTo(playerPos) else connection.sendPacket(
                             PlayerMoveC2SPacket.Full(
                                 playerPos.x,
