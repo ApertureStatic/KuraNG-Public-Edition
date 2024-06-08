@@ -18,6 +18,7 @@ import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.utils.TimerUtils
 import net.minecraft.block.*
 import net.minecraft.entity.Entity
@@ -253,7 +254,7 @@ object Burrow : Module(
                 fastPos(pos, strictDirection, sequence = it)
             }
         }
-        connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
+        swing()
     }
 
     private fun SafeClientEvent.placeBlock(pos: BlockPos) {
@@ -266,7 +267,7 @@ object Burrow : Module(
                 fastPos(pos, strictDirection, sequence = it)
             }
         }
-        connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
+        swing()
     }
 
     private fun SafeClientEvent.breakCrystal() {
@@ -292,7 +293,7 @@ object Burrow : Module(
                         world.getEntityById(entity.id), player.isSneaking
                     )
                 )
-                connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
+                swing()
             }
         }
     }
