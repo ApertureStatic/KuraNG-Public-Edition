@@ -26,8 +26,8 @@ import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.anchorDamageNew
-import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.scaledHealth
-import dev.dyzjct.kura.module.modules.crystal.PlaceInfo
+import dev.dyzjct.kura.module.modules.crystal2.CrystalHelper.scaledHealth
+import dev.dyzjct.kura.module.modules.crystal2.PlaceInfo
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
 import dev.dyzjct.kura.utils.animations.sq
@@ -399,6 +399,6 @@ object AnchorAura : Module(
 
     @Suppress("UNUSED")
     enum class DamageMode {
-        Melon, Thunder
+        base, Thunder
     }
 }

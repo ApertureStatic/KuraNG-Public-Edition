@@ -10,7 +10,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
 
-import java.net.InetAddress;
 import java.net.SocketException;
 
 /**
@@ -28,12 +27,12 @@ public class ClientHandler extends SimpleChannelInboundHandler<Packet> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Log.info(LogCategory.LOG, "Connected to server: " + ctx.channel().remoteAddress());
-        InetAddress address = InetAddress.getLocalHost();
+
         try {
             ctx.writeAndFlush(new UserInfoPacket(
                     ClientType.Kura,
                     0,
-                    "§d" + address.getHostAddress() + "§f" + Wrapper.getPlayer().getName().getString(),
+                     "§f" + Wrapper.getPlayer().getName().getString(),
                     Rank.USER,
                     0,
                     114514));

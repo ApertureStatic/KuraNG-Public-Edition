@@ -1,5 +1,8 @@
 package dev.dyzjct.kura.mixin.gui;
 
+import base.system.render.newfont.FontRenderer;
+import base.system.render.newfont.FontRenderers;
+import dev.dyzjct.kura.Kura;
 import dev.dyzjct.kura.KuraIdentifier;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.dyzjct.kura.module.modules.client.UiSetting;
@@ -15,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.awt.*;
+
 
 @Mixin(TitleScreen.class)
 public abstract class MixinTitleScreen {
@@ -28,9 +33,11 @@ public abstract class MixinTitleScreen {
     @Shadow
     private long backgroundFadeStart;
 
+
     protected MixinTitleScreen(boolean doBackgroundFade) {
         this.doBackgroundFade = doBackgroundFade;
     }
+
 
     @Inject(method = "init", at = @At("HEAD"))
     private void modifyTitle(CallbackInfo ci) {

@@ -1,28 +1,26 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.system.event.SafeClientEvent
-import base.utils.block.BlockUtil.canBreak
-import base.utils.combat.getTarget
-import base.utils.math.distanceSqTo
-import base.utils.math.sq
-import base.utils.world.getMiningSide
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.combat.HolePush.doHolePush
 import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.module.modules.player.PacketMine.hookPos
 import dev.dyzjct.kura.utils.TimerUtils
+import base.utils.block.BlockUtil.canBreak
+import base.utils.combat.getTarget
+import base.utils.world.getMiningSide
 import net.minecraft.block.CobwebBlock
 import net.minecraft.block.RedstoneBlock
 import net.minecraft.util.math.BlockPos
 
-object HoleMiner : Module(
-    name = "HoleMiner",
-    langName = "自动挖角",
+object CityRecode : Module(
+    name = "CityRecode",
+    langName = "自动挖角重写",
     description = "auto mine target feet.",
     category = Category.COMBAT
 ) {
+    private var range by isetting("Range", 6, 1, 6)
+    private var eatingPause by bsetting("EatingPause", true)
     private var raytrace by bsetting("RayTrace", true)
     private var ground by bsetting("OnlyGround", true)
     private var instant by bsetting("Instant", false)
@@ -33,21 +31,21 @@ object HoleMiner : Module(
     init {
         onMotion {
             if (ground && !player.onGround) return@onMotion
-            if (CombatSystem.eating && player.isUsingItem) return@onMotion
-            getTarget(CombatSystem.targetRange)?.let { target ->
+            getTarget(range.toDouble())?.let { target ->
                 val targetPos = target.blockPos
                 if (HolePush.isEnabled) {
                     PacketMine.blockData?.let { data ->
-                        doHolePush(targetPos.up(1), true, test = true)?.let { stonePos ->
+                        doHolePush(targetPos.up(1), true, null, null)?.let { stonePos ->
                             if (stonePos == data.blockPos) return@onMotion
                         }
                         if (world.getBlockState(data.blockPos).block is RedstoneBlock) return@onMotion
                     }
                 }
-                for (offset in CityOffset.entries) {
+                if (eatingPause && player.isUsingItem) return@onMotion
+                for (offset in CityOffset.values()) {
                     PacketMine.blockData?.let { data ->
                         PacketMine.doubleData?.let { dbData ->
-                            for (offsetCheck in CityOffset.entries) {
+                            for (offsetCheck in CityOffset.values()) {
                                 if (data.blockPos == targetPos.add(offsetCheck.offset) && dbData.blockPos == targetPos.add(
                                         offsetCheck.offset
                                     )
@@ -58,7 +56,6 @@ object HoleMiner : Module(
                         }
                     }
                     val pos = targetPos.add(offset.offset)
-                    if (player.distanceSqTo(pos) > CombatSystem.interactRange.sq) continue
                     if (!canBreak(pos, true)) continue
                     if (world.getBlockState(pos).block is CobwebBlock) continue
                     if (world.isAir(pos)) {
@@ -69,7 +66,6 @@ object HoleMiner : Module(
                     }
                     if (raytrace && getMiningSide(pos) == null) continue
                     if (!pass()) return@onMotion
-                    if (PacketMine.doubleData != null) continue
                     if (PacketMine.blockData == null) {
                         if (timer.tickAndReset(delay)) hookPos(pos)
                     }
@@ -83,8 +79,8 @@ object HoleMiner : Module(
         }
     }
 
-    private fun SafeClientEvent.pass(): Boolean {
-        return (PacketMine.blockData == null || PacketMine.blockData?.let { world.isAir(it.blockPos) } ?: false) || if (PacketMine.doubleBreak) PacketMine.doubleData == null else false
+    private fun pass(): Boolean {
+        return PacketMine.blockData == null || if (PacketMine.doubleBreak) PacketMine.doubleData == null else false
     }
 
     private enum class CityOffset(val offset: BlockPos) {

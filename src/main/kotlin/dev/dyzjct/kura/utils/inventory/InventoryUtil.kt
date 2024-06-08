@@ -3,10 +3,9 @@ package dev.dyzjct.kura.utils.inventory
 import base.system.event.SafeClientEvent
 import base.utils.concurrent.threads.runSafe
 import base.utils.extension.packetClick
-import net.minecraft.entity.effect.StatusEffect
-import net.minecraft.entity.effect.StatusEffectInstance
-import net.minecraft.item.*
-import net.minecraft.potion.PotionUtil
+import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.math.BlockPos
 
@@ -27,22 +26,6 @@ object InventoryUtil {
                 val stack = player.inventory.getStack(i)
                 if (item == stack.item) {
                     return i
-                }
-            }
-        }
-        return null
-    }
-
-    fun SafeClientEvent.findPotInventorySlot(potion: StatusEffect): Int? {
-        for (i in 0..44) {
-            val stack: ItemStack = player.inventory.getStack(i)
-            if (stack == ItemStack.EMPTY || stack.item !is SplashPotionItem) {
-                continue
-            }
-            val effects: List<StatusEffectInstance> = java.util.ArrayList(PotionUtil.getPotionEffects(stack))
-            for (potionEffect in effects) {
-                if (potionEffect.effectType === potion) {
-                    return if (i < 9) i + 36 else i
                 }
             }
         }

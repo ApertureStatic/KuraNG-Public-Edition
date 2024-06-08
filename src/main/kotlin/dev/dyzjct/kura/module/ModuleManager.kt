@@ -13,9 +13,11 @@ import dev.dyzjct.kura.module.hud.*
 import dev.dyzjct.kura.module.modules.client.*
 import dev.dyzjct.kura.module.modules.combat.*
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
+import dev.dyzjct.kura.module.modules.crystal2.AutoCrystal2
 import dev.dyzjct.kura.module.modules.misc.*
 import dev.dyzjct.kura.module.modules.movement.*
 import dev.dyzjct.kura.module.modules.player.*
+import dev.dyzjct.kura.module.modules.player.disabler.Disabler
 import dev.dyzjct.kura.module.modules.render.*
 import kotlinx.coroutines.async
 import net.minecraft.client.gui.DrawContext
@@ -84,11 +86,11 @@ object ModuleManager : AlwaysListening {
         registerModule(AutoWeb)
         registerModule(HolePush)
         registerModule(Burrow)
+        registerModule(CityMiner)
+        registerModule(CityRecode)
         registerModule(HeadTrap)
         registerModule(InfiniteAura)
-        registerModule(HoleMiner)
-        registerModule(CrystalBasePlacer)
-        registerModule(AutoPot)
+        registerModule(AimAssist)
     }
 
     private fun loadCategoryMisc() {
@@ -107,6 +109,7 @@ object ModuleManager : AlwaysListening {
     }
 
     private fun loadCategoryMovement() {
+        registerModule(AutoWalk)
         registerModule(Velocity)
         registerModule(Strafe)
         registerModule(Speed)
@@ -115,6 +118,7 @@ object ModuleManager : AlwaysListening {
         registerModule(GUIMove)
         registerModule(NoSlowDown)
         registerModule(ElytraFly)
+        registerModule(ControlElytraFly)
         registerModule(FastWeb)
         registerModule(Blink)
         registerModule(Flight)
@@ -123,6 +127,7 @@ object ModuleManager : AlwaysListening {
     private fun loadCategoryPlayer() {
         registerModule(PacketMine)
         registerModule(AutoArmor)
+        registerModule(Disabler)
         registerModule(NoEntityTrace)
         registerModule(NoRotate)
         registerModule(Timer)
@@ -170,6 +175,7 @@ object ModuleManager : AlwaysListening {
         loadCategoryRender()
         loadCategoryPlayer()
         registerModule(AutoCrystal)
+        registerModule(AutoCrystal2)
         DamageCalculator
         getModules().sortedWith(Comparator.comparing { it.moduleName })
     }
@@ -228,7 +234,7 @@ object ModuleManager : AlwaysListening {
     }
 
     @JvmStatic
-    val hudModules: List<HUDModule>
+    val hUDModules: List<HUDModule>
         get() = moduleList.filterIsInstance<HUDModule>().toList()
 
     @JvmStatic
@@ -251,7 +257,7 @@ object ModuleManager : AlwaysListening {
 
     @JvmStatic
     fun getHUDByName(targetName: String?): HUDModule {
-        for (iModule in hudModules) {
+        for (iModule in hUDModules) {
             if (!iModule.moduleName.equals(targetName, ignoreCase = true)) continue
             return iModule
         }
@@ -293,7 +299,7 @@ object ModuleManager : AlwaysListening {
     }
 
     fun onRenderHUD(context: DrawContext) {
-        hudModules.forEach {
+        hUDModules.forEach {
             if (it.isEnabled) {
                 it.renderDelegateOnGame(context)
             }

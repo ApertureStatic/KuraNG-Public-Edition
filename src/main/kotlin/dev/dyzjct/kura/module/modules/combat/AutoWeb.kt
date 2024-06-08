@@ -1,5 +1,14 @@
 package dev.dyzjct.kura.module.modules.combat
 
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarBypass
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.combat.HolePush.doHolePush
+import dev.dyzjct.kura.module.modules.player.AntiMinePlace
+import dev.dyzjct.kura.module.modules.player.PacketMine
+import dev.dyzjct.kura.utils.TimerUtils
 import base.system.event.SafeClientEvent
 import base.utils.block.BlockUtil.getNeighbor
 import base.utils.chat.ChatUtil
@@ -7,27 +16,17 @@ import base.utils.combat.getPredictedTarget
 import base.utils.combat.getTarget
 import base.utils.concurrent.threads.onMainThread
 import base.utils.concurrent.threads.runSafe
-import base.utils.entity.EntityUtils.isInWeb
 import base.utils.entity.EntityUtils.spoofSneak
 import base.utils.extension.fastPos
 import base.utils.hole.SurroundUtils
 import base.utils.hole.SurroundUtils.checkHole
-import base.utils.math.distanceSqTo
-import base.utils.math.sq
+import base.utils.inventory.slot.firstBlock
+import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.toBlockPos
 import base.utils.player.getTargetSpeed
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.client.CombatSystem
-import dev.dyzjct.kura.module.modules.combat.HolePush.doHolePush
-import dev.dyzjct.kura.module.modules.player.AntiMinePlace
-import dev.dyzjct.kura.module.modules.player.PacketMine
-import dev.dyzjct.kura.utils.TimerUtils
+import net.minecraft.block.Blocks
 import net.minecraft.block.CobwebBlock
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.Items
 import net.minecraft.util.math.BlockPos
 
 object AutoWeb : Module(
@@ -40,13 +39,16 @@ object AutoWeb : Module(
     private var holeCheck = bsetting("HoleCheck", true)
     private var betterPush = bsetting("BetterPush", true)
     private var betterAnchor = bsetting("BetterAnchor", true)
+    private var eatingPause = bsetting("EatingPause", true)
     private var facePlace = bsetting("FacePlace", false)
     private var multiPlace = bsetting("MultiPlace", true)
-    private var webCheck = bsetting("WebCheck", true)
+    private var spoofBypass = bsetting("SpoofBypass", false)
     private var ground = bsetting("OnlyGround", true)
     private var inside = bsetting("Inside", false)
     private var strictDirection = bsetting("StrictDirection", false)
     private var air = bsetting("AirPlace", false)
+    private var range = isetting("Range", 5, 1, 6)
+    private var predictTicks = isetting("PredictTicks", 8, 0, 20)
     private var smartDelay = bsetting("SmartDelay", false)
     private var delay = isetting("minDelay", 25, 0, 500)
     private var maxDelay = isetting("MaxDelay", 400, 0, 1000).isTrue(smartDelay)
@@ -71,17 +73,19 @@ object AutoWeb : Module(
     init {
         onLoop {
             if (!player.isOnGround && ground.value) return@onLoop
-            if (CombatSystem.eating && player.isUsingItem) return@onLoop
-            if (!spoofHotbarWithSetting(Items.COBWEB, true) {}) {
+            val webSlot = player.hotbarSlots.firstBlock(Blocks.COBWEB)
+            if ((eatingPause.value && player.isUsingItem) || webSlot == null) {
                 return@onLoop
             }
-            target = getTarget(CombatSystem.targetRange)
+            target = getTarget(range.value.toDouble())
             if (onAnchorPlacing && betterAnchor.value) return@onLoop
             target?.let {
-                val targetDistance = getPredictedTarget(it, CombatSystem.predictTicks).blockPos
+                val targetDistance = getPredictedTarget(it, predictTicks.value).blockPos
                 if (doHolePush(
                         it.blockPos.up(),
-                        check = true, test = true
+                        true,
+                        null,
+                        null
                     ) != null && betterPush.value && HolePush.isEnabled
                 ) return@onLoop
                 fun SafeClientEvent.place(delay: Long) {
@@ -95,22 +99,24 @@ object AutoWeb : Module(
                             if (System.currentTimeMillis() - mine.start >= mine.mine) return@onPacket
                         }
 
-                        if (isInWeb(it) && webCheck.value) return
-
-                        if (world.isAir(pos) && (getNeighbor(
-                                pos,
-                                strictDirection.value
-                            ) != null || air.value) && player.distanceSqTo(pos) < CombatSystem.placeRange.sq
-                        ) {
+                        if (world.isAir(pos) && (getNeighbor(pos, strictDirection.value) != null || air.value)) {
                             if (timerDelay.tickAndReset(delay)) {
                                 if (spoofRotations.value) {
                                     RotationManager.addRotations(pos)
                                 }
-                                spoofHotbarWithSetting(Items.COBWEB) {
-                                    player.spoofSneak {
-                                        connection.sendPacket(
-                                            fastPos(pos, true)
-                                        )
+                                player.spoofSneak {
+                                    if (!spoofBypass.value) {
+                                        spoofHotbar(webSlot) {
+                                            connection.sendPacket(
+                                                fastPos(pos, true)
+                                            )
+                                        }
+                                    } else {
+                                        spoofHotbarBypass(webSlot) {
+                                            connection.sendPacket(
+                                                fastPos(pos, true)
+                                            )
+                                        }
                                     }
                                 }
                                 if (debug.value) ChatUtil.sendMessage("Placing")
@@ -139,10 +145,6 @@ object AutoWeb : Module(
                         packet(it.pos.add(-0.3, 0.3, -0.3).toBlockPos())
                         packet(it.pos.add(-0.3, 0.3, 0.3).toBlockPos())
                         packet(it.pos.add(0.3, 0.3, -0.3).toBlockPos())
-                        packet(it.pos.add(0.3, 0.3, 0.3).toBlockPos().down())
-                        packet(it.pos.add(-0.3, 0.3, -0.3).toBlockPos().down())
-                        packet(it.pos.add(-0.3, 0.3, 0.3).toBlockPos().down())
-                        packet(it.pos.add(0.3, 0.3, -0.3).toBlockPos().down())
                         if (facePlace.value) {
                             packet(it.pos.add(0.3, 0.3, 0.3).toBlockPos().up(), true)
                             packet(it.pos.add(-0.3, 0.3, -0.3).toBlockPos().up(), true)

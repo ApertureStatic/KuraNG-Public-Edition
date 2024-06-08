@@ -49,11 +49,6 @@ object EntityUtils : MinecraftWrapper {
                     jumpSpeed += (amplifier + 1) * 0.1
                 }
             }
-            if (player.hasStatusEffect(StatusEffects.SLOWNESS)) {
-//                jumpSpeed *= 0.9
-                val amplifier = player.getStatusEffect(StatusEffects.SLOWNESS)!!.amplifier.toDouble()
-                jumpSpeed /= 1 + 0.2 * (amplifier + 1)
-            }
             return jumpSpeed
         }
 

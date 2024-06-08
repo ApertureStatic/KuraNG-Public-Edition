@@ -52,6 +52,22 @@ object HotbarManager : AlwaysListening {
             }
         }
     }
+    inline fun SafeClientEvent.spoofHotbarBypass(slot: HotbarSlot, crossinline block: () -> Unit) {
+        synchronized(HotbarManager) {
+            val swap = slot.hotbarSlot != serverSideHotbar
+            if (swap) {
+                inventoryTaskNow {
+                    val hotbarSlot = player.hotbarSlots[serverSideHotbar]
+                    swapWith(slot, hotbarSlot)
+                    action { block.invoke() }
+                    swapWith(slot, hotbarSlot)
+                }
+            } else {
+                block.invoke()
+            }
+        }
+    }
+
 
     inline fun SafeClientEvent.swapSpoof(slot: HotbarSlot, crossinline block: () -> Unit) {
         synchronized(HotbarManager) {
@@ -77,6 +93,24 @@ object HotbarManager : AlwaysListening {
                 pickUp(slot)
             }
         }
+    }
+    inline fun SafeClientEvent.spoofInvBypass(slot: HotbarSlot, swap: Boolean = false, crossinline block: () -> Unit) {
+        if (slot.hotbarSlot in 0 until 9) {
+            if (swap) spoofHotbarBypass(slot, block)
+            else spoofHotbar(slot, block)
+            return
+        }
+        if (!hotbarIsFull()) return
+
+        playerController.pickFromInventory(slot.allSlot)
+        block.invoke()
+        playerController.pickFromInventory(slot.allSlot)
+    }
+    fun SafeClientEvent.hotbarIsFull(): Boolean {
+        for (i in 0 until 9) {
+            if (player.inventory.getStack(i).isEmpty) return false
+        }
+        return true
     }
 
     inline fun SafeClientEvent.spoofOffhand(slot: Slot, crossinline block: () -> Unit) {
@@ -131,9 +165,9 @@ object HotbarManager : AlwaysListening {
                     notNullSlot = true
                     synchronized(HotbarManager) {
                         if (!isCheck) {
-                            spoofHotbar(slot) {
-                                block.invoke()
-                            }
+                            spoofHotbar(slot)
+                            block.invoke()
+                            resetHotbar()
                         }
                     }
                 }
@@ -192,9 +226,9 @@ object HotbarManager : AlwaysListening {
                     notNullSlot = true
                     synchronized(HotbarManager) {
                         if (!isCheck) {
-                            spoofHotbar(slot) {
-                                block.invoke()
-                            }
+                            spoofHotbar(slot)
+                            block.invoke()
+                            resetHotbar()
                         }
                     }
                 }

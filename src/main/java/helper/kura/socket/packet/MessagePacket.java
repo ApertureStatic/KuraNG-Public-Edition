@@ -9,6 +9,7 @@ import helper.kura.socket.utils.ChatType;
 import helper.kura.socket.utils.ClientType;
 import helper.kura.socket.utils.Rank;
 import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.client.MinecraftClient;
 
 /**
  * @author DiaoLing
@@ -87,15 +88,16 @@ public class MessagePacket extends Packet {
 
     @Override
     public void handler(ChannelHandlerContext ctx, ClientHandler handler) {
+        if (getUsername().equals(MinecraftClient.getInstance().getSession().getSessionId())) return;
         switch ((IRC.Mode) IRC.INSTANCE.getMode()) {
             case Both -> {
-                ChatUtil.INSTANCE.sendMessage(ChatUtil.INSTANCE.getDARK_AQUA() + "[IRC] " + ChatUtil.INSTANCE.getDARK_BLUE() + "[" + ChatUtil.INSTANCE.getBLUE() + getClient().getName() + ChatUtil.INSTANCE.getDARK_BLUE() + "] " + ChatUtil.INSTANCE.getWHITE() + getUsername() + " say: " + getMessage());
-                NotificationManager.INSTANCE.addNotification(ChatUtil.INSTANCE.getDARK_AQUA() + "[IRC] " + ChatUtil.INSTANCE.getDARK_BLUE() + "[" + ChatUtil.INSTANCE.getBLUE() + getClient().getName() + ChatUtil.INSTANCE.getDARK_BLUE() + "] " + ChatUtil.INSTANCE.getWHITE() + getUsername() + " say: " + getMessage());
+                ChatUtil.INSTANCE.sendMessage(ChatUtil.INSTANCE.getDARK_AQUA() + "[IRC] " + ChatUtil.INSTANCE.getDARK_BLUE()+ ChatUtil.INSTANCE.getWHITE() + getUsername()  + getMessage());
+                NotificationManager.INSTANCE.addNotification(ChatUtil.INSTANCE.getDARK_AQUA() + "[IRC] " + ChatUtil.INSTANCE.getDARK_BLUE()  + ChatUtil.INSTANCE.getWHITE() + getUsername()  + getMessage());
             }
             case Chat ->
-                    ChatUtil.INSTANCE.sendMessage(ChatUtil.INSTANCE.getDARK_AQUA() + "[IRC] " + ChatUtil.INSTANCE.getDARK_BLUE() + "[" + ChatUtil.INSTANCE.getBLUE() + getClient().getName() + ChatUtil.INSTANCE.getDARK_BLUE() + "] " + ChatUtil.INSTANCE.getWHITE() + getUsername() + " say: " + getMessage());
+                    ChatUtil.INSTANCE.sendMessage(ChatUtil.INSTANCE.getDARK_AQUA() + "[IRC] " + ChatUtil.INSTANCE.getWHITE() + getUsername() + getMessage());
             case Notification ->
-                    NotificationManager.INSTANCE.addNotification(ChatUtil.INSTANCE.getDARK_AQUA() + "[IRC] " + ChatUtil.INSTANCE.getDARK_BLUE() + "[" + ChatUtil.INSTANCE.getBLUE() + getClient().getName() + ChatUtil.INSTANCE.getDARK_BLUE() + "] " + ChatUtil.INSTANCE.getWHITE() + getUsername() + " say: " + getMessage());
+                    NotificationManager.INSTANCE.addNotification(ChatUtil.INSTANCE.getDARK_AQUA() + "[IRC] "  + ChatUtil.INSTANCE.getWHITE() + getUsername()  + getMessage());
         }
     }
 }
