@@ -40,8 +40,8 @@ object AutoPot : Module(
     private val rotate by bsetting("Rotate", true)
     private val pitch by isetting("Pitch", 86, 80, 90).isTrue { rotate }
     private val delay by isetting("Delay", 1050, 0, 2000)
-    private val hcehck by bsetting("HealthCheck", false)
-    private val health by isetting("Health", 20, 0, 36).isTrue { hcehck }
+    private val healthCheck by bsetting("HealthCheck", false)
+    private val health by isetting("Health", 20, 0, 36).isTrue { healthCheck }
     private val effectRange by dsetting("EffectRange", 3.0, 0.0, 6.0, 0.1)
     private val predictTicks by isetting("Predict", 2, 0, 10)
     private val mode by msetting("Mode", Mode.RESISTANCE)
@@ -60,7 +60,7 @@ object AutoPot : Module(
             if (!timer.passedMs(delay.toLong())) {
                 return@onMotion
             }
-            if (hcehck && player.health + player.absorptionAmount >= health) {
+            if (healthCheck && player.health + player.absorptionAmount >= health) {
                 return@onMotion
             }
 //            if (player.pos.add(CombatUtil.getMotionVec(mc.player, predictTicks.getValueInt(), true))
@@ -194,7 +194,7 @@ object AutoPot : Module(
             else 0.03
 
 
-            val pos: Vec3d = Vec3d(x, y, z)
+            val pos = Vec3d(x, y, z)
 
 
             val bhr = world.raycast(

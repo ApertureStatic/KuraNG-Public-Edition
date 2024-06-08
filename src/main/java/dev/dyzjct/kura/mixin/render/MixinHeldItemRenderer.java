@@ -40,7 +40,7 @@ public class MixinHeldItemRenderer implements IHeldItemRenderer {
 
     @Unique
     private boolean showSwapping(ItemStack stack1, ItemStack stack2) {
-        return HandView.INSTANCE.isEnabled() || ItemStack.areEqual(stack1, stack2);
+        return ItemStack.areEqual(stack1, stack2);
     }
 
     @Inject(method = "renderFirstPersonItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/HeldItemRenderer;renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"))

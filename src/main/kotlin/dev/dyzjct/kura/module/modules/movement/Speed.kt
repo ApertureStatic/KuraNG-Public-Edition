@@ -67,14 +67,19 @@ object Speed :
                 var baseRestrictedSpeed =
                     if (strict || player.input.movementForward < 1) 0.44 else 0.57
                 if (player.hasStatusEffect(StatusEffects.SPEED)) {
-                    val amplifier = player.getStatusEffect(StatusEffects.SPEED)!!.amplifier.toDouble()
+                     val amplifier = player.getStatusEffect(StatusEffects.SPEED)!!.amplifier.toDouble()
                     baseStrictSpeed *= 1 + 0.2 * (amplifier + 1)
                     baseRestrictedSpeed *= 1 + 0.2 * (amplifier + 1)
                 }
-                if (player.hasStatusEffect(StatusEffects.SLOWNESS) && slowness) {
-                    val amplifier = player.getStatusEffect(StatusEffects.SLOWNESS)!!.amplifier.toDouble()
-                    baseStrictSpeed /= 1 + 0.2 * (amplifier + 1)
-                    baseRestrictedSpeed /= 1 + 0.2 * (amplifier + 1)
+                if (player.hasStatusEffect(StatusEffects.SLOWNESS)) {
+                    if (slowness) {
+                        val amplifier = player.getStatusEffect(StatusEffects.SLOWNESS)!!.amplifier.toDouble()
+                        baseStrictSpeed /= 1 + 0.2 * (amplifier + 1)
+                        baseRestrictedSpeed /= 1 + 0.2 * (amplifier + 1)
+                    } else {
+                        baseStrictSpeed = baseMoveSpeed
+                        baseRestrictedSpeed = baseMoveSpeed
+                    }
                 }
                 baseSpeed = baseSpeed.coerceAtMost(if (ticks > 25) baseStrictSpeed else baseRestrictedSpeed)
                 if (damageBoost && MovementManager.boostSpeed != 0.0) {

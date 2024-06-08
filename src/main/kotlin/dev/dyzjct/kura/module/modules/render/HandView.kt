@@ -1,11 +1,11 @@
 package dev.dyzjct.kura.module.modules.render
 
+import base.events.render.ItemRenderEvent
+import base.system.event.safeEventListener
 import dev.dyzjct.kura.mixins.IHeldItemRenderer
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils
-import base.events.render.ItemRenderEvent
-import base.system.event.safeEventListener
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.util.Hand
 
@@ -14,8 +14,6 @@ object HandView : Module(name = "HandView", "手部渲染", category = Category.
 
     val swingSpeed by isetting("SlowVL", 6, 0, 20)
     val oldSwing by bsetting("OldSwing", true)
-    private val disableSwapMain by bsetting("DisableSwapMain", false).isFalse { oldSwing }
-    private val disableSwapOff by bsetting("DisableSwapOff", false).isFalse { oldSwing }
     private val resetSwing = bsetting("ResetSwing", false)
     private val delay by isetting("ResetDelay", 100, 0, 1000).isTrue(resetSwing)
     private val tick by isetting("ResetTick", 0, 0, 5).isTrue(resetSwing)
@@ -38,13 +36,13 @@ object HandView : Module(name = "HandView", "手部渲染", category = Category.
             }
         }
         onMotion {
-            if ((disableSwapMain || oldSwing) && (mc.entityRenderDispatcher.heldItemRenderer as IHeldItemRenderer).getEquippedProgressMainHand() <= 1f) {
-                (mc.entityRenderDispatcher.heldItemRenderer as IHeldItemRenderer).setEquippedProgressMainHand(1f)
+            if ((mc.entityRenderDispatcher.heldItemRenderer as IHeldItemRenderer).getEquippedProgressMainHand() <= 1f) {
+                if(oldSwing) (mc.entityRenderDispatcher.heldItemRenderer as IHeldItemRenderer).setEquippedProgressMainHand(1f)
                 (mc.entityRenderDispatcher.heldItemRenderer as IHeldItemRenderer).setItemStackMainHand(mc.player!!.mainHandStack)
             }
 
-            if ((disableSwapOff || oldSwing) && (mc.entityRenderDispatcher.heldItemRenderer as IHeldItemRenderer).getEquippedProgressOffHand() <= 1f) {
-                (mc.entityRenderDispatcher.heldItemRenderer as IHeldItemRenderer).setEquippedProgressOffHand(1f)
+            if ((mc.entityRenderDispatcher.heldItemRenderer as IHeldItemRenderer).getEquippedProgressOffHand() <= 1f) {
+                if(oldSwing) (mc.entityRenderDispatcher.heldItemRenderer as IHeldItemRenderer).setEquippedProgressOffHand(1f)
                 (mc.entityRenderDispatcher.heldItemRenderer as IHeldItemRenderer).setItemStackOffHand(mc.player!!.offHandStack)
             }
         }

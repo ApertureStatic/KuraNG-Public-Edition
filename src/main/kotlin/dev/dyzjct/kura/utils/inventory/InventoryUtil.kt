@@ -42,7 +42,7 @@ object InventoryUtil {
             val effects: List<StatusEffectInstance> = java.util.ArrayList(PotionUtil.getPotionEffects(stack))
             for (potionEffect in effects) {
                 if (potionEffect.effectType === potion) {
-                    return if (i < 9) i + 36 else i
+                    return i
                 }
             }
         }
