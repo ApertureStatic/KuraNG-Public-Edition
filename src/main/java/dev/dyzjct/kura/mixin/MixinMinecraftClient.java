@@ -54,8 +54,6 @@ public abstract class MixinMinecraftClient {
     public Screen currentScreen;
     @Shadow
     private IntegratedServer server;
-    @Shadow
-    private boolean connectedToRealms;
 
     @Shadow
     public ClientPlayNetworkHandler getNetworkHandler() {
@@ -68,11 +66,6 @@ public abstract class MixinMinecraftClient {
     }
 
     @Shadow
-    public boolean isConnectedToRealms() {
-        return this.connectedToRealms;
-    }
-
-    @Shadow
     public abstract void setScreen(@Nullable Screen screen);
 
 
@@ -82,7 +75,7 @@ public abstract class MixinMinecraftClient {
         Kura.Companion.setCalled(true);
     }
 
-    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/telemetry/GameLoadTimeEvent;startTimer(Lnet/minecraft/client/util/telemetry/TelemetryEventProperty;)V", shift = At.Shift.AFTER))
+    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/session/telemetry/GameLoadTimeEvent;startTimer(Lnet/minecraft/client/session/telemetry/TelemetryEventProperty;)V", shift = At.Shift.AFTER))
     public void onInit(RunArgs args, CallbackInfo ci) {
 //        BuildersKt.launch(CoroutineUtilsKt.getIOScope(), CoroutineUtilsKt.getIOScope().getCoroutineContext(), CoroutineStart.DEFAULT, (coroutineScope, continuation) -> Kura.Companion);
         Kura.Companion.onManagersInit();
@@ -93,7 +86,7 @@ public abstract class MixinMinecraftClient {
         Kura.Companion.onPostInit();
     }
 
-    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/telemetry/GameLoadTimeEvent;startTimer(Lnet/minecraft/client/util/telemetry/TelemetryEventProperty;)V"))
+    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/session/telemetry/GameLoadTimeEvent;startTimer(Lnet/minecraft/client/session/telemetry/TelemetryEventProperty;)V"))
     public void onFontLoad(RunArgs args, CallbackInfo ci) {
         if (!Kura.Companion.getHasInit()) {
             try {
@@ -123,9 +116,10 @@ public abstract class MixinMinecraftClient {
         ClientPlayNetworkHandler clientPlayNetworkHandler = this.getNetworkHandler();
         if (clientPlayNetworkHandler != null && clientPlayNetworkHandler.getConnection().isOpen()) {
             stringBuilder.append(" - ");
+            ServerInfo serverInfo = this.getCurrentServerEntry();
             if (this.server != null && !this.server.isRemote()) {
                 stringBuilder.append(I18n.translate("title.singleplayer"));
-            } else if (this.isConnectedToRealms()) {
+            } else if (serverInfo != null && serverInfo.isRealm()) {
                 stringBuilder.append(I18n.translate("title.multiplayer.realms"));
             } else if (this.server != null || this.getCurrentServerEntry() != null && this.getCurrentServerEntry().isLocal()) {
                 stringBuilder.append(I18n.translate("title.multiplayer.lan"));

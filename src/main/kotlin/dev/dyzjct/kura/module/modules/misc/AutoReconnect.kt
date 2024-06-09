@@ -1,18 +1,16 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import base.events.ConnectionEvent
 import base.events.screen.GuiScreenEvent
 import base.system.event.listener
 import base.utils.concurrent.threads.BackgroundScope
 import base.utils.concurrent.threads.onMainThread
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.ConnectScreen
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.minecraft.client.gui.screen.DisconnectedScreen
+import net.minecraft.client.gui.screen.multiplayer.ConnectScreen
 import net.minecraft.client.network.ServerAddress
 import net.minecraft.client.network.ServerInfo
 
@@ -23,7 +21,7 @@ object AutoReconnect :
 
     private val delay by isetting("Delay", 1000, 500, 10000)
 
-    private var isReconnecting = false
+    var isReconnecting = false
     private var startTime = 0L
 
     init {
@@ -53,12 +51,11 @@ object AutoReconnect :
         }
     }
 
-    fun render(context: DrawContext, mc: MinecraftClient) {
-        if (isReconnecting) {
-            val text = "Reconnecting in ${(startTime + delay - System.currentTimeMillis() + 1000) / 1000}s"
-            context.drawTextWithShadow(
-                mc.textRenderer, text, 2, 2, 16777215
-            )
-        }
+    fun getTime(): Long {
+        return (startTime + delay - System.currentTimeMillis() + 1000) / 1000L
+    }
+
+    fun getText(): String {
+        return "Reconnecting in ${(startTime + delay - System.currentTimeMillis() + 1000) / 1000}s"
     }
 }

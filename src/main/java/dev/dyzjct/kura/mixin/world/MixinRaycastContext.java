@@ -20,7 +20,7 @@ public class MixinRaycastContext implements IRaycastContext {
     @Shadow @Final @Mutable private Vec3d end;
     @Shadow @Final @Mutable private RaycastContext.ShapeType shapeType;
     @Shadow @Final @Mutable private RaycastContext.FluidHandling fluid;
-    @Shadow @Final @Mutable private ShapeContext entityPosition;
+    @Shadow @Final @Mutable private ShapeContext shapeContext;
 
     @Override
     public void set(Vec3d start, Vec3d end, RaycastContext.ShapeType shapeType, RaycastContext.FluidHandling fluidHandling, Entity entity) {
@@ -28,6 +28,6 @@ public class MixinRaycastContext implements IRaycastContext {
         this.end = end;
         this.shapeType = shapeType;
         this.fluid = fluidHandling;
-        this.entityPosition = ShapeContext.of(entity);
+        this.shapeContext = ShapeContext.of(entity);
     }
 }

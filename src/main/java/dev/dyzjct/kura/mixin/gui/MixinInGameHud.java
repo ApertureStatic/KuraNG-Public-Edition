@@ -22,12 +22,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InGameHud.class)
 public abstract class MixinInGameHud {
+//    @Final
+//    @Shadow
+//    private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
+//    @Final
+//    @Shadow
+//    private static Identifier WIDGETS_TEXTURE = new Identifier("textures/gui/widgets.png");
     @Final
     @Shadow
-    private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
+    private static final Identifier HOTBAR_TEXTURE = new Identifier("hud/hotbar");
     @Final
     @Shadow
-    private static Identifier WIDGETS_TEXTURE = new Identifier("textures/gui/widgets.png");
+    private static final Identifier HOTBAR_SELECTION_TEXTURE = new Identifier("hud/hotbar_selection");
     @Shadow
     private int scaledWidth;
     @Shadow
@@ -80,15 +86,15 @@ public abstract class MixinInGameHud {
                     float x = GameAnimation.INSTANCE.updateHotbar();
                     context.getMatrices().push();
                     context.getMatrices().translate(0.0f, 0.0f, -90.0f);
-                    context.drawTexture(WIDGETS_TEXTURE, i - 91, this.scaledHeight - 22, 0, 0, 182, 22);
-                    context.drawTexture(WIDGETS_TEXTURE, (int) (i - 91 - 1 + x), this.scaledHeight - 22 - 1, 0, 22, 24, 22);
+                    context.drawTexture(HOTBAR_SELECTION_TEXTURE, i - 91, this.scaledHeight - 22, 0, 0, 182, 22);
+                    context.drawTexture(HOTBAR_SELECTION_TEXTURE, (int) (i - 91 - 1 + x), this.scaledHeight - 22 - 1, 0, 22, 24, 22);
 
                     ItemStack offHandStack = player.getOffHandStack();
                     if (!offHandStack.isEmpty()) {
                         if (primaryHand == Arm.LEFT) {
-                            context.drawTexture(WIDGETS_TEXTURE, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
+                            context.drawTexture(HOTBAR_SELECTION_TEXTURE, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
                         } else {
-                            context.drawTexture(WIDGETS_TEXTURE, i + 91, this.scaledHeight - 23, 53, 22, 29, 24);
+                            context.drawTexture(HOTBAR_SELECTION_TEXTURE, i + 91, this.scaledHeight - 23, 53, 22, 29, 24);
                         }
                     }
                     context.getMatrices().pop();
@@ -115,8 +121,8 @@ public abstract class MixinInGameHud {
                                 o = i - 91 - 22;
                             }
                             int p = (int) (f * 19.0f);
-                            context.drawTexture(ICONS, o, n, 0, 94, 18, 18);
-                            context.drawTexture(ICONS, o, n + 18 - p, 18, 112 - p, 18, p);
+                            context.drawTexture(HOTBAR_TEXTURE, o, n, 0, 94, 18, 18);
+                            context.drawTexture(HOTBAR_TEXTURE, o, n + 18 - p, 18, 112 - p, 18, p);
                         }
                     }
                     RenderSystem.disableBlend();

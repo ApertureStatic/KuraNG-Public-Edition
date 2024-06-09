@@ -11,12 +11,12 @@ import base.utils.math.vector.Vec2f
 import kotlin.math.min
 
 
-val Box.xCenter get() = minX + xLength * 0.5
+val Box.xCenter get() = minX + lengthX * 0.5
 
-val Box.yCenter get() = minY + yLength * 0.5
+val Box.yCenter get() = minY + lengthY * 0.5
 
-val Box.zCenter get() = minZ + zLength * 0.5
-val Box.lengths get() = Vec3d(xLength, yLength, zLength)
+val Box.zCenter get() = minZ + lengthZ * 0.5
+val Box.lengths get() = Vec3d(lengthX, lengthY, lengthZ)
 
 fun Box.corners(scale: Double): Array<Vec3d> {
     val growSizes = lengths * (scale - 1.0)
@@ -45,11 +45,11 @@ fun Box.scale(multiplier: Double): Box {
 }
 
 fun Box.scale(x: Double, y: Double, z: Double): Box {
-    val halfXLength = this.xLength * 0.5
-    val halfYLength = this.yLength * 0.5
-    val halfZLength = this.zLength * 0.5
+    val halflengthX = this.lengthX * 0.5
+    val halflengthY = this.lengthY * 0.5
+    val halflengthZ = this.lengthZ * 0.5
 
-    return this.expand(halfXLength * (x - 1.0), halfYLength * (y - 1.0), halfZLength * (z - 1.0))
+    return this.expand(halflengthX * (x - 1.0), halflengthY * (y - 1.0), halflengthZ * (z - 1.0))
 }
 
 fun Box.scale(multiplier: Float): Box {
@@ -57,17 +57,17 @@ fun Box.scale(multiplier: Float): Box {
 }
 
 fun Box.scale(x: Float, y: Float, z: Float): Box {
-    val halfXLength = this.xLength * 0.5f
-    val halfYLength = this.yLength * 0.5f
-    val halfZLength = this.zLength * 0.5f
+    val halflengthX = this.lengthX * 0.5f
+    val halflengthY = this.lengthY * 0.5f
+    val halflengthZ = this.lengthZ * 0.5f
 
-    return this.expand(halfXLength * (x - 1f), halfYLength * (y - 1f), halfZLength * (z - 1f))
+    return this.expand(halflengthX * (x - 1f), halflengthY * (y - 1f), halflengthZ * (z - 1f))
 }
 
 fun Box.limitSize(x: Double, y: Double, z: Double): Box {
-    val halfX = min(xLength, x) / 2.0
-    val halfY = min(yLength, y) / 2.0
-    val halfZ = min(zLength, z) / 2.0
+    val halfX = min(lengthX, x) / 2.0
+    val halfY = min(lengthY, y) / 2.0
+    val halfZ = min(lengthZ, z) / 2.0
     val center = center
 
     return Box(

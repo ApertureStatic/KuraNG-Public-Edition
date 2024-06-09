@@ -1,7 +1,7 @@
 plugins {
     java
     kotlin("jvm") version "2.0.0-Beta4"
-    id("fabric-loom") version "1.5-SNAPSHOT"
+    id("fabric-loom") version "1.6-SNAPSHOT"
 }
 
 repositories {

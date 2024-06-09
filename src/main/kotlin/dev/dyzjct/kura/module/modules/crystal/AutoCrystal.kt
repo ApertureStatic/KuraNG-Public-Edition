@@ -703,7 +703,7 @@ object AutoCrystal : Module(
                 if (target == player) continue
                 if (!target.isAlive) continue
                 if (target.distanceSqTo(eyePos) > rangeSq) continue
-                if (isFriend(target.entityName)) continue
+                if (isFriend(target.name.string)) continue
 
                 list.add(getPredictedTarget(target, CombatSystem.predictTicks))
             }

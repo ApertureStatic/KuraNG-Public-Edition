@@ -1,13 +1,5 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.RotationManager
-import dev.dyzjct.kura.manager.SphereCalculatorManager
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.animations.Easing
-import dev.dyzjct.kura.utils.animations.sq
 import base.events.RunGameLoopEvent
 import base.events.TickEvent
 import base.system.event.SafeClientEvent
@@ -21,7 +13,16 @@ import base.utils.extension.fastPos
 import base.utils.graphics.ESPRenderer
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
+import base.utils.math.distanceSqToCenter
 import base.utils.player.updateController
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.SphereCalculatorManager
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.animations.Easing
+import dev.dyzjct.kura.utils.animations.sq
 import net.minecraft.block.Blocks
 import net.minecraft.client.gui.screen.ingame.CraftingScreen
 import net.minecraft.client.gui.screen.ingame.InventoryScreen
@@ -36,7 +37,6 @@ import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
-import base.utils.math.distanceSqToCenter
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.stream.Collectors
@@ -211,8 +211,8 @@ object AutoCraftBed : Module(name = "AutoCraftBed", langName = "自动合成床"
                     val recipeResultCollectionList = player.recipeBook.orderedResults
                     outerLoop@ for (recipeResultCollection in recipeResultCollectionList) {
                         for (recipe in recipeResultCollection.getRecipes(true)) {
-                            if (!bedList.contains(recipe.getOutput(world.registryManager).item)) continue
-                            if (!bedList.any { item -> item != recipe.getOutput(world.registryManager).item }) break
+                            if (!bedList.contains(recipe.value.getResult(world.registryManager).item)) continue
+                            if (!bedList.any { item -> item != recipe.value.getResult(world.registryManager).item }) break
                             if (smart > 0) {
                                 if (craftTimer.tickAndReset(craftDelay.value)) {
                                     if (fastPacket.value) {

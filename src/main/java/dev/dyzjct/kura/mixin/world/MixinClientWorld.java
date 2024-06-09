@@ -15,8 +15,8 @@ public abstract class MixinClientWorld {
     @Shadow
     public abstract @Nullable Entity getEntityById(int id);
 
-    @Inject(method = "addEntityPrivate", at = @At("RETURN"))
-    public void onAddEntity(int id, Entity entity, CallbackInfo ci) {
+    @Inject(method = "addEntity", at = @At("RETURN"))
+    public void addEntityHook(Entity entity, CallbackInfo ci) {
         WorldEvent.Entity.Add event = new WorldEvent.Entity.Add(entity);
         event.post();
     }

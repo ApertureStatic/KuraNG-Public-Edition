@@ -50,12 +50,12 @@ object PlayerListHUD :
             }
 
             playerList.forEach { p ->
-                val playerName = if (highlightList.any { p.entityName.contains(it) }) {
-                    "${Formatting.BOLD}${Formatting.BLACK}${p.entityName}"
+                val playerName = if (highlightList.any { p.name.string.contains(it) }) {
+                    "${Formatting.BOLD}${Formatting.BLACK}${p.name.string}"
                 } else if (FriendManager.isFriend(p)) {
-                    "${Formatting.AQUA}${p.entityName}"
+                    "${Formatting.AQUA}${p.name.string}"
                 } else {
-                    "${Formatting.RED}${p.entityName}"
+                    "${Formatting.RED}${p.name.string}"
                 }
 
                 val text =
@@ -108,12 +108,12 @@ object PlayerListHUD :
 //                return
 //            }
 //            playerList.forEach { p ->
-//                val playerName = if (highlightList.any { p.entityName.contains(it) }) {
-//                    "${Formatting.BOLD}${Formatting.BLACK}${p.entityName}"
+//                val playerName = if (highlightList.any { p.name.string.contains(it) }) {
+//                    "${Formatting.BOLD}${Formatting.BLACK}${p.name.string}"
 //                } else if (FriendManager.isFriend(p)) {
-//                    "${Formatting.AQUA}${p.entityName}"
+//                    "${Formatting.AQUA}${p.name.string}"
 //                } else {
-//                    "${Formatting.RED}${p.entityName}"
+//                    "${Formatting.RED}${p.name.string}"
 //                }
 //
 //                val text =

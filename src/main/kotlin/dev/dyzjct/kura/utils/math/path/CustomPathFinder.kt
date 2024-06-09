@@ -1,8 +1,8 @@
 package dev.dyzjct.kura.utils.math.path
 
-import dev.dyzjct.kura.utils.extension.fastFloor
 import base.system.event.SafeClientEvent
 import base.utils.block.getBlock
+import dev.dyzjct.kura.utils.extension.fastFloor
 import net.minecraft.block.*
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
@@ -171,7 +171,7 @@ class CustomPathFinder(startVec3: Vec3d, endVec3: Vec3d) {
                     mc.world,
                     block
                 ))) || b is SlabBlock || b is StairsBlock || b is CactusBlock || b is ChestBlock || b is EnderChestBlock || b is SkullBlock || b is PaneBlock ||
-                        b is FenceBlock || b is WallBlock || b is GlassBlock || b is PistonBlock || b is PistonExtensionBlock || b is PistonHeadBlock || b is StainedGlassBlock ||
+                        b is FenceBlock || b is WallBlock || b is StainedGlassBlock || b is TintedGlassBlock || b is PistonBlock || b is PistonExtensionBlock || b is PistonHeadBlock || b is StainedGlassBlock ||
                         b is TrapdoorBlock ||
                         b is BambooBlock || b is BellBlock ||
                         b is CakeBlock || b is RedstoneBlock ||

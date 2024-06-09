@@ -33,7 +33,8 @@ import kotlin.math.min
 object CrystalDamageCalculator : AlwaysListening {
     val reductionMap: MutableMap<LivingEntity, DamageReduction> = Collections.synchronizedMap(WeakHashMap())
 
-    var explosion = Explosion(minecraft.world, null, 0.0, 0.0, 0.0, 6f, false, Explosion.DestructionType.DESTROY)
+    private var explosion =
+        Explosion(minecraft.world, null, 0.0, 0.0, 0.0, 6f, false, Explosion.DestructionType.DESTROY)
 
     class DamageReduction(var entity: LivingEntity) {
         private val armorValue: Float = entity.armor.toFloat()
@@ -264,7 +265,7 @@ object CrystalDamageCalculator : AlwaysListening {
             return endDamage
         }
 
-        if (!target.isImmuneToExplosion && !target.isInvulnerable) {
+        if (!target.isImmuneToExplosion(explosion) && !target.isInvulnerable) {
             val distExposure = MathHelper.sqrt(target.squaredDistanceTo(explosionPos).toFloat()) / 12.0
             if (distExposure <= 1.0) {
                 val xDiff = target.x - explosionPos.x
@@ -303,7 +304,7 @@ object CrystalDamageCalculator : AlwaysListening {
                     } else {
                         val protAmount = EnchantmentHelper.getProtectionAmount(
                             target.armorItems,
-                            explosion.damageSource
+                            (explosion as IExplosion).damageSource
                         )
                         if (protAmount > 0) {
                             toDamage = DamageUtil.getInflictedDamage(toDamage, protAmount.toFloat())

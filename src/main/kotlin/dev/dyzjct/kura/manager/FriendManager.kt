@@ -38,7 +38,7 @@ object FriendManager {
 
     fun isFriend(name: String): Boolean {
         Wrapper.player?.let {
-            if (name == it.entityName) return true
+            if (name == it.name.string) return true
         }
         return if (!checkExist(name)) {
             false
@@ -46,7 +46,7 @@ object FriendManager {
     }
 
     fun isFriend(entity: Entity): Boolean {
-        return isFriend(entity.entityName)
+        return isFriend(entity.name.string)
     }
 
     val friendStringList: List<String>

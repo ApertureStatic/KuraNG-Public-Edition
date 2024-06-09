@@ -144,7 +144,12 @@ open class GuiScreen : Screen(Text.empty()) {
         }
     }
 
-    override fun mouseScrolled(mouseX: Double, mouseY: Double, verticalAmount: Double): Boolean {
+    override fun mouseScrolled(
+        mouseX: Double,
+        mouseY: Double,
+        horizontalAmount: Double,
+        verticalAmount: Double
+    ): Boolean {
         if (verticalAmount < 0) {
             elements.forEach {
                 it.y -= 10
@@ -156,6 +161,6 @@ open class GuiScreen : Screen(Text.empty()) {
                 it.rearrange()
             }
         }
-        return super.mouseScrolled(mouseX, mouseY, verticalAmount)
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)
     }
 }

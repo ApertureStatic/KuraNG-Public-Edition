@@ -41,7 +41,7 @@ object BreakESP : Module(name = "BreakESP", langName = "挖掘显示", category 
             if ((!renderSelf && event.breakerID == player.id)) return@safeEventListener
             if (event.blockPos.distanceSqToCenter(player.pos) > renderRange.sq) return@safeEventListener
             if (!canBreak(event.blockPos, false)) return@safeEventListener
-            val targetName = world.getEntityById(event.breakerID)?.entityName ?: return@safeEventListener
+            val targetName = world.getEntityById(event.breakerID)?.name?.string ?: return@safeEventListener
             var blockProgress = mineMap[targetName]
             if (blockProgress == null || blockProgress.blockPos != event.blockPos) {
                 if (world.getEntityById(event.breakerID) is PlayerEntity) {

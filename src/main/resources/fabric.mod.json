@@ -5,8 +5,8 @@
   "name": "Kura",
   "description": "A Client Developed For 2B2T",
   "authors": [
-    "DreamDev",
-    "dyzjct"
+    "dyzjct",
+    "DreamDev"
   ],
   "license": "GNU General Public License v3.0",
   "icon": "assets/kura/logo/logo.png",
@@ -17,6 +17,6 @@
   "accessWidener": "kura.accesswidener",
   "depends": {
     "fabricloader": ">=0.14.21",
-    "minecraft": "1.20.1"
+    "minecraft": "1.20.4"
   }
 }

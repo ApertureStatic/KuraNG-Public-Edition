@@ -388,7 +388,7 @@ object AnchorAura : Module(
                 if (target == player) continue
                 if (!target.isAlive) continue
                 if (target.distanceSqTo(eyePos) > rangeSq) continue
-                if (FriendManager.isFriend(target.entityName)) continue
+                if (FriendManager.isFriend(target.name.string)) continue
 
                 list.add(getPredictedTarget(target, CombatSystem.predictTicks))
             }

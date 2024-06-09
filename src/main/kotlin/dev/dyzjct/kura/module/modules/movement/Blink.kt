@@ -1,11 +1,11 @@
 package dev.dyzjct.kura.module.modules.movement
 
-import com.mojang.authlib.GameProfile
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
 import base.events.PacketEvents
 import base.system.event.safeEventListener
 import base.utils.concurrent.threads.runSafe
+import com.mojang.authlib.GameProfile
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
 import net.minecraft.client.network.OtherClientPlayerEntity
 import net.minecraft.entity.Entity
 import net.minecraft.network.packet.Packet
@@ -35,7 +35,7 @@ object Blink : Module(name = "Blink", langName = "瞬移", category = Category.M
         runSafe {
             clonedPlayer = OtherClientPlayerEntity(
                 world,
-                GameProfile(UUID.fromString("60569353-f22b-42da-b84b-d706a65c5ddf"), player.entityName)
+                GameProfile(UUID.fromString("60569353-f22b-42da-b84b-d706a65c5ddf"), player.name.string)
             )
             clonedPlayer?.let { fakePlayer ->
                 fakePlayer.copyPositionAndRotation(player)
@@ -45,7 +45,7 @@ object Blink : Module(name = "Blink", langName = "瞬移", category = Category.M
                 fakePlayer.health = player.health
                 fakePlayer.inventory.clone(player.inventory)
                 fakePlayer.yaw = player.yaw
-                world.addEntity(-114514, fakePlayer)
+                world.addEntity(fakePlayer)
             }
         }
     }

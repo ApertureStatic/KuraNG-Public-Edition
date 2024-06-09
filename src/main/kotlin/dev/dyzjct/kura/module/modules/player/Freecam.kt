@@ -1,14 +1,14 @@
 package dev.dyzjct.kura.module.modules.player
 
-import com.mojang.authlib.GameProfile
-import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.Module
 import base.events.ConnectionEvent
 import base.events.PacketEvents
 import base.events.player.PlayerMoveEvent
 import base.system.event.safeEventListener
 import base.utils.concurrent.threads.runSafe
 import base.utils.player.RotationUtils.directionSpeed
+import com.mojang.authlib.GameProfile
+import dev.dyzjct.kura.module.Category
+import dev.dyzjct.kura.module.Module
 import net.minecraft.client.network.OtherClientPlayerEntity
 import net.minecraft.entity.Entity
 import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket
@@ -50,12 +50,13 @@ object Freecam : Module(name = "Freecam", langName = "灵魂出窍", category = 
                 posY = player.y
                 posZ = player.z
             }
-            clonedPlayer = OtherClientPlayerEntity(world, GameProfile(mc.session.uuidOrNull, mc.session.username)).also {
-                it.boundingBox = Box(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-                it.copyFrom(player)
-                it.headYaw = player.headYaw
-            }
-            world.addEntity(-101, clonedPlayer)
+            clonedPlayer =
+                OtherClientPlayerEntity(world, GameProfile(mc.session.uuidOrNull, mc.session.username)).also {
+                    it.boundingBox = Box(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+                    it.copyFrom(player)
+                    it.headYaw = player.headYaw
+                }
+            world.addEntity(clonedPlayer)
             player.abilities.flying = true
             player.abilities.flySpeed = (speed.value / 100f).toFloat()
             player.noClip = true

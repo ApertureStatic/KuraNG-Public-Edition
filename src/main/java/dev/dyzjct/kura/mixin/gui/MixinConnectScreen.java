@@ -2,8 +2,8 @@ package dev.dyzjct.kura.mixin.gui;
 
 import base.events.ConnectionEvent;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ConnectScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.multiplayer.ConnectScreen;
 import net.minecraft.client.network.ServerAddress;
 import net.minecraft.client.network.ServerInfo;
 import org.spongepowered.asm.mixin.Mixin;

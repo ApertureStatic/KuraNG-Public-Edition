@@ -10,7 +10,7 @@ import base.system.event.ListenerOwner
 import base.system.event.listener
 import base.system.event.safeEventListener
 import net.minecraft.client.MinecraftClient
-import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket
+import net.minecraft.network.packet.s2c.common.DisconnectS2CPacket
 
 internal object EventListenerManager : ListenerOwner() {
     private var displayWidth = 0

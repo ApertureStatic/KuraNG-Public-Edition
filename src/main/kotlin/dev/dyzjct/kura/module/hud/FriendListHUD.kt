@@ -46,7 +46,7 @@ object FriendListHUD : HUDModule(
             Color.ORANGE.rgb
         )
         friendList.forEach { p ->
-            val text = "- ${p.entityName}"
+            val text = "- ${p.name.string}"
             FontRenderers.cn.drawString(context.matrices, text, x, y + addY, Color.WHITE.rgb)
             maxFontWidth = maxFontWidth.coerceAtLeast(FontRenderers.cn.getStringWidth(text))
             addY += FontRenderers.cn.fontHeight + 2

@@ -83,11 +83,11 @@ object TotemPopCounter : Module(
                 if (!EntityManager.players.contains(it.key)) {
                     if (it.key.name.string != player.name.string) {
                         if (mode.value == Mode.Chat || mode.value == Mode.Both) {
-                            ChatUtil.sendMessage("${ChatUtil.GREEN}${it.key.entityName} died after popped ${ChatUtil.RED}${it.value} ${ChatUtil.GREEN} totems!")
+                            ChatUtil.sendMessage("${ChatUtil.GREEN}${it.key.name.string} died after popped ${ChatUtil.RED}${it.value} ${ChatUtil.GREEN} totems!")
                         }
                         if (mode.value == Mode.Notification || mode.value == Mode.Both) {
                             NotificationManager.addNotification(
-                                "${ChatUtil.GREEN}${it.key.entityName} died after popped ${ChatUtil.RED}${it.value} ${ChatUtil.GREEN} totems!"
+                                "${ChatUtil.GREEN}${it.key.name.string} died after popped ${ChatUtil.RED}${it.value} ${ChatUtil.GREEN} totems!"
                             )
                         }
                         if (Sound.isEnabled && Sound.ezz) {

@@ -37,7 +37,7 @@ object FakePlayer : Module(
                 fakePlayer.health = health.toFloat()
                 fakePlayer.inventory.clone(player.inventory)
                 fakePlayer.yaw = player.yaw
-                world.addEntity(-114514, fakePlayer)
+                world.addEntity(fakePlayer)
             }
         }
     }

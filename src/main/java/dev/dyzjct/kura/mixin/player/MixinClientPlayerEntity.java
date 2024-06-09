@@ -1,12 +1,12 @@
 package dev.dyzjct.kura.mixin.player;
 
-import dev.dyzjct.kura.manager.EventAccessManager;
-import dev.dyzjct.kura.module.modules.movement.NoSlowDown;
-import dev.dyzjct.kura.module.modules.movement.Velocity;
 import base.events.player.JumpEvent;
 import base.events.player.PlayerMotionEvent;
 import base.events.player.PlayerMoveEvent;
 import base.system.event.StageType;
+import dev.dyzjct.kura.manager.EventAccessManager;
+import dev.dyzjct.kura.module.modules.movement.NoSlowDown;
+import dev.dyzjct.kura.module.modules.movement.Velocity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.util.math.Vec3d;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerEntity.class)
-public abstract class MixinClientPlayerEntity extends MixinAbstractClientPlayerEntity {
+public abstract class MixinClientPlayerEntity extends MixinPlayerEntity {
     @Unique
     public PlayerMotionEvent motionEvent;
 

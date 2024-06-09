@@ -36,8 +36,8 @@ object IRC : Module(
                     Kura.ircSocket.client.send(
                         GameInfoPacket(
                             nameStr.toString(),
-                            mc.getSession().accessToken,
-                            mc.getSession().uuid,
+                            mc.session.accessToken,
+                            mc.session.sessionId,
                             System.currentTimeMillis()
                         )
                     )

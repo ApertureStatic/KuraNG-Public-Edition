@@ -13,7 +13,6 @@ import dev.dyzjct.kura.module.modules.client.UiSetting.Theme
 import dev.dyzjct.kura.module.modules.client.UiSetting.theme
 import dev.dyzjct.kura.utils.animations.Easing
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.PlayerSkinDrawer
 import net.minecraft.client.network.AbstractClientPlayerEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.RotationAxis
@@ -264,7 +263,8 @@ object TargetHUD : HUDModule(
         context.matrices.translate(x, y, 0.0)
         context.matrices.scale(1f, 1f, 1f)
         context.matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(0f))
-        PlayerSkinDrawer.draw(context, (target as AbstractClientPlayerEntity).skinTexture, 10, 7, 32, false, false)
+//        PlayerSkinDrawer.draw(context, (target as AbstractClientPlayerEntity).skinTextures, 10, 7, 32, false, false)
+        RenderSystem.setShaderTexture(0, (target as AbstractClientPlayerEntity).skinTextures.texture())
         context.matrices.pop()
     }
 }

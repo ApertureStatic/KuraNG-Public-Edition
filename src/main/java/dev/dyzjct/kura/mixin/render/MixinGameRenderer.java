@@ -108,7 +108,7 @@ public class MixinGameRenderer {
      * @reason fuck u mojang.
      */
     @Overwrite
-    public void renderHand(MatrixStack matrices, Camera camera, float tickDelta) {
+    private void renderHand(MatrixStack matrices, Camera camera, float tickDelta) {
         if (!this.renderingPanorama) {
             this.loadProjectionMatrix(getBasicProjectionMatrixKura(getFov(camera, tickDelta, false)));
             matrices.loadIdentity();

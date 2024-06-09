@@ -1,18 +1,26 @@
 package dev.dyzjct.kura.mixin.gui;
 
 import dev.dyzjct.kura.module.modules.misc.AutoReconnect;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.DisconnectedScreen;
+import net.minecraft.client.gui.screen.GameModeSelectionScreen;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(DisconnectedScreen.class)
-public class MixinDisconnectScreen {
-    @Inject(method = "render", at = @At("RETURN"))
-    public void onRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        AutoReconnect.INSTANCE.render(context, MinecraftClient.getInstance());
+public abstract class MixinDisconnectScreen extends Screen {
+    @Unique
+    private final GameModeSelectionScreen.ButtonWidget reconnectBtn;
+
+    protected MixinDisconnectScreen(Text title, GameModeSelectionScreen.ButtonWidget reconnectBtn) {
+        super(title);
+        this.reconnectBtn = reconnectBtn;
+    }
+
+    @Override
+    public void tick() {
+        if (AutoReconnect.INSTANCE.isDisabled() || !AutoReconnect.INSTANCE.isReconnecting()) return;
+        if (reconnectBtn != null) reconnectBtn.setMessage(Text.literal(AutoReconnect.INSTANCE.getText()));
     }
 }

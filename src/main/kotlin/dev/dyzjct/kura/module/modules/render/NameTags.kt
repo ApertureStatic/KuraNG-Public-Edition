@@ -75,7 +75,7 @@ object NameTags : Module(name = "NameTags", langName = "名牌显示", category 
                 if (gameMode.value) {
                     finalString += translateGamemode(getEntityGamemode(p)) + " "
                 }
-                finalString += p.displayName.string + " "
+                finalString += p.displayName!!.string + " "
                 if (health.value) {
                     finalString += getHealthColor(p) + round2((p.absorptionAmount + p.health).toDouble()) + " "
                 }
