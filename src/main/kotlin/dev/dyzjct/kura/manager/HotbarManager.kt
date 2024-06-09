@@ -165,11 +165,10 @@ object HotbarManager : AlwaysListening {
                     val swap = slot != serverSideHotbar
                     if (!isCheck) {
                         if (swap) {
-                            val old = player.inventory.selectedSlot
                             inventorySwap(slot)
                             block.invoke()
                             inventorySwap(slot)
-                            doSwap(old)
+                            doSwap(player.inventory.selectedSlot)
                         } else {
                             block.invoke()
                         }
