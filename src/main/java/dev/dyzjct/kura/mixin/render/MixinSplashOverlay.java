@@ -1,8 +1,9 @@
 package dev.dyzjct.kura.mixin.render;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import dev.dyzjct.kura.module.modules.client.LoadingMenu;
 import base.utils.Wrapper;
+import com.mojang.blaze3d.systems.RenderSystem;
+import dev.dyzjct.kura.KuraIdentifier;
+import dev.dyzjct.kura.module.modules.client.LoadingMenu;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.SplashOverlay;
@@ -17,7 +18,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import dev.dyzjct.kura.KuraIdentifier;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -26,11 +26,13 @@ import java.util.function.Consumer;
 public abstract class MixinSplashOverlay {
     @Unique
     private static final Identifier XGP = new KuraIdentifier("textures/xgp.png");
-
     @Unique
     private static final Identifier GENSHIN_IMPACT = new KuraIdentifier("textures/genshin.png");
+    @Unique
     private static final Identifier Kura = new KuraIdentifier("textures/kura.png");
+    @Unique
     private static final Identifier Nullpoint = new KuraIdentifier("textures/nullpoint.png");
+    @Unique
     private static final Identifier Ayachinene = new KuraIdentifier("textures/0721.png");
 
     private static final MinecraftClient mc = Wrapper.getMinecraft();

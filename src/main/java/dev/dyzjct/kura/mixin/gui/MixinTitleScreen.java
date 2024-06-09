@@ -44,25 +44,25 @@ public abstract class MixinTitleScreen {
 
     @Inject(method = "render", at = @At("HEAD"))
     private void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-//        int width = MinecraftClient.getInstance().getWindow().getScaledWidth();
-//        int height = MinecraftClient.getInstance().getWindow().getScaledHeight();
-//
-//        RenderSystem.enableBlend();
-//        RenderSystem.defaultBlendFunc();
-//        RenderSystem.depthMask(true);
-//        RenderSystem.enableDepthTest();
-//
-//        if (this.backgroundFadeStart == 0L && this.doBackgroundFade) {
-//            this.backgroundFadeStart = Util.getMeasuringTimeMs();
-//        }
-//        float f = this.doBackgroundFade ? (float) (Util.getMeasuringTimeMs() - this.backgroundFadeStart) / 1000.0F : 1.0F;
-//
-//        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, f);
-//
-//        // 同上
-//        context.drawTexture(new KuraIdentifier("background/" + UiSetting.splashImg() + ".png"), 0, 0, 0, 0, width, height, width, height);
-//
-//        RenderSystem.defaultBlendFunc();
-//        RenderSystem.disableBlend();
+        int width = MinecraftClient.getInstance().getWindow().getScaledWidth();
+        int height = MinecraftClient.getInstance().getWindow().getScaledHeight();
+
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.depthMask(true);
+        RenderSystem.enableDepthTest();
+
+        if (this.backgroundFadeStart == 0L && this.doBackgroundFade) {
+            this.backgroundFadeStart = Util.getMeasuringTimeMs();
+        }
+        float f = this.doBackgroundFade ? (float) (Util.getMeasuringTimeMs() - this.backgroundFadeStart) / 1000.0F : 1.0F;
+
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, f);
+
+        // 同上
+        context.drawTexture(new KuraIdentifier("background/" + UiSetting.splashImg() + ".png"), 0, 0, 0, 0, width, height, width, height);
+
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableBlend();
     }
 }

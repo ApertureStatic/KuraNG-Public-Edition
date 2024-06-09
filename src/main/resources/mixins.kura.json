@@ -10,7 +10,6 @@
     "gui.MixinConnectScreen",
     "gui.MixinDisconnectScreen",
     "gui.MixinInGameHud",
-    "gui.MixinTitleScreen",
     "input.MixinKeyboard",
     "input.MixinMouse",
     "player.MixinPlayerListEntry",
