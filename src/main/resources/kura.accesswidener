@@ -4,8 +4,8 @@ accessible class net/minecraft/client/render/BackgroundRenderer$StatusEffectFogM
 
 accessible field net/minecraft/client/MinecraftClient itemUseCooldown I
 mutable field net/minecraft/client/MinecraftClient itemUseCooldown I
-accessible field net/minecraft/client/MinecraftClient session Lnet/minecraft/client/util/Session;
-mutable field net/minecraft/client/MinecraftClient session Lnet/minecraft/client/util/Session;
+accessible field net/minecraft/client/MinecraftClient session Lnet/minecraft/client/session/Session;
+mutable field net/minecraft/client/MinecraftClient session Lnet/minecraft/client/session/Session;
 accessible field net/minecraft/client/MinecraftClient sessionService Lcom/mojang/authlib/minecraft/MinecraftSessionService;
 mutable field net/minecraft/client/MinecraftClient sessionService Lcom/mojang/authlib/minecraft/MinecraftSessionService;
 accessible field net/minecraft/client/MinecraftClient renderTickCounter Lnet/minecraft/client/render/RenderTickCounter;
@@ -23,8 +23,8 @@ mutable field net/minecraft/util/math/Vec3d z D
 accessible field net/minecraft/client/gl/Framebuffer useDepthAttachment Z
 mutable field net/minecraft/client/gl/Framebuffer useDepthAttachment Z
 
-accessible field net/minecraft/network/packet/c2s/play/KeepAliveC2SPacket id J
-mutable field net/minecraft/network/packet/c2s/play/KeepAliveC2SPacket id J
+#accessible field net/minecraft/network/packet/c2s/play/KeepAliveC2SPacket id J
+#mutable field net/minecraft/network/packet/c2s/play/KeepAliveC2SPacket id J
 
 accessible field net/minecraft/network/packet/c2s/play/PlayerInteractEntityC2SPacket entityId I
 mutable field net/minecraft/network/packet/c2s/play/PlayerInteractEntityC2SPacket entityId I
@@ -73,7 +73,7 @@ accessible field net/minecraft/client/network/ClientPlayerInteractionManager cur
 accessible field net/minecraft/client/network/ClientPlayerInteractionManager blockBreakingCooldown I
 accessible field net/minecraft/client/network/ClientPlayerInteractionManager lastSelectedSlot I
 
-accessible field net/minecraft/network/packet/c2s/play/ResourcePackStatusC2SPacket status Lnet/minecraft/network/packet/c2s/play/ResourcePackStatusC2SPacket$Status;
+#accessible field net/minecraft/network/packet/c2s/play/ResourcePackStatusC2SPacket status Lnet/minecraft/network/packet/c2s/play/ResourcePackStatusC2SPacket$Status;
 
 accessible field net/minecraft/item/BucketItem fluid Lnet/minecraft/fluid/Fluid;
 
