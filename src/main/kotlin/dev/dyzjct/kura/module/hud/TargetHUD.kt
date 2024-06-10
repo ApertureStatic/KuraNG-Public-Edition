@@ -260,11 +260,11 @@ object TargetHUD : HUDModule(
 
     private fun drawTargetFace(context: DrawContext, target: PlayerEntity, x: Double, y: Double) {
         context.matrices.push()
-        context.matrices.translate(x, y, 0.0)
         context.matrices.scale(1f, 1f, 1f)
         context.matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(0f))
-//        PlayerSkinDrawer.draw(context, (target as AbstractClientPlayerEntity).skinTextures, 10, 7, 32, false, false)
         RenderSystem.setShaderTexture(0, (target as AbstractClientPlayerEntity).skinTextures.texture())
+        Render2DEngine.renderTexture(context.matrices, x + 10, y + 7, 32.0, 32.0, 8f, 8f, 8.0, 8.0, 64.0, 64.0)
+        Render2DEngine.renderTexture(context.matrices, x + 10, y + 7, 32.0, 32.0, 40f, 8f, 8.0, 8.0, 64.0, 64.0)
         context.matrices.pop()
     }
 }
