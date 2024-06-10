@@ -1,2 +1,3 @@
 # Kura-NextGen
-We're back
+#### Public-Edition
+###### KuraDevelopTeam
