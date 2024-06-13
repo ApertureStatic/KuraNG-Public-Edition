@@ -59,7 +59,6 @@ object TargetHUD : HUDModule(
     override fun DrawScope.renderOnGame() {
         if (!isTargetNull) {
             if (started) {
-
                 startTime = System.currentTimeMillis() - if (Easing.OUT_CUBIC.inc(
                         Easing.toDelta(
                             startTime,
