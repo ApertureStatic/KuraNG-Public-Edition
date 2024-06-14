@@ -1,5 +1,6 @@
 package dev.dyzjct.kura.mixin.gui;
 
+import base.system.render.graphic.Render2DEngine;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.dyzjct.kura.Kura;
 import dev.dyzjct.kura.KuraIdentifier;
@@ -17,8 +18,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -100,17 +99,16 @@ public class MixinTitleScreen extends Screen {
         float g = this.doBackgroundFade ? MathHelper.clamp(f - 1.0F, 0.0F, 1.0F) : 1.0F;
 
         // why？ cannot load bg image?
-        context.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.blendEquation(GL14.GL_FUNC_ADD);
-        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        RenderSystem.enableBlend();
-        RenderSystem.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        RenderSystem.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
-        context.drawTexture(new KuraIdentifier("background/" + UiSetting.splashImg() + ".png"), 0, 0, width, height, width, height, width, height);
+        Render2DEngine.INSTANCE.drawRect(context.getMatrices(), 0, 0, width, height, UiSetting.INSTANCE.getSplashColor());
+//        RenderSystem.blendEquation(GL14.GL_FUNC_ADD);
+//        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+//        RenderSystem.enableBlend();
+//        RenderSystem.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+//        RenderSystem.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
+//        context.drawTexture(new KuraIdentifier("background/" + UiSetting.splashImg() + ".png"), 0, 0, width, height, width, height, width, height);
 //        context.drawTexture(new KuraIdentifier("background/" + UiSetting.splashImg() + ".png"), 0, 0, 0, 0, this.width, this.height, this.width, this.height);
 
         context.setShaderColor(1.0f, 1.0f, 1.0f, g);
-//        context.drawTexture(new KuraIdentifier("background/" + UiSetting.splashImg() + ".png"), 0, 0, 0, 0, width, height, 1920, 1080);
         context.drawTexture(new KuraIdentifier("logo/logo.png"), this.width / 2 - 35, this.height / 4 - 45, 0f, 0f, 80, 80, 80, 80);
         context.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         int i = MathHelper.ceil(g * 255.0F) << 24;

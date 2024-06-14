@@ -29,11 +29,11 @@ object UiSetting : Module(
 
     //    Theme type
     val theme by msetting("Theme", Theme.Ayachinene)
-//    val splashColor by csetting("SplashColor",Color(0,0,0,255))
-    private val splashMode by msetting(
-        "SplashMode",
-        Splash.Rimuru
-    ).isTrue { theme == Theme.Custom }
+    val splashColor by csetting("SplashColor",Color(0,0,0,255))
+//    private val splashMode by msetting(
+//        "SplashMode",
+//        Splash.Rimuru
+//    ).isTrue { theme == Theme.Custom }
 
 
     //    Ui colors
@@ -248,11 +248,11 @@ object UiSetting : Module(
         }
     }
 
-    @JvmStatic
-    fun splashImg(): String {
-        if (theme == Theme.Custom) return splashMode.name.lowercase(Locale.getDefault())
-        return theme.name.lowercase(Locale.getDefault())
-    }
+//    @JvmStatic
+//    fun splashImg(): String {
+//        if (theme == Theme.Custom) return splashMode.name.lowercase(Locale.getDefault())
+//        return theme.name.lowercase(Locale.getDefault())
+//    }
 
     @JvmStatic
     fun getSlashText(): String {
