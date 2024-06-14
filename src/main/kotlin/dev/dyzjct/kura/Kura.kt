@@ -21,7 +21,7 @@ class Kura : AlwaysListening {
         const val VERSION = "Community Edition v1.0.1"
         var logger: Logger = LogManager.getLogger("Kura")
         var commandPrefix = StringSetting("CommandPrefix", null, ".")
-        var DISPLAY_NAME = "$MOD_NAME-$VERSION | Have a nice day!)"
+        var DISPLAY_NAME = "$MOD_NAME-$VERSION | Have a nice day!"
         var TICK_TIMER = 1f
 
         var ircSocket = SocketManager()
