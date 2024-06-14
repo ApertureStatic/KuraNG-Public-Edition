@@ -14,6 +14,7 @@ import dev.dyzjct.kura.module.modules.client.UiSetting.theme
 import dev.dyzjct.kura.utils.animations.Easing
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.network.AbstractClientPlayerEntity
+import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.RotationAxis
 import java.awt.Color
@@ -28,6 +29,7 @@ object TargetHUD : HUDModule(
     private val fadeLength by isetting("FadeLength", 200, 0, 1000)
     private val targetColor by csetting("TargetColor", Color(76, 179, 208, 150)).isTrue { theme == Theme.Custom }
     private val healthColor by csetting("TargetHealthColor", Color(117, 39, 198, 255)).isTrue { theme == Theme.Custom }
+    private val nigger by bsetting("NIGGER", true)
     private var lastTarget: PlayerEntity? = null
     private var isTargetNull = true
     private var started = false
@@ -148,6 +150,16 @@ object TargetHUD : HUDModule(
                     32f,
                     Color(255, 0, 0, (150 * hurtPercentage).toInt())
                 )
+
+                if (nigger && it.getStatusEffect(StatusEffects.RESISTANCE)?.amplifier != 0) Render2DEngine.drawRect(
+                    context.matrices,
+                    x + 10,
+                    y + 7,
+                    32f,
+                    32f,
+                    Color(0, 0, 0, 100)
+                )
+
                 if (theme == Theme.Rimuru) {
                     context.drawTexture(
                         KuraIdentifier("textures/slm.png"),
