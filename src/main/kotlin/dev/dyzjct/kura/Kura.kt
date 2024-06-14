@@ -15,17 +15,13 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.io.path.Path
 class Kura : AlwaysListening {
-    enum class UserType(val userType: String) {
-        User("User"), Beta("Beta"), Nigger("NIGGER")
-    }
 
     companion object {
         const val MOD_NAME = "Kura"
-        const val VERSION = "1.0"
-        var userState = UserType.Beta
+        const val VERSION = "Community Edition v1.0.1"
         var logger: Logger = LogManager.getLogger("Kura")
         var commandPrefix = StringSetting("CommandPrefix", null, ".")
-        var DISPLAY_NAME = "$MOD_NAME.dev $VERSION (${userState.userType})"
+        var DISPLAY_NAME = "$MOD_NAME-$VERSION | Have a nice day!)"
         var TICK_TIMER = 1f
 
         var ircSocket = SocketManager()

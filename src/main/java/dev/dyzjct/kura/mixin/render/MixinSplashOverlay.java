@@ -76,7 +76,7 @@ public abstract class MixinSplashOverlay {
         RenderSystem.depthMask(true);
         RenderSystem.enableDepthTest();
 
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.1f);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
         context.drawTexture(switch ((LoadingMenu.LoadingMenuMode) LoadingMenu.INSTANCE.getMode().getValue()) {
             case XGP -> XGP;
             case Kura -> Kura;

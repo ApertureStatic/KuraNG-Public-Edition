@@ -7,7 +7,6 @@ import base.system.event.listener
 import base.system.render.newfont.FontRenderers
 import base.utils.concurrent.threads.IOScope
 import base.utils.math.DamageCalculator
-import base.verify.VerificationManager
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.hud.*
 import dev.dyzjct.kura.module.modules.client.*
@@ -27,7 +26,6 @@ object ModuleManager : AlwaysListening {
     val moduleList = CopyOnWriteArrayList<AbstractModule>()
 
     init {
-        VerificationManager
         listener<TickEvent.Pre>(true) {
             sortModules()
             moduleList.forEach {

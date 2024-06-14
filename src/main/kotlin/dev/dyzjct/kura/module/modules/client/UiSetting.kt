@@ -29,6 +29,7 @@ object UiSetting : Module(
 
     //    Theme type
     val theme by msetting("Theme", Theme.Ayachinene)
+//    val splashColor by csetting("SplashColor",Color(0,0,0,255))
     private val splashMode by msetting(
         "SplashMode",
         Splash.Rimuru
@@ -289,7 +290,7 @@ object UiSetting : Module(
 
     @Suppress("UNUSED")
     enum class Splash {
-        Custom, Rimuru, Mahiro, Arona, Roxy, Mahiru, Gura, Mikoto, Miku, Ayachinene
+        Rimuru, Mahiro, Arona, Roxy, Mahiru, Gura, Mikoto, Miku, Ayachinene
     }
 
     enum class SytMode {
