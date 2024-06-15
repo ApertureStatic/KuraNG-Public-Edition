@@ -82,6 +82,8 @@ object AnchorAura : Module(
     private var startTime = 0L
     private var scale = 0.0f
 
+    var anchorDamage = 0.0
+
     override fun onEnable() {
         prevPos = null
         currentPos = null
@@ -91,7 +93,7 @@ object AnchorAura : Module(
         lastUpdateTime = 0L
         startTime = 0L
         scale = 0.0f
-        if (CombatSystem.autoToggle && AutoCrystal.isEnabled) {
+        if (CombatSystem.autoToggle && AutoCrystal.isEnabled && !CombatSystem.smartAura) {
             if (CombatSystem.mainToggle != CombatSystem.MainToggle.Anchor) lastCrystalAuraState = true
             AutoCrystal.disable()
         }
@@ -106,7 +108,7 @@ object AnchorAura : Module(
 
     private fun update(placeInfo: PlaceInfo?) {
         if (placeInfo?.blockPos != lastBlockPos) {
-            if (placeInfo?.blockPos != null) {
+            if (placeInfo?.blockPos != null && (!CombatSystem.smartAura || CombatSystem.bestAura == CombatSystem.BestAura.Anchor)) {
                 currentPos = placeInfo.blockPos.toVec3dCenter()
                 prevPos = lastRenderPos ?: currentPos
                 lastUpdateTime = System.currentTimeMillis()
@@ -127,8 +129,16 @@ object AnchorAura : Module(
     init {
         onMotion {
             if (CombatSystem.eating && player.isUsingItem) return@onMotion
+            if (!spoofHotbarWithSetting(Items.GLOWSTONE, true) {} || !spoofHotbarWithSetting(
+                    Items.RESPAWN_ANCHOR,
+                    true
+                ) {}) {
+                anchorDamage = 0.0
+                return@onMotion
+            }
             rawPosList = getPlaceablePos()
             placeInfo = calcPlaceInfo()
+            if (CombatSystem.smartAura && CombatSystem.bestAura != CombatSystem.BestAura.Anchor) return@onMotion
             placeInfo?.let { placeInfo ->
                 if (rotate) RotationManager.addRotations(placeInfo.blockPos)
                 globalPlace(placeInfo, true)
@@ -263,7 +273,6 @@ object AnchorAura : Module(
                     }
                 }
                 val minDamage = minDamage
-                val balance = -8f
                 val headPos = target.blockPos.up(2)
                 if (!isBurrowBlock(target.blockPos, target)) {
                     if (world.entities.none {
@@ -278,12 +287,13 @@ object AnchorAura : Module(
                             headPos, false
                         ) != null else getAnchorBlock(headPos, true) != null) && player.distanceSqToCenter(
                             headPos
-                        ) <= CombatSystem.placeRange.sq) {
+                        ) <= CombatSystem.placeRange.sq && world.isAir(target.blockPos.up())) {
                         normal.update(
                             target, headPos, selfDamage, targetDamage
                         )
+                        anchorDamage = 255.0
                     } else {
-                        if (targetDamage >= minDamage && targetDamage - selfDamage >= balance && (if (!strictDirection) getNeighbor(
+                        if (targetDamage >= minDamage && (if (!strictDirection) getNeighbor(
                                 blockPos,
                                 false
                             ) != null else getAnchorBlock(blockPos, true) != null || airPlace)
@@ -292,6 +302,7 @@ object AnchorAura : Module(
                                 normal.update(
                                     target, blockPos, selfDamage, targetDamage
                                 )
+                                anchorDamage = targetDamage
                             }
                         }
                     }

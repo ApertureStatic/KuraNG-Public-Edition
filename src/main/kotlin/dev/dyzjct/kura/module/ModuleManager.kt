@@ -8,6 +8,7 @@ import base.system.render.newfont.FontRenderers
 import base.utils.concurrent.threads.IOScope
 import base.utils.math.DamageCalculator
 import dev.dyzjct.kura.Kura
+import dev.dyzjct.kura.manager.AuraPrioManager
 import dev.dyzjct.kura.module.hud.*
 import dev.dyzjct.kura.module.modules.client.*
 import dev.dyzjct.kura.module.modules.combat.*
@@ -170,6 +171,7 @@ object ModuleManager : AlwaysListening {
         loadCategoryPlayer()
         registerModule(AutoCrystal)
         DamageCalculator
+        AuraPrioManager.onInit()
         getModules().sortedWith(Comparator.comparing { it.moduleName })
     }
 

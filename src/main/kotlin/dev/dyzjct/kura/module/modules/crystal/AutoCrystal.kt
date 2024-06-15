@@ -202,6 +202,7 @@ object AutoCrystal : Module(
     private var renderEnt: LivingEntity? = null
     var crystalPriority = Priority.Crystal
     var placeInfo: PlaceInfo? = null
+    var cadamage = 0.0
 
     private var lastBlockPos: BlockPos? = null
     private var lastRenderPos: Vec3d? = null
@@ -299,6 +300,8 @@ object AutoCrystal : Module(
                             target
                         ) !in 450L..500L)
                     ) {
+                        cadamage = placeInfo.targetDamage
+                        if (CombatSystem.smartAura && CombatSystem.bestAura != CombatSystem.BestAura.Crystal) return@safeConcurrentListener
                         doRotate()
                         doBreak()
                         doPlace()
@@ -959,7 +962,7 @@ object AutoCrystal : Module(
 
     private fun update(placeInfo: PlaceInfo?) {
         val newBlockPos = placeInfo?.blockPos
-        if (newBlockPos != lastBlockPos) {
+        if (newBlockPos != lastBlockPos && (!CombatSystem.smartAura || CombatSystem.bestAura == CombatSystem.BestAura.Crystal)) {
             if (newBlockPos != null) {
                 currentPos = placeInfo.blockPos.toVec3dCenter()
                 prevPos = lastRenderPos ?: currentPos
@@ -1191,7 +1194,7 @@ object AutoCrystal : Module(
             placeTimer.reset()
             calcTimer.reset()
             fpTimer.reset()
-            if (CombatSystem.autoToggle && AnchorAura.isEnabled) {
+            if (CombatSystem.autoToggle && AnchorAura.isEnabled && !CombatSystem.smartAura) {
                 if (CombatSystem.mainToggle != CombatSystem.MainToggle.Crystal) lastAnchorAuraState = true
                 AnchorAura.disable()
             }

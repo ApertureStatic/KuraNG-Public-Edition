@@ -6,6 +6,7 @@ import base.utils.concurrent.threads.runSafe
 import base.utils.graphics.ESPRenderer
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
+import base.utils.item.attackDamage
 import base.utils.math.distanceSqTo
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
@@ -38,6 +39,8 @@ object KillAura : Module(name = "KillAura", langName = "杀戮", category = Cate
     private var target: Entity? = null
     private var stop = false
 
+    var kadamage = 0.0
+
     init {
         onMotion {
             if (pauseIfCA) {
@@ -50,6 +53,10 @@ object KillAura : Module(name = "KillAura", langName = "杀戮", category = Cate
             )
             target?.let { target ->
                 val weaponSlot = player.hotbarSlots.firstItem<SwordItem, HotbarSlot>()
+                weaponSlot?.let {
+                    kadamage = player.inventory.getStack(weaponSlot.hotbarSlot).attackDamage.toDouble()
+                }
+                if (CombatSystem.smartAura && CombatSystem.bestAura != CombatSystem.BestAura.Sword) return@onMotion
                 if (onlySword && player.mainHandStack.item !is SwordItem) return@onMotion
                 if (swapWeapon) {
                     weaponSlot?.let { swordSlot ->
@@ -77,7 +84,12 @@ object KillAura : Module(name = "KillAura", langName = "杀戮", category = Cate
                 player.resetLastAttackedTicks()
                 stop = true
             }
-            if (target == null && autoBlock.value && stop) playerController.stopUsingItem(player)
+            if (target == null) {
+                if (autoBlock.value && stop) {
+                    playerController.stopUsingItem(player)
+                }
+                kadamage = 0.0
+            }
         }
 
         onRender3D { event ->
