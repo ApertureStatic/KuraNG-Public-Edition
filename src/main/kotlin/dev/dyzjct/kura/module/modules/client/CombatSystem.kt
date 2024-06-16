@@ -3,13 +3,16 @@ package dev.dyzjct.kura.module.modules.client
 import base.system.event.SafeClientEvent
 import base.utils.chat.ChatUtil
 import dev.dyzjct.kura.gui.clickgui.ClickGuiScreen
-import dev.dyzjct.kura.manager.AuraPrioManager
 import dev.dyzjct.kura.manager.FileManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.combat.AnchorAura
+import dev.dyzjct.kura.module.modules.combat.KillAura
+import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
 import dev.dyzjct.kura.setting.BooleanSetting
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.util.Hand
+import java.util.concurrent.CopyOnWriteArrayList
 
 object CombatSystem : Module(
     name = "CombatSystem",
@@ -22,7 +25,7 @@ object CombatSystem : Module(
     val autoSwitch by bsetting("AutoSwitch", false).enumIs(combatMode, CombatMode.Strong)
     val eating by bsetting("EatingPause", true).enumIs(combatMode, CombatMode.Strong)
     val smartAura by bsetting("SmartAura", false).enumIs(combatMode, CombatMode.Strong)
-    val calculateKA by bsetting("CalculateKA",false).isTrue { smartAura }
+    val calculateKA by bsetting("CalculateKA", false).isTrue { smartAura }
     val autoToggle by bsetting("[CA/AA]AutoToggle", false).enumIs(combatMode, CombatMode.Strong).isFalse { smartAura }
     val mainToggle by msetting("MainToggle", MainToggle.Crystal).enumIs(combatMode, CombatMode.Strong)
         .isFalse { smartAura }
@@ -38,12 +41,28 @@ object CombatSystem : Module(
     private val swingHand by msetting("SwingHand", SwingHand.MainHand).isTrue { swing }
     val debug by bsetting("Debug", false)
 
-    var bestAura: BestAura? = null
-
     init {
         combatMode.onChange<BooleanSetting> { value: Enum<*> ->
             turn(value)
         }
+    }
+
+    fun isBestAura(aura: AuraType): Boolean {
+        if (smartAura) {
+            kotlin.runCatching {
+                val auraList = CopyOnWriteArrayList<Aura>()
+                if (KillAura.isEnabled && calculateKA) auraList.add(
+                    Aura(
+                        AuraType.Sword,
+                        KillAura.kadamage
+                    )
+                )
+                if (AutoCrystal.isEnabled) auraList.add(Aura(AuraType.Crystal, AutoCrystal.cadamage))
+                if (AnchorAura.isEnabled) auraList.add(Aura(AuraType.Anchor, AnchorAura.anchorDamage))
+                return auraList.maxByOrNull { it.damage }!!.aura == aura
+            }
+        } else return true
+        return false
     }
 
     private fun turn(value: Enum<*>) {
@@ -96,9 +115,9 @@ object CombatSystem : Module(
         MainHand, OffHand
     }
 
-    enum class BestAura {
+    enum class AuraType {
         Crystal, Anchor, Sword
     }
 
-    class Auras(val aura: BestAura, val damage: Double)
+    class Aura(val aura: AuraType, val damage: Double)
 }

@@ -301,7 +301,7 @@ object AutoCrystal : Module(
                         ) !in 450L..500L)
                     ) {
                         cadamage = placeInfo.targetDamage
-                        if (CombatSystem.smartAura && CombatSystem.bestAura != CombatSystem.BestAura.Crystal) return@safeConcurrentListener
+                        if (!CombatSystem.isBestAura(CombatSystem.AuraType.Crystal)) return@safeConcurrentListener
                         doRotate()
                         doBreak()
                         doPlace()
@@ -962,7 +962,7 @@ object AutoCrystal : Module(
 
     private fun update(placeInfo: PlaceInfo?) {
         val newBlockPos = placeInfo?.blockPos
-        if (newBlockPos != lastBlockPos && (!CombatSystem.smartAura || CombatSystem.bestAura == CombatSystem.BestAura.Crystal)) {
+        if (newBlockPos != lastBlockPos && CombatSystem.isBestAura(CombatSystem.AuraType.Crystal)) {
             if (newBlockPos != null) {
                 currentPos = placeInfo.blockPos.toVec3dCenter()
                 prevPos = lastRenderPos ?: currentPos

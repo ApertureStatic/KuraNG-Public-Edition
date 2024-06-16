@@ -108,7 +108,7 @@ object AnchorAura : Module(
 
     private fun update(placeInfo: PlaceInfo?) {
         if (placeInfo?.blockPos != lastBlockPos) {
-            if (placeInfo?.blockPos != null && (!CombatSystem.smartAura || CombatSystem.bestAura == CombatSystem.BestAura.Anchor)) {
+            if (placeInfo?.blockPos != null && CombatSystem.isBestAura(CombatSystem.AuraType.Anchor)) {
                 currentPos = placeInfo.blockPos.toVec3dCenter()
                 prevPos = lastRenderPos ?: currentPos
                 lastUpdateTime = System.currentTimeMillis()
@@ -138,7 +138,7 @@ object AnchorAura : Module(
             }
             rawPosList = getPlaceablePos()
             placeInfo = calcPlaceInfo()
-            if (CombatSystem.smartAura && CombatSystem.bestAura != CombatSystem.BestAura.Anchor) return@onMotion
+            if (!CombatSystem.isBestAura(CombatSystem.AuraType.Anchor)) return@onMotion
             placeInfo?.let { placeInfo ->
                 if (rotate) RotationManager.addRotations(placeInfo.blockPos)
                 globalPlace(placeInfo, true)

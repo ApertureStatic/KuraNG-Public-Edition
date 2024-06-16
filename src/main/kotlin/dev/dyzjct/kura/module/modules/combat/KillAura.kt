@@ -56,7 +56,7 @@ object KillAura : Module(name = "KillAura", langName = "杀戮", category = Cate
                 weaponSlot?.let {
                     kadamage = player.inventory.getStack(weaponSlot.hotbarSlot).attackDamage.toDouble()
                 }
-                if (CombatSystem.smartAura && CombatSystem.bestAura != CombatSystem.BestAura.Sword) return@onMotion
+                if (!CombatSystem.isBestAura(CombatSystem.AuraType.Anchor) && CombatSystem.calculateKA) return@onMotion
                 if (onlySword && player.mainHandStack.item !is SwordItem) return@onMotion
                 if (swapWeapon) {
                     weaponSlot?.let { swordSlot ->
