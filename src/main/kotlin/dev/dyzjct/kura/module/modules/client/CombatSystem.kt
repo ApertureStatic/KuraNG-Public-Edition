@@ -22,6 +22,7 @@ object CombatSystem : Module(
     val autoSwitch by bsetting("AutoSwitch", false).enumIs(combatMode, CombatMode.Strong)
     val eating by bsetting("EatingPause", true).enumIs(combatMode, CombatMode.Strong)
     val smartAura by bsetting("SmartAura", false).enumIs(combatMode, CombatMode.Strong)
+    val calculateKA by bsetting("CalculateKA",false).isTrue { smartAura }
     val autoToggle by bsetting("[CA/AA]AutoToggle", false).enumIs(combatMode, CombatMode.Strong).isFalse { smartAura }
     val mainToggle by msetting("MainToggle", MainToggle.Crystal).enumIs(combatMode, CombatMode.Strong)
         .isFalse { smartAura }
