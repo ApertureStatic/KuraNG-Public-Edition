@@ -124,59 +124,7 @@ object HotbarManager : AlwaysListening {
     ): Boolean {
         if (CombatSystem.eating && player.isUsingItem) return false
         if (PacketMine.isEnabled && PacketMine.doubleBreak && PacketMine.onDoubleBreak) return false
-        var notNullSlot = false
-        when (CombatSystem.spoofMode.value) {
-            CombatSystem.SpoofMode.Normal -> {
-                player.hotbarSlots.firstItem(item)?.let { slot ->
-                    notNullSlot = true
-                    synchronized(HotbarManager) {
-                        if (!isCheck) {
-                            spoofHotbar(slot) {
-                                block.invoke()
-                            }
-                        }
-                    }
-                }
-            }
-
-            CombatSystem.SpoofMode.Swap -> {
-                player.allSlots.firstItem(item)
-                    ?.let { thisItem -> HotbarSlot(thisItem) }?.let { slot ->
-                        notNullSlot = true
-                        val swap = slot.hotbarSlot != serverSideHotbar
-                        if (!isCheck) {
-                            if (swap) {
-                                inventoryTaskNow {
-                                    val hotbarSlot = player.hotbarSlots[serverSideHotbar]
-                                    swapWith(slot, hotbarSlot)
-                                    action { block.invoke() }
-                                    swapWith(slot, hotbarSlot)
-                                }
-                            } else {
-                                block.invoke()
-                            }
-                        }
-                    }
-            }
-
-            CombatSystem.SpoofMode.China -> {
-                findItemInInventory(item)?.let { slot ->
-                    notNullSlot = true
-                    val swap = slot != serverSideHotbar
-                    if (!isCheck) {
-                        if (swap) {
-                            inventorySwap(slot)
-                            block.invoke()
-                            inventorySwap(slot)
-                            doSwap(player.inventory.selectedSlot)
-                        } else {
-                            block.invoke()
-                        }
-                    }
-                }
-            }
-        }
-        return notNullSlot
+        return spoofHotbarNoAnyCheck(item, isCheck, block)
     }
 
     inline fun SafeClientEvent.spoofHotbarNoAnyCheck(
@@ -225,11 +173,16 @@ object HotbarManager : AlwaysListening {
                     val swap = slot != serverSideHotbar
                     if (!isCheck) {
                         if (swap) {
-                            val old = player.inventory.selectedSlot
-                            inventorySwap(slot)
-                            block.invoke()
-                            inventorySwap(slot)
-                            doSwap(old)
+                            if (slot < 9) {
+                                spoofHotbar(slot) {
+                                    block.invoke()
+                                }
+                            } else {
+                                inventorySwap(slot)
+                                block.invoke()
+                                inventorySwap(slot)
+                            }
+                            playerController.updateController()
                         } else {
                             block.invoke()
                         }
@@ -241,11 +194,8 @@ object HotbarManager : AlwaysListening {
     }
 
     fun SafeClientEvent.inventorySwap(slot: Int) {
-        if (slot < 9) {
-            spoofHotbar(slot)
-            return
-        }
         connection.sendPacket(PickFromInventoryC2SPacket(slot))
+        playerController.updateController()
     }
 
     fun SafeClientEvent.doSwap(slot: Int) {

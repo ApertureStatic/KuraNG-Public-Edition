@@ -40,7 +40,6 @@ import base.utils.world.getMiningSide
 import base.utils.world.noCollision
 import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.manager.FriendManager.isFriend
-import dev.dyzjct.kura.manager.HotbarManager.doSwap
 import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.module.Category
@@ -90,6 +89,7 @@ import net.minecraft.item.SwordItem
 import net.minecraft.item.ToolItem
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
+import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.Hand
@@ -555,7 +555,8 @@ object AutoCrystal : Module(
                                 sendPacket()
                             } else if (CombatSystem.autoSwitch) {
                                 findItemInInventory(Items.END_CRYSTAL)?.let { slot ->
-                                    doSwap(slot)
+                                    player.inventory.selectedSlot = slot
+                                    connection.sendPacket(UpdateSelectedSlotC2SPacket(slot))
                                 }
                             }
                             return@onMainThread
