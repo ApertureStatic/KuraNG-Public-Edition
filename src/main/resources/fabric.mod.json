@@ -1,12 +1,13 @@
 {
   "schemaVersion": 1,
   "id": "kura",
-  "version": "${version}",
+  "version": "1.0.1",
   "name": "Kura",
   "description": "A Client Developed For 2B2T",
   "authors": [
     "dyzjct",
-    "DreamDev"
+    "Dream520",
+    "傻逼金明辉不配进authors名单"
   ],
   "license": "GNU General Public License v3.0",
   "icon": "assets/kura/logo/logo.png",

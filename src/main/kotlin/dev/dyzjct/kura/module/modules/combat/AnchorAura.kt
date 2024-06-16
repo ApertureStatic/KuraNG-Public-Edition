@@ -287,7 +287,9 @@ object AnchorAura : Module(
                             headPos, false
                         ) != null else getAnchorBlock(headPos, true) != null) && player.distanceSqToCenter(
                             headPos
-                        ) <= CombatSystem.placeRange.sq && world.isAir(target.blockPos.up())) {
+                        ) <= CombatSystem.placeRange.sq && (world.isAir(target.blockPos.up()) || world.getBlockState(
+                            target.blockPos.up()
+                        ).block == Blocks.COBWEB)) {
                         normal.update(
                             target, headPos, selfDamage, targetDamage
                         )
