@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.system.event.SafeClientEvent
-import base.system.util.interfaces.DisplayEnum
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.system.util.interfaces.DisplayEnum
 import base.utils.block.BlockUtil.getNeighbor
 import base.utils.block.isLiquidBlock
 import base.utils.block.isWater

@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.events.player.PlayerMotionEvent
-import base.events.player.PlayerMoveEvent
-import base.system.event.SafeClientEvent
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
+import dev.dyzjct.kura.event.events.player.PlayerMoveEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils
 import base.utils.hole.SurroundUtils

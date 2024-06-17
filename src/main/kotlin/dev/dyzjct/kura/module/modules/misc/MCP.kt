@@ -1,8 +1,8 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import base.events.input.MouseClickEvent
-import base.system.event.SafeClientEvent
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.input.MouseClickEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.screen.ScreenUtils.safeReturn

@@ -2,7 +2,7 @@ package dev.dyzjct.kura.utils.inventory
 
 import com.google.common.collect.Lists
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.concurrent.threads.onMainThreadSafe
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.inventory.slot.swapToSlot

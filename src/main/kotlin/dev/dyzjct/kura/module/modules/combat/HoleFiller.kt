@@ -1,9 +1,5 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.events.WorldEvent
-import base.system.event.SafeClientEvent
-import base.system.event.listener
-import base.system.util.color.ColorRGB
 import base.utils.TickTimer
 import base.utils.concurrent.threads.onMainThread
 import base.utils.concurrent.threads.runSynchronized
@@ -19,6 +15,9 @@ import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.distance
 import base.utils.math.distanceSqToCenter
 import base.utils.math.isInSight
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.listener
+import dev.dyzjct.kura.event.events.WorldEvent
 import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
@@ -26,6 +25,7 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.player.AntiMinePlace
+import dev.dyzjct.kura.system.util.color.ColorRGB
 import dev.dyzjct.kura.utils.animations.Easing
 import dev.dyzjct.kura.utils.animations.sq
 import dev.dyzjct.kura.utils.inventory.HotbarSlot

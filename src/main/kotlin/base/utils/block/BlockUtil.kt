@@ -1,7 +1,7 @@
 package base.utils.block
 
 import dev.dyzjct.kura.utils.animations.fastCeil
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.entity.EntityUtils.boxCheck
 import base.utils.inventory.slot.allSlots
 import base.utils.inventory.slot.hotbarSlots

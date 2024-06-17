@@ -1,6 +1,6 @@
 package base.utils.inventory
 
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.concurrent.threads.runSafe
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen.CreativeScreenHandler

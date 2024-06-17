@@ -1,7 +1,7 @@
 package base.utils.concurrent.threads
 
 import kotlinx.coroutines.CompletableDeferred
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract

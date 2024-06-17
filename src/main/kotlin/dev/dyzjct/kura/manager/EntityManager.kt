@@ -1,11 +1,11 @@
 package dev.dyzjct.kura.manager
 
-import base.events.ConnectionEvent
-import base.events.TickEvent
-import base.events.WorldEvent
-import base.system.event.AlwaysListening
-import base.system.event.listener
-import base.system.event.safeParallelListener
+import dev.dyzjct.kura.event.events.ConnectionEvent
+import dev.dyzjct.kura.event.events.TickEvent
+import dev.dyzjct.kura.event.events.WorldEvent
+import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.listener
+import dev.dyzjct.kura.event.eventbus.safeParallelListener
 import base.utils.entity.EntityUtils.preventEntitySpawning
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.Entity

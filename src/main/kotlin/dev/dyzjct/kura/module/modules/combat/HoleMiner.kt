@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.block.BlockUtil.canBreak
 import base.utils.combat.getTarget
 import base.utils.math.distanceSqTo

@@ -3,7 +3,7 @@ package dev.dyzjct.kura.module.modules.combat
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.inventory.Pair
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import net.minecraft.client.gui.screen.ingame.InventoryScreen
 import net.minecraft.item.BlockItem
 import net.minecraft.item.ItemStack

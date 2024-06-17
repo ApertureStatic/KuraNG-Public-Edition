@@ -1,6 +1,6 @@
 package base.utils.world
 
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.entity.EntityUtils.eyePosition
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction

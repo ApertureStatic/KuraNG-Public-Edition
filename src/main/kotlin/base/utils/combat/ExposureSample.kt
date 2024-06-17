@@ -2,7 +2,7 @@ package base.utils.combat
 
 import dev.dyzjct.kura.utils.animations.fastFloor
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
-import base.system.render.graphic.mask.DirectionMask
+import dev.dyzjct.kura.system.render.graphic.mask.DirectionMask
 import net.minecraft.util.math.Vec3d
 import kotlin.math.max
 

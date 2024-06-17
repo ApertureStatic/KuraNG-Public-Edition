@@ -5,8 +5,8 @@ import dev.dyzjct.kura.manager.MovementManager.boostSpeed
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.player.Freecam
-import base.events.player.PlayerMoveEvent
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.player.PlayerMoveEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.entity.EntityUtils
 import base.utils.entity.EntityUtils.baseMoveSpeed
 import base.utils.entity.EntityUtils.isInBurrow

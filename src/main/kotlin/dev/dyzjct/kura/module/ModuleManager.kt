@@ -1,13 +1,12 @@
 package dev.dyzjct.kura.module
 
-import base.events.TickEvent
-import base.events.input.BindEvent
-import base.system.event.AlwaysListening
-import base.system.event.listener
-import base.system.render.newfont.FontRenderers
+import dev.dyzjct.kura.event.events.TickEvent
+import dev.dyzjct.kura.event.events.input.BindEvent
 import base.utils.concurrent.threads.IOScope
 import base.utils.math.DamageCalculator
 import dev.dyzjct.kura.Kura
+import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.listener
 import dev.dyzjct.kura.module.hud.*
 import dev.dyzjct.kura.module.modules.client.*
 import dev.dyzjct.kura.module.modules.combat.*
@@ -16,6 +15,7 @@ import dev.dyzjct.kura.module.modules.misc.*
 import dev.dyzjct.kura.module.modules.movement.*
 import dev.dyzjct.kura.module.modules.player.*
 import dev.dyzjct.kura.module.modules.render.*
+import dev.dyzjct.kura.system.render.newfont.FontRenderers
 import kotlinx.coroutines.async
 import net.minecraft.client.gui.DrawContext
 import java.util.concurrent.CopyOnWriteArrayList
@@ -61,7 +61,6 @@ object ModuleManager : AlwaysListening {
         registerModule(LoadingMenu)
         registerModule(Sound)
         registerModule(CombatSystem)
-        registerModule(IRC)
     }
 
     private fun loadCategoryCombat() {

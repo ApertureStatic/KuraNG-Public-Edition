@@ -4,7 +4,7 @@ import dev.dyzjct.kura.gui.clickgui.animation.AbstractAnimationStrategy
 import dev.dyzjct.kura.gui.clickgui.component.Component
 import dev.dyzjct.kura.gui.clickgui.render.Alignment
 import dev.dyzjct.kura.module.modules.client.UiSetting
-import base.system.util.interfaces.MinecraftWrapper
+import dev.dyzjct.kura.system.util.interfaces.MinecraftWrapper
 import net.minecraft.client.gui.DrawContext
 
 class ScalaAnimationStrategy : AbstractAnimationStrategy() {

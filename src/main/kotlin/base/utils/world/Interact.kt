@@ -1,7 +1,7 @@
 package base.utils.world
 
-import base.system.event.SafeClientEvent
-import base.system.util.collections.EnumSet
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.system.util.collections.EnumSet
 import base.utils.block.blockBlacklist
 import base.utils.block.getBlock
 import base.utils.block.isFullBox

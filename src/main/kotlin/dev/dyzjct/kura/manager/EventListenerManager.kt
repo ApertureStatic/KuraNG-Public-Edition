@@ -2,13 +2,13 @@ package dev.dyzjct.kura.manager
 
 import com.mojang.blaze3d.platform.GlStateManager
 import dev.dyzjct.kura.module.ModuleManager
-import base.events.ConnectionEvent
-import base.events.PacketEvents
-import base.events.TickEvent
-import base.events.screen.ResolutionUpdateEvent
-import base.system.event.ListenerOwner
-import base.system.event.listener
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.ConnectionEvent
+import dev.dyzjct.kura.event.events.PacketEvents
+import dev.dyzjct.kura.event.events.TickEvent
+import dev.dyzjct.kura.event.events.screen.ResolutionUpdateEvent
+import dev.dyzjct.kura.event.eventbus.ListenerOwner
+import dev.dyzjct.kura.event.eventbus.listener
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import net.minecraft.client.MinecraftClient
 import net.minecraft.network.packet.s2c.common.DisconnectS2CPacket
 

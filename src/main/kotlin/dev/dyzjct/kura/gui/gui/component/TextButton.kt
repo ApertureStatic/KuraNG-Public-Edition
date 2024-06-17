@@ -2,8 +2,8 @@ package dev.dyzjct.kura.gui.gui.component
 
 import dev.dyzjct.kura.gui.gui.Panel
 import dev.dyzjct.kura.setting.StringSetting
-import base.system.render.graphic.Render2DEngine
-import base.system.render.newfont.FontRenderers
+import dev.dyzjct.kura.system.render.graphic.Render2DEngine
+import dev.dyzjct.kura.system.render.newfont.FontRenderers
 import base.utils.concurrent.threads.runSafe
 import base.utils.keyboard.KeyboardUtils
 import net.minecraft.client.gui.DrawContext

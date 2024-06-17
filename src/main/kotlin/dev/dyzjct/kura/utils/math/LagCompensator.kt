@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.utils.math
 
-import base.events.PacketEvents
-import base.system.event.AlwaysListening
-import base.system.event.SafeClientEvent
-import base.system.event.safeConcurrentListener
+import dev.dyzjct.kura.event.events.PacketEvents
+import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeConcurrentListener
 import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket
 import java.util.*
 

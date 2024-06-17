@@ -1,8 +1,8 @@
 package dev.dyzjct.kura.module.modules.movement
 
-import base.events.PacketEvents
-import base.events.TickEvent
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.PacketEvents
+import dev.dyzjct.kura.event.events.TickEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket

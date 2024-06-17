@@ -1,8 +1,8 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import base.events.TickEvent
+import dev.dyzjct.kura.event.events.TickEvent
 import dev.dyzjct.kura.manager.NotificationManager
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.chat.ChatUtil
 import base.utils.sound.SoundPlayer
 import dev.dyzjct.kura.Kura

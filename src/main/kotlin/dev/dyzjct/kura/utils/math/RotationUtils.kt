@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.utils.math
 
 import dev.dyzjct.kura.utils.animations.toDegree
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.entity.EntityUtils.eyePosition
 import base.utils.world.getMiningSide
 import net.minecraft.client.network.ClientPlayerEntity

@@ -1,8 +1,8 @@
 package base.utils.combat
 
 import dev.dyzjct.kura.utils.animations.fastFloor
-import base.system.event.SafeClientEvent
-import base.system.render.graphic.mask.DirectionMask
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.system.render.graphic.mask.DirectionMask
 import base.utils.world.FastRayTraceAction
 import base.utils.world.fastRaytrace
 import net.minecraft.block.BlockState

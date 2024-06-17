@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.events.render.Render3DEvent
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.events.render.Render3DEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.block.BlockUtil.getAnchorBlock
 import base.utils.block.BlockUtil.getNeighbor
 import base.utils.chat.ChatUtil

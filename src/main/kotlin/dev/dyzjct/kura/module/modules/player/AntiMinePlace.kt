@@ -4,8 +4,8 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.render.BreakESP.calcBreakTime
 import dev.dyzjct.kura.utils.extension.synchronized
-import base.events.block.BlockBreakEvent
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.block.BlockBreakEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import net.minecraft.util.math.BlockPos
 import java.util.concurrent.ConcurrentHashMap
 

@@ -1,7 +1,7 @@
 package base.utils.entity
 
-import base.system.event.SafeClientEvent
-import base.system.util.interfaces.MinecraftWrapper
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.system.util.interfaces.MinecraftWrapper
 import base.utils.Wrapper
 import base.utils.block.BlockUtil.canSeeEntity
 import base.utils.concurrent.threads.runSafe

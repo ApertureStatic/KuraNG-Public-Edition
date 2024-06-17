@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.mixin.network;
 
 import io.netty.channel.ChannelHandlerContext;
-import base.events.PacketEvents;
+import dev.dyzjct.kura.event.events.PacketEvents;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.packet.Packet;

@@ -5,8 +5,8 @@ import dev.dyzjct.kura.module.modules.client.Colors
 import dev.dyzjct.kura.setting.Setting
 import dev.dyzjct.kura.utils.animations.Animation
 import dev.dyzjct.kura.utils.animations.DecelerateAnimation
-import base.system.render.graphic.Render2DEngine
-import base.system.render.newfont.FontRenderers
+import dev.dyzjct.kura.system.render.graphic.Render2DEngine
+import dev.dyzjct.kura.system.render.newfont.FontRenderers
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.math.RotationAxis
 import dev.dyzjct.kura.KuraIdentifier

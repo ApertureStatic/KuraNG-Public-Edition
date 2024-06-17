@@ -2,9 +2,9 @@ package dev.dyzjct.kura.utils.delegate
 
 import dev.dyzjct.kura.utils.TimeUnit
 import dev.dyzjct.kura.utils.TimerUtils
-import base.events.RunGameLoopEvent
-import base.system.event.AlwaysListening
-import base.system.event.listener
+import dev.dyzjct.kura.event.events.RunGameLoopEvent
+import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.listener
 import kotlin.reflect.KProperty
 
 class AutoUpdateValue<T>(private val block: () -> T) {

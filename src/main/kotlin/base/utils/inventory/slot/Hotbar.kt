@@ -4,7 +4,7 @@ import dev.dyzjct.kura.manager.HotbarManager
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import dev.dyzjct.kura.utils.inventory.inventoryTaskNow
 import dev.dyzjct.kura.utils.inventory.swapWith
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import net.minecraft.block.Block
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack

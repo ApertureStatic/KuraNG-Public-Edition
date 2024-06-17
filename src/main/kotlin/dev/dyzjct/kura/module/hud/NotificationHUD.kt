@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.hud
 
-import base.system.render.graphic.Render2DEngine
-import base.system.render.newfont.FontRenderers
+import dev.dyzjct.kura.system.render.graphic.Render2DEngine
+import dev.dyzjct.kura.system.render.newfont.FontRenderers
 import base.utils.chat.ChatUtil
 import dev.dyzjct.kura.manager.NotificationManager
 import dev.dyzjct.kura.module.HUDModule

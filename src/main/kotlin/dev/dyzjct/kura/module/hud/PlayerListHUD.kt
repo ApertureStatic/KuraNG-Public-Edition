@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.hud
 
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.concurrent.threads.runSafe
 import base.utils.math.distanceSqTo
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope

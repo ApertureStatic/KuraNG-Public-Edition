@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import base.events.chat.MessageSentEvent
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.chat.MessageSentEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.chat.ChatUtil
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module

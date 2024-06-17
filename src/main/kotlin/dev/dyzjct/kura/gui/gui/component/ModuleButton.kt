@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.gui.gui.component
 
-import base.system.render.graphic.Render2DEngine
-import base.system.render.newfont.FontRenderers
+import dev.dyzjct.kura.system.render.graphic.Render2DEngine
+import dev.dyzjct.kura.system.render.newfont.FontRenderers
 import dev.dyzjct.kura.gui.clickgui.component.ColorPickerUtil
 import dev.dyzjct.kura.gui.gui.Panel
 import dev.dyzjct.kura.gui.gui.Panel.Companion.toIsVisibleList

@@ -1,10 +1,10 @@
 package dev.dyzjct.kura.gui.clickgui
 
-import base.events.render.Render2DEvent
-import base.graphics.shaders.impl.ParticleShader
-import base.graphics.shaders.impl.WindowBlurShader
-import base.system.event.Listener
-import base.system.render.graphic.Render2DEngine
+import dev.dyzjct.kura.event.events.render.Render2DEvent
+import dev.dyzjct.kura.graphics.shaders.impl.ParticleShader
+import dev.dyzjct.kura.graphics.shaders.impl.WindowBlurShader
+import dev.dyzjct.kura.event.eventbus.Listener
+import dev.dyzjct.kura.system.render.graphic.Render2DEngine
 import com.mojang.blaze3d.platform.GlStateManager
 import dev.dyzjct.kura.gui.clickgui.animation.AnimationStrategy
 import dev.dyzjct.kura.gui.clickgui.animation.NonAnimationStrategy

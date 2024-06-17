@@ -3,7 +3,7 @@ package dev.dyzjct.kura.mixin.player;
 import dev.dyzjct.kura.mixins.IClientPlayerInteractionManager;
 import dev.dyzjct.kura.module.modules.misc.BetterEat;
 import dev.dyzjct.kura.module.modules.player.Reach;
-import base.events.block.BlockEvent;
+import dev.dyzjct.kura.event.events.block.BlockEvent;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.PotionItem;

@@ -5,9 +5,9 @@ import kotlinx.coroutines.completeWith
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import base.events.RunGameLoopEvent
-import base.system.event.AlwaysListening
-import base.system.event.listener
+import dev.dyzjct.kura.event.events.RunGameLoopEvent
+import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.listener
 import base.utils.Wrapper
 
 object MainThreadExecutor : AlwaysListening {

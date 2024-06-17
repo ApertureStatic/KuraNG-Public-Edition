@@ -2,8 +2,8 @@ package dev.dyzjct.kura.module.modules.movement
 
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import base.events.player.PlayerMotionEvent
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.entity.EntityUtils
 
 object Sprint : Module(

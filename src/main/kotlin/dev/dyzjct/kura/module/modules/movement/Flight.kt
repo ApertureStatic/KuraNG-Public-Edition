@@ -3,10 +3,10 @@ package dev.dyzjct.kura.module.modules.movement
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils
-import base.events.player.PlayerMoveEvent
-import base.system.event.SafeClientEvent
-import base.system.event.safeEventListener
-import base.system.util.interfaces.DisplayEnum
+import dev.dyzjct.kura.event.events.player.PlayerMoveEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.system.util.interfaces.DisplayEnum
 import base.utils.world.noCollision
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.Full
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket

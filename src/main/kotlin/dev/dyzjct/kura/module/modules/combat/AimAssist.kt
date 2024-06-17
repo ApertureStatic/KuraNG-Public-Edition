@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.combat.getTarget
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module

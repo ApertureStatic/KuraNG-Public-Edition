@@ -1,10 +1,10 @@
 package base.utils.math
 
-import base.events.ConnectionEvent
-import base.events.PacketEvents
-import base.system.event.AlwaysListening
-import base.system.event.listener
-import base.system.util.collections.CircularArray
+import dev.dyzjct.kura.event.events.ConnectionEvent
+import dev.dyzjct.kura.event.events.PacketEvents
+import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.listener
+import dev.dyzjct.kura.system.util.collections.CircularArray
 import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket
 
 object TpsCalculator : AlwaysListening {

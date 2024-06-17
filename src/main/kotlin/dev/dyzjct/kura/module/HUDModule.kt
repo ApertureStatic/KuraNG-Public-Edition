@@ -1,14 +1,13 @@
 package dev.dyzjct.kura.module
 
-import base.events.render.Render2DEvent
-import base.system.event.safeEventListener
-import base.system.render.graphic.Render2DEngine
+import dev.dyzjct.kura.event.events.render.Render2DEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.system.render.graphic.Render2DEngine
 import dev.dyzjct.kura.gui.clickgui.DrawDelegateSelector
 import dev.dyzjct.kura.gui.clickgui.HudEditorScreen
 import dev.dyzjct.kura.gui.clickgui.component.Component
 import dev.dyzjct.kura.gui.clickgui.render.DrawDelegate
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope
-import dev.dyzjct.kura.module.modules.client.UiSetting
 import dev.dyzjct.kura.setting.BooleanSetting
 import net.minecraft.client.gui.DrawContext
 import java.awt.Color

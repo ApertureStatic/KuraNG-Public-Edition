@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.mixin.player;
 
-import base.events.player.JumpEvent;
-import base.events.player.PlayerMotionEvent;
-import base.events.player.PlayerMoveEvent;
-import base.system.event.StageType;
+import dev.dyzjct.kura.event.events.player.JumpEvent;
+import dev.dyzjct.kura.event.events.player.PlayerMotionEvent;
+import dev.dyzjct.kura.event.events.player.PlayerMoveEvent;
+import dev.dyzjct.kura.event.eventbus.StageType;
 import dev.dyzjct.kura.manager.EventAccessManager;
 import dev.dyzjct.kura.module.modules.movement.NoSlowDown;
 import dev.dyzjct.kura.module.modules.movement.Velocity;

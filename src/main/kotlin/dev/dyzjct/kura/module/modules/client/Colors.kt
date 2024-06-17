@@ -2,7 +2,7 @@ package dev.dyzjct.kura.module.modules.client
 
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import base.system.render.graphic.Render2DEngine
+import dev.dyzjct.kura.system.render.graphic.Render2DEngine
 import java.awt.Color
 
 object Colors :

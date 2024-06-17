@@ -1,10 +1,5 @@
 package dev.dyzjct.kura.module.modules.player
 
-import base.events.block.BlockEvent
-import base.system.event.SafeClientEvent
-import base.system.event.safeEventListener
-import base.system.util.color.ColorRGB
-import base.system.util.color.ColorUtils.toRGB
 import base.utils.block.BlockUtil.calcBreakTime
 import base.utils.block.BlockUtil.canBreak
 import base.utils.entity.EntityUtils.eyePosition
@@ -18,6 +13,9 @@ import base.utils.math.distanceSqTo
 import base.utils.math.distanceSqToCenter
 import base.utils.math.scale
 import base.utils.world.getClickSide
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.event.events.block.BlockEvent
 import dev.dyzjct.kura.manager.HotbarManager.resetHotbar
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
@@ -28,6 +26,8 @@ import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.combat.ManualCev
 import dev.dyzjct.kura.module.modules.player.PacketMine.PacketType.Start
 import dev.dyzjct.kura.module.modules.player.PacketMine.PacketType.Stop
+import dev.dyzjct.kura.system.util.color.ColorRGB
+import dev.dyzjct.kura.system.util.color.ColorUtils.toRGB
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
 import dev.dyzjct.kura.utils.animations.sq

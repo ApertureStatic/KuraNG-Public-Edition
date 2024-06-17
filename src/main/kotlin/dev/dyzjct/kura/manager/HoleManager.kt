@@ -4,9 +4,8 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet
 import it.unimi.dsi.fastutil.longs.LongSet
 import it.unimi.dsi.fastutil.longs.LongSets
 import kotlinx.coroutines.launch
-import base.events.RunGameLoopEvent
-import base.events.WorldEvent
-import base.system.event.*
+import dev.dyzjct.kura.event.events.RunGameLoopEvent
+import dev.dyzjct.kura.event.events.WorldEvent
 import base.utils.TickTimer
 import base.utils.concurrent.threads.defaultScope
 import base.utils.concurrent.threads.runSafe
@@ -17,6 +16,7 @@ import base.utils.hole.SurroundUtils.flooredPosition
 import net.minecraft.entity.Entity
 import net.minecraft.util.math.BlockPos
 import base.utils.math.distanceSqTo
+import dev.dyzjct.kura.event.eventbus.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Predicate
 

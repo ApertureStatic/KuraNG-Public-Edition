@@ -4,10 +4,10 @@ import dev.dyzjct.kura.mixins.IExplosion
 import dev.dyzjct.kura.mixins.IRaycastContext
 import dev.dyzjct.kura.mixins.IVec3d
 import dev.dyzjct.kura.utils.extension.sq
-import base.events.player.PlayerMotionEvent
-import base.system.event.AlwaysListening
-import base.system.event.SafeClientEvent
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
+import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.enchantment.EnchantmentHelper

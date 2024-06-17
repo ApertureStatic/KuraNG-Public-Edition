@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.manager
 
-import base.events.PacketEvents
-import base.events.player.PlayerMotionEvent
-import base.system.event.AlwaysListening
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.PacketEvents
+import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
+import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.concurrent.threads.runSafe
 import base.utils.math.toVec3dCenter
 import base.utils.math.vector.Vec2f

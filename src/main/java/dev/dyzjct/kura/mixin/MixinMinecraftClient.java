@@ -1,15 +1,14 @@
 package dev.dyzjct.kura.mixin;
 
-import base.events.RunGameLoopEvent;
-import base.events.TickEvent;
-import base.events.screen.GuiScreenEvent;
-import base.system.antileak.AntiLeak;
-import base.system.render.newfont.FontRenderers;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.dyzjct.kura.Kura;
+import dev.dyzjct.kura.event.events.RunGameLoopEvent;
+import dev.dyzjct.kura.event.events.TickEvent;
+import dev.dyzjct.kura.event.events.screen.GuiScreenEvent;
 import dev.dyzjct.kura.manager.FileManager;
 import dev.dyzjct.kura.module.AbstractModule;
 import dev.dyzjct.kura.module.modules.client.CombatSystem;
+import dev.dyzjct.kura.system.render.newfont.FontRenderers;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
@@ -67,13 +66,6 @@ public abstract class MixinMinecraftClient {
 
     @Shadow
     public abstract void setScreen(@Nullable Screen screen);
-
-
-    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/text/KeybindTranslations;setFactory(Ljava/util/function/Function;)V", shift = At.Shift.AFTER))
-    public void onPreInit(RunArgs args, CallbackInfo ci) {
-        AntiLeak.INSTANCE.init();
-        Kura.Companion.setCalled(true);
-    }
 
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/session/telemetry/GameLoadTimeEvent;startTimer(Lnet/minecraft/client/session/telemetry/TelemetryEventProperty;)V", shift = At.Shift.AFTER))
     public void onInit(RunArgs args, CallbackInfo ci) {

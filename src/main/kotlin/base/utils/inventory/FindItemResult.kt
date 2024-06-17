@@ -1,6 +1,6 @@
 package base.utils.inventory
 
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import net.minecraft.util.Hand
 
 data class FindItemResult(val slot: Int, val count: Int) {

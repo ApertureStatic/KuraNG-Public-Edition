@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.command
 
-import dev.dyzjct.kura.command.impl.*
 import dev.dyzjct.kura.Kura
+import dev.dyzjct.kura.command.impl.*
 
 object CommandManager {
     private val commands = mutableListOf<Command>()
@@ -17,7 +17,6 @@ object CommandManager {
         addCommand(PrefixCommand)
         addCommand(ResetUiCommand)
         addCommand(ConfigCommand)
-        addCommand(IRCCommand)
     }
 
     fun addCommand(command: Command) {

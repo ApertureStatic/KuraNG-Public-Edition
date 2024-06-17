@@ -3,7 +3,7 @@ package dev.dyzjct.kura.module.hud
 import com.mojang.blaze3d.platform.GlStateManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
-import base.system.render.newfont.FontRenderers
+import dev.dyzjct.kura.system.render.newfont.FontRenderers
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.item.ItemStack
 

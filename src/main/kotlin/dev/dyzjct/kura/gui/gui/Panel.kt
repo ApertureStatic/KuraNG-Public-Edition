@@ -1,8 +1,8 @@
 package dev.dyzjct.kura.gui.gui
 
-import base.system.render.graphic.Render2DEngine
-import base.system.render.newfont.FontRenderers
-import base.system.render.shader.MSAAFramebuffer
+import dev.dyzjct.kura.system.render.graphic.Render2DEngine
+import dev.dyzjct.kura.system.render.newfont.FontRenderers
+import dev.dyzjct.kura.system.render.shader.MSAAFramebuffer
 import dev.dyzjct.kura.KuraIdentifier
 import dev.dyzjct.kura.gui.gui.component.Component
 import dev.dyzjct.kura.gui.gui.component.ModuleButton

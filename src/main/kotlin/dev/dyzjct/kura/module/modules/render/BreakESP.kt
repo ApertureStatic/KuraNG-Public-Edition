@@ -7,10 +7,10 @@ import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.utils.animations.Easing
 import dev.dyzjct.kura.utils.animations.MathUtils
 import dev.dyzjct.kura.utils.extension.sq
-import base.events.block.BlockBreakEvent
-import base.system.event.SafeClientEvent
-import base.system.event.safeEventListener
-import base.system.render.graphic.Render3DEngine
+import dev.dyzjct.kura.event.events.block.BlockBreakEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.system.render.graphic.Render3DEngine
 import base.utils.block.BlockUtil.canBreak
 import base.utils.block.BlockUtil.getBreakSpeed
 import base.utils.block.BlockUtil.getBreakSpeedObi

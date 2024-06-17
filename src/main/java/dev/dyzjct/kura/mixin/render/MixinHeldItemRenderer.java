@@ -2,7 +2,7 @@ package dev.dyzjct.kura.mixin.render;
 
 import dev.dyzjct.kura.mixins.IHeldItemRenderer;
 import dev.dyzjct.kura.module.modules.render.HandView;
-import base.events.render.ItemRenderEvent;
+import dev.dyzjct.kura.event.events.render.ItemRenderEvent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;

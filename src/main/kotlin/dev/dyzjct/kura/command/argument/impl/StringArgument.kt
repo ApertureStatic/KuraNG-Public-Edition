@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.command.argument.impl
 
 import dev.dyzjct.kura.command.argument.Argument
-import base.system.util.interfaces.Alias
+import dev.dyzjct.kura.system.util.interfaces.Alias
 
 class StringArgument(
     index: Int,

@@ -3,8 +3,8 @@ package dev.dyzjct.kura.module.modules.misc
 import dev.dyzjct.kura.manager.FriendManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import base.events.input.MouseClickEvent
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.input.MouseClickEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.chat.ChatUtil
 import base.utils.screen.ScreenUtils.safeReturn
 import net.minecraft.entity.player.PlayerEntity

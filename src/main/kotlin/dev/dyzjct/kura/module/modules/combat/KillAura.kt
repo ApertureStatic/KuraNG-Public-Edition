@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.combat.getEntityTarget
 import base.utils.concurrent.threads.runSafe
 import base.utils.graphics.ESPRenderer

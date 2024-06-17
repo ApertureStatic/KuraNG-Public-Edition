@@ -2,7 +2,7 @@ package base.utils.world
 
 import dev.dyzjct.kura.utils.animations.fastFloor
 import dev.dyzjct.kura.utils.extension.sq
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.Wrapper
 import net.minecraft.block.Blocks
 import net.minecraft.entity.Entity

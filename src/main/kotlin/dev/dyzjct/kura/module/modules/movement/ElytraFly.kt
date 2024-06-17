@@ -3,9 +3,9 @@ package dev.dyzjct.kura.module.modules.movement
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils
-import base.events.player.PlayerTravelEvent
-import base.system.event.SafeClientEvent
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.player.PlayerTravelEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.MovementUtils.calcMoveYaw
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket

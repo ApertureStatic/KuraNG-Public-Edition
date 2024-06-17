@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.render
 
-import base.events.render.ItemRenderEvent
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.render.ItemRenderEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.mixins.IHeldItemRenderer
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module

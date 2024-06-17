@@ -1,15 +1,15 @@
 package dev.dyzjct.kura.module.modules.render
 
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.event.events.render.Render2DEvent
 import dev.dyzjct.kura.manager.FriendManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.Colors
-import base.events.render.Render2DEvent
-import base.system.event.SafeClientEvent
-import base.system.event.safeEventListener
-import base.system.render.graphic.Render2DEngine
-import base.system.render.graphic.Render3DEngine
-import base.system.render.newfont.FontRenderers
+import dev.dyzjct.kura.system.render.graphic.Render2DEngine
+import dev.dyzjct.kura.system.render.graphic.Render3DEngine
+import dev.dyzjct.kura.system.render.newfont.FontRenderers
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.network.PlayerListEntry
 import net.minecraft.client.render.DiffuseLighting

@@ -1,6 +1,6 @@
 package base.utils.player
 
-import base.system.util.interfaces.MinecraftWrapper.Companion.mc
+import dev.dyzjct.kura.system.util.interfaces.MinecraftWrapper.Companion.mc
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity

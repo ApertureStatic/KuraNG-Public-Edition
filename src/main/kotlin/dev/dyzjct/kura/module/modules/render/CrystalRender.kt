@@ -1,22 +1,23 @@
 package dev.dyzjct.kura.module.modules.render
 
+import base.utils.math.distanceSqTo
+import base.utils.math.distanceSqToCenter
+import dev.dyzjct.kura.event.eventbus.safeConcurrentListener
+import dev.dyzjct.kura.event.events.TickEvent
+import dev.dyzjct.kura.event.events.render.Render3DEvent
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.system.render.graphic.Render3DEngine
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.extension.sq
 import dev.dyzjct.kura.utils.extension.synchronized
-import base.events.TickEvent
-import base.events.render.Render3DEvent
-import base.system.event.safeConcurrentListener
-import base.system.render.graphic.Render3DEngine
 import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.util.math.BlockPos
-import base.utils.math.distanceSqTo
-import base.utils.math.distanceSqToCenter
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
-object CrystalRender : Module(name = "CrystalRender", langName = "水晶渲染", category = Category.RENDER, type = Type.Both) {
+object CrystalRender :
+    Module(name = "CrystalRender", langName = "水晶渲染", category = Category.RENDER, type = Type.Both) {
     private val range = isetting("Range", 12, 0, 30)
     private val mode = msetting("Mode", Mode.Normal)
     private val points = isetting("Points", 20, 1, 100).enumIs(mode, Mode.New)

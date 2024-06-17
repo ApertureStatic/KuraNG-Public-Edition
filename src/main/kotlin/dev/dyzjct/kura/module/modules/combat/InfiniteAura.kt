@@ -9,7 +9,7 @@ import dev.dyzjct.kura.utils.math.path.TeleportPath.teleportTo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.combat.getEntityTarget
 import base.utils.concurrent.threads.runSafe
 import base.utils.inventory.slot.firstItem

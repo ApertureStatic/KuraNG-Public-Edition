@@ -2,10 +2,10 @@ package base.utils.graphics
 
 import com.mojang.blaze3d.platform.GlStateManager
 import com.mojang.blaze3d.systems.RenderSystem
-import base.system.render.graphic.Render2DEngine
-import base.system.render.graphic.Render3DEngine
-import base.system.render.graphic.mask.DirectionMask
-import base.system.util.color.ColorRGB
+import dev.dyzjct.kura.system.render.graphic.Render2DEngine
+import dev.dyzjct.kura.system.render.graphic.Render3DEngine
+import dev.dyzjct.kura.system.render.graphic.mask.DirectionMask
+import dev.dyzjct.kura.system.util.color.ColorRGB
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box

@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.manager
 
-import base.events.TickEvent
-import base.system.event.AlwaysListening
-import base.system.event.SafeClientEvent
-import base.system.event.safeBackGroundTaskListener
+import dev.dyzjct.kura.event.events.TickEvent
+import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeBackGroundTaskListener
 import base.utils.concurrent.threads.defaultScope
 import base.utils.extension.sendSequencedPacket
 import base.utils.math.distanceSqToCenter

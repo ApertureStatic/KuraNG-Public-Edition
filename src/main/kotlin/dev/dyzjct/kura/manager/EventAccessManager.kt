@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.manager
 
-import base.events.player.PlayerMotionEvent
+import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
 
 object EventAccessManager {
     private var playerMotion: PlayerMotionEvent? = null

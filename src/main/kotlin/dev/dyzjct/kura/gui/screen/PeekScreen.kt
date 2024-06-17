@@ -2,7 +2,7 @@ package dev.dyzjct.kura.gui.screen
 
 import com.mojang.blaze3d.systems.RenderSystem
 import dev.dyzjct.kura.module.modules.render.ToolTips
-import base.system.render.graphic.Render2DEngine
+import dev.dyzjct.kura.system.render.graphic.Render2DEngine
 import base.utils.concurrent.threads.runSafe
 import net.minecraft.block.Block
 import net.minecraft.block.EnderChestBlock

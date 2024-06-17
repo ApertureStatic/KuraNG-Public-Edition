@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.utils.inventory
 
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
 

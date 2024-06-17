@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.manager
 
-import base.events.PacketEvents
-import base.events.TickEvent
-import base.system.event.AlwaysListening
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.PacketEvents
+import dev.dyzjct.kura.event.events.TickEvent
+import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket
 import kotlin.math.hypot
 import kotlin.math.max

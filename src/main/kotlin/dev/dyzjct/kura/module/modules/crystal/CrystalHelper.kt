@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.crystal
 
-import base.system.event.AlwaysListening
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.block.BlockUtil.canSee
 import base.utils.combat.CrystalUtils
 import base.utils.math.distanceSqTo

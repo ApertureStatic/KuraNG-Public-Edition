@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.mixin.chat;
 
-import base.events.chat.MessageSentEvent;
+import dev.dyzjct.kura.event.events.chat.MessageSentEvent;
 import base.utils.Wrapper;
 import base.utils.chat.ChatUtil;
 import dev.dyzjct.kura.Kura;

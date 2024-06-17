@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.mixin.render;
 
-import base.events.render.RenderEntityEvent;
+import dev.dyzjct.kura.event.events.render.RenderEntityEvent;
 import dev.dyzjct.kura.module.modules.render.Brightness;
 import dev.dyzjct.kura.module.modules.render.NameTags;
 import net.minecraft.client.render.VertexConsumerProvider;

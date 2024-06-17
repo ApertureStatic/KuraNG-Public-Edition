@@ -1,6 +1,6 @@
 package base.utils.hole
 
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.combat.CrystalUtils
 import net.minecraft.block.Blocks
 import net.minecraft.util.math.BlockPos

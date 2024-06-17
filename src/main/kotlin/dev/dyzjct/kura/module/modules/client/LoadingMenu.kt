@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.modules.client
 
-import base.system.util.interfaces.DisplayEnum
+import dev.dyzjct.kura.system.util.interfaces.DisplayEnum
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.UiSetting.Theme

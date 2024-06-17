@@ -1,6 +1,6 @@
 package base.utils.combat
 
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.math.distanceSqToCenter
 import dev.dyzjct.kura.manager.FriendManager
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.canMove

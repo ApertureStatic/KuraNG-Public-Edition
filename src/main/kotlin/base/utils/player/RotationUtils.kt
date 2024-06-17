@@ -1,6 +1,6 @@
 package base.utils.player
 
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.Wrapper
 import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
 import net.minecraft.util.math.Direction

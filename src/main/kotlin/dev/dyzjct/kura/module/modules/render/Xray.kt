@@ -1,15 +1,19 @@
 package dev.dyzjct.kura.module.modules.render
 
+import base.utils.math.toBox
 import dev.dyzjct.kura.manager.BlockFinderManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import base.system.render.graphic.Render3DEngine
+import dev.dyzjct.kura.system.render.graphic.Render3DEngine
 import net.minecraft.block.Blocks
-import base.utils.math.toBox
 import java.awt.Color
 
 object Xray : Module(
-    name = "Xray", langName = "矿物透视", description = "AutoSearch For Ores!", category = Category.RENDER, type = Type.Both
+    name = "Xray",
+    langName = "矿物透视",
+    description = "AutoSearch For Ores!",
+    category = Category.RENDER,
+    type = Type.Both
 ) {
     val distance by isetting("Distance", 25, 1, 80)
     private val coal by bsetting("Coal", false)

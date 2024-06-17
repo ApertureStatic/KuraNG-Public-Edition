@@ -3,7 +3,7 @@ package dev.dyzjct.kura.module.hud
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.client.Colors
-import base.system.render.newfont.FontRenderers
+import dev.dyzjct.kura.system.render.newfont.FontRenderers
 import base.utils.concurrent.threads.runSafe
 import net.minecraft.client.gui.DrawContext
 

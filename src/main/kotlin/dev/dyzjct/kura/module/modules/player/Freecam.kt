@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.module.modules.player
 
-import base.events.ConnectionEvent
-import base.events.PacketEvents
-import base.events.player.PlayerMoveEvent
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.ConnectionEvent
+import dev.dyzjct.kura.event.events.PacketEvents
+import dev.dyzjct.kura.event.events.player.PlayerMoveEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.concurrent.threads.runSafe
 import base.utils.player.RotationUtils.directionSpeed
 import com.mojang.authlib.GameProfile

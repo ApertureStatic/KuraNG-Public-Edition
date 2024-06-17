@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.entity.EntityUtils.autoCenter
 import base.utils.extension.sendSequencedPacket
 import base.utils.player.RotationUtils.getPlayerDirection

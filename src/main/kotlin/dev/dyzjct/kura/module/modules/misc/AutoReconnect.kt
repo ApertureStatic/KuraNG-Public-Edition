@@ -1,8 +1,8 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import base.events.ConnectionEvent
-import base.events.screen.GuiScreenEvent
-import base.system.event.listener
+import dev.dyzjct.kura.event.events.ConnectionEvent
+import dev.dyzjct.kura.event.events.screen.GuiScreenEvent
+import dev.dyzjct.kura.event.eventbus.listener
 import base.utils.concurrent.threads.BackgroundScope
 import base.utils.concurrent.threads.onMainThread
 import dev.dyzjct.kura.module.Category

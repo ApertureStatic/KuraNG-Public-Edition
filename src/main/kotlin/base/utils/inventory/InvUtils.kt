@@ -2,7 +2,7 @@ package base.utils.inventory
 
 import dev.dyzjct.kura.mixins.IClientPlayerInteractionManager
 import dev.dyzjct.kura.utils.inventory.clickSlot
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.concurrent.threads.runSafe
 import base.utils.inventory.slot.craftingSlots
 import base.utils.inventory.slot.firstItem

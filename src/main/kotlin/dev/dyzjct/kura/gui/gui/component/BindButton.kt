@@ -5,7 +5,7 @@ import dev.dyzjct.kura.module.modules.client.ClickGui
 import dev.dyzjct.kura.module.modules.client.Colors
 import dev.dyzjct.kura.setting.IntegerSetting
 import dev.dyzjct.kura.utils.TimerUtils
-import base.system.render.newfont.FontRenderers
+import dev.dyzjct.kura.system.render.newfont.FontRenderers
 import net.minecraft.client.gui.DrawContext
 import org.lwjgl.glfw.GLFW
 import java.awt.Color

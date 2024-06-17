@@ -2,8 +2,8 @@ package dev.dyzjct.kura.module.modules.misc
 
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import base.events.screen.GuiScreenEvent
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.screen.GuiScreenEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.chat.ChatUtil
 import net.minecraft.client.gui.screen.DeathScreen
 

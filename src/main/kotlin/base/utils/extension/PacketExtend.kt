@@ -6,7 +6,7 @@ import dev.dyzjct.kura.module.modules.player.PacketMine.BlockData
 import dev.dyzjct.kura.module.modules.player.PacketMine.PacketType
 import dev.dyzjct.kura.module.modules.render.PlaceRender
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.block.BlockUtil
 import base.utils.block.BlockUtil.getNeighbor
 import base.utils.concurrent.threads.runSynchronized

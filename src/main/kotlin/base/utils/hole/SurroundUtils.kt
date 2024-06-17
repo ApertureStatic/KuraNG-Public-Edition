@@ -1,7 +1,7 @@
 package base.utils.hole
 
 import dev.dyzjct.kura.utils.animations.fastFloor
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import net.minecraft.block.Block
 import net.minecraft.block.Blocks
 import net.minecraft.entity.Entity

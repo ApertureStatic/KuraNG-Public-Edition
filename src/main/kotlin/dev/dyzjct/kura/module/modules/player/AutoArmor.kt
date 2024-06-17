@@ -5,7 +5,7 @@ import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.movement.ElytraFly
 import it.unimi.dsi.fastutil.objects.Object2IntMap
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.concurrent.threads.runSafe
 import base.utils.inventory.InvUtils
 import net.minecraft.enchantment.Enchantment

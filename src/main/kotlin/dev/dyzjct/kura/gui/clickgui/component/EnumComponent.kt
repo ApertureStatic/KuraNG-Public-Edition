@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.gui.clickgui.component
 
-import base.system.util.interfaces.DisplayEnum
+import dev.dyzjct.kura.system.util.interfaces.DisplayEnum
 import dev.dyzjct.kura.gui.clickgui.render.Alignment
 import dev.dyzjct.kura.gui.clickgui.render.DrawDelegate
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope

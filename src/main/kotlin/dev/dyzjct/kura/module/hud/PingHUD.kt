@@ -4,7 +4,7 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.client.Colors
 import dev.dyzjct.kura.utils.math.LagCompensator.globalInfoPingValue
-import base.system.render.newfont.FontRenderers
+import dev.dyzjct.kura.system.render.newfont.FontRenderers
 import base.utils.chat.ChatUtil
 import base.utils.concurrent.threads.runSafe
 import net.minecraft.client.gui.DrawContext

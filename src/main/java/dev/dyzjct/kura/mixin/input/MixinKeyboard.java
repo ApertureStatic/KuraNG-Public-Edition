@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.mixin.input;
 
 import dev.dyzjct.kura.module.ModuleManager;
-import base.events.chat.CharTypedEvent;
+import dev.dyzjct.kura.event.events.chat.CharTypedEvent;
 import base.utils.screen.ScreenUtils;
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;

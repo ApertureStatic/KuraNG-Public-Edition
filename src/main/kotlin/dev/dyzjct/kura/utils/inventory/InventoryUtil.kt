@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.utils.inventory
 
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.concurrent.threads.runSafe
 import base.utils.extension.packetClick
 import net.minecraft.entity.effect.StatusEffect

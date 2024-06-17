@@ -1,11 +1,11 @@
 package dev.dyzjct.kura.utils.inventory
 
-import dev.dyzjct.kura.manager.InventoryTaskManager
-import base.system.event.SafeClientEvent
-import base.system.util.delegate.ComputeFlag
 import base.utils.TimeUnit
 import base.utils.concurrent.threads.onMainThreadSafe
 import base.utils.interfaces.Helper
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.manager.InventoryTaskManager
+import dev.dyzjct.kura.system.util.delegate.ComputeFlag
 
 inline fun SafeClientEvent.inventoryTaskNow(block: InventoryTask.Builder.() -> Unit) =
     InventoryTask.Builder()

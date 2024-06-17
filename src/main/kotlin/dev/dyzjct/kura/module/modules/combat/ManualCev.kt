@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.events.player.PlayerMotionEvent
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.block.BlockUtil.canBreak
 import base.utils.chat.ChatUtil
 import base.utils.extension.fastPos

@@ -4,8 +4,8 @@ import dev.dyzjct.kura.manager.MovementManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.modules.client.Colors
-import base.system.event.SafeClientEvent
-import base.system.render.newfont.FontRenderers
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.system.render.newfont.FontRenderers
 import base.utils.chat.ChatUtil
 import base.utils.concurrent.threads.runSafe
 import net.minecraft.client.gui.DrawContext

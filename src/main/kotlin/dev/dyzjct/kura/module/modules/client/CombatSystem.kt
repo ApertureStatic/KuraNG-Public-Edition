@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.modules.client
 
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.chat.ChatUtil
 import dev.dyzjct.kura.gui.clickgui.ClickGuiScreen
 import dev.dyzjct.kura.manager.FileManager

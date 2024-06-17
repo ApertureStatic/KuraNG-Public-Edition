@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.crystal
 
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal.getPlaceSide
-import base.system.event.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.Wrapper
 import base.utils.world.getHitVecOffset
 import net.minecraft.client.network.ClientPlayerEntity

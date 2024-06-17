@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.movement
 
-import base.events.PacketEvents
-import base.system.event.safeEventListener
+import dev.dyzjct.kura.event.events.PacketEvents
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.concurrent.threads.runSafe
 import com.mojang.authlib.GameProfile
 import dev.dyzjct.kura.module.Category

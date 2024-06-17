@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.mixin.world;
 
-import base.events.WorldEvent;
+import dev.dyzjct.kura.event.events.WorldEvent;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.Nullable;
