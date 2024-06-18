@@ -93,7 +93,7 @@ object AutoCraftBed : Module(name = "AutoCraftBed", langName = "自动合成床"
                 .filter { player.distanceSqToCenter(it.up()) <= placeRange.value.sq }
                 .filter { world.isAir(it.up()) || world.getBlockState(it.up()).block == Blocks.CRAFTING_TABLE }.filter {
                     if (world.getBlockState(it.up()).block != Blocks.CRAFTING_TABLE) {
-                        if (airPlace.value) true else getNeighbor(it.up(), false) != null
+                        if (airPlace.value) true else getNeighbor(it.up()) != null
                     } else true
                 }.sorted(Comparator.comparingInt { getSafeFactor(it.up()) }).collect(Collectors.toList())
         )

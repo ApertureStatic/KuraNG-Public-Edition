@@ -1,6 +1,5 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.block.BlockUtil.getNeighbor
 import base.utils.chat.ChatUtil
 import base.utils.combat.getPredictedTarget
@@ -16,6 +15,7 @@ import base.utils.math.distanceSqTo
 import base.utils.math.sq
 import base.utils.math.toBlockPos
 import base.utils.player.getTargetSpeed
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
@@ -45,7 +45,6 @@ object AutoWeb : Module(
     private var webCheck = bsetting("WebCheck", true)
     private var ground = bsetting("OnlyGround", true)
     private var inside = bsetting("Inside", false)
-    private var strictDirection = bsetting("StrictDirection", false)
     private var air = bsetting("AirPlace", false)
     private var smartDelay = bsetting("SmartDelay", false)
     private var delay = isetting("minDelay", 25, 0, 500)
@@ -98,8 +97,7 @@ object AutoWeb : Module(
                         if (isInWeb(it) && webCheck.value) return
 
                         if (world.isAir(pos) && (getNeighbor(
-                                pos,
-                                strictDirection.value
+                                pos
                             ) != null || air.value) && player.distanceSqTo(pos) < CombatSystem.placeRange.sq
                         ) {
                             if (timerDelay.tickAndReset(delay)) {
@@ -109,7 +107,7 @@ object AutoWeb : Module(
                                 spoofHotbarWithSetting(Items.COBWEB) {
                                     player.spoofSneak {
                                         connection.sendPacket(
-                                            fastPos(pos, true)
+                                            fastPos(pos)
                                         )
                                     }
                                 }
@@ -118,19 +116,19 @@ object AutoWeb : Module(
                         }
                     }
 
-                    getNeighbor(targetDistance.up(), strictDirection.value)?.let {
+                    getNeighbor(targetDistance.up())?.let {
                         if (facePlace.value) {
                             packet(targetDistance.up(), true)
                         }
                     }
 
-                    getNeighbor(targetDistance, strictDirection.value)?.let {
+                    getNeighbor(targetDistance)?.let {
                         if (inside.value) {
                             packet(targetDistance)
                         }
                     }
 
-                    getNeighbor(targetDistance.down(), strictDirection.value)?.let {
+                    getNeighbor(targetDistance.down())?.let {
                         packet(targetDistance.down())
                     }
 

@@ -86,6 +86,7 @@ object ModuleManager : AlwaysListening {
         registerModule(HoleMiner)
         registerModule(CrystalBasePlacer)
         registerModule(AutoPot)
+        registerModule(PearlFucker)
     }
 
     private fun loadCategoryMisc() {

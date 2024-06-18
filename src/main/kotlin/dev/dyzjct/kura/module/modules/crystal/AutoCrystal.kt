@@ -112,14 +112,11 @@ object AutoCrystal : Module(
 
     //Page GENERAL
     var damageMode = msetting("DamageMode", DamageMode.PPBP).enumIs(p, Page.GENERAL)
-    private var strictDirection = bsetting("StrictDirection", false).enumIs(p, Page.GENERAL)
     private var antiWeak = bsetting("AntiWeakness", true).enumIs(p, Page.GENERAL)
     private var ghostHand = bsetting("GhostHand", true).enumIs(p, Page.GENERAL)
     private var rotate = bsetting("Rotate", false).enumIs(p, Page.GENERAL)
     private var yawSpeed = fsetting("YawSpeed", 30.0f, 5.0f, 180f, 1f).isTrue(rotate).enumIs(p, Page.GENERAL)
     private var rotateDiff = fsetting("RotationDiff", 1f, 0f, 2f).isTrue(rotate).enumIs(p, Page.GENERAL)
-    private var old = bsetting("OldPlace", false).enumIs(p, Page.GENERAL)
-    private var wallRange = dsetting("WallRange", 3.0, 0.0, 6.0).isTrue(old).enumIs(p, Page.GENERAL)
 
     //Page Place
     private var packetPlaceMode = msetting("PacketMode", PacketPlaceMode.Strong).enumIs(p, Page.PLACE)
@@ -415,7 +412,13 @@ object AutoCrystal : Module(
         if (blockBoost.value) {
             if (EntityManager.players.isEmpty()) return
             for (target in EntityManager.players) {
-                if (isntValid(target, CombatSystem.placeRange, old.value, wallRange.value)) continue
+                if (isntValid(
+                        target,
+                        CombatSystem.placeRange,
+                        CombatSystem.oldVersion,
+                        CombatSystem.wallRange
+                    )
+                ) continue
                 val calcOffset = target.blockPos
 
                 for (facing in offsetFacing) {
@@ -472,7 +475,7 @@ object AutoCrystal : Module(
                                     doRotate(CurrentState.Blocking, pos)
                                     spoofHotbarWithSetting(Items.OBSIDIAN) {
                                         sendSequencedPacket(world) { sequence ->
-                                            fastPos(pos, strictDirection.value, sequence = sequence)
+                                            fastPos(pos, sequence = sequence)
                                         }
                                     }
 
@@ -581,7 +584,7 @@ object AutoCrystal : Module(
     }
 
     fun SafeClientEvent.getPlaceSide(pos: BlockPos): Direction {
-        return if (strictDirection.value) {
+        return if (CombatSystem.strictDirection) {
             getMiningSide(pos) ?: Direction.UP
         } else {
             Direction.UP
@@ -774,7 +777,7 @@ object AutoCrystal : Module(
     private fun SafeClientEvent.getCrystalList(): List<EndCrystalEntity> {
         return EntityManager.entity.asSequence().filterIsInstance<EndCrystalEntity>().filter { it.isAlive }.filter {
             checkBreakRange(
-                it, CombatSystem.attackRange.toFloat(), old.value, wallRange.value
+                it, CombatSystem.attackRange.toFloat(), CombatSystem.oldVersion, CombatSystem.wallRange
             )
         }.toList()
     }
@@ -1067,10 +1070,10 @@ object AutoCrystal : Module(
                 val crystalZ = it.z + 0.5
                 player.distanceSqTo(
                     crystalX, crystalY, crystalZ
-                ) <= CombatSystem.placeRange.sq && (!old.value || player.distanceSqTo(it.toCenterPos()) <= wallRange.value.sq || canSee(
+                ) <= CombatSystem.placeRange.sq && (!CombatSystem.oldVersion || player.distanceSqTo(it.toCenterPos()) <= CombatSystem.wallRange.sq || canSee(
                     it.x.toDouble(), it.y.toDouble(), it.z.toDouble()
                 ))
-            }.filter { canPlaceCrystal(it, prio, old.value) }.collect(Collectors.toList())
+            }.filter { canPlaceCrystal(it, prio, CombatSystem.oldVersion) }.collect(Collectors.toList())
         )
 
         return positions

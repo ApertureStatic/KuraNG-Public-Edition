@@ -58,12 +58,12 @@ object HeadTrap : Module(name = "HeadTrap", "盖头", category = Category.COMBAT
                         if (placeTimer.tickAndReset(placeDelay.value)) {
                             if (bypass.value) swapSpoof(slot) {
                                 sendSequencedPacket(world) { seq ->
-                                    fastPos(pos = target.blockPos.up(2), strictDirection = true, sequence = seq)
+                                    fastPos(pos = target.blockPos.up(2), sequence = seq)
                                 }
                             } else {
                                 spoofHotbar(slot) {
                                     sendSequencedPacket(world) { seq ->
-                                        fastPos(pos = target.blockPos.up(2), strictDirection = true, sequence = seq)
+                                        fastPos(pos = target.blockPos.up(2), sequence = seq)
                                     }
                                 }
                             }
@@ -80,13 +80,13 @@ object HeadTrap : Module(name = "HeadTrap", "盖头", category = Category.COMBAT
                                     if (bypass.value) {
                                         swapSpoof(slot) {
                                             sendSequencedPacket(world) {
-                                                fastPos(block.position.offset(block.facing), strictDirection = true)
+                                                fastPos(block.position.offset(block.facing))
                                             }
                                         }
                                     } else {
                                         spoofHotbar(slot) {
                                             sendSequencedPacket(world) {
-                                                fastPos(block.position.offset(block.facing), strictDirection = true)
+                                                fastPos(block.position.offset(block.facing))
                                             }
                                         }
                                     }

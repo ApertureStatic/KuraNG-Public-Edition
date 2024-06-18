@@ -59,14 +59,13 @@ fun fastPosDirectionDown(
 
 fun SafeClientEvent.fastPos(
     pos: BlockPos,
-    strictDirection: Boolean = false,
     face: Direction = Direction.UP,
     hand: Hand = Hand.MAIN_HAND,
     inside: Boolean = false,
     sequence: Int = 0,
     render: Boolean = true
 ): PlayerInteractBlockC2SPacket {
-    val placePos = getNeighbor(pos, strictDirection) ?: BlockUtil.EasyBlock(pos, face)
+    val placePos = getNeighbor(pos) ?: BlockUtil.EasyBlock(pos, face)
     if (render) PlaceRender.renderBlocks[pos] = System.currentTimeMillis()
     return PlayerInteractBlockC2SPacket(
         hand,
@@ -82,13 +81,12 @@ fun SafeClientEvent.fastPos(
 
 fun SafeClientEvent.fastPos(
     vec: Vec3d,
-    strictDirection: Boolean = false,
     face: Direction = Direction.UP,
     hand: Hand = Hand.MAIN_HAND,
     inside: Boolean = false,
     sequence: Int = 0
 ): PlayerInteractBlockC2SPacket {
-    val placePos = getNeighbor(vec.toBlockPos(), strictDirection) ?: BlockUtil.EasyBlock(vec.toBlockPos(), face)
+    val placePos = getNeighbor(vec.toBlockPos()) ?: BlockUtil.EasyBlock(vec.toBlockPos(), face)
     PlaceRender.renderBlocks[vec.toBlockPos()] = System.currentTimeMillis()
     return PlayerInteractBlockC2SPacket(
         hand,

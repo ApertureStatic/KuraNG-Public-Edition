@@ -24,7 +24,6 @@ object SelfTrap : Module(name = "SelfTrap", "自动裹自己", category = Catego
 
     private var placeDelay = isetting("PlaceDelay", 10, 0, 1000)
     private var rotate = bsetting("Rotate", false)
-    private var strictDirection = bsetting("StrictDirection", false)
     private var placeTimer = TimerUtils()
     private var attackTimer = TimerUtils()
 
@@ -61,7 +60,7 @@ object SelfTrap : Module(name = "SelfTrap", "自动裹自己", category = Catego
                         }
                         player.spoofSneak {
                             spoofHotbar(obs) {
-                                connection.sendPacket(fastPos(pos, strictDirection.value))
+                                connection.sendPacket(fastPos(pos))
                             }
                         }
                     }

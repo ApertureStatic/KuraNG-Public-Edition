@@ -8,6 +8,7 @@ import base.utils.inventory.slot.hotbarSlots
 import base.utils.item.isTool
 import base.utils.world.getMiningSide
 import base.utils.world.getVisibleSides
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.block.FireBlock
@@ -28,12 +29,12 @@ object BlockUtil {
         return getMiningSide(pos) ?: Direction.UP
     }
 
-    fun SafeClientEvent.getNeighbor(pos: BlockPos, strictDirection: Boolean): EasyBlock? {
+    fun SafeClientEvent.getNeighbor(pos: BlockPos): EasyBlock? {
         for (side in Direction.entries) {
             val offsetPos = pos.offset(side)
             val oppositeSide = side.opposite
 
-            if (strictDirection && !getVisibleSides(offsetPos, true).contains(oppositeSide)) continue
+            if (CombatSystem.strictDirection && !getVisibleSides(offsetPos, true).contains(oppositeSide)) continue
             if (world.getBlockState(offsetPos).isReplaceable) continue
 
             return EasyBlock(offsetPos, oppositeSide ?: Direction.UP)

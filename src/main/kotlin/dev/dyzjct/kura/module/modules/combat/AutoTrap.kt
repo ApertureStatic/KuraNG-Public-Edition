@@ -48,7 +48,7 @@ object AutoTrap : Module(name = "AutoTrap", "自动陷阱", category = Category.
                             if (rotate) RotationManager.addRotations(placePos, true)
                             spoofHotbar(hotbarSlot) {
                                 sendSequencedPacket(world) {
-                                    fastPos(placePos, strictDirection = true, sequence = it)
+                                    fastPos(placePos, sequence = it)
                                 }
                             }
                         }

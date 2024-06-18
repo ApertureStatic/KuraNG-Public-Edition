@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.client
 
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.chat.ChatUtil
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.gui.clickgui.ClickGuiScreen
 import dev.dyzjct.kura.manager.FileManager
 import dev.dyzjct.kura.module.Category
@@ -24,6 +24,9 @@ object CombatSystem : Module(
     val spoofMode = msetting("SpoofMode", SpoofMode.Normal).enumIs(combatMode, CombatMode.Strong)
     val autoSwitch by bsetting("AutoSwitch", false).enumIs(combatMode, CombatMode.Strong)
     val eating by bsetting("EatingPause", true).enumIs(combatMode, CombatMode.Strong)
+    val oldVersion by bsetting("1.12.2Support", false)
+    val wallRange by dsetting("WallRange", 3.5, 0.0, 6.0).isTrue { oldVersion }
+    val strictDirection by bsetting("StrictDirection",true)
     val smartAura by bsetting("SmartAura", false).enumIs(combatMode, CombatMode.Strong)
     val calculateKA by bsetting("CalculateKA", false).isTrue { smartAura }
     val autoToggle by bsetting("[CA/AA]AutoToggle", false).enumIs(combatMode, CombatMode.Strong).isFalse { smartAura }

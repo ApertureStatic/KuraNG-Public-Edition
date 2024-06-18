@@ -58,7 +58,6 @@ object AnchorAura : Module(
     private val clickDelay by isetting("ClickDelay", 50, 0, 500)
     private val damageMode by msetting("DamageMode", DamageMode.Thunder)
     private var airPlace by bsetting("AirPlace", false)
-    private val strictDirection by bsetting("StrictDirection", false)
     private val rotate by bsetting("Rotation", false)
     private val fillColor by csetting("FillColor", Color(255, 255, 255, 50))
     private val lineColor by csetting("LineColor", Color(255, 255, 255, 255))
@@ -216,7 +215,7 @@ object AnchorAura : Module(
                     if (airPlace) {
                         true
                     } else {
-                        getNeighbor(it.up(), strictDirection) != null
+                        getNeighbor(it.up()) != null
                     }
                 }.sorted(Comparator.comparingInt { interactPriority(it.up()) }).collect(Collectors.toList())
         )
@@ -283,8 +282,8 @@ object AnchorAura : Module(
                             headPos
                         ) || world.getBlockState(
                             headPos
-                        ).block is RespawnAnchorBlock) && if (airPlace) true else (if (!strictDirection) getNeighbor(
-                            headPos, false
+                        ).block is RespawnAnchorBlock) && if (airPlace) true else (if (!CombatSystem.strictDirection) getNeighbor(
+                            headPos
                         ) != null else getAnchorBlock(headPos, true) != null) && player.distanceSqToCenter(
                             headPos
                         ) <= CombatSystem.placeRange.sq && (world.isAir(target.blockPos.up()) || world.getBlockState(
@@ -295,9 +294,8 @@ object AnchorAura : Module(
                         )
                         anchorDamage = 255.0
                     } else {
-                        if (targetDamage >= minDamage && (if (!strictDirection) getNeighbor(
-                                blockPos,
-                                false
+                        if (targetDamage >= minDamage && (if (!CombatSystem.strictDirection) getNeighbor(
+                                blockPos
                             ) != null else getAnchorBlock(blockPos, true) != null || airPlace)
                         ) {
                             if (targetDamage > normal.targetDamage) {
@@ -327,7 +325,6 @@ object AnchorAura : Module(
                             fastPos(
                                 placeInfo.blockPos,
                                 face = placeInfo.side,
-                                strictDirection = strictDirection,
                                 sequence = it,
                                 render = false
                             )
@@ -345,7 +342,7 @@ object AnchorAura : Module(
                     PlayerInteractBlockC2SPacket(
                         Hand.MAIN_HAND, BlockHitResult(
                             placeInfo.blockPos.toCenterPos(),
-                            getAnchorBlock(placeInfo.blockPos, strictDirection)?.clickFace ?: placeInfo.side,
+                            getAnchorBlock(placeInfo.blockPos, CombatSystem.strictDirection)?.clickFace ?: placeInfo.side,
                             placeInfo.blockPos,
                             true
                         ), it
@@ -370,7 +367,7 @@ object AnchorAura : Module(
                         PlayerInteractBlockC2SPacket(
                             Hand.MAIN_HAND, BlockHitResult(
                                 placeInfo.blockPos.toCenterPos(),
-                                getAnchorBlock(placeInfo.blockPos, strictDirection)?.clickFace ?: placeInfo.side,
+                                getAnchorBlock(placeInfo.blockPos, CombatSystem.strictDirection)?.clickFace ?: placeInfo.side,
                                 placeInfo.blockPos,
                                 true
                             ), it
@@ -380,7 +377,7 @@ object AnchorAura : Module(
                         "[ANCHOR -> glowSide = ${
                             getAnchorBlock(
                                 placeInfo.blockPos,
-                                strictDirection
+                                CombatSystem.strictDirection
                             )?.clickFace ?: placeInfo.side
                         }"
                     )

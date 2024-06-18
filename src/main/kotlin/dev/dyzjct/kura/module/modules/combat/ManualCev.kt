@@ -1,14 +1,11 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
-import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.block.BlockUtil.canBreak
 import base.utils.chat.ChatUtil
 import base.utils.extension.fastPos
-import base.utils.inventory.slot.firstBlock
-import base.utils.inventory.slot.firstItem
-import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.distanceSqToCenter
+import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
@@ -17,7 +14,6 @@ import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.sq
-import net.minecraft.block.Blocks
 import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
@@ -48,8 +44,6 @@ object ManualCev : Module(
                 PacketMine.enable()
             }
 
-            val obsSlot = player.hotbarSlots.firstBlock(Blocks.OBSIDIAN)
-            val crySlot = player.hotbarSlots.firstItem(Items.END_CRYSTAL)
             PacketMine.blockData?.let { blockData ->
                 if (player.distanceSqToCenter(blockData.blockPos) > range.sq) return@safeEventListener
                 if (!world.isAir(blockData.blockPos.up())) return@safeEventListener
@@ -63,7 +57,7 @@ object ManualCev : Module(
                         if (world.isAir(blockData.blockPos)) {
                             if (timer.tickAndReset(delay)) {
                                 spoofHotbarWithSetting(Items.OBSIDIAN) {
-                                    connection.sendPacket(fastPos(blockData.blockPos, true))
+                                    connection.sendPacket(fastPos(blockData.blockPos))
                                 }
                             }
                         } else {

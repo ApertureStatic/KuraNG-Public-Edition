@@ -37,6 +37,7 @@ import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.realSpeed
 import dev.dyzjct.kura.module.modules.movement.Step
 import dev.dyzjct.kura.module.modules.player.PacketMine
@@ -74,7 +75,6 @@ object Surround : Module(
     private var placeDelay = isetting("PlaceDelay", 50, 0, 1000)
     private var multiPlace = isetting("MultiPlace", 2, 1, 5)
     private var groundCheck = bsetting("GroundCheck", true)
-    private var strictDirection = bsetting("StrictDirection", false)
     private var autoCenter = bsetting("AutoCenter", true)
     private var rotation = bsetting("Rotation", false)
     private var checkRotation = bsetting("CheckRotation", false)
@@ -240,7 +240,7 @@ object Surround : Module(
                             if (safePos == playerPos || !world.isAir(safePos)) continue
                             if (world.isPlaceable(safePos) && safeTimer.tickAndReset(placeDelay.value)) {
                                 spoofHotbar(slot) {
-                                    connection.sendPacket(fastPos(safePos, true))
+                                    connection.sendPacket(fastPos(safePos))
                                 }
                             }
                         }
@@ -322,7 +322,7 @@ object Surround : Module(
         }
 
         tempPosition.forEach {
-            getNeighborSequence(it.key, 2, 5.0f, strictDirection.value, false)?.let { list ->
+            getNeighborSequence(it.key, 2, 5.0f, false)?.let { list ->
                 placing[it.value] = list
                 list.forEach { placeInfo ->
                     placingSet.add(placeInfo.placedPos.asLong())
@@ -385,7 +385,7 @@ object Surround : Module(
             val offsetPos = pos.offset(side)
             val oppositeSide = side.opposite
 
-            if (strictDirection.value && !getVisibleSides(offsetPos, true).contains(oppositeSide)) continue
+            if (CombatSystem.strictDirection && !getVisibleSides(offsetPos, true).contains(oppositeSide)) continue
             if (world.getBlockState(offsetPos).isReplaceable) continue
 
             val hitVec = getHitVec(offsetPos, oppositeSide)

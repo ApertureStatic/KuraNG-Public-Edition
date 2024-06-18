@@ -1,6 +1,5 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.block.BlockUtil.getNeighbor
 import base.utils.chat.ChatUtil
 import base.utils.combat.getTarget
@@ -14,6 +13,7 @@ import base.utils.hole.SurroundUtils.checkHole
 import base.utils.math.distanceSqToCenter
 import base.utils.math.sq
 import base.utils.world.noCollision
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
@@ -41,7 +41,6 @@ object HolePush : Module(
 ) {
     private val rotate = bsetting("Rotation", false)
     private val side by bsetting("Side", false).isTrue(rotate)
-    private val strictDirection = bsetting("StrictDirection", false)
     private val checkDown by bsetting("CheckDown", false)
     private val delay by dsetting("Delay", 50.0, 0.0, 250.0)
     private val airPlace by bsetting("AirPlace", false)
@@ -168,7 +167,7 @@ object HolePush : Module(
                             if (rotate.value) RotationManager.addRotations(it.pos.down())
                             player.spoofSneak {
                                 spoofHotbarWithSetting(Items.OBSIDIAN) {
-                                    connection.sendPacket(fastPos(it.pos.down(), strictDirection.value))
+                                    connection.sendPacket(fastPos(it.pos.down()))
                                 }
                             }
                         }
@@ -215,7 +214,7 @@ object HolePush : Module(
                             ) {}
                         ) Items.PISTON else Items.STICKY_PISTON) else Items.REDSTONE_BLOCK
                     ) {
-                        connection.sendPacket(fastPos(if (!stone) blockPos else stonePos, strictDirection.value))
+                        connection.sendPacket(fastPos(if (!stone) blockPos else stonePos))
                     }
                 }
                 swing()
@@ -236,7 +235,7 @@ object HolePush : Module(
             timer.reset()
             return
         }
-        if (getNeighbor(blockPos, false) != null || airPlace) {
+        if (getNeighbor(blockPos) != null || airPlace) {
             if (world.isAir(blockPos)) {
                 if (rotate.value) {
                     RotationManager.addRotations(blockPos, side = side)
@@ -273,7 +272,7 @@ object HolePush : Module(
                 if (!boxCheck(Box(pos.offset(facing)))) continue
                 if (!world.noCollision(pos.offset(facing))) continue
                 if (!world.isAir(pos.offset(facing))) continue
-                if (getNeighbor(pos.offset(facing), false) == null) continue
+                if (getNeighbor(pos.offset(facing)) == null) continue
                 val minePos = AntiMinePlace.mineMap[pos.offset(facing)]
                 if (AntiMinePlace.isEnabled && minePos != null) {
                     if (System.currentTimeMillis() - minePos.mine >= minePos.start
