@@ -40,8 +40,10 @@ object PearlFucker : Module(
     private val ignoreTime by isetting("IgnoreTime", 500, 500, 1500)
     private val delay by isetting("Delay", 25, 0, 500)
     private val debug by bsetting("Debug", false)
-    private val ignoreTimer = TimerUtils()
+
     private val timer = TimerUtils()
+    val ignoreTimer = TimerUtils()
+
 
     init {
         onPacketSend {

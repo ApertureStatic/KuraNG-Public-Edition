@@ -1,17 +1,18 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import dev.dyzjct.kura.event.events.input.MouseClickEvent
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
-import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.screen.ScreenUtils.safeReturn
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.event.events.input.MouseClickEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.combat.PearlFucker
 import net.minecraft.item.Items
 import net.minecraft.util.Hand
 
@@ -38,6 +39,7 @@ object MCP : Module(
     private fun SafeClientEvent.interactPearl() {
         RotationManager.stopRotation()
         playerController.interactItem(player, Hand.MAIN_HAND)
+        PearlFucker.ignoreTimer.reset()
         RotationManager.startRotation()
     }
 }
