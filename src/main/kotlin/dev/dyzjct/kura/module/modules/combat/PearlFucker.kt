@@ -36,7 +36,7 @@ object PearlFucker : Module(
 ) {
     private val mode by msetting("Mode", Mode.Crystal)
     private val rotate by bsetting("Rotation", false)
-    private val ignore by bsetting("Ignore", false)
+    private val ignore by bsetting("IgnoreSelf", false)
     private val ignoreTime by isetting("IgnoreTime", 500, 500, 1500)
     private val delay by isetting("Delay", 25, 0, 500)
     private val debug by bsetting("Debug", false)
