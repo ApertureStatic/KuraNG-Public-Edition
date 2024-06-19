@@ -419,7 +419,7 @@ object Surround : Module(
                     RotationManager.addRotations(
                         getRotationTo(
                             Vec3d(player.x, player.y + eyeHeight, player.z), placeInfo.hitVec
-                        ), true
+                        )
                     )
                 }
 

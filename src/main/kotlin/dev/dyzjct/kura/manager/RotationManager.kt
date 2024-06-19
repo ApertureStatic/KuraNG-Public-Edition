@@ -12,11 +12,9 @@ import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
 object RotationManager : AlwaysListening {
-    private val rotationMap = ConcurrentHashMap<Vec2f, Boolean>()
     private val resetTimer = TimerUtils()
     private var rotateYaw = 0f
     private var rotatePitch = 0f
@@ -28,11 +26,6 @@ object RotationManager : AlwaysListening {
             if (stop) return@safeEventListener
             if (resetTimer.passed(500)) return@safeEventListener
             event.setRotation(rotateYaw, rotatePitch)
-//            rotationMap.toSortedMap(Comparator.comparing { (_, prio) -> prio }).forEach { (vec, _) ->
-//                val packet = Vec2f(vec.x, vec.y)
-//                event.setRotation(packet.x, packet.y)
-//                rotationMap.remove(packet)
-//            }
         }
 
         safeEventListener<PacketEvents.Send>(Int.MAX_VALUE) { event ->
@@ -65,25 +58,22 @@ object RotationManager : AlwaysListening {
     }
 
     @JvmStatic
-    fun addRotations(yaw: Float, pitch: Float, prio: Boolean = false) {
-        rotationMap[Vec2f(yaw, pitch)] = prio
+    fun addRotations(yaw: Float, pitch: Float) {
         rotateYaw = yaw
         rotatePitch = pitch
         resetTimer.reset()
     }
 
     @JvmStatic
-    fun addRotations(rotation: Vec2f, prio: Boolean = false) {
-        rotationMap[rotation] = prio
+    fun addRotations(rotation: Vec2f) {
         rotateYaw = rotation.x
         rotatePitch = rotation.y
         resetTimer.reset()
     }
 
     @JvmStatic
-    fun addRotations(blockPos: BlockPos, prio: Boolean = false, side: Boolean = false) {
+    fun addRotations(blockPos: BlockPos, side: Boolean = false) {
         runSafe {
-            rotationMap[getRotationTo(blockPos.toVec3dCenter(), side)] = prio
             rotateYaw = getRotationTo(blockPos.toVec3dCenter(), side).x
             rotatePitch = getRotationTo(blockPos.toVec3dCenter(), side).y
             resetTimer.reset()
@@ -91,9 +81,8 @@ object RotationManager : AlwaysListening {
     }
 
     @JvmStatic
-    fun addRotations(vec3d: Vec3d, prio: Boolean = false, side: Boolean = false) {
+    fun addRotations(vec3d: Vec3d, side: Boolean = false) {
         runSafe {
-            rotationMap[getRotationTo(vec3d, side)] = prio
             rotateYaw = getRotationTo(vec3d, side).x
             rotatePitch = getRotationTo(vec3d, side).y
             resetTimer.reset()

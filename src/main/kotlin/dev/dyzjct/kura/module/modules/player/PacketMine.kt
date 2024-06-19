@@ -65,7 +65,6 @@ object PacketMine : Module(
     private var setGround by bsetting("SetGround", true)
     private var cancelAbort by bsetting("CancelAbortPacket", false)
     private var rotate = bsetting("Rotate", true)
-    private var prio by bsetting("PrioRotate", true).isTrue(rotate)
     private var swing by bsetting("Swing", false)
     private var mainColor by csetting("MainColor", ColorRGB(255, 32, 32))
     private var doubleColor by csetting("DoubleColor", ColorRGB(200, 32, 32)).isTrue { doubleBreak }
@@ -272,7 +271,7 @@ object PacketMine : Module(
         if (db) {
             if (doubleBreak) {
                 if (onDoubleBreak) {
-                    doubleData?.let { RotationManager.addRotations(it.blockPos, prio) }
+                    doubleData?.let { RotationManager.addRotations(it.blockPos) }
                 }
                 if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime + backTime) && onDoubleBreak) {
                     onDoubleBreak = false
@@ -293,7 +292,7 @@ object PacketMine : Module(
                     blockData.blockPos
                 ) && action == Stop)) && !force
             ) return
-            if (rotate.value) RotationManager.addRotations(blockData.blockPos, prio)
+            if (rotate.value) RotationManager.addRotations(blockData.blockPos)
             if (swing) connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
             if (switchMode0.spoof) {
                 if (!switchMode0.bypass) {

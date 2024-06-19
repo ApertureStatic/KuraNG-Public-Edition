@@ -187,7 +187,7 @@ object HolePush : Module(
         if (!timer.passedMs(delay.toLong())) return
         fun spoofPlace(stone: Boolean, doToggle: Boolean = false) {
             if (!stone) {
-                RotationManager.addRotations(blockPos = blockPos, prio = true, side = true)
+                RotationManager.addRotations(blockPos = blockPos, side = true)
                 RotationManager.stopRotation()
                 face.let {
                     connection.sendPacket(
@@ -204,7 +204,7 @@ object HolePush : Module(
                 }
             }
             RotationManager.startRotation()
-            if (!stone) RotationManager.addRotations(blockPos, true)
+            if (!stone) RotationManager.addRotations(blockPos)
             if (!stone || world.isAir(stonePos)) {
                 player.spoofSneak {
                     spoofHotbarWithSetting(
@@ -219,7 +219,7 @@ object HolePush : Module(
                 }
                 swing()
             }
-            if (!stone) RotationManager.addRotations(blockPos, true)
+            if (!stone) RotationManager.addRotations(blockPos)
             stage++
             if (debug) ChatUtil.sendMessage(if (stone) "[HolePush] -> PlaceStone!" else "[HolePush] -> PlacePiston!")
             if (!world.isAir(stonePos) && doToggle) {

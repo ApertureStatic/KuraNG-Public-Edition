@@ -45,7 +45,7 @@ object AutoTrap : Module(name = "AutoTrap", "自动陷阱", category = Category.
                     }
                     if (placeTimer.tickAndReset(placeDelay)) {
                         player.spoofSneak {
-                            if (rotate) RotationManager.addRotations(placePos, true)
+                            if (rotate) RotationManager.addRotations(placePos)
                             spoofHotbar(hotbarSlot) {
                                 sendSequencedPacket(world) {
                                     fastPos(placePos, sequence = it)

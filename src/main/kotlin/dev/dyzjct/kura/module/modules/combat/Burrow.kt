@@ -81,7 +81,7 @@ object Burrow : Module(
             if (canPlace(player.blockPos.down())) {
                 val vec = player.pos.add(0.0, -1.0, 0.0)
                 sendPlayerRotation(player.yaw, 90f, false)
-                if (rotate) RotationManager.addRotations(player.blockPos.down(), true)
+                if (rotate) RotationManager.addRotations(player.blockPos.down())
                 doSneak()
                 placeBlock(player.blockPos.down())
                 place(vec.add(0.3, 0.3, 0.3))
@@ -237,7 +237,7 @@ object Burrow : Module(
         }
         val pos = vec3d.toBlockPos()
 
-        if (rotate) RotationManager.addRotations(player.yaw, 90f, true)
+        if (rotate) RotationManager.addRotations(player.yaw, 90f)
 
         placeBlock(pos.down())
         if (!canPlace(pos)) {
@@ -245,7 +245,7 @@ object Burrow : Module(
         }
         if (getNeighbor(pos) == null) return
         if (rotate) {
-            RotationManager.addRotations(player.yaw, 90.0f, true)
+            RotationManager.addRotations(player.yaw, 90.0f)
         }
         spoofHotbarNoAnyCheck(Items.OBSIDIAN) {
             sendSequencedPacket(world) {
@@ -258,7 +258,7 @@ object Burrow : Module(
     private fun SafeClientEvent.placeBlock(pos: BlockPos) {
         if (!canPlace(pos)) return
         if (rotate) {
-            RotationManager.addRotations(player.yaw, 90.0f, true)
+            RotationManager.addRotations(player.yaw, 90.0f)
         }
         spoofHotbarNoAnyCheck(Items.OBSIDIAN) {
             sendSequencedPacket(world) {
