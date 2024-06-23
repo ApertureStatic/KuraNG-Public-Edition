@@ -1,7 +1,5 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.event.events.render.Render3DEvent
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.block.BlockUtil.getAnchorBlock
 import base.utils.block.BlockUtil.getNeighbor
 import base.utils.chat.ChatUtil
@@ -18,6 +16,8 @@ import base.utils.math.distanceSqToCenter
 import base.utils.math.toBlockPos
 import base.utils.math.toVec3dCenter
 import base.utils.player.getTargetSpeed
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.events.render.Render3DEvent
 import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.module.Category
@@ -317,7 +317,7 @@ object AnchorAura : Module(
     private fun SafeClientEvent.globalPlace(placeInfo: PlaceInfo, explode: Boolean) {
         if (explode) {
             if (anchorTimer.tickAndReset(anchorDelay) && world.isAir(placeInfo.blockPos)) {
-                AutoWeb.onAnchorPlacing = true
+
                 if (rotate) RotationManager.addRotations(placeInfo.blockPos)
                 player.spoofSneak {
                     spoofHotbarWithSetting(Items.RESPAWN_ANCHOR) {
@@ -332,24 +332,25 @@ object AnchorAura : Module(
                     }
                 }
                 swing()
-                AutoWeb.onAnchorPlacing = false
+
             }
         } else {
             if (clickTimer.tickAndReset(clickDelay)) {
-                AutoWeb.onAnchorPlacing = true
+
                 if (rotate) RotationManager.addRotations(placeInfo.blockPos)
                 sendSequencedPacket(world) {
                     PlayerInteractBlockC2SPacket(
                         Hand.MAIN_HAND, BlockHitResult(
                             placeInfo.blockPos.toCenterPos(),
-                            getAnchorBlock(placeInfo.blockPos, CombatSystem.strictDirection)?.clickFace ?: placeInfo.side,
+                            getAnchorBlock(placeInfo.blockPos, CombatSystem.strictDirection)?.clickFace
+                                ?: placeInfo.side,
                             placeInfo.blockPos,
                             true
                         ), it
                     )
                 }
                 swing()
-                AutoWeb.onAnchorPlacing = false
+
             }
         }
     }
@@ -360,14 +361,15 @@ object AnchorAura : Module(
         val currentBlockState = world.getBlockState(placeInfo.blockPos)
         if ((currentBlockState.block == Blocks.RESPAWN_ANCHOR && currentBlockState.get(Properties.CHARGES) < 1) || ignore) {
             if (glowTimer.tickAndReset(glowDelay)) {
-                AutoWeb.onAnchorPlacing = true
+
                 if (rotate) RotationManager.addRotations(placeInfo.blockPos)
                 spoofHotbarWithSetting(item) {
                     sendSequencedPacket(world) {
                         PlayerInteractBlockC2SPacket(
                             Hand.MAIN_HAND, BlockHitResult(
                                 placeInfo.blockPos.toCenterPos(),
-                                getAnchorBlock(placeInfo.blockPos, CombatSystem.strictDirection)?.clickFace ?: placeInfo.side,
+                                getAnchorBlock(placeInfo.blockPos, CombatSystem.strictDirection)?.clickFace
+                                    ?: placeInfo.side,
                                 placeInfo.blockPos,
                                 true
                             ), it
@@ -383,7 +385,7 @@ object AnchorAura : Module(
                     )
                     swing()
                 }
-                AutoWeb.onAnchorPlacing = false
+
             }
         }
     }

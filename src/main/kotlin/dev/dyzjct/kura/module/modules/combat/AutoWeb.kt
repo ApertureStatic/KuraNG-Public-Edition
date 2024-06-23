@@ -53,7 +53,6 @@ object AutoWeb : Module(
     private var timerDelay = TimerUtils()
 
     var target: PlayerEntity? = null
-    var onAnchorPlacing = false
 
     override fun onEnable() {
         runSafe {
@@ -75,7 +74,10 @@ object AutoWeb : Module(
                 return@onLoop
             }
             target = getTarget(CombatSystem.targetRange)
-            if (onAnchorPlacing && betterAnchor.value) return@onLoop
+            if (AnchorAura.isEnabled && AnchorAura.placeInfo != null && (!CombatSystem.smartAura || CombatSystem.isBestAura(
+                    CombatSystem.AuraType.Anchor
+                )) && betterAnchor.value
+            ) return@onLoop
             target?.let {
                 val targetDistance = getPredictedTarget(it, CombatSystem.predictTicks).blockPos
                 if (doHolePush(

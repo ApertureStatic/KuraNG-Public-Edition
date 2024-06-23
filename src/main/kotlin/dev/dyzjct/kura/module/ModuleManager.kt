@@ -87,6 +87,7 @@ object ModuleManager : AlwaysListening {
         registerModule(CrystalBasePlacer)
         registerModule(AutoPot)
         registerModule(PearlFucker)
+        registerModule(AnchorHelper)
     }
 
     private fun loadCategoryMisc() {
