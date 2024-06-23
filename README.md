@@ -1,3 +1,3 @@
 # Kura-NextGen
 #### Public-Edition
-###### KuraDevelopTeam
+###### ApertureStaticTeam
