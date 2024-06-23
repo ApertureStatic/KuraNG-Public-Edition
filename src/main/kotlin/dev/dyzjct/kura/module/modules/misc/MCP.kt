@@ -6,6 +6,7 @@ import base.utils.screen.ScreenUtils.safeReturn
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.event.events.input.MouseClickEvent
+import dev.dyzjct.kura.manager.HotbarManager
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
 import dev.dyzjct.kura.manager.RotationManager
@@ -24,6 +25,7 @@ object MCP : Module(
         safeEventListener<MouseClickEvent> {
             if (it.button == MouseClickEvent.MouseButton.MIDDLE && it.action == MouseClickEvent.MouseAction.PRESS) {
                 if (mc.currentScreen.safeReturn()) return@safeEventListener
+                HotbarManager.onlyItem = Items.ENDER_PEARL
                 if (CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong) spoofHotbarNoAnyCheck(Items.ENDER_PEARL) {
                     interactPearl()
                 } else {
@@ -32,6 +34,7 @@ object MCP : Module(
                         interactPearl()
                     }
                 }
+                HotbarManager.onlyItem = null
             }
         }
     }

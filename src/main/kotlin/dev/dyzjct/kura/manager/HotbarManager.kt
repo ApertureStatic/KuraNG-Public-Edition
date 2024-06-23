@@ -26,6 +26,7 @@ import net.minecraft.screen.slot.Slot
 object HotbarManager : AlwaysListening {
     var serverSideHotbar = 0; private set
     var swapTime = 0L; private set
+    var onlyItem: Item? = null
 
     private val tick = TickTimer()
 
@@ -132,6 +133,7 @@ object HotbarManager : AlwaysListening {
         isCheck: Boolean = false,
         crossinline block: () -> Unit
     ): Boolean {
+        if (item != onlyItem && onlyItem != null) return false
         var notNullSlot = false
         when (CombatSystem.spoofMode.value) {
             CombatSystem.SpoofMode.Normal -> {
@@ -174,9 +176,10 @@ object HotbarManager : AlwaysListening {
                     if (!isCheck) {
                         if (swap) {
                             if (slot < 9) {
-                                spoofHotbar(slot) {
-                                    block.invoke()
-                                }
+                                val old = player.inventory.selectedSlot
+                                spoofHotbar(slot)
+                                block.invoke()
+                                spoofHotbar(old)
                             } else {
                                 val old = player.inventory.selectedSlot
                                 inventorySwap(slot)

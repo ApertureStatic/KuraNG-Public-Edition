@@ -1,7 +1,5 @@
 package base.utils.world
 
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
-import dev.dyzjct.kura.system.util.collections.EnumSet
 import base.utils.block.blockBlacklist
 import base.utils.block.getBlock
 import base.utils.block.isFullBox
@@ -9,9 +7,11 @@ import base.utils.entity.EntityUtils.eyePosition
 import base.utils.math.distanceSqTo
 import base.utils.math.toVec3dCenter
 import base.utils.math.vector.Vec3f
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.system.util.collections.EnumSet
 import dev.dyzjct.kura.utils.animations.sq
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import net.minecraft.block.BlockState
@@ -202,7 +202,7 @@ fun SafeClientEvent.getClickSide(pos: BlockPos, strict: Boolean): Direction? {
 
 fun SafeClientEvent.canSee(pos: BlockPos, side: Direction): Boolean {
     val testVec = pos.toCenterPos().add(side.vector.x * 0.5, side.vector.y * 0.5, side.vector.z * 0.5)
-    val result: HitResult = world.raycast(
+    val result = world.raycast(
         RaycastContext(
             player.eyePosition,
             testVec,
@@ -211,7 +211,7 @@ fun SafeClientEvent.canSee(pos: BlockPos, side: Direction): Boolean {
             player
         )
     )
-    return result == null || result.type == HitResult.Type.MISS
+    return result.type == HitResult.Type.MISS
 }
 
 fun SafeClientEvent.getMiningSide(pos: BlockPos): Direction? {
