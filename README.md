@@ -1,3 +1,3 @@
 # Kura-NextGen
 #### Public-Edition
-###### ApertureStaticTeam
+###### Developed by ApertureStaticTeam and All those who have contributed to this project
