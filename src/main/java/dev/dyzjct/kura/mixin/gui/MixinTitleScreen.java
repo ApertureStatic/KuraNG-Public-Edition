@@ -6,6 +6,7 @@ import dev.dyzjct.kura.KuraIdentifier;
 import dev.dyzjct.kura.module.modules.client.UiSetting;
 import dev.dyzjct.kura.system.render.graphic.Render2DEngine;
 import net.minecraft.SharedConstants;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
@@ -18,10 +19,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -29,6 +27,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(TitleScreen.class)
 public class MixinTitleScreen extends Screen {
+    @Unique
+    private static final Identifier DreamDev = new KuraIdentifier("background/longbg.png");
     @Shadow
     @Nullable
     private SplashTextRenderer splashText;
@@ -56,29 +56,6 @@ public class MixinTitleScreen extends Screen {
         this.splashText = new SplashTextRenderer(UiSetting.getSlashText());
     }
 
-//    @Inject(method = "render", at = @At("HEAD"))
-//    private void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-//        int width = MinecraftClient.getInstance().getWindow().getScaledWidth();
-//        int height = MinecraftClient.getInstance().getWindow().getScaledHeight();
-//
-//        RenderSystem.enableBlend();
-//        RenderSystem.defaultBlendFunc();
-//        RenderSystem.depthMask(true);
-//        RenderSystem.enableDepthTest();
-//
-//        if (this.backgroundFadeStart == 0L && this.doBackgroundFade) {
-//            this.backgroundFadeStart = Util.getMeasuringTimeMs();
-//        }
-//        float f = this.doBackgroundFade ? (float) (Util.getMeasuringTimeMs() - this.backgroundFadeStart) / 1000.0F : 1.0F;
-//
-//        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, f);
-//
-//        // 同上
-//        context.drawTexture(new KuraIdentifier("background/" + UiSetting.splashImg() + ".png"), 0, 0, 0, 0, width, height, width, height);
-//
-//        RenderSystem.defaultBlendFunc();
-//        RenderSystem.disableBlend();
-//    }
 
     /**
      * @author dyzjct
@@ -86,6 +63,7 @@ public class MixinTitleScreen extends Screen {
      */
     @Overwrite
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
         if (this.backgroundFadeStart == 0L && this.doBackgroundFade) {
             this.backgroundFadeStart = Util.getMeasuringTimeMs();
         }
@@ -108,6 +86,26 @@ public class MixinTitleScreen extends Screen {
 //        context.drawTexture(new KuraIdentifier("background/" + UiSetting.splashImg() + ".png"), 0, 0, width, height, width, height, width, height);
 //        context.drawTexture(new KuraIdentifier("background/" + UiSetting.splashImg() + ".png"), 0, 0, 0, 0, this.width, this.height, this.width, this.height);
 
+        int width = MinecraftClient.getInstance().getWindow().getScaledWidth();
+        int height = MinecraftClient.getInstance().getWindow().getScaledHeight();
+
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.depthMask(true);
+        RenderSystem.enableDepthTest();
+
+        if (this.backgroundFadeStart == 0L && this.doBackgroundFade) {
+            this.backgroundFadeStart = Util.getMeasuringTimeMs();
+        }
+        float L = this.doBackgroundFade ? (float) (Util.getMeasuringTimeMs() - this.backgroundFadeStart) / 1000.0F : 1.0F;
+
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, L);
+
+        // 同上
+        context.drawTexture(DreamDev, -750+mouseX/2, 0, 0, 0, 0, width+960, height, width+960, height);
+
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableBlend();
         context.setShaderColor(1.0f, 1.0f, 1.0f, g);
         context.drawTexture(new KuraIdentifier("logo/logo.png"), this.width / 2 - 35, this.height / 4 - 45, 0f, 0f, 80, 80, 80, 80);
         context.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -121,14 +119,6 @@ public class MixinTitleScreen extends Screen {
             string = string + "/§b" + Kura.MOD_NAME + " " + Kura.VERSION;
 
             context.drawTextWithShadow(this.textRenderer, string, 2, this.height - 10, 16777215 | i);
-
-            for (Element element : this.children()) {
-                if (element instanceof ClickableWidget) {
-                    ((ClickableWidget) element).setAlpha(g);
-                }
-            }
-
-            super.render(context, mouseX, mouseY, delta);
         }
     }
 }
