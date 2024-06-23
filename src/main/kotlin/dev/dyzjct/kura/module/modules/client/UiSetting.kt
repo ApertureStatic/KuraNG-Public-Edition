@@ -13,7 +13,6 @@ import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.hud.Image
 import dev.dyzjct.kura.setting.BooleanSetting
 import java.awt.Color
-import java.util.*
 
 
 object UiSetting : Module(
@@ -29,12 +28,6 @@ object UiSetting : Module(
 
     //    Theme type
     val theme by msetting("Theme", Theme.Custom)
-    val splashColor by csetting("SplashColor",Color(0,0,0,255))
-//    private val splashMode by msetting(
-//        "SplashMode",
-//        Splash.Rimuru
-//    ).isTrue { theme == Theme.Custom }
-
 
     //    Ui colors
     private val primaryColor by csetting("Primary", Color(240, 100, 255, 200)).isTrue { theme == Theme.Custom }
@@ -248,28 +241,6 @@ object UiSetting : Module(
         }
     }
 
-//    @JvmStatic
-//    fun splashImg(): String {
-//        if (theme == Theme.Custom) return splashMode.name.lowercase(Locale.getDefault())
-//        return theme.name.lowercase(Locale.getDefault())
-//    }
-
-    @JvmStatic
-    fun getSlashText(): String {
-        return when (theme) {
-            Theme.Mikoto -> "君指先跃动の光は、私の一生不変の信仰に、唯私の超电磁炮永世生き。"
-            Theme.Miku -> "おしまいです。"
-            Theme.Gura -> "Guwr Gura!"
-            Theme.Mahiro -> "每个人都有权享受自己的兴趣"
-            Theme.Arona -> "Arona~"
-            Theme.Rimuru -> "Rimuru Sama~"
-            Theme.Roxy -> "Roxy KAMI!"
-            Theme.Ayachinene -> "Ayachinene!"
-            Theme.Mahiru -> "ロードエンジェル!"
-            else -> "Kura Client!"
-        }
-    }
-
     data class ThemesSetting(
         val primary: Color,
         val secondary: Color,
@@ -286,11 +257,6 @@ object UiSetting : Module(
 
     enum class Theme {
         Custom, Rimuru, Mahiro, Arona, Roxy, Mahiru, Gura, Mikoto, Miku, Ayachinene
-    }
-
-    @Suppress("UNUSED")
-    enum class Splash {
-        Rimuru, Mahiro, Arona, Roxy, Mahiru, Gura, Mikoto, Miku, Ayachinene
     }
 
     enum class SytMode {
