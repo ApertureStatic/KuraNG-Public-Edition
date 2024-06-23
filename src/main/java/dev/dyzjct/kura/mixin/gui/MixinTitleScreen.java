@@ -29,9 +29,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinTitleScreen extends Screen {
     @Unique
     private static final Identifier DreamDev = new KuraIdentifier("background/longbg.png");
-    @Shadow
-    @Nullable
-    private SplashTextRenderer splashText;
     @Final
     @Shadow
     private boolean doBackgroundFade;
@@ -47,13 +44,6 @@ public class MixinTitleScreen extends Screen {
 
     protected MixinTitleScreen(Text title) {
         super(title);
-    }
-
-
-    @Inject(method = "init", at = @At("HEAD"))
-    private void modifyTitle(CallbackInfo ci) {
-        // 實際上不需要使用全局變量，直接獲取即可，修復了賦值一次導致的始終無法切換的bug
-        this.splashText = new SplashTextRenderer(UiSetting.getSlashText());
     }
 
 
