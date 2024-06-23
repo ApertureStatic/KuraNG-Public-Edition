@@ -4,7 +4,7 @@ import dev.dyzjct.kura.manager.MovementManager
 import dev.dyzjct.kura.manager.MovementManager.boostSpeed
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.player.Freecam
+import dev.dyzjct.kura.module.modules.player.FreeCam
 import dev.dyzjct.kura.event.events.player.PlayerMoveEvent
 import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.entity.EntityUtils
@@ -77,7 +77,7 @@ object Strafe :
                     moveSpeed.coerceAtLeast(baseMoveSpeed)
                 }
                 if (burrowDetect.value && bMode.value == BMode.Slow && isInBurrow()) {
-                    if (Freecam.isDisabled) {
+                    if (FreeCam.isDisabled) {
                         moveSpeed = 0.2873 * 0.1f
                     }
                 }

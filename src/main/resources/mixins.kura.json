@@ -12,6 +12,7 @@
     "gui.MixinInGameHud",
     "gui.MixinTitleScreen",
     "input.MixinKeyboard",
+    "input.MixinKeyboardInput",
     "input.MixinMouse",
     "player.MixinBipedEntityModel",
     "player.MixinClientPlayerEntity",

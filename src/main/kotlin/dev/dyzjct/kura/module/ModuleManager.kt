@@ -130,7 +130,7 @@ object ModuleManager : AlwaysListening {
         registerModule(BetterEat)
         registerModule(Scaffold)
         registerModule(NoFall)
-        registerModule(Freecam)
+        registerModule(FreeCam)
         registerModule(HitboxDesync)
         registerModule(AntiMinePlace)
         registerModule(AntiHunger)
