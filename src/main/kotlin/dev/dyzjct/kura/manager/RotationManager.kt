@@ -30,7 +30,7 @@ object RotationManager : AlwaysListening {
 
         safeEventListener<PacketEvents.Send>(Int.MAX_VALUE) { event ->
             if (stop) return@safeEventListener
-            spoofMap.forEach {
+            spoofMap.forEach { _ ->
                 when (event.packet) {
                     is PlayerMoveC2SPacket -> {
                         event.packet.yaw = rotateYaw
@@ -38,14 +38,6 @@ object RotationManager : AlwaysListening {
                     }
                 }
             }
-//            if (rotationMap.isNotEmpty()) {
-//                when (event.packet) {
-//                    is PlayerMoveC2SPacket -> {
-//                        if (!rotationMap.contains(Vec2f(event.packet.yaw, event.packet.pitch))) {
-//                        }
-//                    }
-//                }
-//            }
         }
     }
 

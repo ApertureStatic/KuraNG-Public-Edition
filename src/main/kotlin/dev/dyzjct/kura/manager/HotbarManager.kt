@@ -1,16 +1,16 @@
 package dev.dyzjct.kura.manager
 
-import dev.dyzjct.kura.event.events.PacketEvents
-import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
-import dev.dyzjct.kura.event.eventbus.AlwaysListening
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
-import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.TickTimer
 import base.utils.inventory.slot.allSlots
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.inventory.slot.offhandSlot
 import base.utils.player.updateController
+import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.event.events.PacketEvents
+import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
 import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.utils.inventory.*
@@ -178,9 +178,11 @@ object HotbarManager : AlwaysListening {
                                     block.invoke()
                                 }
                             } else {
+                                val old = player.inventory.selectedSlot
                                 inventorySwap(slot)
                                 block.invoke()
                                 inventorySwap(slot)
+                                player.inventory.selectedSlot = old
                             }
                             playerController.updateController()
                         } else {
