@@ -99,7 +99,8 @@ open class GuiScreen : Screen(Text.empty()) {
 
     override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
         updatePanelIndex()
-        WindowBlurShader.render(width.toDouble(), height.toDouble())
+        //kotlin.runCatching { WindowBlurShader.render(width.toDouble(), height.toDouble()) }
+
         GlStateManager._enableBlend()
         if (UiSetting.getThemeSetting().particle) ParticleShader.render()
         animationStrategy.onRender(context, mouseX.toFloat(), mouseY.toFloat(), container)

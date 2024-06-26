@@ -2,9 +2,13 @@ package dev.dyzjct.kura.graphics.shaders.impl
 
 import com.mojang.blaze3d.platform.GlConst
 import com.mojang.blaze3d.platform.GlStateManager
-import dev.dyzjct.kura.event.events.screen.ResolutionUpdateEvent
+import dev.dyzjct.kura.KuraIdentifier
 import dev.dyzjct.kura.event.eventbus.AlwaysListening
 import dev.dyzjct.kura.event.eventbus.listener
+import dev.dyzjct.kura.event.events.screen.ResolutionUpdateEvent
+import dev.dyzjct.kura.graphics.MatrixUtils
+import dev.dyzjct.kura.graphics.shaders.DrawShader
+import dev.dyzjct.kura.graphics.use
 import dev.dyzjct.kura.system.util.interfaces.MinecraftWrapper
 import net.minecraft.client.render.BufferRenderer
 import net.minecraft.client.render.Tessellator
@@ -12,10 +16,6 @@ import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL20.*
-import dev.dyzjct.kura.KuraIdentifier
-import dev.dyzjct.kura.graphics.MatrixUtils
-import dev.dyzjct.kura.graphics.shaders.DrawShader
-import dev.dyzjct.kura.graphics.use
 
 object WindowBlurShader : AlwaysListening, MinecraftWrapper {
     private val pass1 = Pass(KuraIdentifier("shaders/window/windowblurh.vsh"))
@@ -29,11 +29,13 @@ object WindowBlurShader : AlwaysListening, MinecraftWrapper {
 
     private fun updateResolution(width: Int, height: Int) {
         if (width <= 0 || height <= 0) return
-        pass1.bind()
-        pass1.updateResolution(width.toFloat(), height.toFloat())
-        pass2.bind()
-        pass2.updateResolution(width.toFloat(), height.toFloat())
-        mc.framebuffer.resize(width, height, true)
+        kotlin.runCatching {
+            pass1.bind()
+            pass1.updateResolution(width.toFloat(), height.toFloat())
+            pass2.bind()
+            pass2.updateResolution(width.toFloat(), height.toFloat())
+            mc.framebuffer.resize(width, height, true)
+        }
     }
 
     fun render(width: Double, height: Double) {

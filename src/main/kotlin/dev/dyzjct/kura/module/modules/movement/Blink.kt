@@ -1,9 +1,10 @@
 package dev.dyzjct.kura.module.modules.movement
 
-import dev.dyzjct.kura.event.events.PacketEvents
-import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.concurrent.threads.runSafe
+import base.utils.entity.EntityUtils.getHealth
 import com.mojang.authlib.GameProfile
+import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.event.events.PacketEvents
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import net.minecraft.client.network.OtherClientPlayerEntity
@@ -13,6 +14,8 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import java.util.*
 
 object Blink : Module(name = "Blink", langName = "瞬移", category = Category.MOVEMENT) {
+    private val healthCheck by bsetting("HealthCheck", false)
+    private val health by isetting("Health", 5, 1, 32).isTrue { healthCheck }
 
     var packets: Queue<Packet<*>> = LinkedList()
     private var clonedPlayer: OtherClientPlayerEntity? = null
@@ -55,6 +58,11 @@ object Blink : Module(name = "Blink", langName = "瞬移", category = Category.M
             if (isEnabled && (it.packet is PlayerMoveC2SPacket)) {
                 it.cancelled = true
                 packets.add(it.packet)
+            }
+        }
+        onMotion {
+            if (healthCheck) {
+                if (getHealth() <= health) disable()
             }
         }
     }

@@ -1,13 +1,7 @@
 package dev.dyzjct.kura.gui.clickgui.render
 
-import com.mojang.blaze3d.platform.GlStateManager
-import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.Tessellator
-import net.minecraft.client.render.VertexFormat
-import net.minecraft.client.render.VertexFormats
 import net.minecraft.client.util.math.MatrixStack
-import org.lwjgl.opengl.GL11
 import java.awt.Color
 
 class DrawScope(
@@ -76,7 +70,6 @@ class DrawScope(
             color
         )
     }
-
 
 
     fun drawText(

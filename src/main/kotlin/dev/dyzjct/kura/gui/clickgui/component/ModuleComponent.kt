@@ -7,6 +7,8 @@ import dev.dyzjct.kura.gui.clickgui.render.Padding
 import dev.dyzjct.kura.module.AbstractModule
 import dev.dyzjct.kura.module.modules.client.UiSetting
 import dev.dyzjct.kura.setting.*
+import dev.dyzjct.kura.system.render.graphic.Render2DEngine
+import dev.dyzjct.kura.system.render.newfont.FontRenderers
 import dev.dyzjct.kura.utils.animations.AnimationFlag
 import dev.dyzjct.kura.utils.animations.Easing
 import java.awt.Color
@@ -250,24 +252,32 @@ class ModuleComponent(
             val textProgress = descriptionTextProgress
             val secondaryColor = UiSetting.getThemeSetting().secondary
 
-            drawRect(
+            Render2DEngine.drawRect(
+                matrixStack,
                 mouseX + 2,
                 mouseY - (textHeight * textProgress),
                 getTextWidth(text),
                 textHeight * textProgress,
                 Color(secondaryColor.red, secondaryColor.green, secondaryColor.blue, 255),
-                Padding(horizontal = -2f, vertical = -1f)
             )
 
             val textColor = Color.WHITE
-            drawText(
+
+            FontRenderers.cn.drawString(
+                matrixStack,
                 text,
-                mouseX + 2,
-                mouseY - textHeight - 2,
-                Color(textColor.red, textColor.green, textColor.blue, (255 * textProgress).toInt()),
-                verticalAlignment = Alignment.CENTER,
-                containerHeight = selfHeight
+                mouseX + 2.0,
+                mouseY - textHeight - 2.0 + ((selfHeight - textHeight) / 2) ,
+                Color(textColor.red, textColor.green, textColor.blue, (255 * textProgress).toInt()).rgb,
             )
+//            drawText(
+//                text,
+//                mouseX + 2,
+//                mouseY - textHeight - 2,
+//                Color(textColor.red, textColor.green, textColor.blue, (255 * textProgress).toInt()),
+//                verticalAlignment = Alignment.CENTER,
+//                containerHeight = selfHeight
+//            )
         }
 
         if (module is Component) {

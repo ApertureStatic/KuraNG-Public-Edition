@@ -1,9 +1,5 @@
-package dev.dyzjct.kura.module.modules.combat
+package dev.dyzjct.kura.module.modules.movement
 
-import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
-import dev.dyzjct.kura.event.events.player.PlayerMoveEvent
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
-import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils
 import base.utils.hole.SurroundUtils
@@ -14,11 +10,13 @@ import base.utils.math.VectorUtils
 import base.utils.math.distanceToCenter
 import base.utils.math.vector.Vec2f
 import dev.dyzjct.kura.Kura
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
+import dev.dyzjct.kura.event.events.player.PlayerMoveEvent
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.ModuleManager
-import dev.dyzjct.kura.module.modules.movement.Speed
-import dev.dyzjct.kura.module.modules.movement.Step
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.toRadian
 import dev.dyzjct.kura.utils.math.RandomUtil
@@ -32,10 +30,11 @@ import net.minecraft.util.math.Vec3d
 import kotlin.math.*
 
 object HoleSnap :
-    Module(name = "HoleSnap", langName = "拉坑", category = Category.COMBAT, description = "Move to the hole.") {
+    Module(name = "HoleSnap", langName = "拉坑", category = Category.MOVEMENT, description = "Move to the hole.") {
     private var range = isetting("Range", 5, 1, 50)
     private var timerVal = fsetting("TimerVal", 3.4f, 1f, 4f)
     private var timeoutTicks = isetting("TimeOutTicks", 60, 0, 1000)
+    private var tp = bsetting("TP", false)
     private var toggleStep = bsetting("EnableStep", true)
     private var disableStrafe = bsetting("DisableSpeed", false)
     private var antiAim = bsetting("AntiAim", true)
@@ -58,6 +57,7 @@ object HoleSnap :
         runSafe {
             lastYaw = player.yaw
             lastPitch = player.pitch
+            if (tp.value && Blink.isDisabled) Blink.enable()
         }
     }
 
@@ -73,6 +73,7 @@ object HoleSnap :
         if (toggleStep.value && Step.isEnabled) {
             ModuleManager.getModuleByClass(Step::class.java).disable()
         }
+        if (tp.value && Blink.isEnabled) Blink.disable()
     }
 
     init {
@@ -230,8 +231,9 @@ object HoleSnap :
         return abs(this.x - x) < 0.2 && abs(this.z - z) < 0.2
     }
 
-    private fun SafeClientEvent.getHole() = if (player.age % 10 == 0 && player.betterPosition != holePos) findHole()
-    else holePos ?: findHole()
+    private fun SafeClientEvent.getHole() =
+        if (player.age % 10 == 0 && player.betterPosition != holePos) findHole()
+        else holePos ?: findHole()
 
     private fun SafeClientEvent.findHole(): Vec3d? {
         var closestHole = Pair(69.69, Vec3d.ZERO)
