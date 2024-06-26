@@ -9,16 +9,14 @@ import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.gui.clickgui.ClickGuiScreen
 import dev.dyzjct.kura.gui.clickgui.HudEditorScreen
 import dev.dyzjct.kura.gui.clickgui.component.Panel
-import dev.dyzjct.kura.gui.gui.GUIRender
-import dev.dyzjct.kura.gui.gui.HUDRender
 import dev.dyzjct.kura.module.AbstractModule
 import dev.dyzjct.kura.module.HUDModule
 import dev.dyzjct.kura.module.ModuleManager.getHUDByName
 import dev.dyzjct.kura.module.ModuleManager.getModuleByName
 import dev.dyzjct.kura.module.ModuleManager.getModules
 import dev.dyzjct.kura.module.ModuleManager.hudModules
-import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.hud.NullHUD
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.setting.*
 import kotlinx.coroutines.launch
 import java.awt.Color
@@ -30,7 +28,6 @@ object FileManager {
     private val initializedConfig = CopyOnWriteArrayList<File>()
     private var CLIENT_FILE: File? = null
     private var FRIEND_FILE: File? = null
-    private var GUI_FILE: File? = null
     private var HUD_FILE: File? = null
 
     var changing = false
@@ -132,34 +129,6 @@ object FileManager {
 
         val json = gsonPretty.toJson(jsonObject)
         file.writeText(json)
-    }
-
-    private fun saveGUI() {
-        try {
-            checkFile(GUI_FILE)
-            var jsonGui: JsonObject
-            val father = JsonObject()
-            for (panel in GUIRender.panels) {
-                jsonGui = JsonObject()
-                jsonGui.addProperty("X", panel.x)
-                jsonGui.addProperty("Y", panel.y)
-                jsonGui.addProperty("Extended", panel.extended)
-                father.add(panel.category.name, jsonGui)
-            }
-            for (panel in HUDRender.panels) {
-                jsonGui = JsonObject()
-                jsonGui.addProperty("X", panel.x)
-                jsonGui.addProperty("Y", panel.y)
-                jsonGui.addProperty("Extended", panel.extended)
-                father.add(panel.category.name, jsonGui)
-            }
-            val saveJSon = PrintWriter(OutputStreamWriter(FileOutputStream(GUI_CONFIG), StandardCharsets.UTF_8))
-            saveJSon.println(gsonPretty!!.toJson(father))
-            saveJSon.close()
-        } catch (e: Exception) {
-            Kura.logger.error("Error while saving GUI config!")
-            e.printStackTrace()
-        }
     }
 
     private fun saveHUD() {
@@ -318,32 +287,6 @@ object FileManager {
         }
     }
 
-    private fun loadGUI() {
-        GUI_FILE?.let {
-            if (it.exists()) {
-                try {
-                    val loadJson = BufferedReader(InputStreamReader(FileInputStream(it), StandardCharsets.UTF_8))
-                    val guiJson = jsonParser.parse(loadJson) as JsonObject
-                    loadJson.close()
-                    for ((key, value) in guiJson.entrySet()) {
-                        var panel = GUIRender.getPanelByName(key as String)
-                        if (panel == null) {
-                            panel = HUDRender.getPanelByName(key)
-                        }
-                        if (panel == null) continue
-                        val jsonGui = value as JsonObject
-                        panel.x = jsonGui["X"].asDouble
-                        panel.y = jsonGui["Y"].asDouble
-                        panel.extended = jsonGui["Extended"].asBoolean
-                    }
-                } catch (e: IOException) {
-                    Kura.logger.error("Error while loading GUI config!")
-                    e.printStackTrace()
-                }
-            }
-        }
-    }
-
     private fun loadHUD() {
         val hudFile = HUD_FILE.takeIf { it?.exists() == true } ?: return
         IOScope.launch {
@@ -468,8 +411,6 @@ object FileManager {
             initializedConfig.add(CLIENT_FILE)
             FRIEND_FILE = File(FRIEND_CONFIG)
             initializedConfig.add(FRIEND_FILE)
-            GUI_FILE = File(GUI_CONFIG)
-            initializedConfig.add(GUI_FILE)
             HUD_FILE = File(HUD_CONFIG)
             initializedConfig.add(HUD_FILE)
         } catch (e: Exception) {
@@ -571,7 +512,6 @@ object FileManager {
     fun saveAll(combatMode: String) {
         saveClient()
         saveFriend()
-        saveGUI()
         saveHUD()
         saveCombatSystem()
         saveModule(combatMode)
@@ -583,7 +523,6 @@ object FileManager {
     fun loadAll(combatMode: String) {
         loadClient()
         loadFriend()
-        loadGUI()
         loadHUD()
         loadModule(combatMode)
         loadNewUiConfig()
