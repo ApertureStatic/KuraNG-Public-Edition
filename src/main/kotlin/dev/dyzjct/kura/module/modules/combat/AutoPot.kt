@@ -1,12 +1,12 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.chat.ChatUtil
 import base.utils.combat.getPredictedTarget
 import base.utils.concurrent.threads.runSafe
 import base.utils.extension.sendSequencedPacket
 import base.utils.math.distanceSqTo
 import base.utils.math.toBlockPos
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.inventorySwap
 import dev.dyzjct.kura.manager.HotbarManager.resetHotbar
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
@@ -30,6 +30,11 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
+/*
+    todo: this module from nullpoint.me
+          but im in nullpoint's development team
+          and this module was written by my friend🙂
+ */
 object AutoPot : Module(
     name = "AutoPot",
     langName = "自动喷药",
@@ -63,7 +68,6 @@ object AutoPot : Module(
             if (healthCheck && player.health + player.absorptionAmount >= health) {
                 return@onMotion
             }
-//            if (player.pos.add(CombatUtil.getMotionVec(mc.player, predictTicks.getValueInt(), true))
             calcTrajectory(
                 Items.SPLASH_POTION, player.yaw, player.pitch
             )?.let { calcedTrajectory ->
@@ -98,11 +102,6 @@ object AutoPot : Module(
             spoofHotbar(slot)
         }
         if (rotate) {
-            /*if(Nullpoint.SPEED.getSpeedKpH() < 8){
-                EntityUtil.sendYawAndPitch(Nullpoint.ROTATE.rotateYaw, -90);
-            } else {
-                EntityUtil.sendYawAndPitch(Nullpoint.ROTATE.rotateYaw, 88);
-            }*/
             connection.sendPacket(PlayerMoveC2SPacket.LookAndOnGround(player.yaw, pitch.toFloat(), player.onGround))
         }
 
