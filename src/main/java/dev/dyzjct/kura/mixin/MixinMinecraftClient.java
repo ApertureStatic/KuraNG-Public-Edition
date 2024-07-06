@@ -7,7 +7,6 @@ import dev.dyzjct.kura.event.events.TickEvent;
 import dev.dyzjct.kura.event.events.screen.GuiScreenEvent;
 import dev.dyzjct.kura.manager.FileManager;
 import dev.dyzjct.kura.module.AbstractModule;
-import dev.dyzjct.kura.module.modules.client.CombatSystem;
 import dev.dyzjct.kura.system.render.newfont.FontRenderers;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
@@ -189,7 +188,7 @@ public abstract class MixinMinecraftClient {
     @Inject(method = "run", at = @At("RETURN"))
     public void shutdown(CallbackInfo info) {
         Kura.Companion.getLogger().warn("Saving Kura configuration please wait...");
-        FileManager.saveAll(CombatSystem.INSTANCE.getCombatMode().getValue().name());
+        FileManager.saveAll();
         Kura.Companion.getLogger().warn("Configuration saved!");
     }
 

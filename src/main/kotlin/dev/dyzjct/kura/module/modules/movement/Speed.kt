@@ -13,7 +13,7 @@ import base.utils.entity.EntityUtils.jumpSpeed
 import net.minecraft.entity.effect.StatusEffects
 
 object Speed :
-    Module(name = "Speed", langName = "移动加速", category = Category.MOVEMENT, description = "Faster Move.") {
+    Module(name = "Speed", langName = "移动加速", description = "Faster Move.", category = Category.MOVEMENT) {
     private var damageBoost by bsetting("DamageBoost", true)
     private var strict by bsetting("Strict", true)
     private var useTimer by bsetting("UseTimer", true)

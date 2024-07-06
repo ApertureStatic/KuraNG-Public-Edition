@@ -10,8 +10,8 @@ import net.minecraft.screen.slot.SlotActionType
 object HotbarSwapper: Module(
     name = "HotbarSwapper",
     langName = "双物品栏",
-    category = Category.PLAYER,
-    description = "Double hotbar"
+    description = "Double hotbar",
+    category = Category.PLAYER
 ) {
 
     private val inventoryRaw by isetting("InventoryRaw", 1, 1, 3)

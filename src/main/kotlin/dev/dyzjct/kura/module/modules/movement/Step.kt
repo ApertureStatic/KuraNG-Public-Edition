@@ -15,8 +15,8 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.PositionAndOnGr
 object Step : Module(
     name = "Step",
     "上台阶",
-    category = Category.MOVEMENT,
-    description = "Allows you to walk up full blocks instantly"
+    description = "Allows you to walk up full blocks instantly",
+    category = Category.MOVEMENT
 ) {
     private var mode = msetting("Mode", Mode.VANILLA)
     private var strict = bsetting("Strict", false)

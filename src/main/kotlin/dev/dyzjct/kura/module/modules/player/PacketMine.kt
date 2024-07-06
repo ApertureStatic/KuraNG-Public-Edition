@@ -48,7 +48,7 @@ import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
 
 object PacketMine : Module(
-    name = "PacketMine", langName = "发包挖掘", category = Category.PLAYER, description = "Better Mine."
+    name = "PacketMine", langName = "发包挖掘", description = "Better Mine.", category = Category.PLAYER
 ) {
     private var mode = msetting("Mode", PacketMode.Instant)
     private var mode0 = mode.value as PacketMode
@@ -109,7 +109,7 @@ object PacketMine : Module(
             }
         }
         safeEventListener<BlockEvent> { event ->
-            if (player.isUsingItem && CombatSystem.eating) return@safeEventListener
+            if (eatingCheck()) return@safeEventListener
             BlockData(
                 event.pos, event.facing, findBestItem(event.pos, inventoryBypass)?.let {
                     if (inventoryBypass) player.allSlots.firstItem(it)
@@ -191,10 +191,10 @@ object PacketMine : Module(
                     return@let
                 }
                 if (player.distanceSqToCenter(data.blockPos) <= CombatSystem.interactRange.sq) {
-                    if (((mode0.ignoreCheck && packetSpamming) || !fastSyncCheck) && !player.isUsingItem) {
+                    if (((mode0.ignoreCheck && packetSpamming) || !fastSyncCheck) && !eatingCheck()) {
                         sendMinePacket(Stop, data)
                     }
-                    if ((mode0.retry || forceRetry) && !player.isUsingItem) hookPos(data.blockPos, true)
+                    if ((mode0.retry || forceRetry) && !eatingCheck()) hookPos(data.blockPos, true)
                     if (mode0.strict) {
                         blockData = BlockData(
                             data.blockPos, data.facing, findBestItem(data.blockPos, inventoryBypass)?.let {
@@ -244,7 +244,7 @@ object PacketMine : Module(
     }
 
     fun SafeClientEvent.hookPos(blockPos: BlockPos, reset: Boolean = false) {
-        if (CombatSystem.eating && player.isUsingItem) return
+        if (eatingCheck()) return
         if (reset) blockData = null
         world.getBlockState(blockPos).onBlockBreakStart(world, blockPos, player)
         val vector = player.eyePosition.subtract(blockPos.x + 0.5, blockPos.y + 0.5, blockPos.z + 0.5)
@@ -279,7 +279,7 @@ object PacketMine : Module(
                     resetHotbar()
                     doubleData = null
                     return
-                } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime) && !onDoubleBreak && !player.usingItem) {
+                } else if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime) && !onDoubleBreak && !eatingCheck()) {
                     onDoubleBreak = true
                     connection.sendPacket(CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId))
                     connection.sendPacket(UpdateSelectedSlotC2SPacket(toolSlot.hotbarSlot))
@@ -287,7 +287,7 @@ object PacketMine : Module(
                 }
             }
         } else {
-            if (world.getBlockState(blockData.blockPos).block is FireBlock || player.isUsingItem) return
+            if (world.getBlockState(blockData.blockPos).block is FireBlock || eatingCheck()) return
             if (((action == Stop && !spamTimer.passed(if (mode0.ignoreCheck) spamDelay else 0)) || (world.isAir(
                     blockData.blockPos
                 ) && action == Stop)) && !force
@@ -351,6 +351,10 @@ object PacketMine : Module(
         Start(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK), Abort(PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK), Stop(
             PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK
         )
+    }
+
+    fun SafeClientEvent.eatingCheck(): Boolean {
+        return player.isUsingItem && CombatSystem.eating
     }
 
     class BlockData(

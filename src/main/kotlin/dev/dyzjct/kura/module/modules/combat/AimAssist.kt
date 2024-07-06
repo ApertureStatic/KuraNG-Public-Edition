@@ -11,8 +11,7 @@ import kotlin.math.abs
 object AimAssist : Module(
     name = "AimAssist",
     langName = "自动瞄准",
-    category = Category.COMBAT,
-    type = Type.Both
+    category = Category.COMBAT
 ) {
     private val range by dsetting("Range", 5.0, 1.0, 8.0)
     private val speed by dsetting("Speed", 1.0, 0.0, 20.0)

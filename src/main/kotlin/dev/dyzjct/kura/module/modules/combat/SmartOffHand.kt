@@ -20,7 +20,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.math.BlockPos
 
 object SmartOffHand :
-    Module(name = "SmartOffHand", langName = "自动副手", category = Category.COMBAT, description = "StupidOffHand") {
+    Module(name = "SmartOffHand", langName = "自动副手", description = "StupidOffHand", category = Category.COMBAT) {
     private var mode = msetting("Mode", Mode.Crystal)
     private var delay = isetting("Delay", 0, 0, 1000)
     private var totem = bsetting("SwitchTotem", true)

@@ -20,7 +20,7 @@ import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.extension.sq
 import net.minecraft.block.Blocks
 
-object HeadTrap : Module(name = "HeadTrap", "盖头", category = Category.COMBAT, description = "1!5!") {
+object HeadTrap : Module(name = "HeadTrap", "盖头", description = "1!5!", category = Category.COMBAT) {
 
     private var placeDelay = isetting("PlaceDelay", 10, 0, 1000)
     private var airPlace = bsetting("AirPlace", false)

@@ -16,8 +16,7 @@ object CrystalBasePlacer : Module(
     name = "CrystalBasePlacer",
     langName = "水晶基座放置",
     description = "Auto Place CrystalBase.",
-    category = Category.COMBAT,
-    type = Type.SafeOnly
+    category = Category.COMBAT
 ) {
     private val backDelay by isetting("BackDelay", 100, 50, 1000)
     private val backTimer = TimerUtils()

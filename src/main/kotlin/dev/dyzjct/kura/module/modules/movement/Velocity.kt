@@ -10,7 +10,7 @@ import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket
 import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket
 import net.minecraft.util.math.Direction
 
-object Velocity : Module(name = "Velocity", langName = "防击退", category = Category.MOVEMENT, type = Type.Both) {
+object Velocity : Module(name = "Velocity", langName = "防击退", category = Category.MOVEMENT) {
     private val mode by msetting("Mode", Mode.Vanilla)
     var noPush = bsetting("NoPush", true)
     private var horizontal = fsetting("Horizontal", 0f, 0f, 100f)

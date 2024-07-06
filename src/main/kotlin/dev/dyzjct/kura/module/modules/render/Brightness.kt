@@ -5,7 +5,7 @@ import dev.dyzjct.kura.module.Module
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
 
-object Brightness : Module(name = "Brightness", langName = "客户端亮度", category = Category.RENDER, type = Type.Both) {
+object Brightness : Module(name = "Brightness", langName = "客户端亮度", category = Category.RENDER) {
     var brightness = isetting("Brightness", 15, 0, 15)
     private var gammaVal by dsetting("GammaValue", 1.0, 1.0, 100.0)
     private var effect = bsetting("Effect", true)

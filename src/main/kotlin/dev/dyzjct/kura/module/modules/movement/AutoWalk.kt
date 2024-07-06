@@ -7,8 +7,8 @@ import base.utils.concurrent.threads.runSafe
 object AutoWalk: Module(
     name = "AutoWalk",
     langName = "自动行走",
-    category = Category.MOVEMENT,
-    description = "Automatic walking"
+    description = "Automatic walking",
+    category = Category.MOVEMENT
 ) {
 
     init {

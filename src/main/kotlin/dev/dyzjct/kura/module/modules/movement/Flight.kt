@@ -17,8 +17,8 @@ import kotlin.math.sin
 object Flight : Module(
     name = "Flight",
     langName = "飞行",
-    category = Category.MOVEMENT,
-    description = ""
+    description = "",
+    category = Category.MOVEMENT
 ) {
 
     private val mode = msetting("Mode", Mode.Vanilla)

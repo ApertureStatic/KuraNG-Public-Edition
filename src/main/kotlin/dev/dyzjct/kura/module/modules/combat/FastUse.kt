@@ -4,11 +4,10 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import base.utils.concurrent.threads.runSafe
 import net.minecraft.item.BlockItem
-import net.minecraft.item.BowItem
 import net.minecraft.item.Items
 
 object FastUse :
-    Module(category = Category.COMBAT, langName = "快速使用物品", description = "Use items faster", name = "FastUse", type = Type.Both) {
+    Module(name = "FastUse", langName = "快速使用物品", description = "Use items faster", category = Category.COMBAT) {
     private val delay = isetting("Delay", 1, 0, 10)
     private val exp = bsetting("XP", true)
 

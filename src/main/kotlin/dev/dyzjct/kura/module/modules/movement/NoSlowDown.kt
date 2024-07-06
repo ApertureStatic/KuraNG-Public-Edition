@@ -11,8 +11,8 @@ import net.minecraft.util.Hand
 object NoSlowDown : Module(
     name = "NoSlowDown",
     langName = "取消减速",
-    category = Category.MOVEMENT,
-    description = "Prevents being slowed down when using an item or going through cobwebs"
+    description = "Prevents being slowed down when using an item or going through cobwebs",
+    category = Category.MOVEMENT
 ) {
     private var bypass = msetting("Bypass", BypassMode.Normal)
     var piston by bsetting("Piston", false)

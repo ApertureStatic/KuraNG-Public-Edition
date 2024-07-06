@@ -12,8 +12,7 @@ object ChestESP : Module(
     name = "ChestESP",
     langName = "箱子透视",
     description = "Displays the location of chests in the world",
-    category = Category.RENDER,
-    type = Type.Both
+    category = Category.RENDER
 ) {
     val distance by isetting("Distance", 25, 1, 80)
     private val chest by bsetting("Chset", false)

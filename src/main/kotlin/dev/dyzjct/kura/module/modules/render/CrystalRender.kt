@@ -17,7 +17,7 @@ import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
 object CrystalRender :
-    Module(name = "CrystalRender", langName = "水晶渲染", category = Category.RENDER, type = Type.Both) {
+    Module(name = "CrystalRender", langName = "水晶渲染", category = Category.RENDER) {
     private val range = isetting("Range", 12, 0, 30)
     private val mode = msetting("Mode", Mode.Normal)
     private val points = isetting("Points", 20, 1, 100).enumIs(mode, Mode.New)

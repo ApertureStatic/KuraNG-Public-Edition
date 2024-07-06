@@ -166,48 +166,11 @@ object FileManager {
         }
     }
 
-    private fun saveCombatSystem() {
-        try {
-            val father = JsonObject()
-            val module = CombatSystem
-            val moduleFile = File("Kura/config/" + module.moduleName + ".json")
-            checkFile(moduleFile)
-            val jsonModule = JsonObject()
-            jsonModule.addProperty("Enable", module.isEnabled)
-            jsonModule.addProperty("Visible", module.isVisible)
-            jsonModule.addProperty("HoldEnable", module.holdToEnable)
-            jsonModule.addProperty("Bind", module.bind)
-            if (module.settingList.isNotEmpty()) {
-                for (setting in module.settingList) {
-                    when (setting) {
-                        is StringSetting -> jsonModule.addProperty(setting.name, setting.value)
-                        is BooleanSetting -> jsonModule.addProperty(setting.name, setting.value)
-                        is IntegerSetting -> jsonModule.addProperty(setting.name, setting.value)
-                        is FloatSetting -> jsonModule.addProperty(setting.name, setting.value)
-                        is DoubleSetting -> jsonModule.addProperty(setting.name, setting.value)
-                        is ColorSetting -> jsonModule.addProperty(setting.name, setting.value.rgb)
-                        is ModeSetting<*> -> jsonModule.addProperty(setting.name, setting.valueAsString)
-                    }
-                }
-            }
-            val saveJSon = PrintWriter(OutputStreamWriter(FileOutputStream(moduleFile), StandardCharsets.UTF_8))
-            saveJSon.println(gsonPretty!!.toJson(jsonModule))
-            saveJSon.close()
-            module.onConfigSave()
-            father.add(module.moduleName, jsonModule)
-
-        } catch (e: Exception) {
-            Kura.logger.error("Error while saving module config!")
-            e.printStackTrace()
-        }
-    }
-
-    private fun saveModule(combatMode: String) {
+    private fun saveModule() {
         try {
             val father = JsonObject()
             for (module in getModules()) {
-                if (module == CombatSystem) continue
-                val moduleFile = File("Kura/config/" + combatMode + "/modules/" + module.moduleName + ".json")
+                val moduleFile = File("Kura/config/" + "/modules/" + module.moduleName + ".json")
                 checkFile(moduleFile)
                 val jsonModule = JsonObject()
                 jsonModule.addProperty("Enable", module.isEnabled)
@@ -320,55 +283,12 @@ object FileManager {
         }
     }
 
-
-    fun loadCombatSystem() {
-        changing = true
-        val module = CombatSystem
-        IOScope.launch {
-            val modulefile =
-                File("Kura/config/" + module.moduleName + ".json").takeIf { it.exists() } ?: return@launch
-            val moduleJason =
-                modulefile.bufferedReader(StandardCharsets.UTF_8).use { JsonParser.parseReader(it) } as? JsonObject
-                    ?: return@launch
-            launch {
-                runCatching {
-                    if (moduleJason["Visible"] == null) {
-                        moduleJason.addProperty("Visible", module.isVisible)
-                    }
-                    if (moduleJason["HoldEnable"] == null) {
-                        moduleJason.addProperty("HoldEnable", module.holdToEnable)
-                    }
-                    val jsonModule = getModuleByName(module.moduleName)
-                    val enabled = moduleJason["Enable"].asBoolean
-                    val visible = moduleJason["Visible"].asBoolean
-                    if (jsonModule.isEnabled && !enabled) {
-                        jsonModule.disable()
-                    }
-                    if (jsonModule.isDisabled && enabled) {
-                        jsonModule.enable()
-                    }
-                    jsonModule.holdToEnable = moduleJason["HoldEnable"].asBoolean
-                    jsonModule.isVisible = visible
-                    if (jsonModule.settingList.isNotEmpty()) {
-                        trySet(jsonModule, moduleJason)
-                    }
-                    jsonModule.onConfigLoad()
-                    jsonModule.bind = moduleJason["Bind"].asInt
-                }
-            }
-        }
-        if (CombatSystem.debug) ChatUtil.sendMessage("Loaded CombatSystem")
-        changing = false
-    }
-
-
-    private fun loadModule(combatMode: String) {
+    private fun loadModule() {
         changing = true
         for (module in CopyOnWriteArrayList(getModules())) {
-            if (module == CombatSystem) continue
             IOScope.launch {
                 val modulefile =
-                    File("Kura/config/" + combatMode + "/modules/" + module.moduleName + ".json").takeIf { it.exists() }
+                    File("Kura/config/" + "/modules/" + module.moduleName + ".json").takeIf { it.exists() }
                         ?: return@launch
                 val moduleJason =
                     modulefile.bufferedReader(StandardCharsets.UTF_8).use { JsonParser.parseReader(it) } as? JsonObject
@@ -502,29 +422,27 @@ object FileManager {
     private const val BACKGROUND_PATH = "${Kura.MOD_NAME}/background/"
     private const val CLIENT_CONFIG = Kura.MOD_NAME + "/" + Kura.MOD_NAME + "-Client.json"
     private const val FRIEND_CONFIG = Kura.MOD_NAME + "/" + Kura.MOD_NAME + "-Friend.json"
-    private const val GUI_CONFIG = Kura.MOD_NAME + "/" + Kura.MOD_NAME + "-Gui.json"
     private const val NEW_UI_CONFIG_FILE_NAME = "${Kura.MOD_NAME}/${Kura.MOD_NAME}-NewUi.json"
     private var gsonPretty = GsonBuilder().setPrettyPrinting().create()
     private var jsonParser = JsonParser()
 
 
     @JvmStatic
-    fun saveAll(combatMode: String) {
+    fun saveAll() {
         saveClient()
         saveFriend()
         saveHUD()
-        saveCombatSystem()
-        saveModule(combatMode)
+        saveModule()
         saveNewUiConfig()
         if (CombatSystem.debug) ChatUtil.sendMessage("Saved All")
     }
 
     @JvmStatic
-    fun loadAll(combatMode: String) {
+    fun loadAll() {
         loadClient()
         loadFriend()
         loadHUD()
-        loadModule(combatMode)
+        loadModule()
         loadNewUiConfig()
         if (CombatSystem.debug) ChatUtil.sendMessage("Loaded All")
     }

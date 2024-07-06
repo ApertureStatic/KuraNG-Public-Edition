@@ -12,9 +12,8 @@ import net.minecraft.util.math.BlockPos
 object AirPlace : Module(
     name = "AirPlace",
     langName = "空放",
-    category = Category.MISC,
     description = "Place Block on the AirBlock.",
-    type = Type.Both
+    category = Category.MISC
 ) {
     private var placeDelay = TimerUtils()
 

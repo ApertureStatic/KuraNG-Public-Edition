@@ -17,8 +17,7 @@ import net.minecraft.util.math.Direction
 object AnchorHelper : Module(
     name = "AnchorHelper",
     langName = "重生锚辅助",
-    category = Category.COMBAT,
-    type = Type.StrongOnly
+    category = Category.COMBAT
 ) {
     private val delay by isetting("Delay", 50, 0, 500)
 

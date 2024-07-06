@@ -9,8 +9,8 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 object NoFall: Module(
     name = "NoFall",
     langName = "无摔落伤害",
-    category = Category.PLAYER,
-    description = "Prevents fall damage"
+    description = "Prevents fall damage",
+    category = Category.PLAYER
 ) {
     private var pauseOnElyTra = bsetting("ElytraPause", true)
 

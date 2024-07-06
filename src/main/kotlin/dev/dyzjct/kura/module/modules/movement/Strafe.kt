@@ -16,7 +16,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 object Strafe :
-    Module(name = "Strafe", langName = "灵活动作", category = Category.MOVEMENT, description = "Better Move.") {
+    Module(name = "Strafe", langName = "灵活动作", description = "Better Move.", category = Category.MOVEMENT) {
     private val mode = msetting("Mode", Mode.NORMAL)
     private var boost = bsetting("DamageBoost", false)
     private var eatingCheck = bsetting("EatingCheck", true)

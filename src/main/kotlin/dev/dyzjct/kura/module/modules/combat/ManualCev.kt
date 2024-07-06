@@ -22,8 +22,8 @@ import net.minecraft.util.Hand
 object ManualCev : Module(
     name = "ManualCev",
     langName = "手动炸头",
-    category = Category.COMBAT,
-    description = "Place and attack crystal to MinePos."
+    description = "Place and attack crystal to MinePos.",
+    category = Category.COMBAT
 ) {
     private val delay by isetting("Delay", 50, 0, 500)
     private val range by isetting("range", 5, 0, 10)

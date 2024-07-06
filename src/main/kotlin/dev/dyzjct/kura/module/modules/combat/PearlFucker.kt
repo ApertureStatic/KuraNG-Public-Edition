@@ -31,8 +31,7 @@ import net.minecraft.util.math.Box
 object PearlFucker : Module(
     name = "PearlFucker",
     langName = "防止珍珠侠",
-    category = Category.COMBAT,
-    type = Type.StrongOnly
+    category = Category.COMBAT
 ) {
     private val mode by msetting("Mode", Mode.Crystal)
     private val rotate by bsetting("Rotation", false)

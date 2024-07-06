@@ -13,9 +13,8 @@ import net.minecraft.client.util.InputUtil
 object ClickGui : Module(
     name = "ClickGUI",
     langName = "ClickGUI",
-    category = Category.CLIENT,
     keyCode = InputUtil.GLFW_KEY_RIGHT_SHIFT,
-    type = Type.Both,
+    category = Category.CLIENT,
     visible = true
 ) {
     var chinese = bsetting("ChineseUI", false)
@@ -49,7 +48,7 @@ object ClickGui : Module(
             if (mc.currentScreen is ClickGuiScreen) {
                 mc.setScreen(null)
             }
-            saveAll(CombatSystem.combatMode.value.name)
+            saveAll()
         }
     }
 }

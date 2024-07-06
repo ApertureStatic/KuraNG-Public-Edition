@@ -40,8 +40,8 @@ import kotlin.math.sqrt
 object Burrow : Module(
     name = "Burrow",
     langName = "下体卡黑曜石",
-    category = Category.COMBAT,
-    description = "HanLIngQI Bypass Burrow"
+    description = "HanLIngQI Bypass Burrow",
+    category = Category.COMBAT
 ) {
     private var rotate by bsetting("Rotate", true)
     private var fakeJumpMode = msetting("FakeJumpMode", FakeJumpMode.Strict)

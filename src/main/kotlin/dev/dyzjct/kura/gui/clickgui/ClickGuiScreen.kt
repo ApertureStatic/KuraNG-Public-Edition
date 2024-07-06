@@ -129,7 +129,7 @@ object ClickGuiScreen : GuiScreen() {
 
     fun updatePanelModuleOnModeChange() {
         elements.mapNotNull { it as? Panel }.forEach {
-            it.filterModules()
+            it.getModules()
         }
     }
 }

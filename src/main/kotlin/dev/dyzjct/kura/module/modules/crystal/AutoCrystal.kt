@@ -106,7 +106,7 @@ import java.util.stream.Collectors
 import kotlin.math.*
 
 object AutoCrystal : Module(
-    name = "AutoCrystal", langName = "自动水晶", category = Category.COMBAT, description = "Help u play crystal pvp."
+    name = "AutoCrystal", langName = "自动水晶", description = "Help u play crystal pvp.", category = Category.COMBAT
 ) {
     private var p = msetting("Page", Page.GENERAL)
 

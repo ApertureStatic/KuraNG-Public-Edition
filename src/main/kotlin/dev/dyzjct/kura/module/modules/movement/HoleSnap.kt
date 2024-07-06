@@ -30,7 +30,7 @@ import net.minecraft.util.math.Vec3d
 import kotlin.math.*
 
 object HoleSnap :
-    Module(name = "HoleSnap", langName = "拉坑", category = Category.MOVEMENT, description = "Move to the hole.") {
+    Module(name = "HoleSnap", langName = "拉坑", description = "Move to the hole.", category = Category.MOVEMENT) {
     private var range = isetting("Range", 5, 1, 50)
     private var timerVal = fsetting("TimerVal", 3.4f, 1f, 4f)
     private var timeoutTicks = isetting("TimeOutTicks", 60, 0, 1000)

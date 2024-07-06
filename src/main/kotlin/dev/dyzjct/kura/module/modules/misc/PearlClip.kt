@@ -19,7 +19,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.math.Direction
 
 object PearlClip : Module(
-    name = "PearlClip", langName = "珍珠卡墙", category = Category.MISC, description = "PearlClip Ez"
+    name = "PearlClip", langName = "珍珠卡墙", description = "PearlClip Ez", category = Category.MISC
 ) {
     private val better by bsetting("LookBetter", true)
     private val bedRock by bsetting("BedRock", false)

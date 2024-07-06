@@ -48,7 +48,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.stream.Collectors
 
 object AnchorAura : Module(
-    name = "AnchorAura", langName = "恶俗狗", category = Category.COMBAT, description = "Auto using crystals for pvp."
+    name = "AnchorAura", langName = "恶俗狗", description = "Auto using crystals for pvp.", category = Category.COMBAT
 ) {
     private var minDamage by dsetting("MinDamage", 4.0, 0.0, 36.0)
     private var maxSelfDamage by isetting("MaxSelfDamage", 10, 0, 36)

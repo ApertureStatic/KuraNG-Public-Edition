@@ -69,8 +69,8 @@ import net.minecraft.util.math.Vec3d
 object Surround : Module(
     name = "Surround",
     langName = "自动围脚",
-    category = Category.COMBAT,
-    description = "Continually places obsidian around your feet"
+    description = "Continually places obsidian around your feet",
+    category = Category.COMBAT
 ) {
     private var placeDelay = isetting("PlaceDelay", 50, 0, 1000)
     private var multiPlace = isetting("MultiPlace", 2, 1, 5)

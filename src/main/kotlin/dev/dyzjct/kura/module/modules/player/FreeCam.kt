@@ -11,7 +11,12 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 
-object FreeCam : Module(name = "FreeCam", langName = "灵魂出窍", category = Category.PLAYER, description = "Free Camera.", type = Type.Both) {
+object FreeCam : Module(
+    name = "FreeCam",
+    langName = "灵魂出窍",
+    description = "Free Camera.",
+    category = Category.PLAYER
+) {
     private val speed by dsetting("HSpeed", 1.0, 0.0, 3.0)
     private val hspeed by dsetting("VSpeed", 0.42, 0.0, 3.0)
     val rotate by bsetting("Rotate", true)

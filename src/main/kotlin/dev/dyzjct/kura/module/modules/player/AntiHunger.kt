@@ -10,9 +10,8 @@ object AntiHunger :
     Module(
         name = "AntiHunger",
         langName = "防饥饿",
-        category = Category.PLAYER,
         description = "Anti Hunger.",
-        type = Type.Both
+        category = Category.PLAYER
     ) {
     private val noSprint by bsetting("NoSprint", false)
 

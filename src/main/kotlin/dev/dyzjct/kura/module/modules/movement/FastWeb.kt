@@ -17,7 +17,7 @@ object FastWeb : Module(name = "FastWeb", "防蜘蛛网", category = Category.MO
                 if (world.getBlockState(player.blockPos).block is CobwebBlock) {
                     Kura.TICK_TIMER = timer
                 } else Kura.TICK_TIMER = 1f
-            } else Kura.TICK_TIMER = 1f
+            }
         }
     }
 

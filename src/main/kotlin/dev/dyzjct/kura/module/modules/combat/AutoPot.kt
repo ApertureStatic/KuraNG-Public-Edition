@@ -39,8 +39,7 @@ object AutoPot : Module(
     name = "AutoPot",
     langName = "自动喷药",
     description = "Auto use pot.",
-    category = Category.COMBAT,
-    type = Type.StrongOnly
+    category = Category.COMBAT
 ) {
     private val rotate by bsetting("Rotate", true)
     private val pitch by isetting("Pitch", 86, 80, 90).isTrue { rotate }

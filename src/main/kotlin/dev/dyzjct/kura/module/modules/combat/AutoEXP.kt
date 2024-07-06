@@ -21,7 +21,7 @@ import net.minecraft.util.Hand
 import java.util.concurrent.ConcurrentLinkedQueue
 
 object AutoEXP : Module(
-    name = "AutoEXP", langName = "自动修甲", category = Category.COMBAT, description = "Automatically mends armour"
+    name = "AutoEXP", langName = "自动修甲", description = "Automatically mends armour", category = Category.COMBAT
 ) {
     private var packetDelay = isetting("PacketDelay", 10, 0, 1000)
     private var delay = isetting("Delay", 50, 0, 500)

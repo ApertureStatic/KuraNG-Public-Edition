@@ -3,15 +3,12 @@ package dev.dyzjct.kura.module.modules.client
 import dev.dyzjct.kura.system.util.interfaces.DisplayEnum
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.client.UiSetting.Theme
-import dev.dyzjct.kura.module.modules.client.UiSetting.theme
 
 object LoadingMenu: Module(
     name = "LoadingMenu",
     langName = "加载界面",
-    category = Category.CLIENT,
     description = "Loading menu",
-    type = Type.Both
+    category = Category.CLIENT
 ) {
 
     val mode = msetting("Mode", LoadingMenuMode.Kura)

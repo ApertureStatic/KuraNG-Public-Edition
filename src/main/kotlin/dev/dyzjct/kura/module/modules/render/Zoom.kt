@@ -9,8 +9,7 @@ object Zoom : Module(
     name = "Zoom",
     langName = "推进镜头",
     description = "change u fov.",
-    category = Category.RENDER,
-    type = Type.Both
+    category = Category.RENDER
 ) {
     private val fadeLength by fsetting("FadeLength", 200f, 0f, 1000f)
 

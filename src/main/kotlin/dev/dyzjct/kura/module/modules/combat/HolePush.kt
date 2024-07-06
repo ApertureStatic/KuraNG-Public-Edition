@@ -36,8 +36,8 @@ import net.minecraft.util.math.Direction
 object HolePush : Module(
     name = "HolePush",
     langName = "活塞推人",
-    category = Category.COMBAT,
-    description = "Push the target away from the hole."
+    description = "Push the target away from the hole.",
+    category = Category.COMBAT
 ) {
     private val rotate = bsetting("Rotation", false)
     private val side by bsetting("Side", false).isTrue(rotate)

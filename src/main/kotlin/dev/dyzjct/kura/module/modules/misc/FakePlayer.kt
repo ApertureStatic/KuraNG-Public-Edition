@@ -11,9 +11,8 @@ import java.util.*
 object FakePlayer : Module(
     name = "FakePlayer",
     langName = "假人",
-    category = Category.MISC,
     description = "Spawns a fake Player",
-    type = Type.Both
+    category = Category.MISC
 ) {
     private var health by isetting("Health", 12, 0, 36)
     private var fpName by ssetting("Name", "Ab_noJB")

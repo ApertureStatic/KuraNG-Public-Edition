@@ -1,6 +1,5 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.combat.getEntityTarget
 import base.utils.concurrent.threads.runSafe
 import base.utils.graphics.ESPRenderer
@@ -8,6 +7,7 @@ import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.item.attackDamage
 import base.utils.math.distanceSqTo
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -25,7 +25,7 @@ import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
 import net.minecraft.util.Hand
 import kotlin.math.max
 
-object KillAura : Module(name = "KillAura", langName = "杀戮", category = Category.COMBAT, type = Type.Both) {
+object KillAura : Module(name = "KillAura", langName = "杀戮", category = Category.COMBAT) {
     private var animals by bsetting("Animals", false)
     private var mobs by bsetting("Mobs", false)
     private var swapWeapon by bsetting("SwapWeapon", false)
@@ -94,6 +94,7 @@ object KillAura : Module(name = "KillAura", langName = "杀戮", category = Cate
 
         onRender3D { event ->
             if (render) {
+                if (player.mainHandStack.item !is SwordItem) return@onRender3D
                 target?.let {
                     val renderer = ESPRenderer()
                     renderer.aFilled = 120

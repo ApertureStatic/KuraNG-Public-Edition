@@ -28,7 +28,7 @@ import java.awt.Color
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-object NameTags : Module(name = "NameTags", langName = "名牌显示", category = Category.RENDER, type = Type.Both) {
+object NameTags : Module(name = "NameTags", langName = "名牌显示", category = Category.RENDER) {
     private val fillColorA = csetting("Color", Color(-0x80000000))
     private val armorMode = msetting("ArmorMode", Armor.Full)
     private val font = msetting("FontMode", Font.Fancy)

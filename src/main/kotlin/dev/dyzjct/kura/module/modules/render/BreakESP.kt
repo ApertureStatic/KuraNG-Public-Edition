@@ -25,7 +25,7 @@ import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
 @Suppress("unused")
-object BreakESP : Module(name = "BreakESP", langName = "挖掘显示", category = Category.RENDER, type = Type.Both) {
+object BreakESP : Module(name = "BreakESP", langName = "挖掘显示", category = Category.RENDER) {
     private var renderMode = msetting("RenderMode", RenderMode.Percent)
     private var renderSelf by bsetting("RenderSelf", false)
     private var renderAir by bsetting("RenderAir", false)

@@ -35,11 +35,6 @@ abstract class AbstractModule : ListenerOwner() {
     var moduleCategory = Category.HIDDEN
     var alwaysEnable = false
     var isEnabled = false
-    var moduleType = Type.StrongOnly
-
-    enum class Type {
-        Both,SafeOnly,StrongOnly
-    }
 
     var isVisible = false
         set(value) {

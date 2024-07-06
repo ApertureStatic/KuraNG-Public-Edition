@@ -76,7 +76,7 @@ object ModuleManager : AlwaysListening {
         registerModule(SmartOffHand)
         registerModule(AutoEXP)
         registerModule(KillAura)
-        registerModule(NewBedAura)
+        registerModule(BedAura)
         registerModule(ManualCev)
         registerModule(AutoWeb)
         registerModule(HolePush)
@@ -103,6 +103,7 @@ object ModuleManager : AlwaysListening {
         registerModule(PearlClip)
         registerModule(Spammer)
         registerModule(PacketLogger)
+        registerModule(Clip)
     }
 
     private fun loadCategoryMovement() {

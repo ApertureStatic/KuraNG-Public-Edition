@@ -11,8 +11,7 @@ object AutoRespawn : Module(
     name = "AutoRespawn",
     langName = "自动重生",
     description = "Automatic respawn",
-    category = Category.MISC,
-    type = Type.Both
+    category = Category.MISC
 ) {
 
     init {

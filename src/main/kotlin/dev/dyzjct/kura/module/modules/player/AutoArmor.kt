@@ -19,8 +19,8 @@ import java.util.*
 object AutoArmor : Module(
     name = "AutoArmor",
     langName = "自动穿甲",
-    category = Category.PLAYER,
-    description = "Automatically equips armour"
+    description = "Automatically equips armour",
+    category = Category.PLAYER
 ) {
     private var antiBreak = bsetting("AntiBreak", true)
     private var elytraCheck by bsetting("ElytraCheck", true)

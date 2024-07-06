@@ -6,7 +6,6 @@ import dev.dyzjct.kura.event.eventbus.AlwaysListening
 import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.module.ModuleManager
 import dev.dyzjct.kura.module.modules.client.ClickGui
-import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.client.HUDEditor
 import dev.dyzjct.kura.setting.StringSetting
 import dev.dyzjct.kura.utils.math.LagCompensator
@@ -28,7 +27,7 @@ class Kura : AlwaysListening {
         val DIRECTORY = Path("$MOD_NAME/")
 
         @get:JvmName("isReady")
-        private var ready = false;
+        private var ready = false
         private var hasPostInit = false
         var hasInit = false
 
@@ -42,8 +41,7 @@ class Kura : AlwaysListening {
             CommandManager.onInit()
             RotationManager.onInit()
             FileManager.onInit()
-            FileManager.loadCombatSystem()
-            FileManager.loadAll(CombatSystem.combatMode.value.name)
+            FileManager.loadAll()
             InventoryTaskManager.onInit()
             CrystalManager.onInit()
             HotbarManager.onInit()

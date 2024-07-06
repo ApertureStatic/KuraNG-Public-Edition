@@ -20,7 +20,6 @@ object UiSetting : Module(
     langName = "界面设置",
     description = "Color settings",
     category = Category.CLIENT,
-    type = Type.Both,
     alwaysEnable = true
 ) {
     @JvmStatic

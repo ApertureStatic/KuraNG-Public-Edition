@@ -12,8 +12,7 @@ object Xray : Module(
     name = "Xray",
     langName = "矿物透视",
     description = "AutoSearch For Ores!",
-    category = Category.RENDER,
-    type = Type.Both
+    category = Category.RENDER
 ) {
     val distance by isetting("Distance", 25, 1, 80)
     private val coal by bsetting("Coal", false)

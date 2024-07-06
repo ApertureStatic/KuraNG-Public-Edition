@@ -1,9 +1,10 @@
 package dev.dyzjct.kura.module.modules.combat
 
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.inventoryAndHotbarSlots
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import net.minecraft.client.gui.screen.ingame.InventoryScreen
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
@@ -19,26 +20,24 @@ object AutoTotem : Module(
     category = Category.COMBAT
 ) {
     private var strict = bsetting("Strict", false)
-    private var packetListen = false
     private var preferredTotemSlot = 0
     private var numOfTotems = 0
+    private val timer = TimerUtils()
 
     init {
         onMotion {
             if (!findTotems() || (mc.currentScreen is ScreenHandlerContext && mc.currentScreen !is InventoryScreen)) {
-                packetListen = false
                 return@onMotion
             }
-            if (player.offHandStack.item != Items.TOTEM_OF_UNDYING) {
-                packetListen = true
-                val offhandEmptyPreSwitch = player.offHandStack.item == Items.AIR
-                legitBypass(preferredTotemSlot)
-                legitBypass(45)
-                if (!offhandEmptyPreSwitch) {
+            if (timer.tickAndReset(25)) {
+                if (player.offHandStack.item != Items.TOTEM_OF_UNDYING) {
+                    val offhandEmptyPreSwitch = player.offHandStack.item == Items.AIR
                     legitBypass(preferredTotemSlot)
+                    legitBypass(45)
+                    if (!offhandEmptyPreSwitch) {
+                        legitBypass(preferredTotemSlot)
+                    }
                 }
-            } else {
-                packetListen = false
             }
         }
     }
@@ -47,6 +46,7 @@ object AutoTotem : Module(
         runCatching {
             if (strict.value) {
                 player.velocity = Vec3d.ZERO
+                player.movementSpeed = 0.0f
             }
             playerController.clickSlot(player.currentScreenHandler.syncId, slot, 0, SlotActionType.PICKUP, player)
         }

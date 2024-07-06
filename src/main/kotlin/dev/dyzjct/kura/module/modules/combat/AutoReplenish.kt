@@ -14,9 +14,8 @@ import net.minecraft.screen.slot.SlotActionType
 object AutoReplenish : Module(
     name = "AutoReplenish",
     langName = "自动补充装备",
-    category = Category.COMBAT,
     description = "Refills items in your hotbar",
-    type = Type.Both
+    category = Category.COMBAT
 ) {
     private val refillWhile = isetting("RefillAt", 32, 1, 64)
     private val tickDelay = isetting("TickDelay", 1, 0, 10)

@@ -33,8 +33,8 @@ import net.minecraft.util.math.BlockPos
 object AutoWeb : Module(
     name = "AutoWeb",
     langName = "自动蜘蛛网",
-    category = Category.COMBAT,
-    description = "Auto Place Web to stick target."
+    description = "Auto Place Web to stick target.",
+    category = Category.COMBAT
 ) {
     private var spoofRotations = bsetting("Rotate", false)
     private var holeCheck = bsetting("HoleCheck", true)

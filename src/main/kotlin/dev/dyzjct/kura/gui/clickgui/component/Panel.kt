@@ -8,7 +8,6 @@ import dev.dyzjct.kura.gui.clickgui.render.DrawDelegate
 import dev.dyzjct.kura.gui.clickgui.render.DrawScope
 import dev.dyzjct.kura.module.AbstractModule
 import dev.dyzjct.kura.module.Category
-import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.client.UiSetting
 import java.awt.Color
 
@@ -48,9 +47,9 @@ class Panel(
         rearrange()
     }
 
-    fun filterModules() {
+    fun getModules() {
         elements.clear()
-        elements.addAll(beforeFilterModuleComponents.filter { (CombatSystem.combatMode.value == CombatSystem.CombatMode.Strong && it.module.moduleType == AbstractModule.Type.StrongOnly) || (CombatSystem.combatMode.value == CombatSystem.CombatMode.Ghost && it.module.moduleType == AbstractModule.Type.SafeOnly) || it.module.moduleType == AbstractModule.Type.Both })
+        elements.addAll(beforeFilterModuleComponents)
         playingAnimation = true
         rearrange()
     }

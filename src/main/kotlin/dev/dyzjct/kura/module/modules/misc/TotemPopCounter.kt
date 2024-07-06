@@ -21,8 +21,7 @@ object TotemPopCounter : Module(
     name = "TotemPopCounter",
     langName = "图腾爆炸提示",
     description = "Counts how many times players pop",
-    category = Category.MISC,
-    type = Type.Both
+    category = Category.MISC
 ) {
     private var mode = msetting("Mode", Mode.Both)
     private var playerList = ConcurrentHashMap<PlayerEntity, Int>()

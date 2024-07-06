@@ -18,6 +18,7 @@ import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.manager.SphereCalculatorManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.getPredictedPos
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.scaledHealth
@@ -26,6 +27,7 @@ import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
 import dev.dyzjct.kura.utils.animations.sq
 import net.minecraft.block.BedBlock
+import net.minecraft.block.Blocks
 import net.minecraft.client.gui.screen.ingame.CraftingScreen
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.BedItem
@@ -45,8 +47,8 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
 import kotlin.math.min
 
-object NewBedAura :
-    Module(name = "BedAura", langName = "自动床", category = Category.COMBAT, description = "Auto using bed for pvp.") {
+object BedAura :
+    Module(name = "BedAura", langName = "自动床", description = "Auto using bed for pvp.", category = Category.COMBAT) {
     var range = isetting("Range", 5, 1, 8)
     private var minDmg = isetting("MinDMG", 4, 0, 20)
     private var maxSelfDmg = isetting("MaxSelfDmg", 4, 0, 20)
@@ -55,7 +57,6 @@ object NewBedAura :
     private var placeDelay = isetting("PlaceDelay", 15, 0, 1000)
     private var clickDelay = isetting("ClickDelay", 15, 0, 1000)
     private var invClickDelay = isetting("InvClickDelay", 5, 0, 1000)
-    private var eatingPause = bsetting("EatingPause", false)
     private var rotate by bsetting("Rotation", false)
     private var motionRender = bsetting("MotionRender", false)
     private var color = csetting("Color", Color(132, 84, 122))
@@ -92,7 +93,7 @@ object NewBedAura :
     init {
         safeConcurrentListener<RunGameLoopEvent.Tick> {
             runCatching {
-                if (eatingPause.value && player.isUsingItem) return@safeConcurrentListener
+                if (CombatSystem.eating && player.isUsingItem) return@safeConcurrentListener
                 renderEnt = getClosestEnemy(range.value.toDouble())
                 if (renderEnt == null) {
                     blockPos = null
@@ -101,7 +102,11 @@ object NewBedAura :
                 if (mc.currentScreen is CraftingScreen) return@safeConcurrentListener
                 var d = minDmg.value.toDouble()
                 renderEnt?.let { entity ->
-                    val bedPos = canPlaceBed(entity, SphereCalculatorManager.sphereList)
+                    val bedPos =
+                        if (CombatSystem.oldVersion) canPlaceBed1122(SphereCalculatorManager.sphereList) else canPlaceBed(
+                            entity,
+                            SphereCalculatorManager.sphereList
+                        )
                     for (pos in bedPos) {
                         if (entity.distanceSqToCenter(pos.blockPos) > range.value.sq) continue
                         for (i in pos.canPlaceDirection.indices) {
@@ -381,7 +386,7 @@ object NewBedAura :
         val list = ArrayList<Direction>()
         val damage = ArrayList<Float>()
         for (pos in blockPosList) {
-            for (facing in Direction.values()) {
+            for (facing in Direction.entries) {
                 if (facing == Direction.UP || facing == Direction.DOWN) continue
                 var selfDmg = 0f
                 val boost = pos.add(0, 1, 0)
@@ -402,6 +407,48 @@ object NewBedAura :
                     ).also {
                         selfDmg = it
                     } > maxSelfDmg.value.toDouble() || selfDmg >= player.scaledHealth
+                ) continue
+                list.add(facing)
+                damage.add(selfDmg)
+            }
+            if (list.isEmpty()) continue
+            bedSaverList.add(BedSaver(pos, list, damage))
+            list.clear()
+            damage.clear()
+        }
+        return bedSaverList
+    }
+
+    private fun SafeClientEvent.canPlaceBed1122(
+        blockPosList: List<BlockPos>
+    ): List<BedSaver> {
+        val bedSaverList = ArrayList<BedSaver>()
+        val list = ArrayList<Direction>()
+        val damage = ArrayList<Float>()
+        for (pos in blockPosList) {
+            for (facing in Direction.entries) {
+                if (facing == Direction.UP || facing == Direction.DOWN) continue
+                var selfDmg = 0.0f
+                val side = pos.offset(facing)
+                val boost = pos.add(0, 1, 0)
+                val boost2 = pos.add(0, 1, 0).offset(facing)
+                val boostBlock = world.getBlockState(boost).block
+                val boostBlock2 = world.getBlockState(boost2).block
+                if (!world.isAir(boost) && boostBlock !is BedBlock || boostBlock2 !== Blocks.AIR && boostBlock2 !is BedBlock || !world.getBlockState(
+                        side
+                    ).isOpaqueFullCube(world, side) || !world.getBlockState(
+                        pos
+                    ).isOpaqueFullCube(world, pos) || calcDamage(
+                        player,
+                        player.pos,
+                        player.boundingBox,
+                        boost2.x.toDouble() + 0.5,
+                        boost2.y.toDouble() + 0.5,
+                        boost2.z.toDouble() + 0.5,
+                        Mutable()
+                    ).also {
+                        selfDmg = it
+                    } > maxSelfDmg.value.toDouble() || selfDmg >= (player.health + player.absorptionAmount + 2.0f).toDouble()
                 ) continue
                 list.add(facing)
                 damage.add(selfDmg)

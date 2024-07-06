@@ -1,17 +1,16 @@
 package dev.dyzjct.kura.gui.clickgui
 
+import com.mojang.blaze3d.platform.GlStateManager
+import dev.dyzjct.kura.event.eventbus.Listener
 import dev.dyzjct.kura.event.events.render.Render2DEvent
 import dev.dyzjct.kura.graphics.shaders.impl.ParticleShader
-import dev.dyzjct.kura.graphics.shaders.impl.WindowBlurShader
-import dev.dyzjct.kura.event.eventbus.Listener
-import dev.dyzjct.kura.system.render.graphic.Render2DEngine
-import com.mojang.blaze3d.platform.GlStateManager
 import dev.dyzjct.kura.gui.clickgui.animation.AnimationStrategy
 import dev.dyzjct.kura.gui.clickgui.animation.NonAnimationStrategy
 import dev.dyzjct.kura.gui.clickgui.component.Component
 import dev.dyzjct.kura.gui.clickgui.component.ComponentContainer
 import dev.dyzjct.kura.module.AbstractModule
 import dev.dyzjct.kura.module.modules.client.UiSetting
+import dev.dyzjct.kura.system.render.graphic.Render2DEngine
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen

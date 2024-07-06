@@ -8,10 +8,9 @@ import base.utils.entity.EntityUtils
 
 object Sprint : Module(
     name = "Sprint",
-    description = "Automatically makes the player sprint",
     langName = "强制疾跑",
-    category = Category.MOVEMENT,
-    type = Type.Both
+    description = "Automatically makes the player sprint",
+    category = Category.MOVEMENT
 ) {
     private var legit = bsetting("Legit", false)
 
