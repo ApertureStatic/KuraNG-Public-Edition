@@ -99,5 +99,5 @@ tasks {
         }
     }
     registerAutoBuildTask("dyzjct", "E:\\KuraNG\\.minecraft\\mods")
-    registerAutoBuildTask("dyz-new", "C:\\Minecraft\\Plain Craft Launcher\\.minecraft\\versions\\1.20.4-Fabric 0.15.11\\mods")
+    registerAutoBuildTask("dyz-new", "C:\\Minecraft\\Plain Craft Launcher\\.minecraft\\versions\\1.21-Fabric 0.15.11\\mods")
 }
