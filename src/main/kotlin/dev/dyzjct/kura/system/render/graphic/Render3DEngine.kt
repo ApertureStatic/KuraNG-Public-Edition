@@ -189,11 +189,10 @@ object Render3DEngine : MinecraftWrapper {
         setup()
         val matrices = matrixFrom(box.minX, box.minY, box.minZ)
         val tessellator = Tessellator.getInstance()
-        val buffer = tessellator.buffer
+        val buffer = tessellator.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES)
         RenderSystem.disableCull()
         RenderSystem.setShader { GameRenderer.getRenderTypeLinesProgram() }
         RenderSystem.lineWidth(lineWidth)
-        buffer.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES)
         box = box.offset(Vec3d(box.minX, box.minY, box.minZ).negate())
         val x1 = box.minX.toFloat()
         val y1 = box.minY.toFloat()
@@ -204,14 +203,14 @@ object Render3DEngine : MinecraftWrapper {
         vertexLine(matrices, buffer, x2, y1, z1, x2, y1, z2, color)
         vertexLine(matrices, buffer, x2, y1, z2, x1, y1, z2, color)
         vertexLine(matrices, buffer, x1, y1, z2, x1, y1, z1, color)
-        tessellator.draw()
+        BufferRenderer.drawWithGlobalProgram(tessellator.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES).end())
         RenderSystem.enableCull()
         cleanup()
     }
 
     fun vertexLine(
         matrices: MatrixStack,
-        vertexConsumer: VertexConsumer,
+        bufferBuilder: BufferBuilder,
         x1: Float,
         y1: Float,
         z1: Float,
@@ -223,10 +222,10 @@ object Render3DEngine : MinecraftWrapper {
         val model = matrices.peek().positionMatrix
         val normal = matrices.peek().normalMatrix
         val normalVec = getNormal(x1, y1, z1, x2, y2, z2)
-        vertexConsumer.vertex(model, x1, y1, z1).color(lineColor.red, lineColor.green, lineColor.blue, lineColor.alpha)
-            .normal(normal, normalVec.x(), normalVec.y(), normalVec.z()).next()
-        vertexConsumer.vertex(model, x2, y2, z2).color(lineColor.red, lineColor.green, lineColor.blue, lineColor.alpha)
-            .normal(normal, normalVec.x(), normalVec.y(), normalVec.z()).next()
+        bufferBuilder.vertex(model, x1, y1, z1).color(lineColor.red, lineColor.green, lineColor.blue, lineColor.alpha)
+            .normal(normal, normalVec.x(), normalVec.y(), normalVec.z())
+        bufferBuilder.vertex(model, x2, y2, z2).color(lineColor.red, lineColor.green, lineColor.blue, lineColor.alpha)
+            .normal(normal, normalVec.x(), normalVec.y(), normalVec.z())
     }
 
     fun getNormal(x1: Float, y1: Float, z1: Float, x2: Float, y2: Float, z2: Float): Vector3f {
