@@ -229,9 +229,26 @@ public class MixinGameRenderer {
                 d *= MathHelper.lerp(this.client.options.getFovEffectScale().getValue(), 1.0, 0.8571428656578064);
             }
 
+            if (CustomFov.INSTANCE.isEnabled()) {
+                if (d == 70 && !CustomFov.INSTANCE.getItemFov().getValue()) return d;
+                else if (CustomFov.INSTANCE.getItemFov().getValue() && d == 70) {
+                    return CustomFov.INSTANCE.getItemFovModifier().getValue();
+                }
+                if (Zoom.INSTANCE.isEnabled()) {
+                    return Zoom.INSTANCE.getFov();
+                } else return CustomFov.INSTANCE.getFov().getValue();
+            } else if (Zoom.INSTANCE.isEnabled()) {
+                if (d == 70) {
+                    if (CustomFov.INSTANCE.getItemFov().getValue())
+                        return CustomFov.INSTANCE.getItemFovModifier().getValue();
+                }
+                return Zoom.INSTANCE.getFov();
+            }
+
             return d;
         }
     }
+
 
     @Inject(method = "updateTargetedEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/ProjectileUtil;raycast(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Box;Ljava/util/function/Predicate;D)Lnet/minecraft/util/hit/EntityHitResult;"), cancellable = true)
     private void onUpdateTargetedEntity(float tickDelta, CallbackInfo info) {
