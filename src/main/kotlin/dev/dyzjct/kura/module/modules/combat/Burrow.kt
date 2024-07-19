@@ -12,6 +12,7 @@ import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.toBlockPos
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.manager.HotbarManager
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
@@ -247,11 +248,13 @@ object Burrow : Module(
         if (rotate) {
             RotationManager.addRotations(player.yaw, 90.0f)
         }
+        HotbarManager.onlyItem = Items.OBSIDIAN
         spoofHotbarNoAnyCheck(Items.OBSIDIAN) {
             sendSequencedPacket(world) {
                 fastPos(pos, sequence = it)
             }
         }
+        HotbarManager.onlyItem = null
         swing()
     }
 
@@ -260,11 +263,13 @@ object Burrow : Module(
         if (rotate) {
             RotationManager.addRotations(player.yaw, 90.0f)
         }
+        HotbarManager.onlyItem = Items.OBSIDIAN
         spoofHotbarNoAnyCheck(Items.OBSIDIAN) {
             sendSequencedPacket(world) {
                 fastPos(pos, sequence = it)
             }
         }
+        HotbarManager.onlyItem = Items.OBSIDIAN
         swing()
     }
 

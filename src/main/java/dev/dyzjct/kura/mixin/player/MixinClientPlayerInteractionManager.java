@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.mixin.player;
 
+import dev.dyzjct.kura.event.events.block.BlockEvent;
 import dev.dyzjct.kura.mixins.IClientPlayerInteractionManager;
 import dev.dyzjct.kura.module.modules.misc.BetterEat;
 import dev.dyzjct.kura.module.modules.player.Reach;
-import dev.dyzjct.kura.event.events.block.BlockEvent;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.PotionItem;
@@ -29,6 +29,11 @@ public abstract class MixinClientPlayerInteractionManager implements IClientPlay
     @Inject(method = "getReachDistance", at = @At("HEAD"), cancellable = true)
     private void onGetReachDistance(CallbackInfoReturnable<Float> info) {
         if (Reach.INSTANCE.isEnabled()) info.setReturnValue(Reach.INSTANCE.getRange().getValue());
+    }
+
+    @Inject(at = {@At("HEAD")}, method = {"hasExtendedReach()Z"}, cancellable = true)
+    private void hasExtendedReach(CallbackInfoReturnable<Boolean> cir) {
+        if (Reach.INSTANCE.isEnabled()) cir.setReturnValue(true);
     }
 
     @Inject(method = "stopUsingItem", at = @At("HEAD"), cancellable = true)
