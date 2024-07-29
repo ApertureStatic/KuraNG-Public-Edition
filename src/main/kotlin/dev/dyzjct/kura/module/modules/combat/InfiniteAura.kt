@@ -49,7 +49,7 @@ object InfiniteAura : Module(name = "InfiniteAura", langName = "百米大刀", c
                         }
                     }
                 }
-                if (rotate) RotationManager.addRotations(target.blockPos.up().toCenterPos())
+                if (rotate) RotationManager.rotationTo(target.blockPos.up().toCenterPos())
                 if (autoBlock) {
                     if (player.offHandStack.item is ShieldItem) {
                         playerController.interactItem(player, Hand.OFF_HAND)

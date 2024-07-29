@@ -60,7 +60,7 @@ object FreeCam : Module(
     init {
         onMotion {
             if (rotate && mc.crosshairTarget != null && mc.crosshairTarget!!.pos != null) {
-                RotationManager.addRotations(mc.crosshairTarget!!.pos, false)
+                RotationManager.rotationTo(mc.crosshairTarget!!.pos, false)
             }
         }
 

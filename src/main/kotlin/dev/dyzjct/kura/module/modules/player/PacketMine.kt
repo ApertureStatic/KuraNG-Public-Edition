@@ -271,7 +271,7 @@ object PacketMine : Module(
         if (db) {
             if (doubleBreak) {
                 if (onDoubleBreak) {
-                    doubleData?.let { RotationManager.addRotations(it.blockPos) }
+                    doubleData?.let { RotationManager.rotationTo(it.blockPos) }
                 }
                 if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime + backTime) && onDoubleBreak) {
                     onDoubleBreak = false
@@ -292,7 +292,7 @@ object PacketMine : Module(
                     blockData.blockPos
                 ) && action == Stop)) && !force
             ) return
-            if (rotate.value) RotationManager.addRotations(blockData.blockPos)
+            if (rotate.value) RotationManager.rotationTo(blockData.blockPos)
             if (swing) connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
             if (switchMode0.spoof) {
                 if (!switchMode0.bypass) {

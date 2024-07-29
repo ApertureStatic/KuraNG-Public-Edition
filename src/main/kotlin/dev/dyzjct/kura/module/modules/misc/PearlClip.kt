@@ -78,7 +78,7 @@ object PearlClip : Module(
                 }
 
                 angle = if ((angle + fix) > 180.0f) angle - fix else angle + fix
-                RotationManager.addRotations(angle, pitch)
+                RotationManager.rotationTo(angle, pitch)
                 RotationManager.stopRotation()
                 sendPlayerRotation(angle, pitch, player.onGround)
                 RotationManager.startRotation()

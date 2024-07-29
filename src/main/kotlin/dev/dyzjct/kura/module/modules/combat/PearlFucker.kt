@@ -56,7 +56,7 @@ object PearlFucker : Module(
                 if (player.distanceSqTo(pearl) > CombatSystem.targetRange.sq) continue
                 if (mode == Mode.WEB) {
                     if (timer.tickAndReset(delay)) {
-                        if (rotate) RotationManager.addRotations(pearl.blockPos)
+                        if (rotate) RotationManager.rotationTo(pearl.blockPos)
                         spoofHotbarWithSetting(Items.COBWEB) {
                             if (getNeighbor(pearl.blockPos) != null) {
                                 if (debug) ChatUtil.sendMessage("WebPlacing")
@@ -69,7 +69,7 @@ object PearlFucker : Module(
                     if (findTargetCrystal(pearl) != null) {
                         if (timer.tickAndReset(delay)) {
                             if (debug) ChatUtil.sendMessage("CrystalAttacking")
-                            if (rotate) RotationManager.addRotations(findTargetCrystal(pearl)!!.blockPos)
+                            if (rotate) RotationManager.rotationTo(findTargetCrystal(pearl)!!.blockPos)
                             connection.sendPacket(
                                 PlayerInteractEntityC2SPacket.attack(
                                     findTargetCrystal(pearl),
@@ -82,7 +82,7 @@ object PearlFucker : Module(
                         findPlacePos(pearl)?.let { pos ->
                             if (timer.tickAndReset(delay)) {
                                 if (debug) ChatUtil.sendMessage("CrystalPlacing")
-                                if (rotate) RotationManager.addRotations(pos)
+                                if (rotate) RotationManager.rotationTo(pos)
                                 spoofHotbarWithSetting(Items.END_CRYSTAL) {
                                     connection.sendPacket(fastPos(pos))
                                     swing()

@@ -172,30 +172,30 @@ object BedAura :
                 blockPos?.let { blockPos ->
                     bedExplodePos = blockPos.up()
                     bedExplodePos?.let { bedExplodePos ->
-                        if (rotate) RotationManager.addRotations(bedExplodePos)
+                        if (rotate) RotationManager.rotationTo(bedExplodePos)
                         direction?.let { direction ->
                             renderBlocks[bedExplodePos] = System.currentTimeMillis()
                             when (direction) {
                                 Direction.EAST -> {
-                                    RotationManager.addRotations(-91.0f, player.pitch)
+                                    RotationManager.rotationTo(-91.0f, player.pitch)
                                     yawOffset = -91f
                                     //event.setRotation(-91.0f, player.rotationPitch)
                                 }
 
                                 Direction.NORTH -> {
-                                    RotationManager.addRotations(179.0f, player.pitch)
+                                    RotationManager.rotationTo(179.0f, player.pitch)
                                     yawOffset = 179f
                                     //event.setRotation(179.0f, player.rotationPitch)
                                 }
 
                                 Direction.WEST -> {
-                                    RotationManager.addRotations(89.0f, player.pitch)
+                                    RotationManager.rotationTo(89.0f, player.pitch)
                                     yawOffset = 89f
                                     //event.setRotation(89.0f, player.rotationPitch)
                                 }
 
                                 else -> {
-                                    RotationManager.addRotations(-1.0f, player.pitch)
+                                    RotationManager.rotationTo(-1.0f, player.pitch)
                                     yawOffset = -1f
                                     //event.setRotation(-1.0f, player.rotationPitch)
                                 }

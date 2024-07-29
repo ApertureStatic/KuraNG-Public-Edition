@@ -65,7 +65,7 @@ object KillAura : Module(name = "KillAura", langName = "杀戮", category = Cate
                         }
                     }
                 }
-                RotationManager.addRotations(target.blockPos.up().toCenterPos())
+                RotationManager.rotationTo(target.blockPos.up().toCenterPos())
                 if (autoBlock.value && player.distanceSqTo(target.pos) <= abRange.sq) {
                     if (player.offHandStack.item is ShieldItem) {
                         if (player.offHandStack.item is ShieldItem) {

@@ -164,7 +164,7 @@ object HolePush : Module(
                 } else if (!world.isAir(it.pos.down(2)) && checkDown && it.direction == Direction.DOWN) {
                     if (!test) {
                         if (timer.tickAndReset(delay)) {
-                            if (rotate.value) RotationManager.addRotations(it.pos.down())
+                            if (rotate.value) RotationManager.rotationTo(it.pos.down())
                             player.spoofSneak {
                                 spoofHotbarWithSetting(Items.OBSIDIAN) {
                                     connection.sendPacket(fastPos(it.pos.down()))
@@ -187,7 +187,7 @@ object HolePush : Module(
         if (!timer.passedMs(delay.toLong())) return
         fun spoofPlace(stone: Boolean, doToggle: Boolean = false) {
             if (!stone) {
-                RotationManager.addRotations(blockPos = blockPos, side = true)
+                RotationManager.rotationTo(blockPos = blockPos, side = true)
                 RotationManager.stopRotation()
                 face.let {
                     connection.sendPacket(
@@ -204,7 +204,7 @@ object HolePush : Module(
                 }
             }
             RotationManager.startRotation()
-            if (!stone) RotationManager.addRotations(blockPos)
+            if (!stone) RotationManager.rotationTo(blockPos)
             if (!stone || world.isAir(stonePos)) {
                 player.spoofSneak {
                     spoofHotbarWithSetting(
@@ -219,7 +219,7 @@ object HolePush : Module(
                 }
                 swing()
             }
-            if (!stone) RotationManager.addRotations(blockPos)
+            if (!stone) RotationManager.rotationTo(blockPos)
             stage++
             if (debug) ChatUtil.sendMessage(if (stone) "[HolePush] -> PlaceStone!" else "[HolePush] -> PlacePiston!")
             if (!world.isAir(stonePos) && doToggle) {
@@ -238,18 +238,18 @@ object HolePush : Module(
         if (getNeighbor(blockPos) != null || airPlace) {
             if (world.isAir(blockPos)) {
                 if (rotate.value) {
-                    RotationManager.addRotations(blockPos, side = side)
+                    RotationManager.rotationTo(blockPos, side = side)
                 }
                 spoofPlace(stone = false, doToggle = true)
             } else {
                 if (rotate.value && world.isAir(stonePos)) {
-                    RotationManager.addRotations(stonePos, side = side)
+                    RotationManager.rotationTo(stonePos, side = side)
                 }
                 spoofPlace(stone = true, doToggle = true)
             }
         } else {
             if (rotate.value && world.isAir(stonePos)) {
-                RotationManager.addRotations(stonePos, side = side)
+                RotationManager.rotationTo(stonePos, side = side)
             }
             spoofPlace(stone = true, doToggle = false)
         }

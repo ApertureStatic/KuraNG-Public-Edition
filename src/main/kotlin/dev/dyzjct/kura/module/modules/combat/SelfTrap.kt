@@ -44,7 +44,7 @@ object SelfTrap : Module(name = "SelfTrap", "自动裹自己", category = Catego
                     for (offset in offsetsDefault) {
                         val pos = player.blockPos.add(offset)
                         if (!world.isPlaceable(pos)) continue
-                        if (rotate.value) RotationManager.addRotations(pos)
+                        if (rotate.value) RotationManager.rotationTo(pos)
                         var breakCrystal = false
                         if (attackTimer.passedMs(50L)) {
                             for (entity in EntityManager.entity) {

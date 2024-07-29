@@ -50,21 +50,21 @@ object RotationManager : AlwaysListening {
     }
 
     @JvmStatic
-    fun addRotations(yaw: Float, pitch: Float) {
+    fun rotationTo(yaw: Float, pitch: Float) {
         rotateYaw = yaw
         rotatePitch = pitch
         resetTimer.reset()
     }
 
     @JvmStatic
-    fun addRotations(rotation: Vec2f) {
+    fun rotationTo(rotation: Vec2f) {
         rotateYaw = rotation.x
         rotatePitch = rotation.y
         resetTimer.reset()
     }
 
     @JvmStatic
-    fun addRotations(blockPos: BlockPos, side: Boolean = false) {
+    fun rotationTo(blockPos: BlockPos, side: Boolean = false) {
         runSafe {
             rotateYaw = getRotationTo(blockPos.toVec3dCenter(), side).x
             rotatePitch = getRotationTo(blockPos.toVec3dCenter(), side).y
@@ -73,7 +73,7 @@ object RotationManager : AlwaysListening {
     }
 
     @JvmStatic
-    fun addRotations(vec3d: Vec3d, side: Boolean = false) {
+    fun rotationTo(vec3d: Vec3d, side: Boolean = false) {
         runSafe {
             rotateYaw = getRotationTo(vec3d, side).x
             rotatePitch = getRotationTo(vec3d, side).y

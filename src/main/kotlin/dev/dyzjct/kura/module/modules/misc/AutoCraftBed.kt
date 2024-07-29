@@ -142,7 +142,7 @@ object AutoCraftBed : Module(name = "AutoCraftBed", langName = "自动合成床"
                         if (world.getBlockState(pos).block != Blocks.CRAFTING_TABLE && player.distanceSqToCenter(pos) <= placeRange.value.sq) {
                             player.hotbarSlots.firstBlock(Blocks.CRAFTING_TABLE)?.let { slot ->
                                 spoofHotbar(slot) {
-                                    RotationManager.addRotations(pos)
+                                    RotationManager.rotationTo(pos)
                                     connection.sendPacket(fastPos(pos))
                                 }
                                 if (!craftTask.contains(pos)) {

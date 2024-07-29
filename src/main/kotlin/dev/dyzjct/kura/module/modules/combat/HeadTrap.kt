@@ -54,7 +54,7 @@ object HeadTrap : Module(name = "HeadTrap", "盖头", description = "1!5!", cate
                         return@onMotion
                     }
                     if (airPlace.value) {
-                        if (rotate.value) RotationManager.addRotations(target.blockPos.up(2), side = side.value)
+                        if (rotate.value) RotationManager.rotationTo(target.blockPos.up(2), side = side.value)
                         if (placeTimer.tickAndReset(placeDelay.value)) {
                             if (bypass.value) swapSpoof(slot) {
                                 sendSequencedPacket(world) { seq ->
@@ -72,7 +72,7 @@ object HeadTrap : Module(name = "HeadTrap", "盖头", description = "1!5!", cate
                         checkNearBlocksExtended(target.blockPos.up(2))?.let { block ->
                             if (player.distanceSqToCenter(block.position.offset(block.facing)) <= CombatSystem.placeRange.sq) {
                                 if (!world.isAir(block.position.offset(block.facing))) return@onMotion
-                                if (rotate.value) RotationManager.addRotations(
+                                if (rotate.value) RotationManager.rotationTo(
                                     block.position.offset(block.facing),
                                     side = side.value
                                 )

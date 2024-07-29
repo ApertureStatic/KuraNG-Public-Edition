@@ -381,7 +381,7 @@ object HoleFiller :
         onMainThread {
             if (rotation.value) {
                 (nextHole ?: getRotationPos(holeInfos))?.let {
-                    RotationManager.addRotations(it)
+                    RotationManager.rotationTo(it)
                 }
             }
             player.spoofSneak {

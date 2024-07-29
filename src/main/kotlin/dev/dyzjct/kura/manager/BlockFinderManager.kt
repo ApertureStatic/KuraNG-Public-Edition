@@ -105,7 +105,7 @@ object BlockFinderManager : AlwaysListening {
                             if (world.isAir(pos)) continue
                             if (xrayMode && Xray.wmBypass.value) {
                                 if (clickTimer.tickAndReset(Xray.clickDelay)) {
-                                    if (Xray.rotate) RotationManager.addRotations(pos)
+                                    if (Xray.rotate) RotationManager.rotationTo(pos)
                                     sendSequencedPacket(world) { sequence ->
                                         PlayerActionC2SPacket(
                                             PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK,
@@ -136,7 +136,7 @@ object BlockFinderManager : AlwaysListening {
                             if (world.isAir(pos)) continue
                             if (esp && ChestESP.wmBypass.value) {
                                 if (clickTimer.tickAndReset(ChestESP.clickDelay)) {
-                                    if (ChestESP.rotate) RotationManager.addRotations(pos)
+                                    if (ChestESP.rotate) RotationManager.rotationTo(pos)
                                     sendSequencedPacket(world) { sequence ->
                                         PlayerActionC2SPacket(
                                             PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK,

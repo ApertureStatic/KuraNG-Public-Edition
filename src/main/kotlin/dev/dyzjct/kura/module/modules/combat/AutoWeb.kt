@@ -104,7 +104,7 @@ object AutoWeb : Module(
                         ) {
                             if (timerDelay.tickAndReset(delay)) {
                                 if (spoofRotations.value) {
-                                    RotationManager.addRotations(pos)
+                                    RotationManager.rotationTo(pos)
                                 }
                                 spoofHotbarWithSetting(Items.COBWEB) {
                                     player.spoofSneak {

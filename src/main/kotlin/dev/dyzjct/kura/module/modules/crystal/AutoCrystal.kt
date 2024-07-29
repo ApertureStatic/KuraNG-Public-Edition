@@ -389,11 +389,11 @@ object AutoCrystal : Module(
             if (rotate.value) {
                 rotationInfo.update(rotation)
                 if (abs(diff) <= yawSpeed.value) {
-                    RotationManager.addRotations(it)
+                    RotationManager.rotationTo(it)
                 } else {
                     val clamped = diff.coerceIn(-yawSpeed.value, yawSpeed.value)
                     val newYaw = normalizeAngle(CrystalManager.rotation.x + clamped)
-                    RotationManager.addRotations(newYaw, it.y)
+                    RotationManager.rotationTo(newYaw, it.y)
                 }
                 flagged = rotateDiff.value > 0 && abs(diff) > rotateDiff.value
             }

@@ -139,7 +139,7 @@ object AnchorAura : Module(
             placeInfo = calcPlaceInfo()
             if (!CombatSystem.isBestAura(CombatSystem.AuraType.Anchor)) return@onMotion
             placeInfo?.let { placeInfo ->
-                if (rotate) RotationManager.addRotations(placeInfo.blockPos)
+                if (rotate) RotationManager.rotationTo(placeInfo.blockPos)
                 globalPlace(placeInfo, true)
                 checkGlowPlaceable(placeInfo, Items.GLOWSTONE)
                 globalPlace(placeInfo, false)
@@ -318,7 +318,7 @@ object AnchorAura : Module(
         if (explode) {
             if (anchorTimer.tickAndReset(anchorDelay) && world.isAir(placeInfo.blockPos)) {
 
-                if (rotate) RotationManager.addRotations(placeInfo.blockPos)
+                if (rotate) RotationManager.rotationTo(placeInfo.blockPos)
                 player.spoofSneak {
                     spoofHotbarWithSetting(Items.RESPAWN_ANCHOR) {
                         sendSequencedPacket(world) {
@@ -337,7 +337,7 @@ object AnchorAura : Module(
         } else {
             if (clickTimer.tickAndReset(clickDelay)) {
 
-                if (rotate) RotationManager.addRotations(placeInfo.blockPos)
+                if (rotate) RotationManager.rotationTo(placeInfo.blockPos)
                 sendSequencedPacket(world) {
                     PlayerInteractBlockC2SPacket(
                         Hand.MAIN_HAND, BlockHitResult(
@@ -362,7 +362,7 @@ object AnchorAura : Module(
         if ((currentBlockState.block == Blocks.RESPAWN_ANCHOR && currentBlockState.get(Properties.CHARGES) < 1) || ignore) {
             if (glowTimer.tickAndReset(glowDelay)) {
 
-                if (rotate) RotationManager.addRotations(placeInfo.blockPos)
+                if (rotate) RotationManager.rotationTo(placeInfo.blockPos)
                 spoofHotbarWithSetting(item) {
                     sendSequencedPacket(world) {
                         PlayerInteractBlockC2SPacket(

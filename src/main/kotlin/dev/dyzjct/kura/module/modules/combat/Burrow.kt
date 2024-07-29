@@ -82,7 +82,7 @@ object Burrow : Module(
             if (canPlace(player.blockPos.down())) {
                 val vec = player.pos.add(0.0, -1.0, 0.0)
                 sendPlayerRotation(player.yaw, 90f, false)
-                if (rotate) RotationManager.addRotations(player.blockPos.down())
+                if (rotate) RotationManager.rotationTo(player.blockPos.down())
                 doSneak()
                 placeBlock(player.blockPos.down())
                 place(vec.add(0.3, 0.3, 0.3))
@@ -238,7 +238,7 @@ object Burrow : Module(
         }
         val pos = vec3d.toBlockPos()
 
-        if (rotate) RotationManager.addRotations(player.yaw, 90f)
+        if (rotate) RotationManager.rotationTo(player.yaw, 90f)
 
         placeBlock(pos.down())
         if (!canPlace(pos)) {
@@ -246,7 +246,7 @@ object Burrow : Module(
         }
         if (getNeighbor(pos) == null) return
         if (rotate) {
-            RotationManager.addRotations(player.yaw, 90.0f)
+            RotationManager.rotationTo(player.yaw, 90.0f)
         }
         HotbarManager.onlyItem = Items.OBSIDIAN
         spoofHotbarNoAnyCheck(Items.OBSIDIAN) {
@@ -261,7 +261,7 @@ object Burrow : Module(
     private fun SafeClientEvent.placeBlock(pos: BlockPos) {
         if (!canPlace(pos)) return
         if (rotate) {
-            RotationManager.addRotations(player.yaw, 90.0f)
+            RotationManager.rotationTo(player.yaw, 90.0f)
         }
         HotbarManager.onlyItem = Items.OBSIDIAN
         spoofHotbarNoAnyCheck(Items.OBSIDIAN) {
@@ -290,7 +290,7 @@ object Burrow : Module(
             ) || it.boundingBox.intersects(Box(player.pos.add(0.3, 0.0, -0.3).toBlockPos())))
         }) {
             if (entity is EndCrystalEntity) {
-                RotationManager.addRotations(entity.blockPos)
+                RotationManager.rotationTo(entity.blockPos)
                 connection.sendPacket(
                     PlayerInteractEntityC2SPacket.attack(
                         world.getEntityById(entity.id), player.isSneaking

@@ -416,7 +416,7 @@ object Surround : Module(
                 if (rotation.value) {
                     var eyeHeight = player.getEyeHeight(player.pose)
                     if (!player.isSneaking) eyeHeight -= 0.08f
-                    RotationManager.addRotations(
+                    RotationManager.rotationTo(
                         getRotationTo(
                             Vec3d(player.x, player.y + eyeHeight, player.z), placeInfo.hitVec
                         )

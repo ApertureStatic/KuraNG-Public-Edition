@@ -105,6 +105,7 @@ object ModuleManager : AlwaysListening {
         registerModule(Spammer)
         registerModule(PacketLogger)
         registerModule(Clip)
+        registerModule(AutoDupe)
     }
 
     private fun loadCategoryMovement() {

@@ -50,7 +50,7 @@ object ManualCev : Module(
                 if (!canBreak(blockData.blockPos, true))
                     if (debug) ChatUtil.sendNoSpamMessage("DEBUG >> ${stage.name}")
                 if (rotation) {
-                    RotationManager.addRotations(blockData.blockPos)
+                    RotationManager.rotationTo(blockData.blockPos)
                 }
                 when (stage) {
                     CevStage.Block -> {

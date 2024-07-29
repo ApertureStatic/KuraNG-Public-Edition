@@ -1,14 +1,15 @@
 package base.utils.block
 
-import dev.dyzjct.kura.utils.animations.fastCeil
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.entity.EntityUtils.boxCheck
 import base.utils.inventory.slot.allSlots
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.item.isTool
 import base.utils.world.getMiningSide
 import base.utils.world.getVisibleSides
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.player.PacketMine
+import dev.dyzjct.kura.utils.animations.fastCeil
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.block.FireBlock
@@ -159,7 +160,7 @@ object BlockUtil {
                         0
                     )
                 )
-            )
+            ) && blockPos.add(0, -1, -1) != PacketMine.blockData?.blockPos
         ) return BlockPosWithFacing(
             blockPos.add(
                 0, -1, 0
@@ -172,7 +173,7 @@ object BlockUtil {
                         0
                     )
                 )
-            )
+            ) && blockPos.add(-1, 0, 0) != PacketMine.blockData?.blockPos
         ) return BlockPosWithFacing(
             blockPos.add(
                 -1, 0, 0
@@ -181,13 +182,17 @@ object BlockUtil {
                 blockPos.add(
                     1, 0, 0
                 )
-            ).isSolid
+            ).isSolid && boxCheck(Box(blockPos.add(1, 0, 0))) && blockPos.add(1, 0, 0) != PacketMine.blockData?.blockPos
         ) return BlockPosWithFacing(blockPos.add(1, 0, 0), Direction.WEST) else if (world.getBlockState(
                 blockPos.add(0, 0, 1)
-            ).isSolid && boxCheck(Box(blockPos.add(0, 0, 1)))
+            ).isSolid && boxCheck(Box(blockPos.add(0, 0, 1))) && blockPos.add(0, 0, 1) != PacketMine.blockData?.blockPos
         ) return BlockPosWithFacing(blockPos.add(0, 0, 1), Direction.NORTH) else if (world.getBlockState(
                 blockPos.add(0, 0, -1)
-            ).isSolid && boxCheck(Box(blockPos.add(0, 0, -1)))
+            ).isSolid && boxCheck(Box(blockPos.add(0, 0, -1))) && blockPos.add(
+                0,
+                0,
+                -1
+            ) != PacketMine.blockData?.blockPos
         ) return BlockPosWithFacing(blockPos.add(0, 0, -1), Direction.SOUTH)
         return null
     }
