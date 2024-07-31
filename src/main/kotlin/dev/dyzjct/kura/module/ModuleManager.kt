@@ -1,12 +1,12 @@
 package dev.dyzjct.kura.module
 
-import dev.dyzjct.kura.event.events.TickEvent
-import dev.dyzjct.kura.event.events.input.BindEvent
 import base.utils.concurrent.threads.IOScope
 import base.utils.math.DamageCalculator
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.event.eventbus.AlwaysListening
 import dev.dyzjct.kura.event.eventbus.listener
+import dev.dyzjct.kura.event.events.TickEvent
+import dev.dyzjct.kura.event.events.input.BindEvent
 import dev.dyzjct.kura.module.hud.*
 import dev.dyzjct.kura.module.modules.client.*
 import dev.dyzjct.kura.module.modules.combat.*
@@ -65,7 +65,7 @@ object ModuleManager : AlwaysListening {
 
     private fun loadCategoryCombat() {
         registerModule(AutoReplenish)
-        registerModule(AutoTotem)
+        registerModule(AutoOffHand)
         registerModule(Surround)
         registerModule(HoleFiller)
         registerModule(AnchorAura)
@@ -73,7 +73,6 @@ object ModuleManager : AlwaysListening {
         registerModule(FastUse)
         registerModule(HoleSnap)
         registerModule(SelfTrap)
-        registerModule(SmartOffHand)
         registerModule(AutoEXP)
         registerModule(KillAura)
         registerModule(BedAura)
@@ -89,6 +88,7 @@ object ModuleManager : AlwaysListening {
         registerModule(PearlFucker)
         registerModule(AnchorHelper)
         registerModule(AutoHitCrystal)
+        registerModule(MainHandTotem)
     }
 
     private fun loadCategoryMisc() {

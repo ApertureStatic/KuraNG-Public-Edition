@@ -82,7 +82,7 @@ object HolePush : Module(
                 return@onMotion
             }
             if (!autoToggle.value) {
-                if ((world.isAir(target.blockPos) && checkHole(target) == SurroundUtils.HoleType.NONE) || player.usingItem)
+                if ((world.isAir(target.blockPos) && checkHole(target) == SurroundUtils.HoleType.NONE) || (player.usingItem && CombatSystem.eating))
                     return@onMotion
             }
             if (!world.isAir(target.blockPos.up(2))) return@onMotion
