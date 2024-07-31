@@ -1,10 +1,10 @@
 package dev.dyzjct.kura.module.modules.movement
 
+import base.utils.concurrent.threads.runSafe
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils
-import base.utils.concurrent.threads.runSafe
 import net.minecraft.entity.Entity
 import net.minecraft.entity.passive.HorseEntity
 import net.minecraft.entity.passive.LlamaEntity
@@ -20,20 +20,17 @@ object Step : Module(
 ) {
     private var mode = msetting("Mode", Mode.VANILLA)
     private var strict = bsetting("Strict", false)
-    private var useTimer = bsetting("UseTimer", true)
     private var entityStep = bsetting("EntityStep", false)
     private var stepDelay = isetting("StepDelay", 200, 0, 1000)
     private var stepHeight0 = fsetting("Height", 2.0f, 1.0f, 5.0f)
+    private var timer = bsetting("TimerBoost", false)
+    private var timerSpeed = fsetting("TimerSpeed", 1.0f, 0.1f, 3.0f).isTrue(timer)
     private var entityRiding: Entity? = null
     private var stepTimer = TimerUtils()
-    private var timer = false
 
     init {
         onMotion {
-            if (timer && player.isOnGround) {
-                Kura.TICK_TIMER = 1f
-                timer = false
-            }
+            if (timer.value) Kura.TICK_TIMER = timerSpeed.value
             if (player.isOnGround && stepTimer.passed(stepDelay.value)) {
                 if (player.isRiding) {
                     player.controllingVehicle?.let {
@@ -73,10 +70,6 @@ object Step : Module(
 
                     val offsets = getOffset(stepHeight)
                     if (offsets != null && offsets.size > 1) {
-                        if (useTimer.value) {
-                            Kura.TICK_TIMER = 1f / offsets.size
-                            timer = true
-                        }
                         for (offset in offsets) {
                             player.networkHandler.sendPacket(
                                 PositionAndOnGround(
@@ -93,6 +86,12 @@ object Step : Module(
         }
     }
 
+    override fun onDisable() {
+        runSafe {
+            player.stepHeight = 0.5f
+            if (timer.value) Kura.TICK_TIMER = 1f
+        }
+    }
 
     private fun getOffset(height: Double): DoubleArray? {
         return when (height) {
@@ -143,12 +142,6 @@ object Step : Module(
             else -> {
                 null
             }
-        }
-    }
-
-    override fun onDisable() {
-        runSafe {
-            player.stepHeight = 0.5f
         }
     }
 

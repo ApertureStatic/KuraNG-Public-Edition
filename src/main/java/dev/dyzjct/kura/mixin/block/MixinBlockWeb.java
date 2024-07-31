@@ -10,17 +10,16 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 @Mixin(CobwebBlock.class)
 public class MixinBlockWeb {
 
     @Inject(method = "onEntityCollision", at = @At("HEAD"), cancellable = true)
     public void onEntityCollidedWithBlock(BlockState state, World world, BlockPos pos, Entity entity, CallbackInfo ci) {
         if (FastWeb.INSTANCE.isEnabled()) {
-            if (FastWeb.INSTANCE.getMode() == FastWeb.Mode.Vanilla) {
+            if (FastWeb.INSTANCE.getMode().getValue() == FastWeb.Mode.Vanilla) {
                 ci.cancel();
             }
         }
-
     }
-
 }
