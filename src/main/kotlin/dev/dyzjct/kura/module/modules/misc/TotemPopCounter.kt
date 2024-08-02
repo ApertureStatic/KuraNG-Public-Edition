@@ -1,13 +1,13 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import dev.dyzjct.kura.event.events.TickEvent
-import dev.dyzjct.kura.manager.NotificationManager
-import dev.dyzjct.kura.event.eventbus.safeEventListener
 import base.utils.chat.ChatUtil
 import base.utils.sound.SoundPlayer
 import dev.dyzjct.kura.Kura
+import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.event.events.TickEvent
 import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.FriendManager
+import dev.dyzjct.kura.manager.NotificationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.hud.NotificationHUD
@@ -79,7 +79,7 @@ object TotemPopCounter : Module(
 
         safeEventListener<TickEvent.Pre> {
             playerList.forEach {
-                if (!EntityManager.players.contains(it.key)) {
+                if (!EntityManager.players.contains(it.key) && it.key.isDead) {
                     if (it.key.name.string != player.name.string) {
                         if (mode.value == Mode.Chat || mode.value == Mode.Both) {
                             ChatUtil.sendMessage("${ChatUtil.GREEN}${it.key.name.string} died after popped ${ChatUtil.RED}${it.value} ${ChatUtil.GREEN} totems!")
