@@ -2,6 +2,7 @@ package dev.dyzjct.kura.module.modules.player
 
 import base.utils.block.BlockUtil
 import base.utils.block.BlockUtil.checkNearBlocksExtended
+import base.utils.entity.EntityUtils.spoofSneak
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.toVec3dCenter
@@ -33,6 +34,7 @@ object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category 
     private var strictRotate by bsetting("StrictRotate", false).isTrue(rotate)
     private var rotateSide by bsetting("RotateSide", false).isTrue(rotate)
     private var allowShift by bsetting("AllowShift", false)
+    private var spoofSneak by bsetting("SpoofSneak", true)
     private var tower by bsetting("Tower", true)
     private var safewalk by bsetting("SafeWalk", true)
     private var render by bsetting("Render", true)
@@ -114,33 +116,40 @@ object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category 
                             }
                             val oldSlot = player.inventory.selectedSlot
                             player.inventory.selectedSlot = slot.hotbarSlot
-                            if (playerController.interactBlock(
-                                    player, Hand.MAIN_HAND, BlockHitResult(
-                                        currentblock.position.toVec3dCenter(),
-                                        currentblock.facing,
-                                        currentblock.position,
-                                        false
-                                    )
-                                ) == ActionResult.SUCCESS
-                            ) {
-                                connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
-                                if (jumped && testjump) {
-                                    player.setVelocity(0.0, -0.14, 0.0)
-                                    connection.sendPacket(
-                                        PlayerMoveC2SPacket.PositionAndOnGround(
-                                            player.x,
-                                            player.y - 0.14,
-                                            player.z,
-                                            player.onGround
+                            fun place() {
+                                if (playerController.interactBlock(
+                                        player, Hand.MAIN_HAND, BlockHitResult(
+                                            currentblock.position.toVec3dCenter(),
+                                            currentblock.facing,
+                                            currentblock.position,
+                                            false
                                         )
-                                    )
+                                    ) == ActionResult.SUCCESS
+                                ) {
+                                    connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
+                                    if (jumped && testjump) {
+                                        player.setVelocity(0.0, -0.14, 0.0)
+                                        connection.sendPacket(
+                                            PlayerMoveC2SPacket.PositionAndOnGround(
+                                                player.x,
+                                                player.y - 0.14,
+                                                player.z,
+                                                player.onGround
+                                            )
+                                        )
+                                    }
+                                    if (!ignorer) {
+                                        PlaceRender.renderBlocks[currentblock.position.offset(currentblock.facing)] =
+                                            System.currentTimeMillis()
+                                    }
                                 }
-                                if (!ignorer) {
-                                    PlaceRender.renderBlocks[currentblock.position.offset(currentblock.facing)] =
-                                        System.currentTimeMillis()
-                                }
+                                player.inventory.selectedSlot = oldSlot
                             }
-                            player.inventory.selectedSlot = oldSlot
+                            if (spoofSneak) player.spoofSneak {
+                                place()
+                            } else {
+                                place()
+                            }
 //                                sendSequencedPacket(world) {
 //                                    PlayerInteractBlockC2SPacket(
 //                                        Hand.MAIN_HAND, BlockHitResult(
