@@ -17,7 +17,7 @@ import dev.dyzjct.kura.module.modules.render.PlaceRender
 import dev.dyzjct.kura.system.render.graphic.Render2DEngine
 import dev.dyzjct.kura.system.render.graphic.Render3DEngine
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
-import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
+import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationTo
 import net.minecraft.item.BlockItem
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket

@@ -1,18 +1,27 @@
-package dev.dyzjct.kura.utils.math
+package dev.dyzjct.kura.utils.rotation
 
-import dev.dyzjct.kura.utils.animations.toDegree
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import base.utils.Wrapper
 import base.utils.entity.EntityUtils.eyePosition
-import base.utils.world.getMiningSide
-import net.minecraft.client.network.ClientPlayerEntity
-import net.minecraft.entity.Entity
-import net.minecraft.util.math.Direction
-import net.minecraft.util.math.Vec3d
 import base.utils.math.toBlockPos
 import base.utils.math.vector.Vec2f
+import base.utils.world.getMiningSide
+import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.event.events.PacketEvents
+import dev.dyzjct.kura.module.modules.movement.Blink
+import dev.dyzjct.kura.utils.animations.toDegree
+import net.minecraft.client.network.ClientPlayerEntity
+import net.minecraft.entity.Entity
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
+import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket
+import net.minecraft.util.math.Direction
+import net.minecraft.util.math.Vec3d
 import kotlin.math.*
 
-object RotationUtils {
+object RotationUtils : AlwaysListening {
+    private var actualServerRotation = Rotation.ZERO
+    private var theoreticalServerRotation = Rotation.ZERO
     fun calcAbsAngleDiff(a: Float, b: Float): Float {
         return abs(a - b) % 180.0f
     }
@@ -81,6 +90,19 @@ object RotationUtils {
             player.pos.add(0.0, player.getEyeHeight(player.pose).toDouble(), 0.0),
             posToBetter ?: posTo
         )
+    }
+
+    fun SafeClientEvent.getFixedRotationTo(posTo: Vec3d, side: Boolean = false): Rotation {
+        var posToBetter: Vec3d? = null
+        if (side) getMiningSide(posTo.toBlockPos())?.let { side ->
+            posToBetter = posTo.toBlockPos().offset(side).toCenterPos()
+                .add(Vec3d(side.opposite.vector.x * 0.5, side.opposite.vector.y * 0.5, side.opposite.vector.z * 0.5))
+        }
+        val rotation = getRotationTo(
+            player.pos.add(0.0, player.getEyeHeight(player.pose).toDouble(), 0.0),
+            posToBetter ?: posTo
+        )
+        return Rotation(rotation.x,rotation.y).fixedSensitivity()
     }
 
     fun SafeClientEvent.getYawTo(posTo: Vec3d): Float {
@@ -176,4 +198,40 @@ object RotationUtils {
             Direction.WEST -> 90.0f
             else -> 0.0f
         }
+
+    val gcd: Double
+        get() {
+            val f = Wrapper.minecraft.options.mouseSensitivity.value * 0.6F.toDouble() + 0.2F.toDouble()
+            return f * f * f * 8.0 * 0.15F
+        }
+
+
+    val serverRotation: Rotation
+        get() = if (Blink.packets.isNotEmpty()) theoreticalServerRotation else actualServerRotation
+
+    init {
+        safeEventListener<PacketEvents.Send> {
+            val rotation = when (val packet = it.packet) {
+                is PlayerMoveC2SPacket -> {
+                    // If we are not changing the look, we don't need to update the rotation
+                    // but, we want to handle slow start triggers
+                    if (!packet.changeLook) {
+                        return@safeEventListener
+                    }
+
+                    Rotation(packet.yaw, packet.pitch)
+                }
+
+                is PlayerPositionLookS2CPacket -> Rotation(packet.yaw, packet.pitch)
+                else -> return@safeEventListener
+            }
+
+            // This normally applies to Modules like Blink, BadWifi, etc.
+            if (!it.cancelled) {
+                actualServerRotation = rotation
+            }
+
+            theoreticalServerRotation = rotation
+        }
+    }
 }

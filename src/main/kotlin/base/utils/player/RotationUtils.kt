@@ -2,7 +2,7 @@ package base.utils.player
 
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.Wrapper
-import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
+import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationTo
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d

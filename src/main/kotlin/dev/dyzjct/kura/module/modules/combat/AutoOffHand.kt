@@ -11,7 +11,6 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.screen.ScreenHandlerContext
 import net.minecraft.screen.slot.SlotActionType
-import net.minecraft.util.math.Vec3d
 import java.util.concurrent.atomic.AtomicInteger
 
 object AutoOffHand : Module(
@@ -52,7 +51,8 @@ object AutoOffHand : Module(
     private fun SafeClientEvent.legitBypass(slot: Int) {
         runCatching {
             if (strict.value) {
-                player.velocity = Vec3d.ZERO
+                player.velocity.x = 0.0
+                player.velocity.z = 0.0
                 player.movementSpeed = 0.0f
             }
             playerController.clickSlot(player.currentScreenHandler.syncId, slot, 0, SlotActionType.PICKUP, player)

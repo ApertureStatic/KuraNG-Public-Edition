@@ -4,7 +4,7 @@ import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.combat.getTarget
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.utils.math.RotationUtils.getRotationToEntity
+import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationToEntity
 import net.minecraft.entity.Entity
 import kotlin.math.abs
 

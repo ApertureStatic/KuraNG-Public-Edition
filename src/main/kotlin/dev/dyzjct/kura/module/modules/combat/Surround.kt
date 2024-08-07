@@ -46,7 +46,7 @@ import dev.dyzjct.kura.system.util.collections.EnumMap
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.extension.sq
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
-import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
+import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationTo
 import it.unimi.dsi.fastutil.longs.Long2LongMaps
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet

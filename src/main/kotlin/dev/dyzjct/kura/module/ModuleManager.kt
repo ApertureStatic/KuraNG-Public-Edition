@@ -61,6 +61,7 @@ object ModuleManager : AlwaysListening {
         registerModule(LoadingMenu)
         registerModule(Sound)
         registerModule(CombatSystem)
+        registerModule(AntiCheat)
     }
 
     private fun loadCategoryCombat() {
@@ -137,7 +138,6 @@ object ModuleManager : AlwaysListening {
         registerModule(HitboxDesync)
         registerModule(AntiMinePlace)
         registerModule(AntiHunger)
-        registerModule(HotbarSwapper)
     }
 
     private fun loadCategoryRender() {

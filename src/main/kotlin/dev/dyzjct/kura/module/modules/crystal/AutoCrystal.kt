@@ -68,8 +68,9 @@ import dev.dyzjct.kura.utils.extension.synchronized
 import dev.dyzjct.kura.utils.extension.toDegree
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.findItemInInventory
-import dev.dyzjct.kura.utils.math.RotationUtils
-import dev.dyzjct.kura.utils.math.RotationUtils.normalizeAngle
+import dev.dyzjct.kura.utils.rotation.Rotation
+import dev.dyzjct.kura.utils.rotation.RotationUtils
+import dev.dyzjct.kura.utils.rotation.RotationUtils.normalizeAngle
 import it.unimi.dsi.fastutil.ints.Int2LongMaps
 import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap
@@ -393,7 +394,8 @@ object AutoCrystal : Module(
                 } else {
                     val clamped = diff.coerceIn(-yawSpeed.value, yawSpeed.value)
                     val newYaw = normalizeAngle(CrystalManager.rotation.x + clamped)
-                    RotationManager.rotationTo(newYaw, it.y)
+                    val fixedRotation = Rotation(newYaw,it.y).fixedSensitivity()
+                    RotationManager.rotationTo(fixedRotation.yaw, fixedRotation.pitch)
                 }
                 flagged = rotateDiff.value > 0 && abs(diff) > rotateDiff.value
             }

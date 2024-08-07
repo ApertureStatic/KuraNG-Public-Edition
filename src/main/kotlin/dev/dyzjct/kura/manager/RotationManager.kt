@@ -8,7 +8,9 @@ import base.utils.concurrent.threads.runSafe
 import base.utils.math.toVec3dCenter
 import base.utils.math.vector.Vec2f
 import dev.dyzjct.kura.utils.TimerUtils
-import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
+import dev.dyzjct.kura.utils.rotation.Rotation
+import dev.dyzjct.kura.utils.rotation.RotationUtils.getFixedRotationTo
+import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationTo
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
@@ -64,10 +66,17 @@ object RotationManager : AlwaysListening {
     }
 
     @JvmStatic
+    fun rotationTo(rotation: Rotation) {
+        rotateYaw = rotation.yaw
+        rotatePitch = rotation.pitch
+        resetTimer.reset()
+    }
+
+    @JvmStatic
     fun rotationTo(blockPos: BlockPos, side: Boolean = false) {
         runSafe {
-            rotateYaw = getRotationTo(blockPos.toVec3dCenter(), side).x
-            rotatePitch = getRotationTo(blockPos.toVec3dCenter(), side).y
+            rotateYaw = getFixedRotationTo(blockPos.toVec3dCenter(), side).yaw
+            rotatePitch = getFixedRotationTo(blockPos.toVec3dCenter(), side).pitch
             resetTimer.reset()
         }
     }
@@ -75,8 +84,8 @@ object RotationManager : AlwaysListening {
     @JvmStatic
     fun rotationTo(vec3d: Vec3d, side: Boolean = false) {
         runSafe {
-            rotateYaw = getRotationTo(vec3d, side).x
-            rotatePitch = getRotationTo(vec3d, side).y
+            rotateYaw = getFixedRotationTo(vec3d, side).yaw
+            rotatePitch = getFixedRotationTo(vec3d, side).pitch
             resetTimer.reset()
         }
     }

@@ -36,6 +36,7 @@ class Kura : AlwaysListening {
             if (hasInit) return
             Thread.currentThread().priority = Thread.MAX_PRIORITY
             LagCompensator.call()
+            BackgroundScope.start()
             EventListenerManager.call()
             ModuleManager.init()
             CommandManager.onInit()
@@ -53,7 +54,6 @@ class Kura : AlwaysListening {
             BlockFinderManager.onInit()
             SphereCalculatorManager.onInit()
             DisablerManager.onInit()
-            BackgroundScope.start()
 
             ClickGui.disable()
             HUDEditor.disable()

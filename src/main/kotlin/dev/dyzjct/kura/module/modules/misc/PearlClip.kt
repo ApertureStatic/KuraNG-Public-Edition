@@ -10,7 +10,7 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.combat.PearlFucker
-import dev.dyzjct.kura.utils.math.RotationUtils.getRotationTo
+import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationTo
 import net.minecraft.block.Blocks
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket
@@ -26,6 +26,8 @@ object PearlClip : Module(
     private val one by bsetting("OneHeight", true)
     private val safe = msetting("SafeMode", SafeMode.Center)
     private val boundary by bsetting("Boundary", false).enumIs(safe, SafeMode.Smart)
+    private val multiple by isetting("Multiple", 50, 1, 100).enumIs(safe, SafeMode.Smart).isTrue { boundary }
+    private val maxVL by fsetting("MaxVL", 6.0f, 0.1f, 8.0f).enumIs(safe, SafeMode.Smart).isTrue { boundary }
 
 
     init {
@@ -62,9 +64,9 @@ object PearlClip : Module(
                         Direction.WEST -> (centerPos.x - playerPos.x).toFloat()
                         Direction.SOUTH -> (centerPos.z - playerPos.z).toFloat()
                         else -> (centerPos.z - playerPos.z).toFloat()
-                    }) * 50
+                    }) * multiple
                     return if (boundary) {
-                        if (vl > 6f) 6f else if (vl < -6f) -6f else vl
+                        if (vl > maxVL) maxVL else if (vl < -maxVL) -maxVL else vl
                     } else vl
                 }
 
@@ -77,7 +79,7 @@ object PearlClip : Module(
                     SafeMode.Smart -> pitch -= smartValue(clipDirection)
                 }
 
-                angle = if ((angle + fix) > 180.0f) angle - fix else angle + fix
+                angle = if ((angle + fix) > 89.0f) angle - fix else angle + fix
                 RotationManager.rotationTo(angle, pitch)
                 RotationManager.stopRotation()
                 sendPlayerRotation(angle, pitch, player.onGround)
