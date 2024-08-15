@@ -16,6 +16,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket
 import net.minecraft.util.math.Direction
+import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
 import kotlin.math.*
 
@@ -75,6 +76,24 @@ object RotationUtils : AlwaysListening {
         return getRotationTo(entity.pos)
     }
 
+    fun SafeClientEvent.fovCheck(pos: Vec3d, fov: Float): Boolean {
+        return abs(normalizeAngle(player.yaw) - getRotationTo(pos).x) <= fov
+    }
+
+    fun SafeClientEvent.getPlayerDirection(): Direction {
+        val directionNum = MathHelper.floor((player.renderYaw * 4.0f / 360.0f).toDouble() + 0.5) and 3
+        if (directionNum == 0) {
+            return Direction.SOUTH
+        }
+        if (directionNum == 1) {
+            return Direction.WEST
+        }
+        if (directionNum == 2) {
+            return Direction.NORTH
+        }
+        return Direction.EAST
+    }
+
     /**
      * Get rotation from a player position to another position vector
      *
@@ -102,7 +121,7 @@ object RotationUtils : AlwaysListening {
             player.pos.add(0.0, player.getEyeHeight(player.pose).toDouble(), 0.0),
             posToBetter ?: posTo
         )
-        return Rotation(rotation.x,rotation.y).fixedSensitivity()
+        return Rotation(rotation.x, rotation.y).fixedSensitivity()
     }
 
     fun SafeClientEvent.getYawTo(posTo: Vec3d): Float {
@@ -232,6 +251,49 @@ object RotationUtils : AlwaysListening {
             }
 
             theoreticalServerRotation = rotation
+        }
+    }
+
+    fun rotMove(target: Float, current: Float, diff: Float): Float {
+        return rotMoveNoRandom(target, current, diff)
+    }
+
+    fun rotMoveNoRandom(target: Float, current: Float, diff: Float): Float {
+        var delta: Float
+        if (target > current) {
+            val dist1 = target - current
+            val dist2 = current + 360 - target
+            delta = if (dist1 > dist2) {  // 另一边移动更近
+                -current - 360 + target
+            } else {
+                dist1
+            }
+        } else if (target < current) {
+            val dist1 = current - target
+            val dist2 = target + 360 - current
+            delta = if (dist1 > dist2) {  // 另一边移动更近
+                current + 360 + target
+            } else {
+                -dist1
+            }
+        } else {
+            return current
+        }
+
+        delta = normalizeAngle(delta)
+
+        return if (abs(delta.toDouble()) < 0.1 * Math.random() + 0.1) {
+            current
+        } else if (abs(delta.toDouble()) <= diff) {
+            current + delta
+        } else {
+            if (delta < 0) {
+                current - diff
+            } else if (delta > 0) {
+                current + diff
+            } else {
+                current
+            }
         }
     }
 }

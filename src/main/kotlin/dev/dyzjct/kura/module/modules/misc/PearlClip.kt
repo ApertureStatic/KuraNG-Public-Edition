@@ -2,7 +2,6 @@ package dev.dyzjct.kura.module.modules.misc
 
 import base.utils.entity.EntityUtils.autoCenter
 import base.utils.extension.sendSequencedPacket
-import base.utils.player.RotationUtils.getPlayerDirection
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
 import dev.dyzjct.kura.manager.RotationManager
@@ -10,6 +9,7 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.combat.PearlFucker
+import dev.dyzjct.kura.utils.rotation.RotationUtils.getPlayerDirection
 import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationTo
 import net.minecraft.block.Blocks
 import net.minecraft.item.Items

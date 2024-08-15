@@ -6,7 +6,6 @@ import base.utils.entity.EntityUtils.spoofSneak
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.toVec3dCenter
-import base.utils.player.RotationUtils
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.eventbus.StageType
 import dev.dyzjct.kura.event.eventbus.safeEventListener
@@ -109,8 +108,8 @@ object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category 
                             lastPos?.let {
                                 if (rotate.value) {
                                     event.setRotation(
-                                        RotationUtils.getLegitRotations(it.toVec3dCenter())[0],
-                                        RotationUtils.getLegitRotations(it.toVec3dCenter())[1]
+                                        getRotationTo(it.toVec3dCenter()).x,
+                                        getRotationTo(it.toVec3dCenter()).y
                                     )
                                 }
                             }

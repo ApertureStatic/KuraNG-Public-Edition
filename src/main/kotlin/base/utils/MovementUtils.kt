@@ -2,7 +2,7 @@ package base.utils
 
 import dev.dyzjct.kura.utils.animations.toRadian
 import dev.dyzjct.kura.utils.extension.toDegree
-import base.utils.player.RotationUtils
+import dev.dyzjct.kura.utils.rotation.RotationUtils.normalizeAngle
 import net.minecraft.client.input.Input
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.client.option.GameOptions
@@ -24,7 +24,7 @@ object MovementUtils {
     ): Double {
         val moveYaw = if (moveForward == 0.0f && moveStrafe == 0.0f) 0.0
         else atan2(moveForward, moveStrafe).toDegree() - 90.0
-        return RotationUtils.normalizeAngle(yaw + moveYaw).toRadian()
+        return normalizeAngle(yaw + moveYaw).toRadian()
     }
 
     fun GameOptions.resetMove() {

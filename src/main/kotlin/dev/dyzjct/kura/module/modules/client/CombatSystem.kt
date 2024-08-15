@@ -35,6 +35,8 @@ object CombatSystem : Module(
     val interactRange by dsetting("InteractRange", 6.0, 0.0, 8.0)
     val kaRange by dsetting("KARange", 6.0, 0.0, 8.0)
     val renderRotate by bsetting("RenderRotate", true)
+    val smooth by bsetting("SmoothRotation",false)
+    val rotationSpeed by isetting("RotationSpeed", 45, 1, 180).isTrue { smooth }
     private val swing by bsetting("Swing", true)
     private val packetSwing by bsetting("PacketSwing", true).isTrue { swing }
     private val swingHand by msetting("SwingHand", SwingHand.MainHand).isTrue { swing }

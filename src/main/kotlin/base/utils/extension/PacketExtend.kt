@@ -1,19 +1,21 @@
 package base.utils.extension
 
-import com.google.common.collect.Lists
-import dev.dyzjct.kura.manager.CrystalManager
-import dev.dyzjct.kura.module.modules.player.PacketMine.BlockData
-import dev.dyzjct.kura.module.modules.player.PacketMine.PacketType
-import dev.dyzjct.kura.module.modules.render.PlaceRender
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.block.BlockUtil
 import base.utils.block.BlockUtil.getNeighbor
 import base.utils.concurrent.threads.runSynchronized
 import base.utils.entity.EntityUtils.eyePosition
-import base.utils.player.RotationUtils
+import base.utils.math.toBlockPos
+import base.utils.math.toVec3d
 import base.utils.player.updateController
 import base.utils.world.getMiningSide
+import com.google.common.collect.Lists
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.manager.CrystalManager
+import dev.dyzjct.kura.module.modules.player.PacketMine.BlockData
+import dev.dyzjct.kura.module.modules.player.PacketMine.PacketType
+import dev.dyzjct.kura.module.modules.render.PlaceRender
+import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationTo
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import net.minecraft.client.network.SequencedPacketCreator
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.item.ItemStack
@@ -27,8 +29,6 @@ import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
-import base.utils.math.toBlockPos
-import base.utils.math.toVec3d
 
 fun fastPosDirection(
     pos: BlockPos,
@@ -141,8 +141,8 @@ fun SafeClientEvent.positionRotation(
         player.x,
         player.y + yOffset,
         player.z,
-        RotationUtils.getLegitRotations(blockPos.toVec3d())[0],
-        RotationUtils.getLegitRotations(blockPos.toVec3d())[1],
+        getRotationTo(blockPos.toVec3d()).x,
+        getRotationTo(blockPos.toVec3d()).y,
         onGround
     )
 }

@@ -15,6 +15,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ServerInfo;
+import net.minecraft.client.option.GraphicsMode;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.Icons;
@@ -28,6 +29,7 @@ import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -149,6 +151,16 @@ public abstract class MixinMinecraftClient {
         } catch (IOException ignored) {
         }
     }
+
+    /**
+     * @author nmsl mojang
+     * @reason fix inGameHud's Bug.
+     */
+    @Overwrite
+    public static boolean isFabulousGraphicsOrBetter() {
+        return !instance.gameRenderer.isRenderingPanorama() && instance.options.getGraphicsMode().getValue().getId() >= GraphicsMode.FABULOUS.getId() && !Kura.Companion.getOnDrawInGameHUD();
+    }
+
 
     @Inject(method = "setScreen", at = @At("HEAD"))
     public void onPreSetScreen(Screen screen, CallbackInfo ci) {
