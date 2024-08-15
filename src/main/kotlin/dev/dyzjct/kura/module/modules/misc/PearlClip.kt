@@ -25,8 +25,9 @@ object PearlClip : Module(
     private val bedRock by bsetting("BedRock", false)
     private val one by bsetting("OneHeight", true)
     private val safe = msetting("SafeMode", SafeMode.Center)
+    private val cpitch by fsetting("Pitch", 89f, 0f, 180f).enumIs(safe, SafeMode.Custom)
+    private val multiple by isetting("Multiple", 50, 1, 100).enumIs(safe, SafeMode.Smart)
     private val boundary by bsetting("Boundary", false).enumIs(safe, SafeMode.Smart)
-    private val multiple by isetting("Multiple", 50, 1, 100).enumIs(safe, SafeMode.Smart).isTrue { boundary }
     private val maxVL by fsetting("MaxVL", 6.0f, 0.1f, 8.0f).enumIs(safe, SafeMode.Smart).isTrue { boundary }
 
 
@@ -59,7 +60,7 @@ object PearlClip : Module(
                 fun smartValue(direction: Direction): Float {
                     val centerPos = player.blockPos.toCenterPos()
                     val playerPos = player.pos
-                    val vl = (when (direction) {
+                    val vl = (0.5f - when (direction) {
                         Direction.EAST -> (centerPos.x - playerPos.x).toFloat()
                         Direction.WEST -> (centerPos.x - playerPos.x).toFloat()
                         Direction.SOUTH -> (centerPos.z - playerPos.z).toFloat()
@@ -71,15 +72,17 @@ object PearlClip : Module(
                 }
 
                 var angle = getRotationTo(clipPos.toCenterPos()).x
-                var pitch = 75f
+                var pitch = 89f
                 val fix = 3f
 
                 when (safe.value) {
                     SafeMode.Center -> autoCenter()
                     SafeMode.Smart -> pitch -= smartValue(clipDirection)
+                    SafeMode.Custom -> pitch = cpitch
                 }
 
-                angle = if ((angle + fix) > 89.0f) angle - fix else angle + fix
+                angle = if ((angle + fix) > 180.0f) angle - fix else angle + fix
+
                 RotationManager.rotationTo(angle, pitch)
                 RotationManager.stopRotation()
                 sendPlayerRotation(angle, pitch, player.onGround)
@@ -113,6 +116,6 @@ object PearlClip : Module(
     }
 
     enum class SafeMode {
-        Center, Smart
+        Center, Smart, Custom
     }
 }

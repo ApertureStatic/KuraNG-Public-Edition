@@ -1,11 +1,11 @@
 package dev.dyzjct.kura.module.modules.client
 
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.eventbus.safeEventListener
-import dev.dyzjct.kura.event.events.player.PlayerMoveEvent
+import dev.dyzjct.kura.event.events.input.MovementInputEvent
+import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.utils.rotation.RotationUtils.normalizeAngle
+import net.minecraft.util.math.MathHelper
 import kotlin.math.abs
 
 
@@ -17,124 +17,74 @@ object AntiCheat : Module(
     private val ac by msetting("AntiCheat", AntiCheats.Vanilla)
     private val moveFix by msetting("MoveFix", MoveFix.NONE)
 
-    private var movementYaw: Float? = null
-    private var rotationYaw: Float? = null
-
     init {
-        safeEventListener<PlayerMoveEvent> {
+        safeEventListener<MovementInputEvent> { event ->
             if (ac == AntiCheats.GrimAC) {
                 when (moveFix) {
-                    MoveFix.NONE -> movementYaw =
-                        null
+                    MoveFix.GrimAC -> {
+                        RotationManager.rotateYaw?.let { yaw ->
+                            val forward = event.forward
+                            val strafe = event.sideways
 
-                    MoveFix.SILENT -> {
-                        movementYaw =
-                            getRotationYaw()
+                            val angle = MathHelper.wrapDegrees(Math.toDegrees(direction(player.yaw, forward, strafe)))
 
-                        val forward: Float = player.input.movementForward
-                        val strafe: Float = player.input.movementSideways
+                            if (forward == 0f && strafe == 0f) {
+                                return@safeEventListener
+                            }
 
-                        val angle: Double = wrapAngleTo180_double(
-                            Math.toDegrees(
-                                direction(
-                                    player.renderYaw,
-                                    forward.toDouble(),
-                                    strafe.toDouble()
-                                )
-                            )
-                        )
+                            var closestForward = 0f
+                            var closestStrafe = 0f
+                            var closestDifference = Float.MAX_VALUE
 
-                        if (forward == 0f && strafe == 0f) {
-                            return@safeEventListener
-                        }
+                            for (predictedForward in -1..1) {
+                                for (predictedStrafe in -1..1) {
+                                    if (predictedStrafe == 0 && predictedForward == 0) continue
 
-                        var closestForward = 0f
-                        var closestStrafe = 0f
-                        var closestDifference = Float.MAX_VALUE
-
-                        var predictedForward = -1f
-                        while (predictedForward <= 1f) {
-                            var predictedStrafe = -1f
-                            while (predictedStrafe <= 1f) {
-                                if (predictedStrafe == 0f && predictedForward == 0f) {
-                                    predictedStrafe += 1f
-                                    continue
-                                }
-                                movementYaw?.let {
-                                    val predictedAngle: Double = wrapAngleTo180_double(
+                                    val predictedAngle = MathHelper.wrapDegrees(
                                         Math.toDegrees(
-                                            direction(
-                                                movementYaw!!,
-                                                predictedForward.toDouble(),
-                                                predictedStrafe.toDouble()
-                                            )
+                                            direction(yaw, predictedForward.toFloat(), predictedStrafe.toFloat())
                                         )
                                     )
                                     val difference = abs(angle - predictedAngle)
 
                                     if (difference < closestDifference) {
                                         closestDifference = difference.toFloat()
-                                        closestForward = predictedForward
-                                        closestStrafe = predictedStrafe
+                                        closestForward = predictedForward.toFloat()
+                                        closestStrafe = predictedStrafe.toFloat()
                                     }
                                 }
-                                predictedStrafe += 1f
                             }
-                            predictedForward += 1f
-                        }
-                        player.input.movementForward = closestForward
-                        player.input.movementSideways = closestStrafe
-                    }
 
-                    MoveFix.STRICT -> movementYaw =
-                        getRotationYaw()
+                            event.forward = closestForward
+                            event.sideways = closestStrafe
+                        }
+                    }
                 }
             }
         }
     }
 
-    private fun SafeClientEvent.getRotationYaw(): Float {
-        rotationYaw?.let {
-            return normalizeAngle(
-                it
-            )
-        }
-        return normalizeAngle(player.renderYaw)
-    }
-
-    fun direction(rotationYaw: Float, moveForward: Double, moveStrafing: Double): Double {
-        var rotationYawCalced = rotationYaw
-        if (moveForward < 0f) rotationYawCalced += 180f
+    private fun direction(yaw: Float, moveForward: Float, moveStrafing: Float): Double {
+        var rotationYaw = yaw
+        if (moveForward < 0f) rotationYaw += 180f
 
         var forward = 1f
 
         if (moveForward < 0f) forward = -0.5f
         else if (moveForward > 0f) forward = 0.5f
 
-        if (moveStrafing > 0f) rotationYawCalced -= 90f * forward
-        if (moveStrafing < 0f) rotationYawCalced += 90f * forward
+        if (moveStrafing > 0f) rotationYaw -= 90f * forward
+        if (moveStrafing < 0f) rotationYaw += 90f * forward
 
-        return Math.toRadians(rotationYawCalced.toDouble())
-    }
-
-
-    private fun wrapAngleTo180_double(value: Double): Double {
-        var calcValue = value
-        calcValue %= 360.0
-        if (calcValue >= 180.0) {
-            calcValue -= 360.0
-        }
-        if (calcValue < -180.0) {
-            calcValue += 360.0
-        }
-        return calcValue
+        return Math.toRadians(rotationYaw.toDouble())
     }
 
 
     enum class MoveFix {
-        NONE, SILENT, STRICT
+        NONE, GrimAC
     }
 
+    @Suppress("UNUSED")
     enum class AntiCheats {
         Vanilla, NCP, GrimAC
     }

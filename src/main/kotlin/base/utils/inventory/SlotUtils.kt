@@ -56,9 +56,11 @@ object SlotUtils {
     }
 
     private fun SafeClientEvent.creativeInventory(i: Int): Int {
-        return if (mc.currentScreen !is CreativeInventoryScreen || CreativeInventoryScreen.selectedTab != Registries.ITEM_GROUP[ItemGroups.INVENTORY]) -1 else survivalInventory(
-            i
-        )
+        return try {
+            if (mc.currentScreen !is CreativeInventoryScreen || CreativeInventoryScreen.selectedTab != Registries.ITEM_GROUP[ItemGroups.INVENTORY]) -1 else survivalInventory(
+                i
+            )
+        } catch (e:Exception) {1}
     }
 
     private fun genericContainer(i: Int, rows: Int): Int {

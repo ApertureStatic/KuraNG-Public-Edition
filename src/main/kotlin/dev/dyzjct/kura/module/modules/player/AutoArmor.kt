@@ -137,8 +137,10 @@ object AutoArmor : Module(
     }
 
     private fun swap(from: Int, armorSlotId: Int) {
-        InvUtils.move().from(from).toArmor(armorSlotId)
-        timer = delay.value
+        kotlin.runCatching {
+            InvUtils.move().from(from).toArmor(armorSlotId)
+            timer = delay.value
+        }
     }
 
     private fun SafeClientEvent.moveToEmpty(armorSlotId: Int) {

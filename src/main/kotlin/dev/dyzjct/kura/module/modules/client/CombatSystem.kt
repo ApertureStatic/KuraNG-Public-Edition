@@ -34,6 +34,7 @@ object CombatSystem : Module(
     val attackRange by dsetting("AttackRange", 6.0, 0.0, 8.0)
     val interactRange by dsetting("InteractRange", 6.0, 0.0, 8.0)
     val kaRange by dsetting("KARange", 6.0, 0.0, 8.0)
+    val renderRotate by bsetting("RenderRotate", true)
     private val swing by bsetting("Swing", true)
     private val packetSwing by bsetting("PacketSwing", true).isTrue { swing }
     private val swingHand by msetting("SwingHand", SwingHand.MainHand).isTrue { swing }
