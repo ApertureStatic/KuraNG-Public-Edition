@@ -28,7 +28,7 @@ object RotationManager : AlwaysListening {
     private val resetTimer = TimerUtils()
     var rotateYaw: Float? = null
     private var rotationYaw: Float? = null
-    private var rotatePitch: Float? = null
+    private var rotationPitch: Float? = null
     private var playerLastRotation: Rotation? = null
     private var motionTimer = TimerUtils()
     private var packetTimer = TimerUtils()
@@ -39,18 +39,18 @@ object RotationManager : AlwaysListening {
             if (event.stageType != StageType.END) return@safeEventListener
             if (stop) {
                 rotateYaw = null
-                rotatePitch = null
+                rotationPitch = null
                 rotationYaw = null
                 return@safeEventListener
             }
             if (resetTimer.passed(500)) {
                 rotateYaw = null
-                rotatePitch = null
+                rotationPitch = null
                 rotationYaw = null
                 return@safeEventListener
             }
             rotateYaw?.let { yaw ->
-                rotatePitch?.let { pitch ->
+                rotationPitch?.let { pitch ->
                     if (motionTimer.tickAndReset(rotationDelay())) {
                         val smoothedRotation = getSmoothRotation(
                             playerLastRotation ?: Rotation(player.yaw, player.pitch),
@@ -72,16 +72,16 @@ object RotationManager : AlwaysListening {
     private fun SafeClientEvent.setRotation(event: PacketEvents) {
         if (stop) {
             rotateYaw = null
-            rotatePitch = null
+            rotationPitch = null
             return
         }
         if (resetTimer.passed(500)) {
             rotateYaw = null
-            rotatePitch = null
+            rotationPitch = null
             return
         }
         rotateYaw?.let { yaw ->
-            rotatePitch?.let { pitch ->
+            rotationPitch?.let { pitch ->
                 if (packetTimer.tickAndReset(rotationDelay())) {
                     val smoothedRotation = getSmoothRotation(
                         playerLastRotation ?: Rotation(player.yaw, player.pitch),
@@ -160,7 +160,7 @@ object RotationManager : AlwaysListening {
     fun rotationTo(yaw: Float, pitch: Float) {
         val fixed = Rotation(yaw, pitch).fixedSensitivity()
         rotateYaw = fixed.yaw
-        rotatePitch = fixed.pitch
+        rotationPitch = fixed.pitch
         resetTimer.reset()
     }
 
@@ -168,14 +168,14 @@ object RotationManager : AlwaysListening {
     fun rotationTo(rotation: Vec2f) {
         val fixed = Rotation(rotation.x, rotation.y).fixedSensitivity()
         rotateYaw = fixed.yaw
-        rotatePitch = fixed.pitch
+        rotationPitch = fixed.pitch
         resetTimer.reset()
     }
 
     @JvmStatic
     fun rotationTo(rotation: Rotation) {
         rotateYaw = rotation.fixedSensitivity().yaw
-        rotatePitch = rotation.fixedSensitivity().pitch
+        rotationPitch = rotation.fixedSensitivity().pitch
         resetTimer.reset()
     }
 
@@ -183,7 +183,7 @@ object RotationManager : AlwaysListening {
     fun rotationTo(blockPos: BlockPos, side: Boolean = false) {
         runSafe {
             rotateYaw = getFixedRotationTo(blockPos.toVec3dCenter(), side).yaw
-            rotatePitch = getFixedRotationTo(blockPos.toVec3dCenter(), side).pitch
+            rotationPitch = getFixedRotationTo(blockPos.toVec3dCenter(), side).pitch
             resetTimer.reset()
         }
     }
@@ -192,7 +192,7 @@ object RotationManager : AlwaysListening {
     fun rotationTo(vec3d: Vec3d, side: Boolean = false) {
         runSafe {
             rotateYaw = getFixedRotationTo(vec3d, side).yaw
-            rotatePitch = getFixedRotationTo(vec3d, side).pitch
+            rotationPitch = getFixedRotationTo(vec3d, side).pitch
             resetTimer.reset()
         }
     }
