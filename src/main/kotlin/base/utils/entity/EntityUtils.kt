@@ -1,14 +1,14 @@
 package base.utils.entity
 
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
-import dev.dyzjct.kura.system.util.interfaces.MinecraftWrapper
 import base.utils.Wrapper
 import base.utils.block.BlockUtil.canSeeEntity
 import base.utils.concurrent.threads.runSafe
 import base.utils.math.distanceSqTo
 import base.utils.math.toBlockPos
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.FriendManager
+import dev.dyzjct.kura.system.util.interfaces.MinecraftWrapper
 import dev.dyzjct.kura.utils.animations.fastFloor
 import dev.dyzjct.kura.utils.animations.sq
 import net.minecraft.block.*
@@ -177,7 +177,9 @@ object EntityUtils : MinecraftWrapper {
     }
 
     fun SafeClientEvent.isBurrowBlock(pos: BlockPos, target: Entity = player): Boolean {
-        return (world.getBlockState(pos).block == Blocks.OBSIDIAN || world.getBlockState(pos).block == Blocks.CRYING_OBSIDIAN) && target.boundingBox.intersects(
+        return (world.getBlockState(pos).block == Blocks.OBSIDIAN || world.getBlockState(pos).block == Blocks.CRYING_OBSIDIAN || world.getBlockState(
+            pos
+        ).block == Blocks.BEDROCK) && target.boundingBox.intersects(
             Box(pos)
         )
     }

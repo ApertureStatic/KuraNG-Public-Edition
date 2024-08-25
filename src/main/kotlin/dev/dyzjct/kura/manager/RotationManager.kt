@@ -10,6 +10,7 @@ import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.event.events.PacketEvents
 import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
 import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.client.CombatSystem.rotationDelay
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.rotation.Rotation
 import dev.dyzjct.kura.utils.rotation.RotationUtils.getFixedRotationTo
@@ -17,14 +18,20 @@ import dev.dyzjct.kura.utils.rotation.RotationUtils.normalizeAngle
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sqrt
 
 
 object RotationManager : AlwaysListening {
     private val resetTimer = TimerUtils()
     var rotateYaw: Float? = null
-    private var rotatePitch: Float? = null
     private var rotationYaw: Float? = null
-    private var smoothed = false
+    private var rotatePitch: Float? = null
+    private var playerLastRotation: Rotation? = null
+    private var motionTimer = TimerUtils()
+    private var packetTimer = TimerUtils()
     private var stop = false
 
     fun onInit() {
@@ -44,10 +51,14 @@ object RotationManager : AlwaysListening {
             }
             rotateYaw?.let { yaw ->
                 rotatePitch?.let { pitch ->
-                    val clamped = 1.coerceIn(-CombatSystem.rotationSpeed, CombatSystem.rotationSpeed)
-                    event.setRotation(
-                        normalizeAngle(yaw + if (CombatSystem.smooth) clamped else 0), pitch
-                    )
+                    if (motionTimer.tickAndReset(rotationDelay())) {
+                        val smoothedRotation = getSmoothRotation(
+                            playerLastRotation ?: Rotation(player.yaw, player.pitch),
+                            Rotation(yaw, pitch),
+                            CombatSystem.rotationSpeed
+                        )
+                        event.setRotation(smoothedRotation.yaw, pitch)
+                    }
                 }
             }
         }
@@ -71,15 +82,70 @@ object RotationManager : AlwaysListening {
         }
         rotateYaw?.let { yaw ->
             rotatePitch?.let { pitch ->
-                val clamped = 1.coerceIn(-CombatSystem.rotationSpeed, CombatSystem.rotationSpeed)
-                when (event.packet) {
-                    is PlayerMoveC2SPacket -> {
-                        event.packet.yaw = normalizeAngle(yaw + if (CombatSystem.smooth) clamped else 0)
-                        event.packet.pitch = pitch
+                if (packetTimer.tickAndReset(rotationDelay())) {
+                    val smoothedRotation = getSmoothRotation(
+                        playerLastRotation ?: Rotation(player.yaw, player.pitch),
+                        Rotation(yaw, pitch),
+                        CombatSystem.rotationSpeed
+                    )
+                    when (event.packet) {
+                        is PlayerMoveC2SPacket -> {
+                            event.packet.yaw = smoothedRotation.yaw
+                            event.packet.pitch = pitch
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun getSmoothRotation(lastRotation: Rotation, targetRotation: Rotation, speed: Double): Rotation {
+        var yaw = targetRotation.yaw
+        var pitch = targetRotation.pitch
+        val lastYaw = lastRotation.yaw
+        val lastPitch = lastRotation.pitch
+
+        if (speed != 0.0) {
+            val rotationSpeed = speed.toFloat()
+
+            val deltaYaw = normalizeAngle(targetRotation.yaw - lastRotation.yaw)
+            val deltaPitch = (pitch - lastPitch).toDouble()
+
+            val distance = sqrt(deltaYaw * deltaYaw + deltaPitch * deltaPitch)
+            val distributionYaw = abs(deltaYaw / distance)
+            val distributionPitch = abs(deltaPitch / distance)
+
+            val maxYaw = rotationSpeed * distributionYaw
+            val maxPitch = rotationSpeed * distributionPitch
+
+            val moveYaw = max(min(deltaYaw.toDouble(), maxYaw), -maxYaw).toFloat()
+            val movePitch = max(min(deltaPitch, maxPitch), -maxPitch).toFloat()
+
+            yaw = lastYaw + moveYaw
+            pitch = lastPitch + movePitch
+        }
+
+        val randomise = Math.random() > 0.8
+
+        for (i in 1..(2 + Math.random() * 2).toInt()) {
+            if (randomise) {
+                yaw += ((Math.random() - 0.5) / 100000000).toFloat()
+                pitch -= (Math.random() / 200000000).toFloat()
+            }
+
+            /*
+             * Fixing GCD
+             */
+            val rotations = Rotation(yaw, pitch).fixedSensitivity()
+
+            /*
+             * Setting rotations
+             */
+            yaw = rotations.yaw
+            pitch = (-90).coerceAtLeast(90.coerceAtMost(rotations.yaw.toInt())).toFloat()
+        }
+        playerLastRotation = Rotation(yaw, pitch)
+        return Rotation(yaw, pitch)
     }
 
     fun stopRotation() {

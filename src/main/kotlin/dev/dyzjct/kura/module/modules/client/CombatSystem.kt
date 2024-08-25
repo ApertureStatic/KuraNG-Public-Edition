@@ -3,6 +3,7 @@ package dev.dyzjct.kura.module.modules.client
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.hud.SpeedHUD.speed
 import dev.dyzjct.kura.module.modules.combat.AnchorAura
 import dev.dyzjct.kura.module.modules.combat.KillAura
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
@@ -35,8 +36,9 @@ object CombatSystem : Module(
     val interactRange by dsetting("InteractRange", 6.0, 0.0, 8.0)
     val kaRange by dsetting("KARange", 6.0, 0.0, 8.0)
     val renderRotate by bsetting("RenderRotate", true)
-    val smooth by bsetting("SmoothRotation",false)
-    val rotationSpeed by isetting("RotationSpeed", 45, 1, 180).isTrue { smooth }
+    val rotationSpeed by dsetting("RotationSpeed", 45.0, 0.0, 100.0)
+    private val stopDelay by isetting("RotationDelay", 0, 0, 400)
+    private val motionDelay by isetting("RotateDelayOnMotion", 0, 0, 1000)
     private val swing by bsetting("Swing", true)
     private val packetSwing by bsetting("PacketSwing", true).isTrue { swing }
     private val swingHand by msetting("SwingHand", SwingHand.MainHand).isTrue { swing }
@@ -78,6 +80,10 @@ object CombatSystem : Module(
             )
             player.resetLastAttackedTicks()
         }
+    }
+
+    fun SafeClientEvent.rotationDelay(): Int {
+        return if (speed() > 15) motionDelay else stopDelay
     }
 
     enum class SpoofMode {

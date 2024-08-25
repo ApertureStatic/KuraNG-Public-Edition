@@ -2,9 +2,11 @@ package dev.dyzjct.kura.module.modules.player
 
 import base.utils.block.BlockUtil
 import base.utils.block.BlockUtil.checkNearBlocksExtended
+import base.utils.combat.getPredictedTarget
 import base.utils.entity.EntityUtils.spoofSneak
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
+import base.utils.math.toBlockPos
 import base.utils.math.toVec3dCenter
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.eventbus.StageType
@@ -12,14 +14,15 @@ import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.event.events.player.PlayerMoveEvent
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.hud.SpeedHUD.speed
 import dev.dyzjct.kura.module.modules.render.PlaceRender
 import dev.dyzjct.kura.system.render.graphic.Render2DEngine
 import dev.dyzjct.kura.system.render.graphic.Render3DEngine
+import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationTo
 import net.minecraft.item.BlockItem
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
@@ -35,23 +38,40 @@ object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category 
     private var allowShift by bsetting("AllowShift", false)
     private var spoofSneak by bsetting("SpoofSneak", true)
     private var tower by bsetting("Tower", true)
+    private var telly by bsetting("Telly", false)
+    private var tellyTick by isetting("TellyTick", 300, 100, 500).isTrue { telly }
+
+    //    private var tellyStartTick by isetting("Telly start", 3, 0, 11, 1).isTrue { telly }
+//    private var tellyStopTick by isetting("Telly stop", 8, 0, 11, 1).isTrue { telly }
+
     private var safewalk by bsetting("SafeWalk", true)
     private var render by bsetting("Render", true)
     private var ignorer by bsetting("IgnorerRender", true)
-    private var testjump by bsetting("TestJump", true)
     private var currentblock: BlockUtil.BlockPosWithFacing? = null
     private var spoofSlot: HotbarSlot? = null
-    private var jumped = false
     private var towerTick = 0
+    private var tellyTickTimer = TimerUtils()
     private var lastPos: BlockPos? = null
+
+    private var tellyed = false
 
     override fun onEnable() {
         spoofSlot = null
+        lastPos = null
+        tellyed = false
         towerTick = 0
     }
 
     init {
         onMotion { event ->
+            if (player.onGround) {
+                if (speed() > 20) {
+                    player.velocity.x = 0.0
+                    player.velocity.z = 0.0
+                }
+                tellyTickTimer.reset()
+            }
+            if (telly && !tellyTickTimer.passedMs(tellyTick.toLong())) return@onMotion
             lastPos?.let {
                 if (rotate.value) {
                     event.setRotation(
@@ -62,7 +82,6 @@ object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category 
             }
             when (event.stageType) {
                 StageType.START -> {
-                    jumped = false
                     spoofSlot = getBlockSlot() ?: return@onMotion
                     if (strictRotate) player.isSprinting = false
                     if (countValidBlocks() <= 0) {
@@ -72,9 +91,15 @@ object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category 
                     currentblock = null
                     if (player.isSneaking && !allowShift) return@onMotion
 
-                    val playerPos = player.blockPos.add(0, -1, 0)
-                    if (!world.getBlockState(playerPos).isReplaceable) return@onMotion
-                    currentblock = checkNearBlocksExtended(playerPos)?.apply {
+                    val predictedPos = getPredictedTarget(player, 3).pos.toBlockPos().add(0, -1, 0)
+
+                    if (!world.getBlockState(predictedPos).isReplaceable) return@onMotion
+                    checkNearBlocksExtended(predictedPos)?.let {
+                        if (lastPos == null || it.position.y <= lastPos!!.y || it.position == lastPos!!.up() || !telly) currentblock =
+                            it
+                    } ?: return@onMotion
+
+                    currentblock = checkNearBlocksExtended(predictedPos)?.apply {
                         lastPos = position
                     } ?: return@onMotion
                     if (world.getBlockCollisions(
@@ -83,22 +108,12 @@ object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category 
                         ).iterator().hasNext()
                     ) return@onMotion
                     if (player.input.jumping && tower) {
-//                        player.setVelocity(0.0, 0.399999986886978 + getJumpEffect() * 0.1, 0.0)
-//                        connection.sendPacket(
-//                            PlayerMoveC2SPacket.PositionAndOnGround(
-//                                player.x,
-//                                player.y + (0.399999986886978 + getJumpEffect() * 0.1),
-//                                player.z,
-//                                player.onGround
-//                            )
-//                        )
                         player.velocityDirty = true
                         if (++towerTick < 10) {
                             player.jump()
                         } else {
                             towerTick = 0
                         }
-                        jumped = true
                     }
                 }
 
@@ -126,17 +141,6 @@ object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category 
                                     ) == ActionResult.SUCCESS
                                 ) {
                                     connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
-                                    if (jumped && testjump) {
-                                        player.setVelocity(0.0, -0.14, 0.0)
-                                        connection.sendPacket(
-                                            PlayerMoveC2SPacket.PositionAndOnGround(
-                                                player.x,
-                                                player.y - 0.14,
-                                                player.z,
-                                                player.onGround
-                                            )
-                                        )
-                                    }
                                     if (!ignorer) {
                                         PlaceRender.renderBlocks[currentblock.position.offset(currentblock.facing)] =
                                             System.currentTimeMillis()
