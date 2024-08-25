@@ -2,11 +2,9 @@ package dev.dyzjct.kura.module.modules.player
 
 import base.utils.block.BlockUtil
 import base.utils.block.BlockUtil.checkNearBlocksExtended
-import base.utils.combat.getPredictedTarget
 import base.utils.entity.EntityUtils.spoofSneak
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
-import base.utils.math.toBlockPos
 import base.utils.math.toVec3dCenter
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.eventbus.StageType
@@ -91,15 +89,15 @@ object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category 
                     currentblock = null
                     if (player.isSneaking && !allowShift) return@onMotion
 
-                    val predictedPos = getPredictedTarget(player, 3).pos.toBlockPos().add(0, -1, 0)
+                    val pos = player.blockPos.down()
 
-                    if (!world.getBlockState(predictedPos).isReplaceable) return@onMotion
-                    checkNearBlocksExtended(predictedPos)?.let {
+                    if (!world.getBlockState(pos).isReplaceable) return@onMotion
+                    checkNearBlocksExtended(pos)?.let {
                         if (lastPos == null || it.position.y <= lastPos!!.y || it.position == lastPos!!.up() || !telly) currentblock =
                             it
                     } ?: return@onMotion
 
-                    currentblock = checkNearBlocksExtended(predictedPos)?.apply {
+                    currentblock = checkNearBlocksExtended(pos)?.apply {
                         lastPos = position
                     } ?: return@onMotion
                     if (world.getBlockCollisions(
