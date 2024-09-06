@@ -13,7 +13,7 @@ import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.toBlockPos
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoCheck
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -73,7 +73,7 @@ object Burrow : Module(
 
             if (isInWeb(player)) return@onMotion
 
-            if (!spoofHotbarNoAnyCheck(Items.OBSIDIAN, true) {}) return@onMotion
+            if (!spoofHotbarNoCheck(Items.OBSIDIAN, true) {}) return@onMotion
 
             if (cancelMotion) player.velocity.y = 0.0
 
@@ -249,7 +249,7 @@ object Burrow : Module(
             RotationManager.rotationTo(player.yaw, 90.0f)
         }
         HotbarManager.onlyItem = Items.OBSIDIAN
-        spoofHotbarNoAnyCheck(Items.OBSIDIAN) {
+        spoofHotbarNoCheck(Items.OBSIDIAN) {
             sendSequencedPacket(world) {
                 fastPos(pos, sequence = it)
             }
@@ -264,7 +264,7 @@ object Burrow : Module(
             RotationManager.rotationTo(player.yaw, 90.0f)
         }
         HotbarManager.onlyItem = Items.OBSIDIAN
-        spoofHotbarNoAnyCheck(Items.OBSIDIAN) {
+        spoofHotbarNoCheck(Items.OBSIDIAN) {
             sendSequencedPacket(world) {
                 fastPos(pos, sequence = it)
             }

@@ -125,10 +125,10 @@ object HotbarManager : AlwaysListening {
     ): Boolean {
         if (CombatSystem.eating && player.isUsingItem) return false
         if (PacketMine.isEnabled && PacketMine.doubleBreak && PacketMine.onDoubleBreak) return false
-        return spoofHotbarNoAnyCheck(item, isCheck, block)
+        return spoofHotbarNoCheck(item, isCheck, block)
     }
 
-    inline fun SafeClientEvent.spoofHotbarNoAnyCheck(
+    inline fun SafeClientEvent.spoofHotbarNoCheck(
         item: Item,
         isCheck: Boolean = false,
         crossinline block: () -> Unit

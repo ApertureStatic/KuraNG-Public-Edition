@@ -5,7 +5,7 @@ import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.event.events.input.MouseClickEvent
 import dev.dyzjct.kura.manager.HotbarManager
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoCheck
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -22,7 +22,7 @@ object MCP : Module(
             if (it.button == MouseClickEvent.MouseButton.MIDDLE && it.action == MouseClickEvent.MouseAction.PRESS) {
                 if (mc.currentScreen.safeReturn()) return@safeEventListener
                 HotbarManager.onlyItem = Items.ENDER_PEARL
-                spoofHotbarNoAnyCheck(Items.ENDER_PEARL) {
+                spoofHotbarNoCheck(Items.ENDER_PEARL) {
                     interactPearl()
                 }
                 HotbarManager.onlyItem = null

@@ -3,7 +3,7 @@ package dev.dyzjct.kura.module.modules.misc
 import base.utils.entity.EntityUtils.autoCenter
 import base.utils.extension.sendSequencedPacket
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
-import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoAnyCheck
+import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoCheck
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -32,7 +32,7 @@ object PearlClip : Module(
 
     init {
         onLoop {
-            if (!spoofHotbarNoAnyCheck(
+            if (!spoofHotbarNoCheck(
                     Items.ENDER_PEARL,
                     true
                 ) {} || !world.isAir(player.blockPos)
@@ -93,7 +93,7 @@ object PearlClip : Module(
                         )
                     }
                 } else {
-                    spoofHotbarNoAnyCheck(Items.ENDER_PEARL) {
+                    spoofHotbarNoCheck(Items.ENDER_PEARL) {
                         PearlFucker.ignoreTimer.reset()
                         sendSequencedPacket(
                             world
