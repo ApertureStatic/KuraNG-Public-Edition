@@ -40,6 +40,8 @@ import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.module.modules.client.UiSetting
 import dev.dyzjct.kura.module.modules.client.UiSetting.theme
 import dev.dyzjct.kura.module.modules.combat.AnchorAura
+import dev.dyzjct.kura.module.modules.combat.AutoWeb
+import dev.dyzjct.kura.module.modules.combat.AutoWeb.getWebDelay
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.isResistant
 import dev.dyzjct.kura.module.modules.crystal.CrystalHelper.calcCollidingCrystalDamage
@@ -150,7 +152,8 @@ object AutoCrystal : Module(
     private val ddosDamageStep = fsetting("DdosDamageStep", 0.1f, 0.1f, 5.0f).isTrue(armorDdos).enumIs(p, Page.FORCE)
 
     //Page Lethal
-    private var blockBoost = bsetting("BlockBoost", false).enumIs(p, Page.LETHAL)
+    private val webSync = bsetting("WebSync", false).enumIs(p, Page.LETHAL)
+
 
     //Page Render
     private var renderDamage = bsetting("RenderDamage", true).enumIs(p, Page.RENDER)
@@ -291,7 +294,12 @@ object AutoCrystal : Module(
                         cadamage = placeInfo.targetDamage
                         if (!CombatSystem.isBestAura(CombatSystem.AuraType.Crystal)) return@safeConcurrentListener
                         doRotate(event = it)
-                        doBreak(event = it)
+                        AutoWeb.target?.let { webTarget ->
+                            if (!webSync.value || AutoWeb.isDisabled || (AutoWeb.timerDelay.passedMs(
+                                    getWebDelay(webTarget).toLong() + 50L
+                                ))
+                            ) doBreak(event = it)
+                        } ?: doBreak(event = it)
                         doPlace(event = it)
                     }
                 }

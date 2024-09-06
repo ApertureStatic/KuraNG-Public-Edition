@@ -1,12 +1,12 @@
 package dev.dyzjct.kura.module.modules.crystal
 
-import dev.dyzjct.kura.event.eventbus.AlwaysListening
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.Wrapper.minecraft
 import base.utils.block.getBlock
 import base.utils.combat.CrystalUtils
 import base.utils.world.FastRayTraceAction
 import base.utils.world.fastRaytrace
+import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.mixins.IExplosion
 import dev.dyzjct.kura.utils.animations.fastFloor
 import net.minecraft.block.BlockState
@@ -123,7 +123,7 @@ object CrystalDamageCalculator : AlwaysListening {
                             crystalY.fastFloor() - 1,
                             crystalZ.fastFloor()
                         )
-                    ), AutoCrystal.crystalPriority
+                    )
                 )
             } else {
                 CrystalUtils.isResistant(
@@ -162,15 +162,7 @@ object CrystalDamageCalculator : AlwaysListening {
     }
 
     private val function: World.(BlockPos, BlockState) -> FastRayTraceAction = { _, blockState ->
-        if ((blockState.block != Blocks.AIR || AutoCrystal.crystalPriority == AutoCrystal.Priority.Block) && isResistant(
-                blockState,
-                AutoCrystal.crystalPriority
-            )
-        ) {
-            FastRayTraceAction.CALC
-        } else {
-            FastRayTraceAction.SKIP
-        }
+        FastRayTraceAction.SKIP
     }
 
     private fun SafeClientEvent.getExposureAmount(
@@ -229,8 +221,7 @@ object CrystalDamageCalculator : AlwaysListening {
     }
 
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "DEPRECATION")
-    fun isResistant(blockState: BlockState, prio: AutoCrystal.Priority = AutoCrystal.Priority.Crystal) =
-        prio == AutoCrystal.Priority.Block || (!blockState.isLiquid && blockState.block.blastResistance >= 19.7)
+    fun isResistant(blockState: BlockState) = !blockState.isLiquid && blockState.block.blastResistance >= 19.7
 
     fun SafeClientEvent.anchorDamageNew(pos: BlockPos, target: PlayerEntity): Float {
         if (world.getBlock(pos) === Blocks.RESPAWN_ANCHOR) {

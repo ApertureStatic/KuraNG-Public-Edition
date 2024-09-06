@@ -50,7 +50,7 @@ object AutoWeb : Module(
     private var delay = isetting("minDelay", 25, 0, 500)
     private var maxDelay = isetting("MaxDelay", 400, 0, 1000).isTrue(smartDelay)
     private var debug = bsetting("Debug", false)
-    private var timerDelay = TimerUtils()
+    var timerDelay = TimerUtils()
 
     var target: PlayerEntity? = null
 
@@ -154,17 +154,18 @@ object AutoWeb : Module(
 
                 if (checkHole(it) != SurroundUtils.HoleType.NONE && it.onGround && holeCheck.value) return@onLoop
 
-                val useDelay = if (smartDelay.value) {
-                    if (getTargetSpeed(it) < 20.0) maxDelay.value else delay.value
-                } else {
-                    delay.value
-                }
-
-
                 onMainThread {
-                    place(useDelay.toLong())
+                    place(getWebDelay(it).toLong())
                 }
             }
+        }
+    }
+
+    fun SafeClientEvent.getWebDelay(target: PlayerEntity): Int {
+        return if (smartDelay.value) {
+            if (getTargetSpeed(target) < 20.0) maxDelay.value else delay.value
+        } else {
+            delay.value
         }
     }
 }
