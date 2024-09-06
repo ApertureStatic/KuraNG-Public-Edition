@@ -164,9 +164,7 @@ object AutoCrystal : Module(
             .isTrue { theme == UiSetting.Theme.Custom }
     private val movingLength = isetting("MovingLength", 400, 0, 1000).enumIs(p, Page.RENDER)
     private val fadeLength = isetting("FadeLength", 200, 0, 1000).enumIs(p, Page.RENDER)
-    private var offsetFacing = arrayOf(Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST)
     private var renderQueue = Object2ObjectArrayMap<BlockPos, CrystalFadeRender>().synchronized()
-    private var blockBoostList = Object2ObjectArrayMap<BlockPos, Priority>().synchronized()
     private val attackedCrystalMap = Int2LongMaps.synchronize(Int2LongOpenHashMap())
     private var crystalList = CopyOnWriteArrayList<EndCrystalEntity>()
     private var ddosQueue = ConcurrentLinkedDeque<BlockPos>()
@@ -191,7 +189,6 @@ object AutoCrystal : Module(
     private var crystalState = AtomicReference<CurrentState>().apply { CurrentState.Waiting }
     private var rotationInfo = RotationInfo(Vec2f.ZERO)
     private var renderEnt: LivingEntity? = null
-    var crystalPriority = Priority.Crystal
     var placeInfo: PlaceInfo? = null
     var cadamage = 0.0
 
@@ -431,7 +428,7 @@ object AutoCrystal : Module(
         } else {
             render = tempPos
         }
-        if ((renderEnt == null && tempPos == null) || render == null || crystalPriority != Priority.Crystal) {
+        if ((renderEnt == null && tempPos == null) || render == null) {
             renderEnt = null
             render = null
             crystalState.set(CurrentState.Waiting)
@@ -964,7 +961,7 @@ object AutoCrystal : Module(
         return bestItem
     }
 
-    private fun SafeClientEvent.getRawPosList(prio: Priority = Priority.Crystal): List<BlockPos> {
+    private fun SafeClientEvent.getRawPosList(): List<BlockPos> {
         val positions = CopyOnWriteArrayList<BlockPos>()
 
         positions.addAll(
@@ -979,22 +976,20 @@ object AutoCrystal : Module(
                 ) <= CombatSystem.placeRange.sq && (!CombatSystem.oldVersion || player.distanceSqTo(it.toCenterPos()) <= CombatSystem.wallRange.sq || canSee(
                     it.x.toDouble(), it.y.toDouble(), it.z.toDouble()
                 ))
-            }.filter { canPlaceCrystal(it, prio, CombatSystem.oldVersion) }.collect(Collectors.toList())
+            }.filter { canPlaceCrystal(it, CombatSystem.oldVersion) }.collect(Collectors.toList())
         )
 
         return positions
     }
 
     private fun SafeClientEvent.canPlaceCrystal(
-        blockPos: BlockPos, priority: Priority = Priority.Crystal, oldPlace: Boolean = false
+        blockPos: BlockPos, oldPlace: Boolean = false
     ): Boolean {
-        val boost = blockPos.add(0, if (priority == Priority.Block) 2 else 1, 0)
+        val boost = blockPos.add(0, 1, 0)
         val base = world.getBlockState(blockPos).block
         val b1 = world.getBlockState(boost).block
         if (world.getBlockState(blockPos.up()).block is FireBlock) return false
-        if (blockBoost.value && priority == Priority.Block) {
-            return true
-        } else if (base !== Blocks.BEDROCK && base !== Blocks.OBSIDIAN) {
+        if (base !== Blocks.BEDROCK && base !== Blocks.OBSIDIAN) {
             return false
         }
         if (b1 !== Blocks.AIR && !isReplaceable(b1)) return false
@@ -1161,10 +1156,6 @@ object AutoCrystal : Module(
 
     enum class CurrentState {
         Placing, Breaking, Blocking, Waiting
-    }
-
-    enum class Priority {
-        Block, Crystal
     }
 
     private fun SafeClientEvent.getPredictedTarget(entity: PlayerEntity, ticks: Int): TargetInfo {
