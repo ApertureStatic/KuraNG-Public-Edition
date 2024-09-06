@@ -46,7 +46,7 @@ import dev.dyzjct.kura.system.util.collections.EnumMap
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.extension.sq
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
-import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationTo
+import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationToVec2f
 import it.unimi.dsi.fastutil.longs.Long2LongMaps
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet
@@ -417,7 +417,7 @@ object Surround : Module(
                     var eyeHeight = player.getEyeHeight(player.pose)
                     if (!player.isSneaking) eyeHeight -= 0.08f
                     RotationManager.rotationTo(
-                        getRotationTo(
+                        getRotationToVec2f(
                             Vec3d(player.x, player.y + eyeHeight, player.z), placeInfo.hitVec
                         )
                     )

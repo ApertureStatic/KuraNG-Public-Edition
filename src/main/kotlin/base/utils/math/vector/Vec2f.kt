@@ -5,6 +5,7 @@ import base.utils.math.distance
 import base.utils.math.distanceSq
 import base.utils.math.sq
 import base.utils.math.toRadians
+import dev.dyzjct.kura.utils.rotation.Rotation
 import kotlin.math.sqrt
 
 @JvmInline
@@ -34,6 +35,7 @@ value class Vec2f private constructor(val bits: Long) {
 
     fun lengthSq() = x.sq + y.sq
 
+    fun getRotation() = Rotation(x,y)
 
     operator fun div(vec2f: Vec2f) = div(vec2f.x, vec2f.y)
 

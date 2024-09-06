@@ -14,7 +14,7 @@ import dev.dyzjct.kura.manager.CrystalManager
 import dev.dyzjct.kura.module.modules.player.PacketMine.BlockData
 import dev.dyzjct.kura.module.modules.player.PacketMine.PacketType
 import dev.dyzjct.kura.module.modules.render.PlaceRender
-import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationTo
+import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationToVec2f
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import net.minecraft.client.network.SequencedPacketCreator
 import net.minecraft.client.world.ClientWorld
@@ -141,8 +141,8 @@ fun SafeClientEvent.positionRotation(
         player.x,
         player.y + yOffset,
         player.z,
-        getRotationTo(blockPos.toVec3d()).x,
-        getRotationTo(blockPos.toVec3d()).y,
+        getRotationToVec2f(blockPos.toVec3d()).x,
+        getRotationToVec2f(blockPos.toVec3d()).y,
         onGround
     )
 }

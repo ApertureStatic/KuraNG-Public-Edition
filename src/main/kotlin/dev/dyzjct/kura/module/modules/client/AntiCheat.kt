@@ -14,7 +14,7 @@ object AntiCheat : Module(
     langName = "反作弊",
     category = Category.CLIENT
 ) {
-    private val ac by msetting("AntiCheat", AntiCheats.Vanilla)
+    val ac by msetting("AntiCheat", AntiCheats.Vanilla)
     private val moveFix by msetting("MoveFix", MoveFix.NONE)
 
     init {
@@ -86,6 +86,6 @@ object AntiCheat : Module(
 
     @Suppress("UNUSED")
     enum class AntiCheats {
-        Vanilla, NCP, GrimAC
+        Vanilla, NCP, GrimAC,Legit
     }
 }

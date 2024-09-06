@@ -9,8 +9,6 @@ import base.utils.concurrent.threads.onMainThread
 import base.utils.concurrent.threads.runSafe
 import base.utils.concurrent.threads.runSynchronized
 import base.utils.entity.EntityUtils.eyePosition
-import base.utils.entity.EntityUtils.isntValid
-import base.utils.extension.fastPos
 import base.utils.extension.minePacket
 import base.utils.extension.sendSequencedPacket
 import base.utils.graphics.ESPRenderer
@@ -24,11 +22,7 @@ import base.utils.math.distanceSqToCenter
 import base.utils.math.toVec3dCenter
 import base.utils.math.vector.Vec2f
 import base.utils.world.getMiningSide
-import base.utils.world.noCollision
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
-import dev.dyzjct.kura.event.eventbus.safeConcurrentListener
-import dev.dyzjct.kura.event.eventbus.safeEventListener
-import dev.dyzjct.kura.event.eventbus.safeParallelListener
+import dev.dyzjct.kura.event.eventbus.*
 import dev.dyzjct.kura.event.events.RunGameLoopEvent
 import dev.dyzjct.kura.event.events.TickEvent
 import dev.dyzjct.kura.event.events.WorldEvent
@@ -68,7 +62,6 @@ import dev.dyzjct.kura.utils.extension.synchronized
 import dev.dyzjct.kura.utils.extension.toDegree
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.findItemInInventory
-import dev.dyzjct.kura.utils.rotation.Rotation
 import dev.dyzjct.kura.utils.rotation.RotationUtils
 import dev.dyzjct.kura.utils.rotation.RotationUtils.normalizeAngle
 import it.unimi.dsi.fastutil.ints.Int2LongMaps
@@ -264,8 +257,8 @@ object AutoCrystal : Module(
                                     ) <= 144.0
                                 ) {
                                     if (packetPlace0.onRemove) {
-                                        doPlace(it.blockPos) {
-                                            doRotate(CurrentState.Placing)
+                                        doPlace(it.blockPos, event) {
+                                            doRotate(CurrentState.Placing, event = event)
                                         }
                                     }
                                     attackedCrystalMap.clear()
@@ -300,9 +293,9 @@ object AutoCrystal : Module(
                     ) {
                         cadamage = placeInfo.targetDamage
                         if (!CombatSystem.isBestAura(CombatSystem.AuraType.Crystal)) return@safeConcurrentListener
-                        doRotate()
-                        doBreak()
-                        doPlace()
+                        doRotate(event = it)
+                        doBreak(event = it)
+                        doPlace(event = it)
                     }
                 }
             }
@@ -310,7 +303,6 @@ object AutoCrystal : Module(
 
         safeParallelListener<TickEvent.Pre> {
             updateDdosQueue()
-            blockBoost()
         }
 
         safeEventListener<WorldEvent.ClientBlockUpdate>(114514) {
@@ -342,7 +334,7 @@ object AutoCrystal : Module(
                                 it.blockPos, event.entity.x, event.entity.y, event.entity.z
                             ) || checkBreakDamage(event.entity.x, event.entity.y, event.entity.z, BlockPos.Mutable())
                         ) {
-                            breakDirect(event.entity.x, event.entity.y, event.entity.z, event.entity)
+                            breakDirect(event.entity.x, event.entity.y, event.entity.z, event.entity, event)
                             if (debug.value) {
                                 ChatUtil.sendMessage("PacketExplode")
                             }
@@ -353,7 +345,7 @@ object AutoCrystal : Module(
         }
     }
 
-    private fun SafeClientEvent.doRotate(tempState: CurrentState? = null, tempPos: BlockPos? = null) {
+    private fun SafeClientEvent.doRotate(tempState: CurrentState? = null, tempPos: BlockPos? = null, event: Event) {
         tempState?.let {
             crystalState.set(it)
         }
@@ -390,11 +382,11 @@ object AutoCrystal : Module(
             if (rotate.value) {
                 rotationInfo.update(rotation)
                 if (abs(diff) <= yawSpeed.value) {
-                    RotationManager.rotationTo(it)
+                    RotationManager.rotationTo(it, event)
                 } else {
                     val clamped = diff.coerceIn(-yawSpeed.value, yawSpeed.value)
                     val newYaw = normalizeAngle(CrystalManager.rotation.x + clamped)
-                    RotationManager.rotationTo(newYaw, it.y)
+                    RotationManager.rotationTo(newYaw, it.y, event)
                 }
                 flagged = rotateDiff.value > 0 && abs(diff) > rotateDiff.value
             }
@@ -407,93 +399,6 @@ object AutoCrystal : Module(
         val yaw = normalizeAngle(atan2(vec.z, vec.x).toDegree() - 90.0)
         val pitch = normalizeAngle(-atan2(vec.y, xz).toDegree())
         return Vec2f(yaw, pitch)
-    }
-
-    private fun SafeClientEvent.blockBoost() {
-        if (blockBoost.value) {
-            if (EntityManager.players.isEmpty()) return
-            for (target in EntityManager.players) {
-                if (isntValid(
-                        target,
-                        CombatSystem.placeRange,
-                        CombatSystem.oldVersion,
-                        CombatSystem.wallRange
-                    )
-                ) continue
-                val calcOffset = target.blockPos
-
-                for (facing in offsetFacing) {
-                    if (obiSlot == null) break
-                    val placePos = calcOffset.offset(facing).down()
-                    if (world.isAir(placePos) && blockBoostList.size <= 8 && !blockBoostList.contains(placePos)) {
-                        blockBoostList[placePos] = Priority.Block
-                    }
-
-                    if (blockBoostList.isNotEmpty()) {
-                        for ((pos: BlockPos, prio: Priority) in blockBoostList) {
-                            if (!world.isAir(pos.up())) continue
-
-                            val box = Box(
-                                pos.up().x.toDouble(),
-                                pos.up().y + 1.0,
-                                pos.up().z.toDouble(),
-                                pos.up().x + 1.0,
-                                pos.up().y + 3.0,
-                                pos.up().z + 1.0
-                            )
-                            for (entity in world.entities) {
-                                if (entity is EndCrystalEntity) continue
-                                if (entity.boundingBox.intersects(box)) {
-                                    blockBoostList.remove(pos)
-                                    continue
-                                }
-                            }
-                            val predictDamage = calcDamage(
-                                target,
-                                target.pos,
-                                target.boundingBox,
-                                pos.up().x + 0.5,
-                                (pos.up().y + 1).toDouble(),
-                                pos.up().z + 0.5,
-                                BlockPos.Mutable(),
-                                true
-                            ).toDouble()
-
-                            val placeInfo = placeInfo
-                            if (placeInfo != null) {
-                                if (predictDamage <= placeInfo.targetDamage) {
-                                    blockBoostList.remove(pos)
-                                    ChatUtil.sendMessage("Filtered Lower Damage!")
-                                    continue
-                                } else {
-                                    ChatUtil.sendMessage("Block Boosted PlaceInfo!")
-                                    break
-                                }
-                            } else {
-                                if (world.isAir(pos)) {
-                                    crystalPriority = prio
-                                    if (!world.noCollision(pos)) continue
-                                    doRotate(CurrentState.Blocking, pos)
-                                    spoofHotbarWithSetting(Items.OBSIDIAN) {
-                                        sendSequencedPacket(world) { sequence ->
-                                            fastPos(pos, sequence = sequence)
-                                        }
-                                    }
-
-                                    render = pos
-                                    crystalPriority = Priority.Crystal
-                                    blockBoostList.clear()
-                                    if (debug.value) {
-                                        ChatUtil.sendMessage("Block Boosted!")
-                                    }
-                                    break
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private fun updateTimeouts() {
@@ -511,7 +416,7 @@ object AutoCrystal : Module(
             .filterNot { attackedCrystalMap.containsKey(it.id) }.none()
     }
 
-    private fun SafeClientEvent.doPlace(tempPos: BlockPos? = null, rotationInvoke: (() -> Unit)? = null) {
+    private fun SafeClientEvent.doPlace(tempPos: BlockPos? = null, event: Event, rotationInvoke: (() -> Unit)? = null) {
         if (tempPos == null) {
             val normal = placeInfo
             render = if (armorDdos.value && (normal == null || normal.targetDamage < placeMinDmg.value)) {
@@ -532,7 +437,7 @@ object AutoCrystal : Module(
             crystalState.set(CurrentState.Waiting)
             return
         }
-        rotationInvoke?.invoke() ?: doRotate(CurrentState.Placing)
+        rotationInvoke?.invoke() ?: doRotate(CurrentState.Placing, event = event)
         if (slowFP.value && isFacePlacing && renderEnt != null) {
             if (!fpTimer.passed(fpDelay.value)) {
                 return
@@ -724,19 +629,19 @@ object AutoCrystal : Module(
                 }).take(CombatSystem.maxTargets)
         }
 
-    private fun SafeClientEvent.doBreak() {
+    private fun SafeClientEvent.doBreak(event: Event) {
         val crystal = getTargetCrystal(crystalList) ?: getCrystal(crystalList) ?: getFinalCrystal(crystalList)
 
         crystal?.let {
             if (!flagged && explodeTimer.tickAndReset(hitDelay.value)) {
-                breakDirect(it.x, it.y, it.z, it)
+                breakDirect(it.x, it.y, it.z, it, event)
                 if (explodeMode.value == ExplodeMode.Sync) packetExplodeTimer.reset()
             }
         }
     }
 
     private fun SafeClientEvent.breakDirect(
-        x: Double, y: Double, z: Double, endCrystal: EndCrystalEntity
+        x: Double, y: Double, z: Double, endCrystal: EndCrystalEntity, event: Event
     ) {
         if (player.isWeaknessActive() && !isHoldingTool() && antiWeak.value) {
             onMainThread {
@@ -754,8 +659,8 @@ object AutoCrystal : Module(
 
         placeInfo?.let {
             if (packetPlace0.onBreak && crystalPlaceBoxIntersectsCrystalBox(it.blockPos, x, y, z)) {
-                doPlace(it.blockPos) {
-                    doRotate(CurrentState.Placing, it.blockPos)
+                doPlace(it.blockPos, event) {
+                    doRotate(CurrentState.Placing, it.blockPos, event = event)
                 }
             }
         }

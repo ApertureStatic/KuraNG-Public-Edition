@@ -18,7 +18,6 @@
  */
 package dev.dyzjct.kura.utils.rotation
 
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.utils.rotation.RotationUtils.gcd
 import dev.dyzjct.kura.utils.rotation.RotationUtils.serverRotation
 import net.minecraft.util.math.MathHelper
@@ -55,13 +54,17 @@ data class Rotation(
         // get rotation differences
         val (deltaYaw, deltaPitch) = Rotation(yaw - rotation.yaw, pitch - rotation.pitch)
 
+        var g1 = 0f
+        var g2 = 0f
         // proper rounding
-        val g1 = (deltaYaw / gcd).roundToInt() * gcd
-        val g2 = (deltaPitch / gcd).roundToInt() * gcd
+        kotlin.runCatching {
+            g1 = ((deltaYaw / gcd).roundToInt() * gcd).toFloat()
+            g2 = ((deltaPitch / gcd).roundToInt() * gcd).toFloat()
+        }
 
         // fix rotation
-        val yaw = rotation.yaw + g1.toFloat()
-        val pitch = rotation.pitch + g2.toFloat()
+        val yaw = rotation.yaw + g1
+        val pitch = rotation.pitch + g2
 
         return Rotation(yaw, pitch.coerceIn(-90f, 90f))
     }

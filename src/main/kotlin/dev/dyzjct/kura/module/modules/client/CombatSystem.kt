@@ -37,8 +37,7 @@ object CombatSystem : Module(
     val kaRange by dsetting("KARange", 6.0, 0.0, 8.0)
     val renderRotate by bsetting("RenderRotate", true)
     val rotationSpeed by dsetting("RotationSpeed", 45.0, 0.0, 100.0)
-    private val stopDelay by isetting("RotationDelay", 0, 0, 400)
-    private val motionDelay by isetting("RotateDelayOnMotion", 0, 0, 1000)
+    val setRotation by bsetting("SetRotation",true)
     private val swing by bsetting("Swing", true)
     private val packetSwing by bsetting("PacketSwing", true).isTrue { swing }
     private val swingHand by msetting("SwingHand", SwingHand.MainHand).isTrue { swing }
@@ -80,10 +79,6 @@ object CombatSystem : Module(
             )
             player.resetLastAttackedTicks()
         }
-    }
-
-    fun SafeClientEvent.rotationDelay(): Int {
-        return if (speed() > 15) motionDelay else stopDelay
     }
 
     enum class SpoofMode {

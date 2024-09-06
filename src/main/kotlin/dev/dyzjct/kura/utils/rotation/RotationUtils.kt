@@ -42,7 +42,7 @@ object RotationUtils : AlwaysListening {
     }
 
     fun SafeClientEvent.getRelativeRotation(posTo: Vec3d): Float {
-        return getRotationDiff(getRotationTo(posTo), Vec2f.ofEntityRotation(player))
+        return getRotationDiff(getRotationToVec2f(posTo), Vec2f.ofEntityRotation(player))
     }
 
     fun getRotationDiff(r1: Vec2f, r2: Vec2f): Float {
@@ -61,7 +61,7 @@ object RotationUtils : AlwaysListening {
         val eyePos = player.eyePosition
 
         if (player.boundingBox.intersects(box)) {
-            return getRotationTo(eyePos, box.center)
+            return getRotationToVec2f(eyePos, box.center)
         }
 
         val x = eyePos.x.coerceIn(box.minX, box.maxX)
@@ -69,15 +69,15 @@ object RotationUtils : AlwaysListening {
         val z = eyePos.z.coerceIn(box.minZ, box.maxZ)
 
         val hitVec = Vec3d(x, y, z)
-        return getRotationTo(eyePos, hitVec)
+        return getRotationToVec2f(eyePos, hitVec)
     }
 
     fun SafeClientEvent.getRotationToEntity(entity: Entity): Vec2f {
-        return getRotationTo(entity.pos)
+        return getRotationToVec2f(entity.pos)
     }
 
     fun SafeClientEvent.fovCheck(pos: Vec3d, fov: Float): Boolean {
-        return abs(normalizeAngle(player.yaw) - getRotationTo(pos).x) <= fov
+        return abs(normalizeAngle(player.yaw) - getRotationToVec2f(pos).x) <= fov
     }
 
     fun SafeClientEvent.getPlayerDirection(): Direction {
@@ -99,16 +99,29 @@ object RotationUtils : AlwaysListening {
      *
      * @param posTo Calculate rotation to this position vector
      */
-    fun SafeClientEvent.getRotationTo(posTo: Vec3d, side: Boolean = false): Vec2f {
+    fun SafeClientEvent.getRotationToVec2f(posTo: Vec3d, side: Boolean = false): Vec2f {
         var posToBetter: Vec3d? = null
         if (side) getMiningSide(posTo.toBlockPos())?.let { side ->
             posToBetter = posTo.toBlockPos().offset(side).toCenterPos()
                 .add(Vec3d(side.opposite.vector.x * 0.5, side.opposite.vector.y * 0.5, side.opposite.vector.z * 0.5))
         }
-        return getRotationTo(
+        return getRotationToVec2f(
             player.pos.add(0.0, player.getEyeHeight(player.pose).toDouble(), 0.0),
             posToBetter ?: posTo
         )
+    }
+
+    fun SafeClientEvent.getRotationToRotation(posTo: Vec3d, side: Boolean = false): Rotation {
+        var posToBetter: Vec3d? = null
+        if (side) getMiningSide(posTo.toBlockPos())?.let { side ->
+            posToBetter = posTo.toBlockPos().offset(side).toCenterPos()
+                .add(Vec3d(side.opposite.vector.x * 0.5, side.opposite.vector.y * 0.5, side.opposite.vector.z * 0.5))
+        }
+        val rotation = getRotationToVec2f(
+            player.pos.add(0.0, player.getEyeHeight(player.pose).toDouble(), 0.0),
+            posToBetter ?: posTo
+        )
+        return Rotation(rotation.x, rotation.y)
     }
 
     fun SafeClientEvent.getFixedRotationTo(posTo: Vec3d, side: Boolean = false): Rotation {
@@ -117,7 +130,7 @@ object RotationUtils : AlwaysListening {
             posToBetter = posTo.toBlockPos().offset(side).toCenterPos()
                 .add(Vec3d(side.opposite.vector.x * 0.5, side.opposite.vector.y * 0.5, side.opposite.vector.z * 0.5))
         }
-        val rotation = getRotationTo(
+        val rotation = getRotationToVec2f(
             player.pos.add(0.0, player.getEyeHeight(player.pose).toDouble(), 0.0),
             posToBetter ?: posTo
         )
@@ -135,7 +148,7 @@ object RotationUtils : AlwaysListening {
      * @param posFrom Calculate rotation from this position vector
      * @param posTo Calculate rotation to this position vector
      */
-    fun getRotationTo(posFrom: Vec3d, posTo: Vec3d): Vec2f {
+    fun getRotationToVec2f(posFrom: Vec3d, posTo: Vec3d): Vec2f {
         return getRotationFromVec(posTo.subtract(posFrom))
     }
 

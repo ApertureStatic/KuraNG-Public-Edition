@@ -18,7 +18,7 @@ import dev.dyzjct.kura.system.render.graphic.Render2DEngine
 import dev.dyzjct.kura.system.render.graphic.Render3DEngine
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
-import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationTo
+import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationToVec2f
 import net.minecraft.item.BlockItem
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
 import net.minecraft.util.ActionResult
@@ -73,8 +73,8 @@ object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category 
             lastPos?.let {
                 if (rotate.value) {
                     event.setRotation(
-                        getRotationTo(it.toVec3dCenter(), side = rotateSide).x,
-                        getRotationTo(it.toVec3dCenter(), side = rotateSide).y
+                        getRotationToVec2f(it.toVec3dCenter(), side = rotateSide).x,
+                        getRotationToVec2f(it.toVec3dCenter(), side = rotateSide).y
                     )
                 }
             }
@@ -121,8 +121,8 @@ object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category 
                             lastPos?.let {
                                 if (rotate.value) {
                                     event.setRotation(
-                                        getRotationTo(it.toVec3dCenter()).x,
-                                        getRotationTo(it.toVec3dCenter()).y
+                                        getRotationToVec2f(it.toVec3dCenter()).x,
+                                        getRotationToVec2f(it.toVec3dCenter()).y
                                     )
                                 }
                             }

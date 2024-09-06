@@ -9,7 +9,7 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.combat.PearlFucker
 import dev.dyzjct.kura.utils.rotation.RotationUtils.getPlayerDirection
-import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationTo
+import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationToVec2f
 import net.minecraft.block.Blocks
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket
@@ -70,7 +70,7 @@ object PearlClip : Module(
                     } else vl
                 }
 
-                var angle = getRotationTo(clipPos.toCenterPos()).x
+                var angle = getRotationToVec2f(clipPos.toCenterPos()).x
                 var pitch = 89f
                 val fix = 3f
 
