@@ -15,6 +15,9 @@ object AntiCheat : Module(
     category = Category.CLIENT
 ) {
     val ac by msetting("AntiCheat", AntiCheats.Vanilla)
+    val forceSync by bsetting("ForceSync",false)
+    val noSpamRotation by bsetting("noSpamRotation",false)
+    val fov by fsetting("Fov", 10f, 0f, 180f)
     private val moveFix by msetting("MoveFix", MoveFix.NONE)
 
     init {
