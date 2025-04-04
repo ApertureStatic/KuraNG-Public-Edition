@@ -1,8 +1,8 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import base.utils.block.BlockUtil.checkNearBlocksExtended
-import base.utils.block.BlockUtil.getNeighbor
-import base.utils.block.isFullBox
+import dev.dyzjct.kura.utils.block.BlockUtil.checkNearBlocksExtended
+import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
+import dev.dyzjct.kura.utils.block.isFullBox
 import base.utils.chat.ChatUtil
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils.boxCheck

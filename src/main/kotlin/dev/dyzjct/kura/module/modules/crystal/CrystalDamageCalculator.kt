@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.crystal
 
 import base.utils.Wrapper.minecraft
-import base.utils.block.getBlock
+import dev.dyzjct.kura.utils.block.getBlock
 import base.utils.combat.CrystalUtils
 import base.utils.world.FastRayTraceAction
 import base.utils.world.fastRaytrace

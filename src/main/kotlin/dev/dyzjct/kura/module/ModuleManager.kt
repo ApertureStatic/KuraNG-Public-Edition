@@ -8,6 +8,7 @@ import dev.dyzjct.kura.event.eventbus.listener
 import dev.dyzjct.kura.event.events.TickEvent
 import dev.dyzjct.kura.event.events.input.BindEvent
 import dev.dyzjct.kura.module.hud.*
+import dev.dyzjct.kura.module.modules.aura.KillAura
 import dev.dyzjct.kura.module.modules.client.*
 import dev.dyzjct.kura.module.modules.combat.*
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
@@ -82,13 +83,8 @@ object ModuleManager : AlwaysListening {
         registerModule(HolePush)
         registerModule(Burrow)
         registerModule(HeadTrap)
-        registerModule(InfiniteAura)
         registerModule(HoleMiner)
-        registerModule(CrystalBasePlacer)
-        registerModule(AutoPot)
         registerModule(PearlFucker)
-        registerModule(AnchorHelper)
-        registerModule(AutoHitCrystal)
         registerModule(MainHandTotem)
     }
 

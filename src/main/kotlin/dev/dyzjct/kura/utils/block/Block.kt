@@ -1,4 +1,4 @@
-package base.utils.block
+package dev.dyzjct.kura.utils.block
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
 import base.utils.Wrapper

@@ -1,7 +1,7 @@
 package base.utils.entity
 
 import base.utils.Wrapper
-import base.utils.block.BlockUtil.canSeeEntity
+import dev.dyzjct.kura.utils.block.BlockUtil.canSeeEntity
 import base.utils.concurrent.threads.runSafe
 import base.utils.math.distanceSqTo
 import base.utils.math.toBlockPos

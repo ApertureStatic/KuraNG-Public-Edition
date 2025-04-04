@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.utils.block.BlockUtil.canBreak
+import dev.dyzjct.kura.utils.block.BlockUtil.canBreak
 import base.utils.chat.ChatUtil
 import base.utils.extension.fastPos
 import base.utils.math.distanceSqToCenter

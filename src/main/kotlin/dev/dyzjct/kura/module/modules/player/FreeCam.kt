@@ -6,7 +6,6 @@ import dev.dyzjct.kura.event.events.input.KeyboardInputEvent
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.combat.AutoPot.interpolate
 import kotlin.math.cos
 import kotlin.math.sin
 

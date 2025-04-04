@@ -1,8 +1,8 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.utils.block.BlockUtil.getNeighbor
-import base.utils.block.isLiquidBlock
-import base.utils.block.isWater
+import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
+import dev.dyzjct.kura.utils.block.isLiquidBlock
+import dev.dyzjct.kura.utils.block.isWater
 import base.utils.entity.EntityUtils.isInWeb
 import base.utils.extension.fastPos
 import base.utils.extension.position

@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.utils.block.BlockUtil.checkNearBlocksExtended
+import dev.dyzjct.kura.utils.block.BlockUtil.checkNearBlocksExtended
 import base.utils.combat.getTarget
 import base.utils.entity.EntityUtils.boxCheck
 import base.utils.extension.fastPos

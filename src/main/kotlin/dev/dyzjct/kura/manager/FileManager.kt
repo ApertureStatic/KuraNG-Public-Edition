@@ -29,6 +29,7 @@ object FileManager {
     private var CLIENT_FILE: File? = null
     private var FRIEND_FILE: File? = null
     private var HUD_FILE: File? = null
+    private var LANGUAGE_FILE: File? = null
 
     var changing = false
 
@@ -423,6 +424,7 @@ object FileManager {
     private const val CLIENT_CONFIG = Kura.MOD_NAME + "/" + Kura.MOD_NAME + "-Client.json"
     private const val FRIEND_CONFIG = Kura.MOD_NAME + "/" + Kura.MOD_NAME + "-Friend.json"
     private const val NEW_UI_CONFIG_FILE_NAME = "${Kura.MOD_NAME}/${Kura.MOD_NAME}-NewUi.json"
+    private const val LANGUAGE_FILES_PATH = "${Kura.MOD_NAME}/lang/"
     private var gsonPretty = GsonBuilder().setPrettyPrinting().create()
     private var jsonParser = JsonParser()
 

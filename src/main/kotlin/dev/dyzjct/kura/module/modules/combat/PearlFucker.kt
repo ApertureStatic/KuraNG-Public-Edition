@@ -1,8 +1,8 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.utils.block.BlockUtil.canSee
-import base.utils.block.BlockUtil.getNeighbor
-import base.utils.block.getBlock
+import dev.dyzjct.kura.utils.block.BlockUtil.canSee
+import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
+import dev.dyzjct.kura.utils.block.getBlock
 import base.utils.chat.ChatUtil
 import base.utils.extension.fastPos
 import base.utils.math.distanceSqTo

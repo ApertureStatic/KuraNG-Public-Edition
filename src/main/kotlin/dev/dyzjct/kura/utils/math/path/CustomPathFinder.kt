@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.utils.math.path
 
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
-import base.utils.block.getBlock
+import dev.dyzjct.kura.utils.block.getBlock
 import dev.dyzjct.kura.utils.extension.fastFloor
 import net.minecraft.block.*
 import net.minecraft.util.math.BlockPos

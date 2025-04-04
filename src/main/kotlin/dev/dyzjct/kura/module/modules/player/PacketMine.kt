@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.player
 
-import base.utils.block.BlockUtil.calcBreakTime
-import base.utils.block.BlockUtil.canBreak
+import dev.dyzjct.kura.utils.block.BlockUtil.calcBreakTime
+import dev.dyzjct.kura.utils.block.BlockUtil.canBreak
 import base.utils.entity.EntityUtils.eyePosition
 import base.utils.extension.minePacket
 import base.utils.extension.sendSequencedPacket

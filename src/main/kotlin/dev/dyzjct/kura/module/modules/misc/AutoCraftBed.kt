@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import base.utils.block.BlockUtil.getNeighbor
+import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
 import base.utils.concurrent.threads.runSafe
 import base.utils.extension.fastPos
 import base.utils.graphics.ESPRenderer

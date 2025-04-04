@@ -3,9 +3,8 @@ package dev.dyzjct.kura.module.modules.client
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.hud.SpeedHUD.speed
 import dev.dyzjct.kura.module.modules.combat.AnchorAura
-import dev.dyzjct.kura.module.modules.combat.KillAura
+import dev.dyzjct.kura.module.modules.aura.KillAura
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
 import net.minecraft.item.EndCrystalItem
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket

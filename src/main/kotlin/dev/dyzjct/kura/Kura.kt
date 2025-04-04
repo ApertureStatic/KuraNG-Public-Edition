@@ -16,7 +16,7 @@ import kotlin.io.path.Path
 class Kura : AlwaysListening {
     companion object {
         const val MOD_NAME = "Kura"
-        const val VERSION = "Community Edition v1.0.4"
+        const val VERSION = "Community Edition v1.0.5"
         var logger: Logger = LogManager.getLogger("Kura")
         var commandPrefix = StringSetting("CommandPrefix", null, ".")
         var DISPLAY_NAME = "$MOD_NAME-$VERSION | Have a nice day!"

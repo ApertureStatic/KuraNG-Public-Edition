@@ -1,7 +1,7 @@
 package base.utils.extension
 
-import base.utils.block.BlockUtil
-import base.utils.block.BlockUtil.getNeighbor
+import dev.dyzjct.kura.utils.block.BlockUtil
+import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
 import base.utils.concurrent.threads.runSynchronized
 import base.utils.entity.EntityUtils.eyePosition
 import base.utils.math.toBlockPos

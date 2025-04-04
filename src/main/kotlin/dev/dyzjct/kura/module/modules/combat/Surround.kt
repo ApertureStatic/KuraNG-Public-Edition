@@ -235,7 +235,8 @@ object Surround : Module(
                         return@safeEventListener
                     }
                     if (isInHole && superSafe.value) {
-                        for (face in Direction.values()) {
+                        if (CombatSystem.eating && player.isUsingItem) return@let
+                        for (face in Direction.entries) {
                             val safePos = mine.offset(face)
                             if (safePos == playerPos || !world.isAir(safePos)) continue
                             if (world.isPlaceable(safePos) && safeTimer.tickAndReset(placeDelay.value)) {

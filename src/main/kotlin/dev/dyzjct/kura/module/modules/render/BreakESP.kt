@@ -11,9 +11,9 @@ import dev.dyzjct.kura.event.events.block.BlockBreakEvent
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.system.render.graphic.Render3DEngine
-import base.utils.block.BlockUtil.canBreak
-import base.utils.block.BlockUtil.getBreakSpeed
-import base.utils.block.BlockUtil.getBreakSpeedObi
+import dev.dyzjct.kura.utils.block.BlockUtil.canBreak
+import dev.dyzjct.kura.utils.block.BlockUtil.getBreakSpeed
+import dev.dyzjct.kura.utils.block.BlockUtil.getBreakSpeedObi
 import base.utils.graphics.ESPRenderer
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos

@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.modules.crystal
 
-import base.utils.block.BlockUtil.canSee
+import dev.dyzjct.kura.utils.block.BlockUtil.canSee
 import base.utils.chat.ChatUtil
 import base.utils.combat.CrystalUtils
 import base.utils.combat.CrystalUtils.crystalPlaceBoxIntersectsCrystalBox

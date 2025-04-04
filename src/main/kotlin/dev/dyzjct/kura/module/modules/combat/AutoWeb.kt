@@ -1,6 +1,6 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import base.utils.block.BlockUtil.getNeighbor
+import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
 import base.utils.chat.ChatUtil
 import base.utils.combat.getPredictedTarget
 import base.utils.combat.getTarget

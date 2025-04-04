@@ -1,8 +1,8 @@
 package base.utils.world
 
-import base.utils.block.blockBlacklist
-import base.utils.block.getBlock
-import base.utils.block.isFullBox
+import dev.dyzjct.kura.utils.block.blockBlacklist
+import dev.dyzjct.kura.utils.block.getBlock
+import dev.dyzjct.kura.utils.block.isFullBox
 import base.utils.entity.EntityUtils.eyePosition
 import base.utils.math.distanceSqTo
 import base.utils.math.toVec3dCenter

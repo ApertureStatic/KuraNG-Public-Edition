@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.player
 
-import base.utils.block.BlockUtil
-import base.utils.block.BlockUtil.checkNearBlocksExtended
+import dev.dyzjct.kura.utils.block.BlockUtil
+import dev.dyzjct.kura.utils.block.BlockUtil.checkNearBlocksExtended
 import base.utils.entity.EntityUtils.spoofSneak
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots

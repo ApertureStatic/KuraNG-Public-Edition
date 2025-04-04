@@ -1,4 +1,4 @@
-package base.utils.block
+package dev.dyzjct.kura.utils.block
 
 import base.utils.entity.EntityUtils.boxCheck
 import base.utils.inventory.slot.allSlots

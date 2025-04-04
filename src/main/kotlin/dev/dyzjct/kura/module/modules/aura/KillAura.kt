@@ -1,4 +1,4 @@
-package dev.dyzjct.kura.module.modules.combat
+package dev.dyzjct.kura.module.modules.aura
 
 import base.utils.combat.getEntityTarget
 import base.utils.concurrent.threads.runSafe
@@ -14,6 +14,7 @@ import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.module.modules.client.UiSetting
+import dev.dyzjct.kura.module.modules.combat.AnchorAura
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
 import dev.dyzjct.kura.utils.animations.sq
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
