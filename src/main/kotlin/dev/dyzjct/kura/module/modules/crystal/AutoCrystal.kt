@@ -1,6 +1,5 @@
 package dev.dyzjct.kura.module.modules.crystal
 
-import dev.dyzjct.kura.utils.block.BlockUtil.canSee
 import base.utils.chat.ChatUtil
 import base.utils.combat.CrystalUtils
 import base.utils.combat.CrystalUtils.crystalPlaceBoxIntersectsCrystalBox
@@ -9,12 +8,9 @@ import base.utils.concurrent.threads.onMainThread
 import base.utils.concurrent.threads.runSafe
 import base.utils.concurrent.threads.runSynchronized
 import base.utils.entity.EntityUtils.eyePosition
-import base.utils.extension.minePacket
-import base.utils.extension.sendSequencedPacket
 import base.utils.graphics.ESPRenderer
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
-import base.utils.item.attackDamage
 import base.utils.item.duraPercentage
 import base.utils.math.distanceSq
 import base.utils.math.distanceSqTo
@@ -59,11 +55,12 @@ import dev.dyzjct.kura.system.util.delegate.CachedValueN
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
 import dev.dyzjct.kura.utils.animations.sq
-import dev.dyzjct.kura.utils.extension.ceilToInt
-import dev.dyzjct.kura.utils.extension.synchronized
-import dev.dyzjct.kura.utils.extension.toDegree
+import dev.dyzjct.kura.utils.block.BlockUtil.canSee
+import dev.dyzjct.kura.utils.extension.*
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.findItemInInventory
+import dev.dyzjct.kura.utils.inventory.InventoryUtil.getWeaponSlot
+import dev.dyzjct.kura.utils.isWeaknessActive
 import dev.dyzjct.kura.utils.rotation.RotationUtils
 import dev.dyzjct.kura.utils.rotation.RotationUtils.normalizeAngle
 import it.unimi.dsi.fastutil.ints.Int2LongMaps
@@ -72,14 +69,11 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import net.minecraft.block.Blocks
 import net.minecraft.block.FireBlock
-import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.Entity
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.decoration.EndCrystalEntity
-import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.item.SwordItem
 import net.minecraft.item.ToolItem
@@ -109,6 +103,7 @@ object AutoCrystal : Module(
     //Page GENERAL
     var damageMode = msetting("DamageMode", DamageMode.PPBP).enumIs(p, Page.GENERAL)
     private var antiWeak = bsetting("AntiWeakness", true).enumIs(p, Page.GENERAL)
+    private val autoSwitch by bsetting("AutoSwitch", false)
     private var ghostHand = bsetting("GhostHand", true).enumIs(p, Page.GENERAL)
     private var rotate = bsetting("Rotate", false).enumIs(p, Page.GENERAL)
     private var yawSpeed = fsetting("YawSpeed", 30.0f, 5.0f, 180f, 1f).isTrue(rotate).enumIs(p, Page.GENERAL)
@@ -467,7 +462,7 @@ object AutoCrystal : Module(
                         if (!ghostHand.value) {
                             if (player.mainHandStack.item == Items.END_CRYSTAL) {
                                 sendPacket()
-                            } else if (CombatSystem.autoSwitch) {
+                            } else if (autoSwitch) {
                                 findItemInInventory(Items.END_CRYSTAL)?.let { slot ->
                                     player.inventory.selectedSlot = slot
                                     connection.sendPacket(UpdateSelectedSlotC2SPacket(slot))
@@ -653,13 +648,11 @@ object AutoCrystal : Module(
                 getWeaponSlot()?.let { stack ->
                     spoofHotbarWithSetting(stack.item) {
                         runExplode(endCrystal)
-                        swing()
                     }
                 }
             }
         } else {
             runExplode(endCrystal)
-            swing()
         }
 
         placeInfo?.let {
@@ -943,30 +936,9 @@ object AutoCrystal : Module(
         return false
     }
 
-    private fun ClientPlayerEntity.isWeaknessActive(): Boolean {
-        return this.getStatusEffect(StatusEffects.WEAKNESS) != null && this.getStatusEffect(StatusEffects.STRENGTH)
-            ?.let {
-                it.amplifier <= 0
-            } ?: true
-    }
-
     private fun SafeClientEvent.isHoldingTool(): Boolean {
         val item = player.serverSideItem.item
         return item is SwordItem || item is ToolItem
-    }
-
-    private fun SafeClientEvent.getWeaponSlot(): ItemStack? {
-        var bestItem: ItemStack? = null
-        for (i in 0..44) {
-            if (player.inventory.getStack(i).item is SwordItem || player.inventory.getStack(i).item is ToolItem) {
-                bestItem?.let {
-                    if (player.inventory.getStack(i).attackDamage > it.damage) bestItem = player.inventory.getStack(i)
-                } ?: run {
-                    bestItem = player.inventory.getStack(i)
-                }
-            }
-        }
-        return bestItem
     }
 
     private fun SafeClientEvent.getRawPosList(): List<BlockPos> {

@@ -17,7 +17,6 @@ object CombatSystem : Module(
     category = Category.CLIENT
 ) {
     val spoofMode = msetting("SpoofMode", SpoofMode.Normal)
-    val autoSwitch by bsetting("AutoSwitch", false)
     val eating by bsetting("EatingPause", true)
     val oldVersion by bsetting("1.12.2Support", false)
     val wallRange by dsetting("WallRange", 3.5, 0.0, 6.0).isTrue { oldVersion }

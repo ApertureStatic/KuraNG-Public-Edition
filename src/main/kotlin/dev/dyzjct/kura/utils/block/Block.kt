@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.utils.block
 
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
 import base.utils.Wrapper
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
@@ -83,6 +83,14 @@ inline fun World.isAir(pos: BlockPos): Boolean {
 
 inline fun World.getBlock(pos: BlockPos): Block =
     this.getBlockState(pos).block
+
+fun BlockPos.aroundBlock(radius: Int): List<BlockPos> {
+    val result = mutableListOf<BlockPos>()
+    for (x in -radius..radius) for (y in -radius..radius) for (z in -radius..radius) {
+        result.add(this.add(x, y, z))
+    }
+    return result
+}
 
 inline fun ClientWorld.getSelectedBox(pos: BlockPos): Box =
     this.getBlockState(pos).getOutlineShape(this, pos).boundingBox

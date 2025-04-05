@@ -2,7 +2,7 @@ package dev.dyzjct.kura.module.modules.combat
 
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils.spoofSneak
-import base.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.world.isPlaceable

@@ -3,8 +3,8 @@ package dev.dyzjct.kura.module.modules.player
 import dev.dyzjct.kura.utils.block.BlockUtil.calcBreakTime
 import dev.dyzjct.kura.utils.block.BlockUtil.canBreak
 import base.utils.entity.EntityUtils.eyePosition
-import base.utils.extension.minePacket
-import base.utils.extension.sendSequencedPacket
+import dev.dyzjct.kura.utils.extension.minePacket
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.graphics.ESPRenderer
 import base.utils.inventory.slot.allSlots
 import base.utils.inventory.slot.firstItem

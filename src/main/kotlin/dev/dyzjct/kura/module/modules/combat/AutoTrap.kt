@@ -2,8 +2,8 @@ package dev.dyzjct.kura.module.modules.combat
 
 import base.utils.combat.getTarget
 import base.utils.entity.EntityUtils.spoofSneak
-import base.utils.extension.fastPos
-import base.utils.extension.sendSequencedPacket
+import dev.dyzjct.kura.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.distanceSqToCenter

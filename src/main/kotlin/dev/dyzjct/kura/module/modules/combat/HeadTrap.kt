@@ -3,8 +3,8 @@ package dev.dyzjct.kura.module.modules.combat
 import dev.dyzjct.kura.utils.block.BlockUtil.checkNearBlocksExtended
 import base.utils.combat.getTarget
 import base.utils.entity.EntityUtils.boxCheck
-import base.utils.extension.fastPos
-import base.utils.extension.sendSequencedPacket
+import dev.dyzjct.kura.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.distanceSqToCenter

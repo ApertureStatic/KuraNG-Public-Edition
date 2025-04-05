@@ -7,7 +7,7 @@ import base.utils.entity.EntityUtils.eyePosition
 import base.utils.entity.EntityUtils.isFriend
 import base.utils.entity.EntityUtils.preventEntitySpawning
 import base.utils.entity.EntityUtils.spoofSneak
-import base.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.graphics.ESPRenderer
 import base.utils.hole.HoleType
 import base.utils.inventory.slot.firstBlock

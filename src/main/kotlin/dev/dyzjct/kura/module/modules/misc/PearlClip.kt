@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.misc
 
 import base.utils.entity.EntityUtils.autoCenter
-import base.utils.extension.sendSequencedPacket
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoCheck
 import dev.dyzjct.kura.manager.RotationManager

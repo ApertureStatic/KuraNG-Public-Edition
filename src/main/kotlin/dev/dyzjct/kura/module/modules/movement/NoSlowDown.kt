@@ -2,7 +2,7 @@ package dev.dyzjct.kura.module.modules.movement
 
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import base.utils.extension.sendSequencedPacket
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket
 import net.minecraft.util.Hand

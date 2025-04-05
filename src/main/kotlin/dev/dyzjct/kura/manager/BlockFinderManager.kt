@@ -5,7 +5,7 @@ import dev.dyzjct.kura.event.eventbus.AlwaysListening
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.eventbus.safeBackGroundTaskListener
 import base.utils.concurrent.threads.defaultScope
-import base.utils.extension.sendSequencedPacket
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.math.distanceSqToCenter
 import dev.dyzjct.kura.module.modules.render.ChestESP
 import dev.dyzjct.kura.module.modules.render.PortalESP

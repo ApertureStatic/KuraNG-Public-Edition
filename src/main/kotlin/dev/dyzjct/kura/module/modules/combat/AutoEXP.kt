@@ -3,14 +3,14 @@ package dev.dyzjct.kura.module.modules.combat
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils
-import base.utils.extension.sendSequencedPacket
-import base.utils.extension.synchronized
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.math.distanceSqTo
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoCheck
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.sq
+import dev.dyzjct.kura.utils.extension.synchronized
 import dev.dyzjct.kura.utils.inventory.InventoryUtil
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.findEmptySlots
 import net.minecraft.item.ItemStack

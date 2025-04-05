@@ -2,7 +2,7 @@ package dev.dyzjct.kura.module.modules.misc
 
 import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
 import base.utils.concurrent.threads.runSafe
-import base.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.graphics.ESPRenderer
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots

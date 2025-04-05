@@ -4,10 +4,10 @@ import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
 import dev.dyzjct.kura.utils.block.isLiquidBlock
 import dev.dyzjct.kura.utils.block.isWater
 import base.utils.entity.EntityUtils.isInWeb
-import base.utils.extension.fastPos
-import base.utils.extension.position
-import base.utils.extension.positionRotation
-import base.utils.extension.sendSequencedPacket
+import dev.dyzjct.kura.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.position
+import dev.dyzjct.kura.utils.extension.positionRotation
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.toBlockPos

@@ -77,13 +77,13 @@ object ChatUtil {
                 msgCount = 0
                 MinecraftClient.getInstance().inGameHud?.let { gameHUD ->
                     val text =
-                        Text.literal("${bracketBuilder(AQUA + Kura.MOD_NAME)} ${message.replace("§", SECTIONSIGN)}")
+                        Text.literal("${bracketBuilder(DARK_PURPLE + Kura.MOD_NAME)} ${message.replace("§", SECTIONSIGN)}")
                     gameHUD.chatHud?.addMessage(text)
                 }
             }
         } ?: {
             MinecraftClient.getInstance().inGameHud?.let { gameHUD ->
-                val text = Text.literal("${bracketBuilder(AQUA + Kura.MOD_NAME)} ${message.replace("§", SECTIONSIGN)}")
+                val text = Text.literal("${bracketBuilder(DARK_PURPLE + Kura.MOD_NAME)} ${message.replace("§", SECTIONSIGN)}")
                 gameHUD.chatHud?.addMessage(text)
             }
         }
@@ -91,12 +91,12 @@ object ChatUtil {
     }
 
     fun sendNoSpamMessage(message: String) {
-        val text = Text.literal("${bracketBuilder(AQUA + Kura.MOD_NAME)} ${message.replace("§", SECTIONSIGN)}")
+        val text = Text.literal("${bracketBuilder(DARK_PURPLE + Kura.MOD_NAME)} ${message.replace("§", SECTIONSIGN)}")
         (MinecraftClient.getInstance().inGameHud.chatHud as IChatHud).kuraAddMessage(text, text.hashCode())
     }
 
     fun sendMessageWithID(message: String, id: Int) {
-        val text = Text.literal("${bracketBuilder(AQUA + Kura.MOD_NAME)} ${message.replace("§", SECTIONSIGN)}")
+        val text = Text.literal("${bracketBuilder(DARK_PURPLE + Kura.MOD_NAME)} ${message.replace("§", SECTIONSIGN)}")
         (MinecraftClient.getInstance().inGameHud.chatHud as IChatHud).kuraAddMessage(text, id)
     }
 }

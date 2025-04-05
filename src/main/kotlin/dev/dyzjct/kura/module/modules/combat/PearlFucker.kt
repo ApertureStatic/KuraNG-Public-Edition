@@ -4,7 +4,7 @@ import dev.dyzjct.kura.utils.block.BlockUtil.canSee
 import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
 import dev.dyzjct.kura.utils.block.getBlock
 import base.utils.chat.ChatUtil
-import base.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.math.distanceSqTo
 import base.utils.math.sq
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent

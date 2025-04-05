@@ -2,7 +2,7 @@ package dev.dyzjct.kura.module.modules.combat
 
 import dev.dyzjct.kura.utils.block.BlockUtil.canBreak
 import base.utils.chat.ChatUtil
-import base.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.math.distanceSqToCenter
 import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.event.events.player.PlayerMotionEvent

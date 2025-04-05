@@ -1,8 +1,9 @@
 package dev.dyzjct.kura.utils.inventory
 
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.concurrent.threads.runSafe
-import base.utils.extension.packetClick
+import base.utils.item.attackDamage
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.utils.extension.packetClick
 import net.minecraft.entity.effect.StatusEffect
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.item.*
@@ -33,6 +34,18 @@ object InventoryUtil {
         return null
     }
 
+    fun SafeClientEvent.findItemInHotbar(item: Item): Int? {
+        runSafe {
+            for (i in 0..8) {
+                val stack = player.inventory.getStack(i)
+                if (item == stack.item) {
+                    return i
+                }
+            }
+        }
+        return null
+    }
+
     fun SafeClientEvent.findPotInventorySlot(potion: StatusEffect): Int? {
         for (i in 0..44) {
             val stack: ItemStack = player.inventory.getStack(i)
@@ -47,6 +60,20 @@ object InventoryUtil {
             }
         }
         return null
+    }
+
+    fun SafeClientEvent.getWeaponSlot(): ItemStack? {
+        var bestItem: ItemStack? = null
+        for (i in 0..44) {
+            if (player.inventory.getStack(i).item is SwordItem || player.inventory.getStack(i).item is ToolItem) {
+                bestItem?.let {
+                    if (player.inventory.getStack(i).attackDamage > it.damage) bestItem = player.inventory.getStack(i)
+                } ?: run {
+                    bestItem = player.inventory.getStack(i)
+                }
+            }
+        }
+        return bestItem
     }
 
     fun SafeClientEvent.findItemInventorySlot(item: Item): Int {

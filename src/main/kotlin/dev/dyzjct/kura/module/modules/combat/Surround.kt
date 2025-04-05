@@ -11,9 +11,8 @@ import base.utils.concurrent.threads.runSynchronized
 import base.utils.entity.EntityUtils
 import base.utils.entity.EntityUtils.preventEntitySpawning
 import base.utils.entity.EntityUtils.spoofSneak
-import base.utils.extension.fastPos
-import base.utils.extension.sendSequencedPacket
-import base.utils.extension.synchronized
+import dev.dyzjct.kura.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.hole.HoleType
 import base.utils.hole.SurroundUtils.betterPosition
 import base.utils.inventory.slot.firstBlock
@@ -45,6 +44,7 @@ import dev.dyzjct.kura.module.modules.render.PlaceRender
 import dev.dyzjct.kura.system.util.collections.EnumMap
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.extension.sq
+import dev.dyzjct.kura.utils.extension.synchronized
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationToVec2f
 import it.unimi.dsi.fastutil.longs.Long2LongMaps

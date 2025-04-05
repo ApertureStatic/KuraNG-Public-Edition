@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import base.utils.extension.fastPos
-import base.utils.extension.sendSequencedPacket
+import dev.dyzjct.kura.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils

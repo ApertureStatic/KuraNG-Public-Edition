@@ -174,3 +174,5 @@ accessible method net/minecraft/client/input/KeyboardInput getMovementMultiplier
 
 accessible field net/minecraft/client/gl/ShaderProgram loadedUniforms Ljava/util/Map;
 mutable field net/minecraft/client/gl/ShaderProgram loadedUniforms Ljava/util/Map;
+
+accessible field net/minecraft/world/explosion/Explosion damageSource Lnet/minecraft/entity/damage/DamageSource;

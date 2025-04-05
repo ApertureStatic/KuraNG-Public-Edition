@@ -6,6 +6,7 @@ import dev.dyzjct.kura.event.events.input.KeyboardInputEvent
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.utils.math.MathUtil
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -92,23 +93,23 @@ object FreeCam : Module(
     }
 
     fun getFakeYaw(): Float {
-        return interpolate(prevFakeYaw.toDouble(), fakeYaw.toDouble(), mc.tickDelta).toFloat()
+        return MathUtil.interpolate(prevFakeYaw.toDouble(), fakeYaw.toDouble(), mc.tickDelta.toDouble()).toFloat()
     }
 
     fun getFakePitch(): Float {
-        return interpolate(prevFakePitch.toDouble(), fakePitch.toDouble(), mc.tickDelta).toFloat()
+        return MathUtil.interpolate(prevFakePitch.toDouble(), fakePitch.toDouble(), mc.tickDelta.toDouble()).toFloat()
     }
 
     fun getFakeX(): Double {
-        return interpolate(prevFakeX, fakeX, mc.tickDelta)
+        return MathUtil.interpolate(prevFakeX, fakeX, mc.tickDelta.toDouble())
     }
 
     fun getFakeY(): Double {
-        return interpolate(prevFakeY, fakeY, mc.tickDelta)
+        return MathUtil.interpolate(prevFakeY, fakeY, mc.tickDelta.toDouble())
     }
 
     fun getFakeZ(): Double {
-        return interpolate(prevFakeZ, fakeZ, mc.tickDelta)
+        return MathUtil.interpolate(prevFakeZ, fakeZ, mc.tickDelta.toDouble())
     }
 
     private fun directionSpeed(speed: Double): DoubleArray {

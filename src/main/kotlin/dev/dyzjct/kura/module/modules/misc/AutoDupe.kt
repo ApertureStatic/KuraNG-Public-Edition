@@ -6,7 +6,7 @@ import dev.dyzjct.kura.utils.block.isFullBox
 import base.utils.chat.ChatUtil
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils.boxCheck
-import base.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.math.toBox
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting

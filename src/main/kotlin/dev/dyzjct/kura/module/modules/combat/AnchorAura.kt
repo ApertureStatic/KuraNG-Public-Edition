@@ -7,8 +7,8 @@ import base.utils.combat.TargetInfo
 import base.utils.combat.getPredictedTarget
 import base.utils.entity.EntityUtils.isBurrowBlock
 import base.utils.entity.EntityUtils.spoofSneak
-import base.utils.extension.fastPos
-import base.utils.extension.sendSequencedPacket
+import dev.dyzjct.kura.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.graphics.ESPRenderer
 import base.utils.math.DamageCalculator.anchorDamage
 import base.utils.math.distanceSqTo

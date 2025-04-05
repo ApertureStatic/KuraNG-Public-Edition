@@ -8,7 +8,7 @@ import base.utils.concurrent.threads.onMainThread
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils.isInWeb
 import base.utils.entity.EntityUtils.spoofSneak
-import base.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.hole.SurroundUtils
 import base.utils.hole.SurroundUtils.checkHole
 import base.utils.math.distanceSqTo

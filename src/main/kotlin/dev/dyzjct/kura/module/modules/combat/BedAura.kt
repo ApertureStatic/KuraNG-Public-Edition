@@ -2,8 +2,8 @@ package dev.dyzjct.kura.module.modules.combat
 
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils.getClosestEnemy
-import base.utils.extension.fastPos
-import base.utils.extension.sendSequencedPacket
+import dev.dyzjct.kura.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.graphics.ESPRenderer
 import base.utils.math.distanceSqToCenter
 import base.utils.math.toBox

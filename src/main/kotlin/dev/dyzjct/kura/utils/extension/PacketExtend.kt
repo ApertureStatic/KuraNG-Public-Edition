@@ -1,4 +1,4 @@
-package base.utils.extension
+package dev.dyzjct.kura.utils.extension
 
 import dev.dyzjct.kura.utils.block.BlockUtil
 import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
