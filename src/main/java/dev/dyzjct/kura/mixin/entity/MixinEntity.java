@@ -62,6 +62,8 @@ public abstract class MixinEntity {
     @Shadow
     public abstract Vec3d getVelocity();
 
+    @Shadow public abstract boolean hasVehicle();
+
     @ModifyArgs(method = "pushAwayFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;addVelocity(DDD)V"))
     public void pushAwayFromHook(Args args) {
         if ((Object) this == MinecraftClient.getInstance().player) {

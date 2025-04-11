@@ -6,8 +6,8 @@ import base.utils.math.vector.Vec2f
 import dev.dyzjct.kura.event.eventbus.AlwaysListening
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.event.events.MovementPacketsEvent
 import dev.dyzjct.kura.event.events.PacketEvents
-import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
 import dev.dyzjct.kura.module.modules.client.AntiCheat
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.math.MathUtil
@@ -22,24 +22,25 @@ import kotlin.math.*
 
 object RotationManager : AlwaysListening {
     private val resetTimer = TimerUtils()
-    var rotateYaw: Float? = null
-    var rotatePitch: Float? = null
+    var rotateYaw: Float = 0f
+    var rotatePitch: Float = 0f
     private var stop = false
 
     fun onInit() {
-        safeEventListener<PlayerMotionEvent>(Int.MAX_VALUE) { event ->
+        safeEventListener<MovementPacketsEvent>(Int.MAX_VALUE) { event ->
             if (stop) {
-                rotateYaw = null
-                rotatePitch = null
+                rotateYaw = 0f
+                rotatePitch = 0f
                 return@safeEventListener
             }
             if (resetTimer.passed(500)) {
-                rotateYaw = null
-                rotatePitch = null
+                rotateYaw = 0f
+                rotatePitch = 0f
                 return@safeEventListener
             }
-            rotateYaw?.let { yaw ->
-                rotatePitch?.let { pitch ->
+            if (rotateYaw == 0f || rotatePitch == 0f) return@safeEventListener
+            rotateYaw.let { yaw ->
+                rotatePitch.let { pitch ->
                     if (AntiCheat.ac == AntiCheat.AntiCheats.GrimAC) {
                         connection.sendPacket(
                             PlayerMoveC2SPacket.Full(
@@ -51,17 +52,19 @@ object RotationManager : AlwaysListening {
                                 player.isOnGround
                             )
                         )
-                        event.setRenderRotation(yaw, pitch)
-                    } else event.setRotation(yaw, pitch)
+                    }
+                    event.yaw = yaw
+                    event.pitch = pitch
+
                 }
             }
         }
 
-
         safeEventListener<PacketEvents.Send>(Int.MAX_VALUE) { event ->
+            if (rotateYaw == 0f || rotatePitch == 0f) return@safeEventListener
             if (event.packet is PlayerMoveC2SPacket) {
-                rotateYaw?.let { yaw ->
-                    rotatePitch?.let { pitch ->
+                rotateYaw.let { yaw ->
+                    rotatePitch.let { pitch ->
                         event.packet.yaw = yaw
                         event.packet.pitch = pitch
                     }
@@ -137,11 +140,11 @@ object RotationManager : AlwaysListening {
 
     fun SafeClientEvent.inFov(yaw: Float, pitch: Float, fov: Float): Boolean {
         if (rotateYaw == null) return false
-        return MathHelper.angleBetween(yaw, rotateYaw!!) + abs((pitch - rotatePitch!!).toDouble()) <= fov
+        return MathHelper.angleBetween(yaw, rotateYaw) + abs((pitch - rotatePitch).toDouble()) <= fov
     }
 
     fun SafeClientEvent.injectStep(vec: Vec3d, steps: Float): Vec2f {
-        if (rotateYaw == null || rotatePitch == null) return Vec2f(vec.x, vec.y)
+        if (rotateYaw == null) return Vec2f(vec.x, vec.y)
         var yawDelta = MathHelper.wrapDegrees(
             MathHelper.wrapDegrees(
                 Math.toDegrees(
@@ -150,14 +153,14 @@ object RotationManager : AlwaysListening {
                         (vec.x - player.x)
                     )
                 ) - 90
-            ).toFloat() - rotateYaw!!
+            ).toFloat() - rotateYaw
         )
         var pitchDelta = ((-Math.toDegrees(
             atan2(
                 vec.y - (player.getPos().y + player.getEyeHeight(player.pose)),
                 sqrt((vec.x - player.x).pow(2.0) + (vec.z - player.z).pow(2.0))
             )
-        )).toFloat() - rotatePitch!!)
+        )).toFloat() - rotatePitch)
 
         val angleToRad = Math.toRadians((27 * (player.age % 30)).toDouble()).toFloat()
         yawDelta = (yawDelta + sin(angleToRad.toDouble()) * 3).toFloat() + MathUtil.random(-1f, 1f)
@@ -170,14 +173,14 @@ object RotationManager : AlwaysListening {
         val clampedYawDelta = MathHelper.clamp(MathHelper.abs(yawDelta), -yawStepVal, yawStepVal)
         val clampedPitchDelta = MathHelper.clamp(pitchDelta, -45f, 45f)
 
-        val newYaw = rotateYaw!! + (if (yawDelta > 0) clampedYawDelta else -clampedYawDelta)
-        val newPitch = MathHelper.clamp(rotatePitch!! + clampedPitchDelta, -90.0f, 90.0f)
+        val newYaw = rotateYaw + (if (yawDelta > 0) clampedYawDelta else -clampedYawDelta)
+        val newPitch = MathHelper.clamp(rotatePitch + clampedPitchDelta, -90.0f, 90.0f)
 
         val gcdFix: Double = ((mc.options.mouseSensitivity.value * 0.6 + 0.2).pow(3.0)) * 1.2
 
         return Vec2f(
-            (newYaw - (newYaw - rotateYaw!!) % gcdFix).toFloat(),
-            (newPitch - (newPitch - rotatePitch!!) % gcdFix).toFloat()
+            (newYaw - (newYaw - rotateYaw) % gcdFix).toFloat(),
+            (newPitch - (newPitch - rotatePitch) % gcdFix).toFloat()
         )
     }
 
@@ -188,13 +191,13 @@ object RotationManager : AlwaysListening {
         if (steps < 0.01f) steps = 0.01f
         if (steps > 1) steps = 1f
         if (steps < 1) {
-            var diff = MathHelper.angleBetween(newVec.x, rotateYaw!!)
+            var diff = MathHelper.angleBetween(newVec.x, rotateYaw)
             if (abs(diff.toDouble()) > 180 * steps) {
-                newVec = Vec2f(((rotateYaw!! + (diff * ((180 * steps) / abs(diff.toDouble())))).toFloat()), newVec.y)
+                newVec = Vec2f(((rotateYaw + (diff * ((180 * steps) / abs(diff.toDouble())))).toFloat()), newVec.y)
             }
-            diff = newVec.y - rotatePitch!!
+            diff = newVec.y - rotatePitch
             if (abs(diff.toDouble()) > 90 * steps) {
-                newVec = Vec2f(newVec.x, ((rotatePitch!! + (diff * ((90 * steps) / abs(diff.toDouble())))).toFloat()))
+                newVec = Vec2f(newVec.x, ((rotatePitch + (diff * ((90 * steps) / abs(diff.toDouble())))).toFloat()))
             }
         }
         return newVec

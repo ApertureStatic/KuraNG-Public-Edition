@@ -3,18 +3,21 @@ package dev.dyzjct.kura.module.modules.client
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.combat.AnchorAura
 import dev.dyzjct.kura.module.modules.aura.KillAura
+import dev.dyzjct.kura.module.modules.combat.AnchorAura
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
+import dev.dyzjct.kura.utils.TimerUtils
 import net.minecraft.item.EndCrystalItem
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.Hand
 import java.util.concurrent.CopyOnWriteArrayList
 
 object CombatSystem : Module(
     name = "CombatSystem",
     langName = "战斗系统",
-    category = Category.CLIENT
+    category = Category.CLIENT,
+    alwaysEnable = true
 ) {
     val spoofMode = msetting("SpoofMode", SpoofMode.Normal)
     val eating by bsetting("EatingPause", true)
@@ -33,11 +36,36 @@ object CombatSystem : Module(
     val attackRange by dsetting("AttackRange", 6.0, 0.0, 8.0)
     val interactRange by dsetting("InteractRange", 6.0, 0.0, 8.0)
     val kaRange by dsetting("KARange", 6.0, 0.0, 8.0)
+    val packetControl by bsetting("PacketControl", false)
+    val rotateControl by bsetting("RotateControl", false).isTrue { packetControl }
+    val rotationDelay by isetting("RotationDelay", 500, 0, 2000).isTrue { packetControl && rotateControl }
+    val positionControl by bsetting("PositionControl", false).isTrue { packetControl }
+    val positionDelay by isetting("PositionDelay", 500, 0, 2000).isTrue { packetControl && positionControl }
+    val groundControl by bsetting("GroundControl", false).isTrue { packetControl }
+    val groundDelay by isetting("GroundDelay", 500, 0, 2000).isTrue { packetControl && groundControl }
     val renderRotate by bsetting("RenderRotate", true)
     private val swing by bsetting("Swing", true)
     private val packetSwing by bsetting("PacketSwing", true).isTrue { swing }
     private val swingHand by msetting("SwingHand", SwingHand.MainHand).isTrue { swing }
     val debug by bsetting("Debug", false)
+
+    val rotation_timer = TimerUtils()
+    val position_timer = TimerUtils()
+    val ground_timer = TimerUtils()
+
+    init {
+        onPacketSend { packet ->
+            if (packet.packet is PlayerMoveC2SPacket) {
+                if (packet.packet.changePosition) {
+                    position_timer.reset()
+                }
+                if (packet.packet.changeLook) {
+                    rotation_timer.reset()
+                }
+                ground_timer.reset()
+            }
+        }
+    }
 
     fun isBestAura(aura: AuraType): Boolean {
         if (smartAura) {

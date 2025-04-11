@@ -133,8 +133,8 @@ object KuraCrystal : Module(
             targetFinder().first().let { target ->
                 runCatching {
                     update(target)
-                    attack(target)
                     place(target)
+                    attack(target)
                 }
                 target_entity = target.entity
                 place_list = null
@@ -300,7 +300,12 @@ object KuraCrystal : Module(
                 if (selfDamage >= player.health + player.absorptionAmount) continue
                 list.add(
                     PlaceInfo(
-                        target.entity, crystalPos, tgtDmg, selfDamage
+                        target.entity,
+                        crystalPos,
+                        tgtDmg,
+                        selfDamage,
+                        if (CombatSystem.strictDirection) findDirection(crystalPos)
+                            ?: Direction.UP else Direction.UP
                     )
                 )
             }
@@ -426,8 +431,7 @@ object KuraCrystal : Module(
             hand,
             BlockHitResult(
                 placeInfo.crystalPos.down().toVec3dCenter(),
-                if (CombatSystem.strictDirection) findDirection(placeInfo.crystalPos.down())
-                    ?: Direction.UP else Direction.UP,
+                placeInfo.direction,
                 placeInfo.crystalPos.down(),
                 false
             ),
@@ -498,7 +502,8 @@ object KuraCrystal : Module(
         val target: LivingEntity,
         val crystalPos: BlockPos,
         val targetDmg: Double,
-        val selfDmg: Double
+        val selfDmg: Double,
+        val direction: Direction
     )
 
     data class TargetInfo(

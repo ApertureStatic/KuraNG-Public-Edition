@@ -1,16 +1,31 @@
 package dev.dyzjct.kura.mixin.player;
 
+import base.utils.Wrapper;
+import com.mojang.authlib.GameProfile;
 import dev.dyzjct.kura.event.eventbus.StageType;
+import dev.dyzjct.kura.event.events.MovementPacketsEvent;
 import dev.dyzjct.kura.event.events.player.JumpEvent;
 import dev.dyzjct.kura.event.events.player.PlayerMotionEvent;
 import dev.dyzjct.kura.event.events.player.PlayerMoveEvent;
+import dev.dyzjct.kura.event.events.player.UpdateWalkingPlayerEvent;
 import dev.dyzjct.kura.manager.EventAccessManager;
+import dev.dyzjct.kura.manager.RotationManager;
+import dev.dyzjct.kura.module.modules.client.CombatSystem;
 import dev.dyzjct.kura.module.modules.movement.NoSlowDown;
 import dev.dyzjct.kura.module.modules.movement.Velocity;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.MovementType;
+import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,9 +33,13 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerEntity.class)
-public abstract class MixinClientPlayerEntity extends MixinPlayerEntity {
+public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity {
     @Unique
     public PlayerMotionEvent motionEvent;
+
+    public MixinClientPlayerEntity(ClientWorld world, GameProfile profile) {
+        super(world, profile);
+    }
 
     @Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"), require = 0)
     private boolean tickMovementHook(ClientPlayerEntity player) {
@@ -56,6 +75,122 @@ public abstract class MixinClientPlayerEntity extends MixinPlayerEntity {
             callbackInfo.cancel();
         }
     }
+
+    @Inject(method = "sendMovementPackets", at = {@At("HEAD")}, cancellable = true)
+    private void sendMovementPacketsHook(CallbackInfo ci) {
+        ci.cancel();
+        if (Wrapper.getPlayer() == null) return;
+        try {
+            UpdateWalkingPlayerEvent.Pre.INSTANCE.post();
+            this.sendSprintingPacket();
+            boolean bl = this.isSneaking();
+            if (bl != this.lastSneaking) {
+                ClientCommandC2SPacket.Mode mode = bl ? ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY : ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY;
+                this.networkHandler.sendPacket(new ClientCommandC2SPacket(this, mode));
+                this.lastSneaking = bl;
+            }
+
+            if (this.isCamera()) {
+                double d = this.getX() - this.lastX;
+                double e = this.getY() - this.lastBaseY;
+                double f = this.getZ() - this.lastZ;
+
+                float yaw = this.getYaw();
+                float pitch = this.getPitch();
+                MovementPacketsEvent movementPacketsEvent = new MovementPacketsEvent(yaw, pitch);
+                movementPacketsEvent.post();
+                yaw = movementPacketsEvent.getYaw();
+                pitch = movementPacketsEvent.getPitch();
+
+                double g = yaw - RotationManager.INSTANCE.getRotateYaw();//this.lastYaw;
+                double h = pitch - RotationManager.INSTANCE.getRotatePitch();//this.lastPitch;
+
+                RotationManager.INSTANCE.setRotateYaw(yaw);
+                RotationManager.INSTANCE.setRotatePitch(pitch);
+
+
+                ++this.ticksSinceLastPositionPacketSent;
+                boolean bl2 = MathHelper.squaredMagnitude(d, e, f) > MathHelper.square(2.0E-4) || this.ticksSinceLastPositionPacketSent >= 20 || (CombatSystem.INSTANCE.getPacketControl() && CombatSystem.INSTANCE.getPositionControl() && CombatSystem.INSTANCE.getPosition_timer().passed(CombatSystem.INSTANCE.getPositionDelay()));
+                boolean bl3 = (g != 0.0 || h != 0.0 || (CombatSystem.INSTANCE.getPacketControl() && CombatSystem.INSTANCE.getRotateControl() && CombatSystem.INSTANCE.getRotation_timer().passed(CombatSystem.INSTANCE.getRotationDelay())));
+                if (this.hasVehicle()) {
+                    Vec3d vec3d = this.getVelocity();
+                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.Full(vec3d.x, -999.0, vec3d.z, yaw, pitch, this.isOnGround()));
+                    bl2 = false;
+                } else if (bl2 && bl3) {
+                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.Full(this.getX(), this.getY(), this.getZ(), yaw, pitch, this.isOnGround()));
+                } else if (bl2) {
+                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(this.getX(), this.getY(), this.getZ(), this.isOnGround()));
+                } else if (bl3) {
+                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, this.isOnGround()));
+                } else if (this.lastOnGround != this.isOnGround() || CombatSystem.INSTANCE.getPacketControl() && CombatSystem.INSTANCE.getGroundControl() && CombatSystem.INSTANCE.getGround_timer().passed(CombatSystem.INSTANCE.getGroundDelay())) {
+                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(this.isOnGround()));
+                }
+
+                if (bl2) {
+                    this.lastX = this.getX();
+                    this.lastBaseY = this.getY();
+                    this.lastZ = this.getZ();
+                    this.ticksSinceLastPositionPacketSent = 0;
+                }
+
+                if (bl3) {
+                    this.lastYaw = yaw;
+                    this.lastPitch = pitch;
+                }
+
+                this.lastOnGround = this.isOnGround();
+                this.autoJumpEnabled = this.client.options.getAutoJump().getValue();
+            }
+            UpdateWalkingPlayerEvent.Post.INSTANCE.post();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Shadow
+    private void sendSprintingPacket() {
+    }
+
+    @Shadow
+    public abstract boolean isSneaking();
+
+    @Shadow
+    public boolean lastSneaking;
+
+    @Shadow
+    @Final
+    public ClientPlayNetworkHandler networkHandler;
+
+    @Shadow
+    protected abstract boolean isCamera();
+
+    @Shadow
+    public double lastX;
+
+    @Shadow
+    public double lastBaseY;
+
+    @Shadow
+    public double lastZ;
+
+    @Shadow
+    public int ticksSinceLastPositionPacketSent;
+
+    @Shadow
+    public float lastYaw;
+
+    @Shadow
+    public float lastPitch;
+
+    @Shadow
+    public boolean lastOnGround;
+
+    @Shadow
+    private boolean autoJumpEnabled;
+
+    @Shadow
+    @Final
+    protected MinecraftClient client;
 
     @Redirect(method = "sendMovementPackets", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getX()D"))
     private double posXHook(ClientPlayerEntity instance) {
