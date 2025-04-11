@@ -8,12 +8,15 @@ import base.utils.math.distanceSqTo
 import base.utils.math.toBox
 import base.utils.math.toVec3dCenter
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.event.events.player.UpdateWalkingPlayerEvent
 import dev.dyzjct.kura.manager.CrystalManager
 import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.FriendManager.isFriend
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.manager.RotationManager.inFov
+import dev.dyzjct.kura.manager.RotationManagerNew.lookAt
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.aura.DamageCalculator.crystalDamage
@@ -77,6 +80,7 @@ object KuraCrystal : Module(
 
     //TODO Page Rotate
     private var rotate by bsetting("Rotate", true).enumIs(page, Page.ROTATE)
+    private var test by bsetting("Test", false).enumIs(page, Page.ROTATE)
     private val onBreak by bsetting("OnBreak", false).enumIs(page, Page.ROTATE)
     private val yOffset by dsetting("YOffset", 0.05, 0.0, 1.0, 0.01).enumIs(page, Page.ROTATE)
     private val yawStep by bsetting("YawStep", false).enumIs(page, Page.ROTATE)
@@ -124,11 +128,11 @@ object KuraCrystal : Module(
     private var prefix = "[${ChatUtil.DARK_PURPLE}KURA ${ChatUtil.DARK_RED}CRYSTAL${ChatUtil.WHITE}]: "
 
     init {
-        onMotion {
+        safeEventListener<UpdateWalkingPlayerEvent.Post> {
             if (targetFinder().isEmpty()) {
                 if (debug) ChatUtil.sendNoSpamMessage("${prefix}${ChatUtil.RED}Can't find the target entity!")
                 attacking_position = null
-                return@onMotion
+                return@safeEventListener
             }
             targetFinder().first().let { target ->
                 runCatching {
@@ -213,7 +217,8 @@ object KuraCrystal : Module(
                 lastUpdateTime = System.currentTimeMillis()
                 startTime = System.currentTimeMillis()
                 if (rotate) {
-                    RotationManager.rotationTo(placePos.crystalPos, false, if (yawStep) steps else 1f)
+                    if (test) lookAt(placePos.crystalPos.toCenterPos())
+                    else RotationManager.rotationTo(placePos.crystalPos, false, if (yawStep) steps else 1f)
                 }
                 if (place_timer.tickAndReset(place_delay)) {
                     if (auto_switch) findItemInHotbar(Items.END_CRYSTAL)?.let { slot ->
@@ -244,7 +249,8 @@ object KuraCrystal : Module(
         }
         val foundCrystal = findCrystalsList(target).first()
         if (rotate) {
-            RotationManager.rotationTo(foundCrystal.pos, false, if (yawStep) steps else 1f)
+            if (test) lookAt(foundCrystal.pos)
+            else RotationManager.rotationTo(foundCrystal.pos, false, if (yawStep) steps else 1f)
         }
         if (attack_timer.tickAndReset(attack_delay)) {
             if (rotate && onBreak) {

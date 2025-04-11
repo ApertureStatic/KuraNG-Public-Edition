@@ -1,5 +1,6 @@
 package dev.dyzjct.kura.mixin.input;
 
+import dev.dyzjct.kura.event.events.input.MouseUpdateEvent;
 import dev.dyzjct.kura.module.ModuleManager;
 import dev.dyzjct.kura.event.events.input.MouseClickEvent;
 import dev.dyzjct.kura.event.events.input.MouseScrollEvent;
@@ -23,5 +24,11 @@ public class MixinMouse {
         if (button == 4 || button == 5) {
             ModuleManager.INSTANCE.onKeyPressed(button, action);
         }
+    }
+
+    @Inject(method = "updateMouse", at = @At("RETURN"))
+    private void updateHook(CallbackInfo ci) {
+        MouseUpdateEvent event = new MouseUpdateEvent();
+        event.post();
     }
 }

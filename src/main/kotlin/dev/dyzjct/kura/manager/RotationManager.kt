@@ -7,7 +7,7 @@ import dev.dyzjct.kura.event.eventbus.AlwaysListening
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.event.events.MovementPacketsEvent
-import dev.dyzjct.kura.event.events.PacketEvents
+import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
 import dev.dyzjct.kura.module.modules.client.AntiCheat
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.math.MathUtil
@@ -59,18 +59,37 @@ object RotationManager : AlwaysListening {
                 }
             }
         }
-
-        safeEventListener<PacketEvents.Send>(Int.MAX_VALUE) { event ->
+        safeEventListener<PlayerMotionEvent>(Int.MAX_VALUE) { event ->
+            if (stop) {
+                rotateYaw = 0f
+                rotatePitch = 0f
+                return@safeEventListener
+            }
+            if (resetTimer.passed(500)) {
+                rotateYaw = 0f
+                rotatePitch = 0f
+                return@safeEventListener
+            }
             if (rotateYaw == 0f || rotatePitch == 0f) return@safeEventListener
-            if (event.packet is PlayerMoveC2SPacket) {
-                rotateYaw.let { yaw ->
-                    rotatePitch.let { pitch ->
-                        event.packet.yaw = yaw
-                        event.packet.pitch = pitch
-                    }
+            rotateYaw.let { yaw ->
+                rotatePitch.let { pitch ->
+                    event.setRotation(yaw, pitch)
+                    event.setRenderRotation(yaw, pitch)
                 }
             }
         }
+
+//        safeEventListener<PacketEvents.Send>(Int.MAX_VALUE) { event ->
+//            if (rotateYaw == 0f || rotatePitch == 0f) return@safeEventListener
+//            if (event.packet is PlayerMoveC2SPacket) {
+//                rotateYaw.let { yaw ->
+//                    rotatePitch.let { pitch ->
+//                        event.packet.yaw = yaw
+//                        event.packet.pitch = pitch
+//                    }
+//                }
+//            }
+//        }
     }
 
     fun stopRotation() {

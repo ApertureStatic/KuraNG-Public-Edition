@@ -40,6 +40,7 @@ class Kura : AlwaysListening {
             EventListenerManager.call()
             ModuleManager.init()
             CommandManager.onInit()
+            RotationManagerNew.onInit()
             RotationManager.onInit()
             FileManager.onInit()
             FileManager.loadAll()
@@ -54,9 +55,9 @@ class Kura : AlwaysListening {
             BlockFinderManager.onInit()
             SphereCalculatorManager.onInit()
             DisablerManager.onInit()
-
             ClickGui.disable()
             HUDEditor.disable()
+
             hasInit = true
         }
 
