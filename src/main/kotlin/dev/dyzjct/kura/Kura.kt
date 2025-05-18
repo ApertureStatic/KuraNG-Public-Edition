@@ -9,6 +9,7 @@ import dev.dyzjct.kura.module.modules.client.ClickGui
 import dev.dyzjct.kura.module.modules.client.HUDEditor
 import dev.dyzjct.kura.setting.StringSetting
 import dev.dyzjct.kura.utils.math.LagCompensator
+import dev.skidderpollution.m7thh4ck.manager.impl.RotationManagerNew
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.io.path.Path
@@ -40,7 +41,7 @@ class Kura : AlwaysListening {
             EventListenerManager.call()
             ModuleManager.init()
             CommandManager.onInit()
-            RotationManagerNew.onInit()
+            RotationManagerNew.call()
             RotationManager.onInit()
             FileManager.onInit()
             FileManager.loadAll()

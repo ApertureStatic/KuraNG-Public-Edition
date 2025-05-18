@@ -1,5 +1,13 @@
 package dev.dyzjct.kura.module
 
+import base.utils.Wrapper
+import base.utils.chat.ChatUtil
+import base.utils.sound.SoundPlayer
+import dev.dyzjct.kura.Kura
+import dev.dyzjct.kura.event.eventbus.ListenerOwner
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.event.eventbus.safeConcurrentListener
+import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.event.events.ModuleEvent
 import dev.dyzjct.kura.event.events.PacketEvents
 import dev.dyzjct.kura.event.events.RunGameLoopEvent
@@ -9,20 +17,12 @@ import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
 import dev.dyzjct.kura.event.events.render.Render2DEvent
 import dev.dyzjct.kura.event.events.render.Render3DEvent
 import dev.dyzjct.kura.manager.NotificationManager
-import dev.dyzjct.kura.event.eventbus.ListenerOwner
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
-import dev.dyzjct.kura.event.eventbus.safeConcurrentListener
-import dev.dyzjct.kura.event.eventbus.safeEventListener
-import dev.dyzjct.kura.system.util.IDRegistry
-import dev.dyzjct.kura.system.util.color.ColorRGB
-import base.utils.Wrapper
-import base.utils.chat.ChatUtil
-import base.utils.sound.SoundPlayer
-import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.module.hud.NotificationHUD
 import dev.dyzjct.kura.module.modules.client.ClickGui
 import dev.dyzjct.kura.module.modules.client.Sound
 import dev.dyzjct.kura.setting.*
+import dev.dyzjct.kura.system.util.IDRegistry
+import dev.dyzjct.kura.system.util.color.ColorRGB
 import net.minecraft.client.gui.DrawContext
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
@@ -202,11 +202,15 @@ abstract class AbstractModule : ListenerOwner() {
         return value
     }
 
+//TODO Integer Settings
+
     fun isetting(name: String, defaultValue: Int, minValue: Int, maxValue: Int, modifyValue: Int = 0): IntegerSetting {
         val value = IntegerSetting(name, this, defaultValue, minValue, maxValue, modifyValue)
         settingList.add(value)
         return value
     }
+
+//TODO Float Settings
 
     fun fsetting(
         name: String, defaultValue: Float, minValue: Float, maxValue: Float, modifyValue: Float = 0f
@@ -216,6 +220,16 @@ abstract class AbstractModule : ListenerOwner() {
         return value
     }
 
+    fun fsetting(
+        name: String, defaultValue: Float, range: ClosedFloatingPointRange<Float>, modifyValue: Float = 0f
+    ): FloatSetting {
+        val value = FloatSetting(name, this, defaultValue, range.start, range.endInclusive, modifyValue)
+        settingList.add(value)
+        return value
+    }
+
+//TODO Double Settings
+
     fun dsetting(
         name: String, defaultValue: Double, minValue: Double, maxValue: Double, modifyValue: Double = 0.0
     ): DoubleSetting {
@@ -224,20 +238,10 @@ abstract class AbstractModule : ListenerOwner() {
         return value
     }
 
-    fun isetting(name: String, defaultValue: Int, minValue: Int, maxValue: Int): IntegerSetting {
-        val value = IntegerSetting(name, this, defaultValue, minValue, maxValue, 0)
-        settingList.add(value)
-        return value
-    }
-
-    fun fsetting(name: String, defaultValue: Float, minValue: Float, maxValue: Float): FloatSetting {
-        val value = FloatSetting(name, this, defaultValue, minValue, maxValue, 0f)
-        settingList.add(value)
-        return value
-    }
-
-    fun dsetting(name: String, defaultValue: Double, minValue: Double, maxValue: Double): DoubleSetting {
-        val value = DoubleSetting(name, this, defaultValue, minValue, maxValue, 0.0)
+    fun dsetting(
+        name: String, defaultValue: Double, range: ClosedFloatingPointRange<Double>, modifyValue: Double = 0.0
+    ): DoubleSetting {
+        val value = DoubleSetting(name, this, defaultValue, range.start, range.endInclusive, modifyValue)
         settingList.add(value)
         return value
     }

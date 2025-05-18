@@ -17,6 +17,24 @@ object MathUtils {
         return i
     }
 
+    fun rad(angle: Float): Float {
+        return (angle * Math.PI / 180).toFloat()
+    }
+    @JvmStatic
+    inline fun random(min: Int, max: Int): Int {
+        return min + (Math.random() * ((max - min) + 1)).toInt()
+    }
+
+    @JvmStatic
+    inline fun random(min: Float, max: Float): Float {
+        return (Math.random() * (max - min) + min).toFloat()
+    }
+
+    @JvmStatic
+    inline fun random(value: Float, places: Int): Float {
+        val scale = 10.0f.pow(places)
+        return kotlin.math.round(value * scale) / scale
+    }
     inline fun round(value: Float, places: Int): Float {
         val scale = 10.0f.pow(places)
         return round(value * scale) / scale

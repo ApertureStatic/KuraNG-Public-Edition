@@ -18,6 +18,8 @@
  */
 package dev.dyzjct.kura.utils.rotation
 
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.NullModule
 import dev.dyzjct.kura.utils.rotation.RotationUtils.gcd
 import dev.dyzjct.kura.utils.rotation.RotationUtils.serverRotation
 import net.minecraft.util.math.MathHelper
@@ -26,7 +28,10 @@ import kotlin.math.roundToInt
 
 data class Rotation(
     var yaw: Float,
-    var pitch: Float
+    var pitch: Float,
+    var module: Module = NullModule,
+    var priority:Int = 114514,
+    var time:Long = System.currentTimeMillis()
 ) {
 
     companion object {

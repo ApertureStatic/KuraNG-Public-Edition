@@ -9,7 +9,6 @@ import base.utils.world.checkAxis
 import base.utils.world.getMiningSide
 import base.utils.world.getVisibleSides
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
-import dev.dyzjct.kura.module.modules.client.AntiCheat
 import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.utils.animations.fastCeil
@@ -279,14 +278,9 @@ object BlockUtil {
 
     fun SafeClientEvent.isStrictDirection(pos: BlockPos, side: Direction): Boolean {
         if (player.blockY - pos.y >= 0 && side == Direction.DOWN) return false
-        if (AntiCheat.ac != AntiCheat.AntiCheats.NCP) {
-            if (side == Direction.UP && pos.y + 1 > player.eyePos.getY()) {
-                return false
-            }
-        } else {
-            if (side == Direction.UP && pos.y > player.eyePos.getY()) {
-                return false
-            }
+
+        if (side == Direction.UP && pos.y > player.eyePos.getY()) {
+            return false
         }
 
         val eyePos: Vec3d = player.eyePosition

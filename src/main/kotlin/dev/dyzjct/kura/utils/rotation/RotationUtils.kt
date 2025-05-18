@@ -124,19 +124,6 @@ object RotationUtils : AlwaysListening {
         return Rotation(rotation.x, rotation.y)
     }
 
-    fun SafeClientEvent.getFixedRotationTo(posTo: Vec3d, side: Boolean = false): Rotation {
-        var posToBetter: Vec3d? = null
-        if (side) getMiningSide(posTo.toBlockPos())?.let { side ->
-            posToBetter = posTo.toBlockPos().offset(side).toCenterPos()
-                .add(Vec3d(side.opposite.vector.x * 0.5, side.opposite.vector.y * 0.5, side.opposite.vector.z * 0.5))
-        }
-        val rotation = getRotationToVec2f(
-            player.pos.add(0.0, player.getEyeHeight(player.pose).toDouble(), 0.0),
-            posToBetter ?: posTo
-        )
-        return Rotation(rotation.x, rotation.y).fixedSensitivity()
-    }
-
     fun SafeClientEvent.getYawTo(posTo: Vec3d): Float {
         val vec = posTo.subtract(player.eyePosition)
         return normalizeAngle((atan2(vec.z, vec.x).toDegree() - 90.0).toFloat())

@@ -16,7 +16,6 @@ import dev.dyzjct.kura.manager.FriendManager.isFriend
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.manager.RotationManager.inFov
-import dev.dyzjct.kura.manager.RotationManagerNew.lookAt
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.aura.DamageCalculator.crystalDamage
@@ -34,6 +33,7 @@ import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.findItemInHotbar
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.getWeaponSlot
 import dev.dyzjct.kura.utils.isWeaknessActive
+import dev.skidderpollution.m7thh4ck.manager.impl.RotationManagerNew.lookAt
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks

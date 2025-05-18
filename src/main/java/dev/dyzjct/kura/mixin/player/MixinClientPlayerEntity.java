@@ -4,10 +4,7 @@ import base.utils.Wrapper;
 import com.mojang.authlib.GameProfile;
 import dev.dyzjct.kura.event.eventbus.StageType;
 import dev.dyzjct.kura.event.events.MovementPacketsEvent;
-import dev.dyzjct.kura.event.events.player.JumpEvent;
-import dev.dyzjct.kura.event.events.player.PlayerMotionEvent;
-import dev.dyzjct.kura.event.events.player.PlayerMoveEvent;
-import dev.dyzjct.kura.event.events.player.UpdateWalkingPlayerEvent;
+import dev.dyzjct.kura.event.events.player.*;
 import dev.dyzjct.kura.manager.EventAccessManager;
 import dev.dyzjct.kura.manager.RotationManager;
 import dev.dyzjct.kura.module.modules.client.CombatSystem;
@@ -74,6 +71,23 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
         if (motionEvent.getCancelled()) {
             callbackInfo.cancel();
         }
+    }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;tick()V", shift = At.Shift.AFTER))
+    private void tick$AFTER(CallbackInfo info) {
+        UpdateMovementEvent.Pre.INSTANCE.post();
+    }
+
+    @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/client/network/ClientPlayerEntity;tickables:Ljava/util/List;", shift = At.Shift.BEFORE))
+    private void tick$tickables(CallbackInfo ci) {
+        UpdateMovementEvent.Post.INSTANCE.post();
+    }
+
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;tick()V", shift = At.Shift.BEFORE))
+    private void tick$BEFORE(CallbackInfo info) {
+        PlayerUpdateEvent event = new PlayerUpdateEvent();
+        event.post();
     }
 
     @Inject(method = "sendMovementPackets", at = {@At("HEAD")}, cancellable = true)
@@ -227,7 +241,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 
     @Override
     public void jump() {
-        JumpEvent event = JumpEvent.INSTANCE;
+        JumpEvent event = new JumpEvent();
         event.post();
         if (!event.getCancelled()) super.jump();
     }
