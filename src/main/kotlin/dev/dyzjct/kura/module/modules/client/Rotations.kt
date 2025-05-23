@@ -3,7 +3,7 @@ package dev.dyzjct.kura.module.modules.client
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 
-object Rotations:Module(name = "Rotations", category = Category.CLIENT, description = "Rotation's Settings.") {
+object Rotations:Module(name = "Rotations", category = Category.CLIENT, description = "Rotation's Settings.", alwaysEnable = true) {
     var movement_fix by bsetting("MovementFix", false)
     var smooth_rotation by bsetting("SmoothRotation", false)
     val smooth_factor by fsetting("SmoothFactor", 4.0F, 0.0F, 16.0F)
