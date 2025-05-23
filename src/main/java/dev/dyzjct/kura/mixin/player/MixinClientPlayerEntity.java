@@ -75,12 +75,14 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;tick()V", shift = At.Shift.AFTER))
     private void tick$AFTER(CallbackInfo info) {
-        UpdateMovementEvent.Pre.INSTANCE.post();
+        UpdateMovementEvent.Pre event = new UpdateMovementEvent.Pre();
+        event.post();
     }
 
     @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/client/network/ClientPlayerEntity;tickables:Ljava/util/List;", shift = At.Shift.BEFORE))
     private void tick$tickables(CallbackInfo ci) {
-        UpdateMovementEvent.Post.INSTANCE.post();
+        UpdateMovementEvent.Post event = new UpdateMovementEvent.Post();
+        event.post();
     }
 
 
@@ -116,8 +118,8 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
                 yaw = movementPacketsEvent.getYaw();
                 pitch = movementPacketsEvent.getPitch();
 
-                double g = yaw - RotationManager.INSTANCE.getRotateYaw();//this.lastYaw;
-                double h = pitch - RotationManager.INSTANCE.getRotatePitch();//this.lastPitch;
+                double g = yaw - RotationManager.INSTANCE.getYaw();//this.lastYaw;
+                double h = pitch - RotationManager.INSTANCE.getPitch();//this.lastPitch;
 
                 ++this.ticksSinceLastPositionPacketSent;
                 boolean bl2 = MathHelper.squaredMagnitude(d, e, f) > MathHelper.square(2.0E-4) || this.ticksSinceLastPositionPacketSent >= 20 || (CombatSystem.INSTANCE.getPacketControl() && CombatSystem.INSTANCE.getPositionControl() && CombatSystem.INSTANCE.getPosition_timer().passed(CombatSystem.INSTANCE.getPositionDelay()));
@@ -202,6 +204,9 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
     @Final
     protected MinecraftClient client;
 
+    @Shadow
+    public abstract float getYaw(float tickDelta);
+
     @Redirect(method = "sendMovementPackets", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getX()D"))
     private double posXHook(ClientPlayerEntity instance) {
         return motionEvent.getX();
@@ -237,12 +242,5 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
         PlayerMotionEvent oldEvent = new PlayerMotionEvent(StageType.END, motionEvent);
         oldEvent.post();
         EventAccessManager.INSTANCE.setData(oldEvent);
-    }
-
-    @Override
-    public void jump() {
-        JumpEvent event = new JumpEvent();
-        event.post();
-        if (!event.getCancelled()) super.jump();
     }
 }

@@ -28,6 +28,7 @@ import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.manager.FriendManager.isFriend
 import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.hud.TargetHUD
@@ -382,11 +383,11 @@ object AutoCrystal : Module(
             if (rotate.value) {
                 rotationInfo.update(rotation)
                 if (abs(diff) <= yawSpeed.value) {
-                    RotationManager.rotationTo(it)
+                    packetRotate(it)
                 } else {
                     val clamped = diff.coerceIn(-yawSpeed.value, yawSpeed.value)
                     val newYaw = normalizeAngle(CrystalManager.rotation.x + clamped)
-                    RotationManager.rotationTo(newYaw, it.y)
+                    packetRotate(newYaw, it.y)
                 }
                 flagged = rotateDiff.value > 0 && abs(diff) > rotateDiff.value
             }

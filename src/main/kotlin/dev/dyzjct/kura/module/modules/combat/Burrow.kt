@@ -1,25 +1,25 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
-import dev.dyzjct.kura.utils.block.isLiquidBlock
-import dev.dyzjct.kura.utils.block.isWater
 import base.utils.entity.EntityUtils.isInWeb
-import dev.dyzjct.kura.utils.extension.fastPos
-import dev.dyzjct.kura.utils.extension.position
-import dev.dyzjct.kura.utils.extension.positionRotation
-import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.toBlockPos
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoCheck
-import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.system.util.interfaces.DisplayEnum
 import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
+import dev.dyzjct.kura.utils.block.isLiquidBlock
+import dev.dyzjct.kura.utils.block.isWater
+import dev.dyzjct.kura.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.position
+import dev.dyzjct.kura.utils.extension.positionRotation
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import net.minecraft.block.*
 import net.minecraft.entity.Entity
 import net.minecraft.entity.decoration.EndCrystalEntity
@@ -82,7 +82,7 @@ object Burrow : Module(
             if (canPlace(player.blockPos.down())) {
                 val vec = player.pos.add(0.0, -1.0, 0.0)
                 sendPlayerRotation(player.yaw, 90f, false)
-                if (rotate) RotationManager.rotationTo(player.blockPos.down())
+                if (rotate) packetRotate(player.blockPos.down())
                 doSneak()
                 placeBlock(player.blockPos.down())
                 place(vec.add(0.3, 0.3, 0.3))
@@ -238,7 +238,7 @@ object Burrow : Module(
         }
         val pos = vec3d.toBlockPos()
 
-        if (rotate) RotationManager.rotationTo(player.yaw, 90f)
+        if (rotate) packetRotate(player.yaw, 90f)
 
         placeBlock(pos.down())
         if (!canPlace(pos)) {
@@ -246,7 +246,7 @@ object Burrow : Module(
         }
         if (getNeighbor(pos) == null) return
         if (rotate) {
-            RotationManager.rotationTo(player.yaw, 90.0f)
+            packetRotate(player.yaw, 90.0f)
         }
         HotbarManager.onlyItem = Items.OBSIDIAN
         spoofHotbarNoCheck(Items.OBSIDIAN) {
@@ -261,7 +261,7 @@ object Burrow : Module(
     private fun SafeClientEvent.placeBlock(pos: BlockPos) {
         if (!canPlace(pos)) return
         if (rotate) {
-            RotationManager.rotationTo(player.yaw, 90.0f)
+            packetRotate(player.yaw, 90.0f)
         }
         HotbarManager.onlyItem = Items.OBSIDIAN
         spoofHotbarNoCheck(Items.OBSIDIAN) {
@@ -290,7 +290,7 @@ object Burrow : Module(
             ) || it.boundingBox.intersects(Box(player.pos.add(0.3, 0.0, -0.3).toBlockPos())))
         }) {
             if (entity is EndCrystalEntity) {
-                RotationManager.rotationTo(entity.blockPos)
+                packetRotate(entity.blockPos)
                 connection.sendPacket(
                     PlayerInteractEntityC2SPacket.attack(
                         world.getEntityById(entity.id), player.isSneaking

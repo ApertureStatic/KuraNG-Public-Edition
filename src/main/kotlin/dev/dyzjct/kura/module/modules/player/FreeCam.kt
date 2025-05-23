@@ -3,7 +3,7 @@ package dev.dyzjct.kura.module.modules.player
 import base.utils.concurrent.threads.runSafe
 import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.event.events.input.KeyboardInputEvent
-import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.math.MathUtil
@@ -60,7 +60,7 @@ object FreeCam : Module(
     init {
         onMotion {
             if (rotate && mc.crosshairTarget != null && mc.crosshairTarget!!.pos != null) {
-                RotationManager.rotationTo(mc.crosshairTarget!!.pos, false)
+                packetRotate(mc.crosshairTarget!!.pos)
             }
         }
 

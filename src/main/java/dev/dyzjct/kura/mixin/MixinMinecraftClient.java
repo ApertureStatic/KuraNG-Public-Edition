@@ -5,6 +5,7 @@ import dev.dyzjct.kura.Kura;
 import dev.dyzjct.kura.event.events.RunGameLoopEvent;
 import dev.dyzjct.kura.event.events.TickEvent;
 import dev.dyzjct.kura.event.events.screen.GuiScreenEvent;
+import dev.dyzjct.kura.gui.screen.MainMenuScreen;
 import dev.dyzjct.kura.manager.FileManager;
 import dev.dyzjct.kura.module.AbstractModule;
 import dev.dyzjct.kura.system.render.newfont.FontRenderers;
@@ -12,6 +13,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ServerInfo;
@@ -175,6 +177,10 @@ public abstract class MixinMinecraftClient {
             new GuiScreenEvent.Displayed(screen).post();
         }
         AbstractModule.Companion.setLaoded(true);
+
+        if (screen instanceof TitleScreen) {
+            this.setScreen(new MainMenuScreen());
+        }
 //        if (screen != verScreen) { //&& Kura.Companion.getId().equals(SocketConnection.INSTANCE.getTaskID())) {
 //            setScreen(verScreen);
 //        }

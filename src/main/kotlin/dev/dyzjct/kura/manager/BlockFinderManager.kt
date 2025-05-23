@@ -1,16 +1,17 @@
 package dev.dyzjct.kura.manager
 
-import dev.dyzjct.kura.event.events.TickEvent
+import base.utils.concurrent.threads.defaultScope
+import base.utils.math.distanceSqToCenter
 import dev.dyzjct.kura.event.eventbus.AlwaysListening
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.eventbus.safeBackGroundTaskListener
-import base.utils.concurrent.threads.defaultScope
-import dev.dyzjct.kura.utils.extension.sendSequencedPacket
-import base.utils.math.distanceSqToCenter
+import dev.dyzjct.kura.event.events.TickEvent
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.modules.render.ChestESP
 import dev.dyzjct.kura.module.modules.render.PortalESP
 import dev.dyzjct.kura.module.modules.render.Xray
 import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import dev.dyzjct.kura.utils.extension.sq
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -105,7 +106,7 @@ object BlockFinderManager : AlwaysListening {
                             if (world.isAir(pos)) continue
                             if (xrayMode && Xray.wmBypass.value) {
                                 if (clickTimer.tickAndReset(Xray.clickDelay)) {
-                                    if (Xray.rotate) RotationManager.rotationTo(pos)
+                                    if (Xray.rotate) packetRotate(pos)
                                     sendSequencedPacket(world) { sequence ->
                                         PlayerActionC2SPacket(
                                             PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK,
@@ -136,7 +137,7 @@ object BlockFinderManager : AlwaysListening {
                             if (world.isAir(pos)) continue
                             if (esp && ChestESP.wmBypass.value) {
                                 if (clickTimer.tickAndReset(ChestESP.clickDelay)) {
-                                    if (ChestESP.rotate) RotationManager.rotationTo(pos)
+                                    if (ChestESP.rotate) packetRotate(pos)
                                     sendSequencedPacket(world) { sequence ->
                                         PlayerActionC2SPacket(
                                             PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK,

@@ -2,7 +2,7 @@ package dev.dyzjct.kura.module
 
 abstract class Module(
     name: String,
-    langName: String = "Undefined",
+    langName: String = name,
     description: String = "",
     keyCode: Int = 0,
     category: Category,

@@ -1,19 +1,19 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.utils.block.BlockUtil.canBreak
 import base.utils.chat.ChatUtil
-import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.math.distanceSqToCenter
 import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.sq
+import dev.dyzjct.kura.utils.block.BlockUtil.canBreak
+import dev.dyzjct.kura.utils.extension.fastPos
 import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
@@ -50,7 +50,7 @@ object ManualCev : Module(
                 if (!canBreak(blockData.blockPos, true))
                     if (debug) ChatUtil.sendNoSpamMessage("DEBUG >> ${stage.name}")
                 if (rotation) {
-                    RotationManager.rotationTo(blockData.blockPos)
+                    packetRotate(blockData.blockPos)
                 }
                 when (stage) {
                     CevStage.Block -> {

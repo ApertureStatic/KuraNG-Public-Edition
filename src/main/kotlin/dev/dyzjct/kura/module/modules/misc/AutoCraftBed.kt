@@ -1,8 +1,6 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
 import base.utils.concurrent.threads.runSafe
-import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.graphics.ESPRenderer
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
@@ -15,7 +13,7 @@ import dev.dyzjct.kura.event.eventbus.safeParallelListener
 import dev.dyzjct.kura.event.events.RunGameLoopEvent
 import dev.dyzjct.kura.event.events.TickEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.manager.SphereCalculatorManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -23,6 +21,8 @@ import dev.dyzjct.kura.system.util.delegate.CachedValueN
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
 import dev.dyzjct.kura.utils.animations.sq
+import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
+import dev.dyzjct.kura.utils.extension.fastPos
 import net.minecraft.block.Blocks
 import net.minecraft.client.gui.screen.ingame.CraftingScreen
 import net.minecraft.client.gui.screen.ingame.InventoryScreen
@@ -142,7 +142,7 @@ object AutoCraftBed : Module(name = "AutoCraftBed", langName = "自动合成床"
                         if (world.getBlockState(pos).block != Blocks.CRAFTING_TABLE && player.distanceSqToCenter(pos) <= placeRange.value.sq) {
                             player.hotbarSlots.firstBlock(Blocks.CRAFTING_TABLE)?.let { slot ->
                                 spoofHotbar(slot) {
-                                    RotationManager.rotationTo(pos)
+                                    packetRotate(pos)
                                     connection.sendPacket(fastPos(pos))
                                 }
                                 if (!craftTask.contains(pos)) {

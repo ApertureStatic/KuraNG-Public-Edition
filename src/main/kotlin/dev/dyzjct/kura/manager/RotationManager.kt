@@ -1,20 +1,97 @@
 package dev.dyzjct.kura.manager
 
+import base.utils.math.vector.Vec2f
 import dev.dyzjct.kura.event.eventbus.AlwaysListening
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.eventbus.safeEventListener
+import dev.dyzjct.kura.event.events.PacketEvents
+import dev.dyzjct.kura.event.events.input.KeyboardTickEvent
+import dev.dyzjct.kura.event.events.player.JumpEvent
 import dev.dyzjct.kura.event.events.player.PlayerUpdateEvent
 import dev.dyzjct.kura.event.events.player.UpdateMovementEvent
+import dev.dyzjct.kura.event.events.player.UpdateVelocityEvent
+import dev.dyzjct.kura.mixin.accessor.EntityAccessor
+import dev.dyzjct.kura.module.Module
+import dev.dyzjct.kura.module.modules.client.Rotations
+import dev.dyzjct.kura.module.modules.player.FreeCam
+import dev.dyzjct.kura.utils.animations.Easing
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
+import dev.dyzjct.kura.utils.math.MathUtil
 import dev.dyzjct.kura.utils.rotation.Rotation
+import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationFromVec
+import net.minecraft.block.BlockState
+import net.minecraft.block.FluidBlock
 import net.minecraft.entity.Entity
-import net.minecraft.util.math.Direction
-import java.util.*
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
+import net.minecraft.util.hit.BlockHitResult
+import net.minecraft.util.hit.HitResult
+import net.minecraft.util.math.*
+import net.minecraft.util.shape.VoxelShapes
+import net.minecraft.world.RaycastContext
 import java.util.concurrent.PriorityBlockingQueue
 import kotlin.math.*
 
-class RotationManager : AlwaysListening {
+object RotationManager : AlwaysListening {
+    var yaw: Float = 0f
+    var pitch: Float = 0f
+
+    fun SafeClientEvent.updateRotations() {
+        yaw = player.getYaw()
+        pitch = player.getPitch()
+    }
+
+    fun SafeClientEvent.restoreRotations() {
+        player.setYaw(yaw)
+        player.headYaw = yaw
+        player.setPitch(pitch)
+    }
+
+    fun SafeClientEvent.setPlayerRotations(yaw: Float, pitch: Float) {
+        player.setYaw(yaw)
+        player.headYaw = yaw
+        player.setPitch(pitch)
+    }
+
+    fun SafeClientEvent.setPlayerYaw(yaw: Float) {
+        player.setYaw(yaw)
+        player.headYaw = yaw
+    }
+
+    fun SafeClientEvent.lookAtPos(pos: BlockPos) {
+        val angle: FloatArray = MathUtil.calcAngle(
+            player.eyePos,
+            Vec3d(
+                (pos.x.toFloat() + 0.5f).toDouble(),
+                (pos.y.toFloat() + 0.5f).toDouble(),
+                (pos.z.toFloat() + 0.5f).toDouble()
+            )
+        )
+        this.setPlayerRotations(angle[0], angle[1])
+    }
+
+    fun SafeClientEvent.lookAtVec3d(vec3d: Vec3d) {
+        val angle: FloatArray = MathUtil.calcAngle(player.eyePos, Vec3d(vec3d.x, vec3d.y, vec3d.z))
+        setPlayerRotations(angle[0], angle[1])
+    }
+
+    fun SafeClientEvent.lookAtVec3d(x: Double, y: Double, z: Double) {
+        val vec3d = Vec3d(x, y, z)
+        this.lookAtVec3d(vec3d)
+    }
+
+    fun SafeClientEvent.lookAtEntity(entity: Entity) {
+        val angle: FloatArray = MathUtil.calcAngle(player.eyePos, entity.eyePos)
+        setPlayerRotations(angle[0], angle[1])
+    }
+
+    fun SafeClientEvent.setPlayerPitch(pitch: Float) {
+        player.setPitch(pitch)
+    }
+
+
     private val queue: PriorityBlockingQueue<Rotation> = PriorityBlockingQueue<Rotation>(
-        11
-    ) { target: Rotation, rotation: Rotation -> this.compareRotations(target, rotation) }
+        11,
+        Comparator<Rotation> { target: Rotation, rotation: Rotation -> this.compareRotations(target, rotation) })
 
     private var rotation: Rotation? = null
 
@@ -31,8 +108,7 @@ class RotationManager : AlwaysListening {
     private var prevRenderPitch = 0f
     private var lastRenderTime = 0L
 
-
-    init {
+    fun onInit() {
         safeEventListener<PlayerUpdateEvent> {
             queue.removeIf { rotation: Rotation -> System.currentTimeMillis() - rotation.time > 100 }
             rotation = queue.peek()
@@ -42,116 +118,98 @@ class RotationManager : AlwaysListening {
         }
 
         safeEventListener<UpdateMovementEvent.Pre> {
-            if (rotation == null) return@safeEventListener
+            rotation?.let { rotation ->
+                prevYaw = player.getYaw()
+                prevPitch = player.getPitch()
 
-            prevYaw = player.yaw
-            prevPitch = player.pitch
-
-            player.setYaw(rotation!!.yaw)
-            player.setPitch(rotation!!.pitch)
+                player.setYaw(rotation.yaw)
+                player.setPitch(rotation.pitch)
+            }
         }
+
         safeEventListener<UpdateMovementEvent.Post> {
-            if (rotation == null) return@safeEventListener
+            rotation?.let {
+                player.setYaw(prevYaw)
+                player.setPitch(prevPitch)
+            }
+        }
 
-            player.setYaw(prevYaw)
-            player.setPitch(prevPitch)
+        safeEventListener<UpdateVelocityEvent> { event ->
+            if (!Rotations.movement_fix) return@safeEventListener
+            if (FreeCam.isEnabled) FreeCam.disable()
+            rotation?.let { rotation ->
+                event.velocity = (
+                        EntityAccessor.invokeMovementInputToVelocity(
+                            event.movementInput,
+                            event.speed,
+                            rotation.yaw
+                        )
+                        )
+                event.cancel()
+            }
+        }
+
+        safeEventListener<KeyboardTickEvent> { event ->
+            if (player.isRiding) return@safeEventListener
+            if (!Rotations.movement_fix) return@safeEventListener
+            if (FreeCam.isEnabled) return@safeEventListener
+            rotation?.let { rotation ->
+                val movementForward: Float = event.movementForward
+                val movementSideways: Float = event.movementSideways
+
+                val delta: Float = (player.getYaw() - rotation.yaw) * MathHelper.RADIANS_PER_DEGREE
+
+                val cos = MathHelper.cos(delta)
+                val sin = MathHelper.sin(delta)
+
+                event.movementForward = Math.round(movementForward * cos + movementSideways * sin).toFloat()
+                event.movementSideways = Math.round(movementSideways * cos - movementForward * sin).toFloat()
+                event.cancel()
+            }
+        }
+        safeEventListener<JumpEvent.Post> {
+            if (player.isRiding) return@safeEventListener
+            if (!Rotations.movement_fix) return@safeEventListener
+            if (FreeCam.isEnabled) return@safeEventListener
+            rotation?.let { rotation ->
+                prevFixYaw = player.yaw
+                player.setYaw(rotation.yaw)
+            }
+        }
+        safeEventListener<PacketEvents.Send> { event ->
+            if (event.packet is PlayerMoveC2SPacket) {
+                if (!event.packet.changesLook()) return@safeEventListener
+
+                serverYaw = event.packet.getYaw(player.yaw)
+                serverPitch = event.packet.getPitch(player.pitch)
+            }
         }
     }
-
-    @SubscribeEvent
-    fun onUpdateVelocity(event: UpdateVelocityEvent) {
-        if (mc.player == null) return
-        if (!Opan.MODULE_MANAGER.getModule(RotationsModule::class.java).movementFix.getValue()) return
-        if (rotation == null) return
-
-        event.setVelocity(
-            EntityAccessor.invokeMovementInputToVelocity(
-                event.getMovementInput(),
-                event.getSpeed(),
-                rotation.getYaw()
-            )
-        )
-        event.setCancelled(true)
-    }
-
-
-    @SubscribeEvent
-    fun onKeyboardTick(event: KeyboardTickEvent) {
-        if (mc.player == null || mc.world == null || mc.player.isRiding()) return
-        if (!Opan.MODULE_MANAGER.getModule(RotationsModule::class.java).movementFix.getValue()) return
-        if (rotation == null) return
-
-        val movementForward: Float = event.getMovementForward()
-        val movementSideways: Float = event.getMovementSideways()
-
-        val delta: Float = (mc.player.getYaw() - rotation.getYaw()) * MathHelper.RADIANS_PER_DEGREE
-
-        val cos: Float = MathHelper.cos(delta)
-        val sin: Float = MathHelper.sin(delta)
-
-        event.setMovementForward(Math.round(movementForward * cos + movementSideways * sin))
-        event.setMovementSideways(Math.round(movementSideways * cos - movementForward * sin))
-        event.setCancelled(true)
-    }
-
-    @SubscribeEvent
-    fun onPlayerJump(event: PlayerJumpEvent?) {
-        if (mc.player == null || mc.world == null || mc.player.isRiding()) return
-        if (!Opan.MODULE_MANAGER.getModule(RotationsModule::class.java).movementFix.getValue()) return
-        if (rotation == null) return
-
-        prevFixYaw = mc.player.getYaw()
-        mc.player.setYaw(rotation.getYaw())
-    }
-
-    @SubscribeEvent
-    fun `onPlayerJump$POST`(event: PlayerJumpEvent.Post?) {
-        if (mc.player == null || mc.world == null || mc.player.isRiding()) return
-        if (!Opan.MODULE_MANAGER.getModule(RotationsModule::class.java).movementFix.getValue()) return
-        if (rotation == null) return
-
-        mc.player.setYaw(prevFixYaw)
-    }
-
-    @SubscribeEvent
-    fun onPacketSend(event: PacketSendEvent) {
-        if (mc.player == null) return
-
-        if (event.getPacket() is PlayerMoveC2SPacket) {
-            if (!packet.changesLook()) return
-
-            serverYaw = packet.getYaw(mc.player.getYaw())
-            serverPitch = packet.getPitch(mc.player.getPitch())
-        }
-    }
-
 
     //
     // 平滑设置旋转
-    fun setSmoothRotation(targetYaw: Float, targetPitch: Float) {
-        val currentYaw: Float = mc.player.getYaw()
-        val currentPitch: Float = mc.player.getPitch()
+    fun SafeClientEvent.setSmoothRotation(targetYaw: Float, targetPitch: Float) {
+        val currentYaw: Float = player.yaw
+        val currentPitch: Float = player.pitch
 
         // 平滑因子
-        val smoothFactor: Float =
-            Opan.MODULE_MANAGER.getModule(RotationsModule::class.java).smoothFactor.getValue().intValue()
+        val smoothFactor: Float = Rotations.smooth_factor
 
         // 计算平滑旋转
         val smoothYaw = currentYaw + (targetYaw - currentYaw) * smoothFactor
         val smoothPitch = currentPitch + (targetPitch - currentPitch) * smoothFactor
 
-        mc.player.setYaw(smoothYaw)
-        mc.player.setPitch(smoothPitch)
+        player.setYaw(smoothYaw)
+        player.setPitch(smoothPitch)
     }
 
     // 方法：检查视线是否可达
-    fun canPlaceBlockAt(pos: BlockPos): Boolean {
-        val eyesPos: Vec3d = eyesPos
-        val blockCenter: Vec3d = Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)
+    fun SafeClientEvent.canPlaceBlockAt(pos: BlockPos): Boolean {
+        val blockCenter = Vec3d(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5)
 
-        val rayTraceResult: BlockHitResult = mc.world.raycast(
+        val rayTraceResult: BlockHitResult = world.raycast(
             RaycastContext(
-                eyesPos,
+                player.eyePos,
                 blockCenter,
                 RaycastContext.ShapeType.OUTLINE,
                 RaycastContext.FluidHandling.NONE,
@@ -159,22 +217,22 @@ class RotationManager : AlwaysListening {
             )
         )
 
-        return rayTraceResult.getType() == BlockHitResult.Type.MISS // 如果没有命中则可以放置
+        return rayTraceResult.type == HitResult.Type.MISS // 如果没有命中则可以放置
     }
 
 
     // 主逻辑调用
     //
-    fun rotate(rotations: FloatArray, module: Module) {
-        rotate(rotations[0], rotations[1], module)
+    fun rotate(rotations: Vec2f, module: Module) {
+        rotate(rotations.x, rotations.y, module)
     }
 
     fun rotate(yaw: Float, pitch: Float, module: Module) {
-        queue.removeIf { rotation: Rotation -> rotation.getModule() === module }
+        queue.removeIf { rotation: Rotation -> rotation.module === module }
         queue.add(Rotation(yaw, pitch, module, getModulePriority(module)))
     }
 
-    fun PistonRotate(yaw: Float, pitch: Float, priority: Int) {
+    fun pistonRotate(yaw: Float, pitch: Float, priority: Int) {
         rotate(yaw, pitch, priority)
     }
 
@@ -183,155 +241,73 @@ class RotationManager : AlwaysListening {
     }
 
     fun rotate(yaw: Float, pitch: Float, module: Module, priority: Int) {
-        queue.removeIf { rotation: Rotation -> rotation.getModule() === module }
+        queue.removeIf { rotation: Rotation -> rotation.module === module }
         queue.add(Rotation(yaw, pitch, module, priority))
     }
 
-
-    fun getRotationss(eyesPos: Vec3d, vec: Vec3d): FloatArray {
-        val diffX: Double = vec.x - eyesPos.x
-        val diffY: Double = vec.y - eyesPos.y
-        val diffZ: Double = vec.z - eyesPos.z
-        var diffXZ = sqrt(diffX * diffX + diffZ * diffZ)
-
-        if (diffXZ < 0.001) diffXZ = 0.001
-
-        val yaw = Math.toDegrees(atan2(diffZ, diffX)).toFloat() - 90.0f
-        val pitch = (-Math.toDegrees(atan2(diffY, diffXZ))).toFloat()
-
-        return floatArrayOf(MathHelper.wrapDegrees(yaw), MathHelper.wrapDegrees(pitch))
+    fun SafeClientEvent.packetRotate(rotations: Vec2f) {
+        packetRotate(rotations.x, rotations.y)
     }
 
-    fun getRotations1(vec: Vec3d): FloatArray {
-        val eyesPos: Vec3d = eyesPos
-        return getRotationss(eyesPos, vec)
+    fun SafeClientEvent.packetRotate(vec3d: Vec3d) {
+        val rotations = getRotation(vec3d)
+        packetRotate(rotations.x, rotations.y)
     }
 
-    fun packetRotate(rotations: FloatArray) {
-        packetRotate(rotations[0], rotations[1])
+    fun SafeClientEvent.packetRotate(blockPos: BlockPos) {
+        val rotations = getRotation(blockPos.toCenterPos())
+        packetRotate(rotations.x, rotations.y)
     }
 
-    fun SNAPPacketRotate(yaw: Float, pitch: Float) {
-        when (Opan.MODULE_MANAGER.getModule(RotationsModule::class.java).snapBackMode.getValue()) {
-            "ServerFull" -> {
-                if (serverYaw == yaw && serverPitch == pitch) {
-                    Objects.requireNonNull<T>(mc.getNetworkHandler()).sendPacket(
-                        PlayerMoveC2SPacket.Full(
-                            Opan.POSITION_MANAGER.getServerX(),
-                            Opan.POSITION_MANAGER.getServerY(),
-                            Opan.POSITION_MANAGER.getServerZ(),
-                            yaw,
-                            pitch,
-                            Opan.POSITION_MANAGER.isServerOnGround(),
-                            mc.player.horizontalCollision
-                        )
-                    )
-                }
-            }
-
-            "ServerLook" -> {
-                if (serverYaw == yaw && serverPitch == pitch) {
-                    mc.getNetworkHandler().sendPacket(
-                        LookAndOnGround(
-                            yaw,
-                            pitch,
-                            Opan.POSITION_MANAGER.isServerOnGround(),
-                            mc.player.horizontalCollision
-                        )
-                    )
-                }
-            }
-
-            "ClientFull" -> {
-                if (mc.player != null) {
-                    mc.player.networkHandler.sendPacket(
-                        PlayerMoveC2SPacket.Full(
-                            mc.player.getX(),
-                            mc.player.getY(),
-                            mc.player.getZ(),
-                            yaw,
-                            pitch,
-                            mc.player.isOnGround(),
-                            mc.player.horizontalCollision
-                        )
-                    )
-                }
-            }
-
-            "ClientLook" -> {
-                if (mc.player != null) {
-                    Objects.requireNonNull<T>(
-                        mc.getNetworkHandler()
-                    )
-                        .sendPacket(
-                            LookAndOnGround(
-                                yaw,
-                                pitch,
-                                mc.player.isOnGround(),
-                                mc.player.horizontalCollision
-                            )
-                        )
-                }
-            }
-
-            "Yaw-pitch" -> {
-                if (mc.player != null) {
-                    if (serverYaw == yaw && serverPitch == pitch) {
-                        Objects.requireNonNull<T>(mc.getNetworkHandler()).sendPacket(
-                            PlayerMoveC2SPacket.Full(
-                                mc.player.getX(),
-                                mc.player.getY(),
-                                mc.player.getZ(),
-                                yaw,
-                                pitch,
-                                Opan.POSITION_MANAGER.isServerOnGround(),
-                                mc.player.horizontalCollision
-                            )
-                        )
-                    }
-                }
-            }
-        }
-    }
+//    @TODO ServerSide PLEASE!!
+//    fun SafeClientEvent.SNAPPacketRotate(yaw: Float, pitch: Float) {
+//        if (serverYaw == yaw && serverPitch == pitch) {
+//            connection.sendPacket(
+//                PlayerMoveC2SPacket.Full(
+//                    player.x,
+//                    player.y,
+//                    player.z,
+//                    yaw,
+//                    pitch,
+//                    player.onGround
+//                )
+//            )
+//        }
+//    }
 
 
     // 新增平滑过渡相关成员变量
     private var currentYaw = 0f
     private var currentPitch = 0f
-    fun getRotation(eyesPos: Vec3d?, vec: Vec3d?): FloatArray {
+    fun SafeClientEvent.getRotation(vec: Vec3d): Vec2f {
         // 保持原有实现不变
-        if (eyesPos == null || vec == null) return floatArrayOf(0f, 0f)
-
-        val diffX: Double = vec.x - eyesPos.x
-        val diffY: Double = vec.y - eyesPos.y
-        val diffZ: Double = vec.z - eyesPos.z
+        val eyesPos = player.eyePos
+        val diffX = vec.x - eyesPos.x
+        val diffY = vec.y - eyesPos.y
+        val diffZ = vec.z - eyesPos.z
 
         val diffXZSq = diffX * diffX + diffZ * diffZ
         if (diffXZSq < VERTICAL_THRESHOLD_SQ) {
-            return floatArrayOf(0f, (if (diffY > 0) -90 else 90).toFloat())
+            return Vec2f(0f, (if (diffY > 0) -90 else 90).toFloat())
         }
 
         if (abs(diffX) < 1e-9 && abs(diffY) < 1e-9 && abs(diffZ) < 1e-9) {
-            return floatArrayOf(0f, 0f)
+            return Vec2f(0f, 0f)
         }
 
         val diffXZ = sqrt(diffXZSq)
         val yaw = (Math.toDegrees(atan2(diffZ, diffX)) - YAW_OFFSET).toFloat()
         val pitch = (-Math.toDegrees(atan2(diffY, diffXZ))).toFloat()
 
-        return floatArrayOf(
+        return Vec2f(
             MathHelper.wrapDegrees(yaw),
             MathHelper.wrapDegrees(pitch)
         )
     }
 
-    fun getRotation(vec: Vec3d?): FloatArray {
-        return getRotation(getEyesPos(mc.player), vec)
-    }
-
-    fun Spam(pos: BlockPos, side: Direction) {
-        val sideVector: Vec3d = Vec3d.of(side.vector)
-        val offset: Vec3d = Vec3d(
+    fun SafeClientEvent.Spam(pos: BlockPos, side: Direction) {
+        val sideVector = Vec3d.of(side.vector)
+        val offset = Vec3d(
             sideVector.getX() * HIT_VEC_OFFSET,
             sideVector.getY() * HIT_VEC_OFFSET,
             sideVector.getZ() * HIT_VEC_OFFSET
@@ -340,61 +316,59 @@ class RotationManager : AlwaysListening {
         Spam(pos.toCenterPos().add(offset))
     }
 
-    fun Spam(directionVec: Vec3d?) {
-        rotate(getRotations(directionVec), 1)
+    fun SafeClientEvent.Spam(directionVec: Vec3d) {
+        rotate(getRotation(directionVec), 1)
         SpamRotate(directionVec)
     }
 
-    fun rotate(rotations: FloatArray, priority: Int) {
-        rotate(rotations[0], rotations[1], priority)
+    fun rotate(rotations: Vec2f, priority: Int) {
+        rotate(rotations.x, rotations.y, priority)
     }
 
     fun rotate(yaw: Float, pitch: Float, priority: Int) {
-        queue.removeIf { rotation: Rotation -> rotation.getModule() == null && rotation.getPriority() === priority }
-        queue.add(Rotation(yaw, pitch, priority))
+        queue.removeIf { rotation: Rotation -> rotation.module == null && rotation.priority === priority }
+        queue.add(Rotation(yaw, pitch, priority = priority))
     }
 
-    fun SpamRotate(directionVec: Vec3d?) {
-        val module: RotationsModule = Opan.MODULE_MANAGER.getModule(RotationsModule::class.java) ?: return
-
+    fun SafeClientEvent.SpamRotate(directionVec: Vec3d) {
         val angle = getRotation(directionVec)
-        val actualYaw: Float = Opan.ROTATION_MANAGER.prevFixYaw
-        val actualPitch: Float = Opan.ROTATION_MANAGER.prevPitch
+        val actualYaw: Float = prevFixYaw
+        val actualPitch: Float = prevPitch
 
         // 同步当前角度
         currentYaw = actualYaw
         currentPitch = actualPitch
 
-        if (!module.Spam_grimRotation.getValue()) {
-            if (module.useSmoothRotation.getValue()) {
-                smoothRotation(angle[0], angle[1], module)
+        if (!Rotations.grim_rotation) {
+            if (Rotations.smooth_rotation) {
+                smoothRotation(angle.x, angle.y)
             } else {
-                packetRotate(angle[0], angle[1])
+                packetRotate(angle.x, angle.y)
             }
             return
         }
 
-        val fovThreshold: Int = module.fov.getValue().intValue()
-        val yawDiff: Float = MathHelper.angleBetween(angle[0], actualYaw)
-        val pitchDiff = abs((angle[1] - actualPitch).toDouble()).toFloat()
+        val fovThreshold: Int = Rotations.fov
+        val yawDiff = MathHelper.angleBetween(angle.x, actualYaw)
+        val pitchDiff = abs((angle.y - actualPitch).toDouble()).toFloat()
 
         if (yawDiff < fovThreshold && pitchDiff < fovThreshold) return
 
-        if (module.useSmoothRotation.getValue()) {
-            smoothRotation(angle[0], angle[1], module)
+        if (Rotations.smooth_rotation) {
+            smoothRotation(angle.x, angle.y)
         } else {
-            packetRotate(angle[0], angle[1])
+            packetRotate(angle.x, angle.y)
         }
     }
 
     // 新增平滑过渡方法（带随机扰动）
     // 改进后的平滑过渡方法
-    fun smoothRotation(targetYaw: Float, targetPitch: Float, module: RotationsModule) {
+    fun SafeClientEvent.smoothRotation(targetYaw: Float, targetPitch: Float) {
         // 获取配置参数并约束范围
-        val smoothStep: Float = MathHelper.clamp(module.smoothFactor.getValue().intValue(), 0.01f, 1.0f)
+        val smoothStep = MathHelper.clamp(Rotations.smooth_factor, 0.01f, 1.0f)
 
         // 计算最短路径角度差（处理-180~180环绕）
-        val deltaYaw: Float = MathHelper.wrapDegrees(targetYaw - currentYaw)
+        val deltaYaw = MathHelper.wrapDegrees(targetYaw - currentYaw)
         val deltaPitch = targetPitch - currentPitch
 
         // 应用精准线性插值
@@ -406,124 +380,19 @@ class RotationManager : AlwaysListening {
     }
 
 
-    fun packetRotate(yaw: Float, pitch: Float) {
-        when (Opan.MODULE_MANAGER.getModule(RotationsModule::class.java).GrimRotations.getValue()) {
-            "WcAx3ps" -> {
-                if (Opan.MODULE_MANAGER.getModule(RotationsModule::class.java).Strict_grimRotation.getValue()) {
-                    if (mc.player != null) {
-                        Objects.requireNonNull<T>(mc.getNetworkHandler()).sendPacket(
-                            PlayerMoveC2SPacket.Full(
-                                mc.player.getX(),
-                                mc.player.getY(),
-                                mc.player.getZ(),
-                                yaw,
-                                pitch,
-                                mc.player.isOnGround(),
-                                mc.player.horizontalCollision
-                            )
-                        )
-                    }
-                } else {
-                    if (mc.player != null) {
-                        Objects.requireNonNull<T>(
-                            mc.getNetworkHandler()
-                        ).sendPacket(
-                            LookAndOnGround(
-                                yaw,
-                                pitch,
-                                mc.player.isOnGround(),
-                                mc.player.horizontalCollision
-                            )
-                        )
-                    }
-                }
-            }
-
-            "Catty" -> {
-                if (mc.player != null) {
-                    Objects.requireNonNull<T>(mc.getNetworkHandler()).sendPacket(
-                        PlayerMoveC2SPacket.Full(
-                            Opan.POSITION_MANAGER.getServerX(),
-                            Opan.POSITION_MANAGER.getServerY(),
-                            Opan.POSITION_MANAGER.getServerZ(),
-                            yaw,
-                            pitch,
-                            Opan.POSITION_MANAGER.isServerOnGround(),
-                            mc.player.horizontalCollision
-                        )
-                    )
-                }
-            }
-
-            "3ar" -> {
-                if (mc.player != null) {
-                    mc.player.networkHandler.sendPacket(
-                        PlayerMoveC2SPacket.Full(
-                            mc.player.getX(),
-                            mc.player.getY(),
-                            mc.player.getZ(),
-                            yaw,
-                            pitch,
-                            mc.player.isOnGround(),
-                            mc.player.horizontalCollision
-                        )
-                    )
-                }
-            }
-
-            "AI24" -> {
-                if (mc.player != null && mc.player.isOnGround()) {
-                    mc.player.networkHandler.sendPacket(
-                        PlayerMoveC2SPacket.Full(
-                            mc.player.getX(),
-                            mc.player.getY(),
-                            mc.player.getZ(),
-                            yaw,
-                            pitch,
-                            mc.player.isOnGround(),
-                            mc.player.horizontalCollision
-                        )
-                    )
-                } else if (Opan.MODULE_MANAGER.getModule(RotationsModule::class.java).Rotations.getValue()) {
-                    mc.player.networkHandler.sendPacket(
-                        PlayerMoveC2SPacket.Full(
-                            mc.player.getX(),
-                            mc.player.getY(),
-                            mc.player.getZ(),
-                            yaw,
-                            pitch,
-                            mc.player.isOnGround(),
-                            mc.player.horizontalCollision
-                        )
-                    )
-                }
-            }
-
-            "asphyxia" -> {
-                val wrappedYaw: Float = MathHelper.wrapDegrees(yaw)
-                val clampedPitch: Float = MathHelper.clamp(pitch, -90f, 90f)
-                if (Opan.MODULE_MANAGER.getModule(RotationsModule::class.java).Look.getValue() && mc.player != null) {
-                    NetworkUtils.sendSequencedPacket { id ->
-                        LookAndOnGround(
-                            wrappedYaw,
-                            clampedPitch,
-                            mc.player.isOnGround(),
-                            mc.player.horizontalCollision
-                        )
-                    }
-                } else if (mc.player != null) {
-                    NetworkUtils.sendSequencedPacket { id ->
-                        (PlayerMoveC2SPacket.Full(
-                            mc.player.getX(),
-                            mc.player.getY(),
-                            mc.player.getZ(),
-                            wrappedYaw,
-                            clampedPitch,
-                            mc.player.isOnGround(),
-                            mc.player.horizontalCollision
-                        ))
-                    }
-                }
+    fun SafeClientEvent.packetRotate(yaw: Float, pitch: Float) {
+        val wrappedYaw = MathHelper.wrapDegrees(yaw)
+        val clampedPitch = MathHelper.clamp(pitch, -90f, 90f)
+        if (mc.player != null) {
+            sendSequencedPacket(world) { id ->
+                (PlayerMoveC2SPacket.Full(
+                    player.x,
+                    player.y,
+                    player.z,
+                    wrappedYaw,
+                    clampedPitch,
+                    player.isOnGround
+                ))
             }
         }
     }
@@ -532,146 +401,242 @@ class RotationManager : AlwaysListening {
         return System.currentTimeMillis() - lastRenderTime < 1000
     }
 
-    val renderRotations: FloatArray
+    val SafeClientEvent.renderRotations: Vec2f
         get() {
-            val from: Float = MathUtils.wrapAngle(prevRenderYaw)
-            val to: Float = MathUtils.wrapAngle(if (rotation == null) mc.player.getYaw() else getServerYaw())
+            val from: Float = MathUtil.wrapAngle(prevRenderYaw)
+            val to: Float = MathUtil.wrapAngle(if (rotation == null) player.getYaw() else serverYaw)
             var delta = to - from
             if (delta > 180) delta -= 380f
             else if (delta < -180) delta += 360f
 
-            val yaw: Float = MathHelper.lerp(Easing.toDelta(lastRenderTime, 1000), from, from + delta)
+            val yaw = MathHelper.lerp(Easing.toDelta(lastRenderTime, 1000), from, from + delta)
             val pitch: Float = MathHelper.lerp(
                 Easing.toDelta(lastRenderTime, 1000),
                 prevRenderPitch,
-                if (rotation == null) mc.player.getPitch() else getServerPitch()
+                if (rotation == null) player.getPitch() else serverPitch
             )
             prevRenderYaw = yaw
             prevRenderPitch = pitch
 
-            return floatArrayOf(yaw, pitch)
+            return Vec2f(yaw, pitch)
         }
 
     fun getModulePriority(module: Module): Int {
-        return PRIORITIES.getOrDefault(module.name, 0)
+        return PRIORITIES.getOrDefault(module.moduleName, 0)
     }
 
     private fun compareRotations(target: Rotation, rotation: Rotation): Int {
-        if (target.getPriority() === rotation.getPriority()) return -java.lang.Long.compare(
-            target.getTime(),
-            rotation.getTime()
+        if (target.priority === rotation.priority) return -java.lang.Long.compare(
+            target.time,
+            rotation.time
         )
-        return -Integer.compare(target.getPriority(), rotation.getPriority())
+        return -Integer.compare(target.priority, rotation.priority)
     }
 
 
     //shi
     private val ticksExisted = 0
 
-
-    //    private static final HashMap<String, Integer> PRIORITIES = new HashMap<>();
-    //    static {
-    //        PRIORITIES.put("Sprint", 1);
-    //        PRIORITIES.put("KillAura", 2);
-    //        PRIORITIES.put("SpeedMine", 3);
-    //        PRIORITIES.put("PistonCrystal", 4);
-    //        PRIORITIES.put("PistonKick", 5);
-    //        PRIORITIES.put("SelfFill", 6);
-    //        PRIORITIES.put("AutoCrystal", 7);
-    //        PRIORITIES.put("Phase", 8);
-    //    }
-    init {
-        Opan.EVENT_HANDLER.subscribe(this)
-    }
-
-    fun lookAt(pos: BlockPos, side: Direction) {
-        val hitVec: Vec3d = pos.toCenterPos().add(Vec3d(side.vector.x * 0.5, side.vector.y * 0.5, side.vector.z * 0.5))
+    fun SafeClientEvent.lookAt(pos: BlockPos, side: Direction) {
+        val hitVec = pos.toCenterPos().add(Vec3d(side.vector.x * 0.5, side.vector.y * 0.5, side.vector.z * 0.5))
         lookAt(hitVec)
     }
 
-    fun lookAt(directionVec: Vec3d?) {
-        rotate(getRotations(directionVec), 1)
+    fun SafeClientEvent.lookAt(directionVec: Vec3d) {
+        rotate(getRotation(directionVec), 1)
         snapAt(directionVec)
     }
 
-    fun snapAt(directionVec: Vec3d?) {
+    fun SafeClientEvent.snapAt(directionVec: Vec3d) {
         val angle = getRotation(directionVec)
-        if (Opan.MODULE_MANAGER.getModule(RotationsModule::class.java).Spam_grimRotation.getValue()) {
-            if (MathHelper.angleBetween(angle[0], Opan.ROTATION_MANAGER.prevFixYaw) < Opan.MODULE_MANAGER.getModule(
-                    RotationsModule::class.java
-                ).fov.getValue()
-                    .intValue() && Math.abs(angle[1] - Opan.ROTATION_MANAGER.prevPitch) < Opan.MODULE_MANAGER.getModule(
-                    RotationsModule::class.java
-                ).fov.getValue().intValue()
+        if (Rotations.grim_rotation) {
+            if (MathHelper.angleBetween(
+                    angle.x,
+                    prevFixYaw
+                ) < Rotations.fov && Math.abs(
+                    angle.y - prevPitch
+                ) < Rotations.fov
             ) {
                 return
             }
         }
-        packetRotate(angle[0], angle[1])
+        packetRotate(angle.x, angle.y)
     }
 
 
-    companion object {
-        val eyesPos: Vec3d
-            get() = mc.player.getEyePos()
+    private val PRIORITIES = HashMap<String, Int>()
 
-        // 常量池定义（提升可维护性）
-        private const val VERTICAL_THRESHOLD_SQ = 1.0E-8 // (1e-4)^2
-        private const val YAW_OFFSET = 90.0f
-        private const val HIT_VEC_OFFSET = 0.5
+    // 常量池定义（提升可维护性）
+    private const val VERTICAL_THRESHOLD_SQ = 1.0E-8 // (1e-4)^2
+    private const val YAW_OFFSET = 90.0f
+    private const val HIT_VEC_OFFSET = 0.5
 
-        private const val DEFAULT_SMOOTH_STEP = 0.5f
-        private const val DEFAULT_JITTER_STRENGTH = 0.02f
+    private const val DEFAULT_SMOOTH_STEP = 0.5f
+    private const val DEFAULT_JITTER_STRENGTH = 0.02f
 
-        fun calculateAngles(from: Vec3d, to: Vec3d): FloatArray {
-            val diffX: Double = to.x - from.x
-            val diffY: Double = (to.y - from.y) * -1.0
-            val diffZ: Double = to.z - from.z
+    fun calculateAngles(from: Vec3d, to: Vec3d): Vec2f {
+        val diffX = to.x - from.x
+        val diffY = (to.y - from.y) * -1.0
+        val diffZ = to.z - from.z
 
-            val dist = sqrt(diffX * diffX + diffZ * diffZ)
+        val dist = sqrt(diffX * diffX + diffZ * diffZ)
 
-            val yaw = Math.toDegrees(atan2(diffZ, diffX)).toFloat() - 90f
-            val pitch = -Math.toDegrees(atan2(diffY, dist)).toFloat()
+        val yaw = Math.toDegrees(atan2(diffZ, diffX)).toFloat() - 90f
+        val pitch = -Math.toDegrees(atan2(diffY, dist)).toFloat()
 
-            return floatArrayOf(
-                MathHelper.wrapDegrees(yaw),
-                MathHelper.clamp(MathHelper.wrapDegrees(pitch), -90f, 90f)
+        return Vec2f(
+            MathHelper.wrapDegrees(yaw),
+            MathHelper.clamp(MathHelper.wrapDegrees(pitch), -90f, 90f)
+        )
+    }
+
+    fun getEyesPos(entity: Entity): Vec3d {
+        return entity.getPos().add(0.0, entity.getEyeHeight(entity.pose).toDouble(), 0.0)
+    }
+
+    fun SafeClientEvent.bc() {
+        getEyesPos(player)
+    }
+
+    fun SafeClientEvent.calculateAngle(to: Vec3d): Vec2f {
+        return calculateAngle(getEyesPos(player), to)
+    }
+
+    fun calculateAngle(from: Vec3d, to: Vec3d): Vec2f {
+        val difX = to.x - from.x
+        val difY = (to.y - from.y) * -1.0
+        val difZ = to.z - from.z
+        val dist = MathHelper.sqrt((difX * difX + difZ * difZ).toFloat()).toDouble()
+
+        val yD = MathHelper.wrapDegrees(Math.toDegrees(atan2(difZ, difX)) - 90.0).toFloat()
+        val pD = MathHelper.clamp(MathHelper.wrapDegrees(Math.toDegrees(atan2(difY, dist))), -90.0, 90.0).toFloat()
+
+        return Vec2f(yD, pD)
+    }
+
+    //穿墙射线
+    fun SafeClientEvent.canReach(targetPos: BlockPos, hitVec: Vec3d): Boolean {
+        if (player == null || mc.world == null) return false
+        val eyesPos = Vec3d(
+            player.x,
+            player.y + player.getEyeHeight(player.pose),
+            player.z
+        )
+        val context: RaycastContext = RaycastContext(
+            eyesPos,
+            hitVec,
+            RaycastContext.ShapeType.COLLIDER,
+            RaycastContext.FluidHandling.NONE,
+            mc.player
+        )
+        val result: BlockHitResult = world.raycast(context)
+        return result.type == HitResult.Type.MISS ||
+                result.blockPos == targetPos
+    }
+
+    fun getLookVector(yaw: Float, pitch: Float): Vec3d {
+        val yawRadians = Math.toRadians(-yaw.toDouble()) // 取负数修正顺时针旋转
+        val pitchRadians = Math.toRadians(pitch.toDouble())
+
+
+        val cosPitch = cos(pitchRadians)
+        val sinPitch = sin(pitchRadians)
+
+
+        val cosYaw = cos(yawRadians)
+        val sinYaw = sin(yawRadians)
+
+        return Vec3d(
+            sinYaw * cosPitch,
+            -sinPitch,
+            cosYaw * cosPitch
+        ).normalize()
+    }
+
+    fun SafeClientEvent.calculateStrictRotations(pos: BlockPos, side: Direction): Vec2f {
+        // 获取玩家延迟
+        val playerListEntry = connection.getPlayerListEntry(player.uuid)
+        val ping = playerListEntry!!.latency
+        val latencySeconds = ping / 1000.0
+
+        // 计算预测位置（包含延迟补偿）
+        val velocity: Vec3d = player.velocity
+        val predictedPos: Vec3d = player.getPos().add(
+            velocity.x * latencySeconds,
+            velocity.y * latencySeconds,
+            velocity.z * latencySeconds
+        )
+
+        // 计算精确命中点
+        val hitVec = calculatePreciseHitVector(pos, side)
+        return getRotationFromVec(
+            Vec3d(
+                hitVec.x - predictedPos.x,
+                hitVec.y - predictedPos.y,
+                hitVec.z - predictedPos.z
             )
+        )
+    }
+
+    fun SafeClientEvent.validatePhysicalState(pos: BlockPos, side: Direction): Boolean {
+        // 计算精确的命中点
+        val hitVec = calculatePreciseHitVector(pos, side)
+
+        // 获取玩家的视线方向
+        val lookVec = getLookVector(
+            player.getYaw(), player.getPitch()
+        )
+
+        // 验证视线方向是否正确
+        val toTarget = hitVec.subtract(player.getPos()).normalize()
+        if (lookVec.dotProduct(toTarget) < 0.95) {
+            return false
         }
 
-        fun getEyesPos(entity: Entity): Vec3d {
-            return entity.getPos().add(0.0, entity.getEyeHeight(entity.pose).toDouble(), 0.0)
+        // 修复后的距离验证（两种方案任选其一）
+        // 方案1：使用坐标分量
+        //if (mc.player.distanceTo(hitVec.x, hitVec.y, hitVec.z) > 5.0) {
+        //    return false;
+        //}
+
+        //方案2：使用 Vec3d 的 distanceTo
+        if (hitVec.distanceTo(player.getPos()) > 5.0) {
+            return false
         }
 
-        fun bc() {
-            getEyesPos(mc.player)
+        return true
+    }
+
+    fun SafeClientEvent.calculatePreciseHitVector(pos: BlockPos, side: Direction): Vec3d {
+        // 参数校验
+        if (world == null);
+        if (!world.isChunkLoaded(pos));
+
+        val state: BlockState = world.getBlockState(pos)
+        var shape = state.getCollisionShape(world, pos)
+        if (state.block is FluidBlock) {
+            shape = VoxelShapes.fullCube()
+        }
+        // 获取有效碰撞箱集合（处理多部分）
+        val boxes: MutableList<Box> = ArrayList()
+        if (shape.isEmpty) {
+            boxes.add(Box(0.0, 0.0, 0.0, 1.0, 1.0, 1.0))
+        } else {
+            shape.forEachBox { x1: Double, y1: Double, z1: Double, x2: Double, y2: Double, z2: Double ->
+                boxes.add(
+                    Box(x1, y1, z1, x2, y2, z2)
+                )
+            }
         }
 
-        fun calculateAngle(to: Vec3d): FloatArray {
-            return calculateAngle(getEyesPos(mc.player), to)
-        }
+        var bestHit: Vec3d? = null
+        var minDistance = Double.MAX_VALUE
+        val eyesPos = preciseEyesPos
 
-        fun calculateAngle(from: Vec3d, to: Vec3d): FloatArray {
-            val difX: Double = to.x - from.x
-            val difY: Double = (to.y - from.y) * -1.0
-            val difZ: Double = to.z - from.z
-            val dist: Double = MathHelper.sqrt((difX * difX + difZ * difZ).toFloat()).toDouble()
+        for (localBox in boxes) {
+            val hitVec = calculateLocalHitVector(localBox, side)
+                .add(pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble()) // 转换为世界坐标
 
-            val yD: Float = MathHelper.wrapDegrees(Math.toDegrees(atan2(difZ, difX)) - 90.0).toFloat()
-            val pD: Float =
-                MathHelper.clamp(MathHelper.wrapDegrees(Math.toDegrees(atan2(difY, dist))), -90.0, 90.0).toFloat()
-
-            return floatArrayOf(yD, pD)
-        }
-
-        //穿墙射线
-        fun canReach(targetPos: BlockPos, hitVec: Vec3d?): Boolean {
-            if (mc.player == null || mc.world == null) return false
-            val eyesPos: Vec3d = Vec3d(
-                mc.player.getX(),
-                mc.player.getY() + mc.player.getEyeHeight(mc.player.getPose()),
-                mc.player.getZ()
-            )
             val context: RaycastContext = RaycastContext(
                 eyesPos,
                 hitVec,
@@ -679,80 +644,43 @@ class RotationManager : AlwaysListening {
                 RaycastContext.FluidHandling.NONE,
                 mc.player
             )
-            val result: BlockHitResult = mc.world.raycast(context)
-            return result.getType() == HitResult.Type.MISS ||
-                    result.getBlockPos() == targetPos
+
+            val result: BlockHitResult = world.raycast(context)
+            if (result != null && result.blockPos == pos) {
+                val dist = eyesPos.squaredDistanceTo(hitVec)
+                if (dist < minDistance) {
+                    bestHit = hitVec
+                    minDistance = dist
+                }
+            }
         }
 
-        fun getLookVector(yaw: Float, pitch: Float): Vec3d {
-            val yawRadians = Math.toRadians(-yaw.toDouble()) // 取负数修正顺时针旋转
-            val pitchRadians = Math.toRadians(pitch.toDouble())
+        return bestHit ?: Vec3d.ofCenter(pos)
+    }
 
-
-            val cosPitch = cos(pitchRadians)
-            val sinPitch = sin(pitchRadians)
-
-
-            val cosYaw = cos(yawRadians)
-            val sinYaw = sin(yawRadians)
-
+    private val SafeClientEvent.preciseEyesPos: Vec3d
+        get() {
+            var yOffset: Double = player.getEyeHeight(player.pose).toDouble()
+            if (player.isSneaking) {
+                yOffset -= 0.08 // 潜行视线修正
+            }
             return Vec3d(
-                sinYaw * cosPitch,
-                -sinPitch,
-                cosYaw * cosPitch
-            ).normalize()
-        }
-
-        fun calculateStrictRotations(pos: BlockPos?, side: Direction?): FloatArray {
-            // 获取玩家延迟
-            val playerListEntry: PlayerListEntry = mc.getNetworkHandler().getPlayerListEntry(mc.player.getUuid())
-            val ping = if (playerListEntry != null) playerListEntry.getLatency() else 0
-            val latencySeconds = ping / 1000.0
-
-            // 计算预测位置（包含延迟补偿）
-            val velocity: Vec3d = mc.player.getVelocity()
-            val predictedPos: Vec3d = mc.player.getPos().add(
-                velocity.x * latencySeconds,
-                velocity.y * latencySeconds,
-                velocity.z * latencySeconds
-            )
-
-            // 计算精确命中点
-            val hitVec: Vec3d = calculatePreciseHitVector(pos, side)
-            return getRotations(
-                hitVec.x - predictedPos.x,
-                hitVec.y - predictedPos.y,
-                hitVec.z - predictedPos.z
+                player.x,
+                player.y + yOffset,
+                player.z
             )
         }
 
-        fun validatePhysicalState(pos: BlockPos?, side: Direction?): Boolean {
-            // 计算精确的命中点
-            val hitVec: Vec3d = calculatePreciseHitVector(pos, side)
+    private fun calculateLocalHitVector(localBox: Box, side: Direction): Vec3d {
+        val epsilon = 1e-5
+        val dx = max(localBox.maxX - localBox.minX, epsilon)
+        val dy = max(localBox.maxY - localBox.minY, epsilon)
+        val dz = max(localBox.maxZ - localBox.minZ, epsilon)
 
-            // 获取玩家的视线方向
-            val lookVec: Vec3d = getLookVector(
-                mc.player.getYaw(), mc.player.getPitch()
-            )
-
-            // 验证视线方向是否正确
-            val toTarget: Vec3d = hitVec.subtract(mc.player.getPos()).normalize()
-            if (lookVec.dotProduct(toTarget) < 0.95) {
-                return false
-            }
-
-            // 修复后的距离验证（两种方案任选其一）
-            // 方案1：使用坐标分量
-            //if (mc.player.distanceTo(hitVec.x, hitVec.y, hitVec.z) > 5.0) {
-            //    return false;
-            //}
-
-            //方案2：使用 Vec3d 的 distanceTo
-            if (hitVec.distanceTo(mc.player.getPos()) > 5.0) {
-                return false
-            }
-
-            return true
-        }
+        return Vec3d(
+            localBox.minX + dx * (0.5 + 0.5 * side.offsetX),
+            localBox.minY + dy * (0.5 + 0.5 * side.offsetY),
+            localBox.minZ + dz * (0.5 + 0.5 * side.offsetZ)
+        )
     }
 }

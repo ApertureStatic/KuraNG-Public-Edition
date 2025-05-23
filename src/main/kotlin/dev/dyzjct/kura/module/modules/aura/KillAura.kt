@@ -9,6 +9,7 @@ import base.utils.item.attackDamage
 import base.utils.math.distanceSqTo
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -66,7 +67,7 @@ object KillAura : Module(name = "KillAura", langName = "杀戮", category = Cate
                         }
                     }
                 }
-                RotationManager.rotationTo(target.blockPos.up().toCenterPos())
+                packetRotate(target.blockPos.up().toCenterPos())
                 if (autoBlock.value && player.distanceSqTo(target.pos) <= abRange.sq) {
                     if (player.offHandStack.item is ShieldItem) {
                         if (player.offHandStack.item is ShieldItem) {

@@ -14,8 +14,7 @@ import dev.dyzjct.kura.manager.CrystalManager
 import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.FriendManager.isFriend
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager
-import dev.dyzjct.kura.manager.RotationManager.inFov
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.aura.DamageCalculator.crystalDamage
@@ -33,7 +32,6 @@ import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.findItemInHotbar
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.getWeaponSlot
 import dev.dyzjct.kura.utils.isWeaknessActive
-import dev.skidderpollution.m7thh4ck.manager.impl.RotationManagerNew.lookAt
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
@@ -80,13 +78,7 @@ object KuraCrystal : Module(
 
     //TODO Page Rotate
     private var rotate by bsetting("Rotate", true).enumIs(page, Page.ROTATE)
-    private var test by bsetting("Test", false).enumIs(page, Page.ROTATE)
-    private val onBreak by bsetting("OnBreak", false).enumIs(page, Page.ROTATE)
-    private val yOffset by dsetting("YOffset", 0.05, 0.0, 1.0, 0.01).enumIs(page, Page.ROTATE)
-    private val yawStep by bsetting("YawStep", false).enumIs(page, Page.ROTATE)
-    private val steps by fsetting("Steps", 0.05f, 0.0f, 1.0f, 0.01f).enumIs(page, Page.ROTATE).isTrue { yawStep }
-    private val checkFov by bsetting("LookingCheck", true).enumIs(page, Page.ROTATE).isTrue { yawStep }
-    private val fov by fsetting("Fov", 30f, 0f, 50f).enumIs(page, Page.ROTATE).isTrue { yawStep }.isTrue { checkFov }
+    private val rotate_on_attack by bsetting("OnAttack", false).enumIs(page, Page.ROTATE)
 
     //TODO Page RENDER
     private var render_damage by bsetting("RenderDamage", true).enumIs(page, Page.RENDER)
@@ -95,9 +87,9 @@ object KuraCrystal : Module(
     private var break_alpha_outline by isetting("BreakLine", 200, 0, 255).enumIs(page, Page.RENDER)
         .isTrue { render_break }
     private var render_mode = msetting("RenderMode", RenderMode.Motion).enumIs(page, Page.RENDER)
-    private var fillColor by
+    private var fill_color by
     csetting("FillColor", Color(20, 225, 219, 50)).enumIs(page, Page.RENDER)
-    private var outlineColor by
+    private var outline_color by
     csetting("LineColor", Color(20, 225, 219, 200)).enumIs(page, Page.RENDER)
     private val movingLength by isetting("MovingLength", 400, 0, 1000).enumIs(page, Page.RENDER)
     private val fadeLength by isetting("FadeLength", 200, 0, 1000).enumIs(page, Page.RENDER)
@@ -157,7 +149,7 @@ object KuraCrystal : Module(
                 attacking_position?.let { pos ->
                     renderer.aFilled = break_alpha_fill
                     renderer.aOutline = break_alpha_outline
-                    renderer.add(pos.toBox(), fillColor, outlineColor)
+                    renderer.add(pos.toBox(), fill_color, outline_color)
                     renderer.render(render3DEvent.matrices, false)
                 }
             }
@@ -172,9 +164,9 @@ object KuraCrystal : Module(
                     val finalPos = if (render_mode.value == RenderMode.Motion) motionRenderPos else staticRenderPos
                     val box = toRenderBox(finalPos, if (render_mode.value == RenderMode.Motion) scale else 1f)
 
-                    renderer.aFilled = (fillColor.alpha * scale).toInt()
-                    renderer.aOutline = (outlineColor.alpha * scale).toInt()
-                    renderer.add(box, fillColor, outlineColor)
+                    renderer.aFilled = (fill_color.alpha * scale).toInt()
+                    renderer.aOutline = (outline_color.alpha * scale).toInt()
+                    renderer.add(box, fill_color, outline_color)
                     renderer.render(render3DEvent.matrices, false)
                     lastRenderPos = motionRenderPos
                 }
@@ -217,8 +209,7 @@ object KuraCrystal : Module(
                 lastUpdateTime = System.currentTimeMillis()
                 startTime = System.currentTimeMillis()
                 if (rotate) {
-                    if (test) lookAt(placePos.crystalPos.toCenterPos())
-                    else RotationManager.rotationTo(placePos.crystalPos, false, if (yawStep) steps else 1f)
+                    packetRotate(placePos.crystalPos)
                 }
                 if (place_timer.tickAndReset(place_delay)) {
                     if (auto_switch) findItemInHotbar(Items.END_CRYSTAL)?.let { slot ->
@@ -248,14 +239,10 @@ object KuraCrystal : Module(
             return
         }
         val foundCrystal = findCrystalsList(target).first()
-        if (rotate) {
-            if (test) lookAt(foundCrystal.pos)
-            else RotationManager.rotationTo(foundCrystal.pos, false, if (yawStep) steps else 1f)
+        if (rotate && rotate_on_attack) {
+            packetRotate(foundCrystal.pos)
         }
         if (attack_timer.tickAndReset(attack_delay)) {
-            if (rotate && onBreak) {
-                if (!faceVector(foundCrystal.pos.add(0.0, yOffset, 0.0))) return
-            }
             attacking_position = foundCrystal.pos.add(-0.5, -1.0, -0.5)
             if (anti_weak && player.isWeaknessActive()) {
                 getWeaponSlot()?.let { stack ->
@@ -413,19 +400,6 @@ object KuraCrystal : Module(
             motion,
             ExposureSample.getExposureSample(entity.width, entity.height)
         )
-    }
-
-    private fun SafeClientEvent.faceVector(vec: Vec3d): Boolean {
-        if (!yawStep) {
-            RotationManager.rotationTo(vec)
-            return true
-        } else {
-            directionVec = vec
-            if (inFov(vec, fov)) {
-                return true
-            }
-        }
-        return !checkFov
     }
 
     private fun SafeClientEvent.placePacket(

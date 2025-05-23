@@ -2,8 +2,6 @@ package dev.dyzjct.kura.module.modules.combat
 
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils.getClosestEnemy
-import dev.dyzjct.kura.utils.extension.fastPos
-import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.graphics.ESPRenderer
 import base.utils.math.distanceSqToCenter
 import base.utils.math.toBox
@@ -14,7 +12,7 @@ import dev.dyzjct.kura.event.eventbus.safeConcurrentListener
 import dev.dyzjct.kura.event.events.RunGameLoopEvent
 import dev.dyzjct.kura.event.events.render.Render3DEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.manager.SphereCalculatorManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -26,6 +24,8 @@ import dev.dyzjct.kura.system.render.graphic.mask.DirectionMask
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
 import dev.dyzjct.kura.utils.animations.sq
+import dev.dyzjct.kura.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import net.minecraft.block.BedBlock
 import net.minecraft.block.Blocks
 import net.minecraft.client.gui.screen.ingame.CraftingScreen
@@ -172,30 +172,30 @@ object BedAura :
                 blockPos?.let { blockPos ->
                     bedExplodePos = blockPos.up()
                     bedExplodePos?.let { bedExplodePos ->
-                        if (rotate) RotationManager.rotationTo(bedExplodePos)
+                        if (rotate) packetRotate(bedExplodePos)
                         direction?.let { direction ->
                             renderBlocks[bedExplodePos] = System.currentTimeMillis()
                             when (direction) {
                                 Direction.EAST -> {
-                                    RotationManager.rotationTo(-91.0f, player.pitch)
+                                    packetRotate(-91.0f, player.pitch)
                                     yawOffset = -91f
                                     //event.setRotation(-91.0f, player.rotationPitch)
                                 }
 
                                 Direction.NORTH -> {
-                                    RotationManager.rotationTo(179.0f, player.pitch)
+                                    packetRotate(179.0f, player.pitch)
                                     yawOffset = 179f
                                     //event.setRotation(179.0f, player.rotationPitch)
                                 }
 
                                 Direction.WEST -> {
-                                    RotationManager.rotationTo(89.0f, player.pitch)
+                                    packetRotate(89.0f, player.pitch)
                                     yawOffset = 89f
                                     //event.setRotation(89.0f, player.rotationPitch)
                                 }
 
                                 else -> {
-                                    RotationManager.rotationTo(-1.0f, player.pitch)
+                                    packetRotate(-1.0f, player.pitch)
                                     yawOffset = -1f
                                     //event.setRotation(-1.0f, player.rotationPitch)
                                 }

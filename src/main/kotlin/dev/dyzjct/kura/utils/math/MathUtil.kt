@@ -3,12 +3,11 @@ package dev.dyzjct.kura.utils.math
 import net.minecraft.entity.LivingEntity
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
+import net.minecraft.util.math.MathHelper
+import net.minecraft.util.math.Vec3d
 import java.math.BigDecimal
 import java.math.RoundingMode
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.min
-import kotlin.math.sin
+import kotlin.math.*
 
 object MathUtil {
     fun clamp(num: Float, min: Float, max: Float): Float {
@@ -97,5 +96,26 @@ object MathUtil {
         }
 
         return entity.horizontalFacing.opposite
+    }
+
+    fun calcAngle(from: Vec3d, to: Vec3d): FloatArray {
+        val difX = to.x - from.x
+        val difY = (to.y - from.y) * -1.0
+        val difZ = to.z - from.z
+        val dist = sqrt(difX * difX + difZ * difZ)
+        return floatArrayOf(
+            MathHelper.wrapDegrees(Math.toDegrees(atan2(difZ, difX)) - 90.0).toFloat(), MathHelper.wrapDegrees(
+                Math.toDegrees(atan2(difY, dist))
+            ).toFloat()
+        )
+    }
+
+    fun wrapAngle(x: Float): Float {
+        var x = x
+        x %= 360
+        if (x < 0) {
+            x += 360f
+        }
+        return x
     }
 }

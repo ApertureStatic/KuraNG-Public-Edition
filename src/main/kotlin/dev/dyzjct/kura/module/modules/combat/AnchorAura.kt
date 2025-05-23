@@ -1,14 +1,10 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.utils.block.BlockUtil.getAnchorBlock
-import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
 import base.utils.chat.ChatUtil
 import base.utils.combat.TargetInfo
 import base.utils.combat.getPredictedTarget
 import base.utils.entity.EntityUtils.isBurrowBlock
 import base.utils.entity.EntityUtils.spoofSneak
-import dev.dyzjct.kura.utils.extension.fastPos
-import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.graphics.ESPRenderer
 import base.utils.math.DamageCalculator.anchorDamage
 import base.utils.math.distanceSqTo
@@ -18,8 +14,12 @@ import base.utils.math.toVec3dCenter
 import base.utils.player.getTargetSpeed
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.events.render.Render3DEvent
-import dev.dyzjct.kura.manager.*
+import dev.dyzjct.kura.manager.CrystalManager
+import dev.dyzjct.kura.manager.EntityManager
+import dev.dyzjct.kura.manager.FriendManager
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.SphereCalculatorManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -31,6 +31,10 @@ import dev.dyzjct.kura.module.modules.crystal.PlaceInfo
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
 import dev.dyzjct.kura.utils.animations.sq
+import dev.dyzjct.kura.utils.block.BlockUtil.getAnchorBlock
+import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
+import dev.dyzjct.kura.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import net.minecraft.block.Blocks
 import net.minecraft.block.RespawnAnchorBlock
 import net.minecraft.entity.ItemEntity
@@ -139,7 +143,7 @@ object AnchorAura : Module(
             placeInfo = calcPlaceInfo()
             if (!CombatSystem.isBestAura(CombatSystem.AuraType.Anchor)) return@onMotion
             placeInfo?.let { placeInfo ->
-                if (rotate) RotationManager.rotationTo(placeInfo.blockPos)
+                if (rotate) packetRotate(placeInfo.blockPos)
                 globalPlace(placeInfo, true)
                 checkGlowPlaceable(placeInfo, Items.GLOWSTONE)
                 globalPlace(placeInfo, false)
@@ -318,7 +322,7 @@ object AnchorAura : Module(
         if (explode) {
             if (anchorTimer.tickAndReset(anchorDelay) && world.isAir(placeInfo.blockPos)) {
 
-                if (rotate) RotationManager.rotationTo(placeInfo.blockPos)
+                if (rotate) packetRotate(placeInfo.blockPos)
                 player.spoofSneak {
                     spoofHotbarWithSetting(Items.RESPAWN_ANCHOR) {
                         sendSequencedPacket(world) {
@@ -337,7 +341,7 @@ object AnchorAura : Module(
         } else {
             if (clickTimer.tickAndReset(clickDelay)) {
 
-                if (rotate) RotationManager.rotationTo(placeInfo.blockPos)
+                if (rotate) packetRotate(placeInfo.blockPos)
                 sendSequencedPacket(world) {
                     PlayerInteractBlockC2SPacket(
                         Hand.MAIN_HAND, BlockHitResult(
@@ -362,7 +366,7 @@ object AnchorAura : Module(
         if ((currentBlockState.block == Blocks.RESPAWN_ANCHOR && currentBlockState.get(Properties.CHARGES) < 1) || ignore) {
             if (glowTimer.tickAndReset(glowDelay)) {
 
-                if (rotate) RotationManager.rotationTo(placeInfo.blockPos)
+                if (rotate) packetRotate(placeInfo.blockPos)
                 spoofHotbarWithSetting(item) {
                     sendSequencedPacket(world) {
                         PlayerInteractBlockC2SPacket(

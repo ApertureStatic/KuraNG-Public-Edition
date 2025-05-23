@@ -1,6 +1,5 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
 import base.utils.chat.ChatUtil
 import base.utils.combat.getPredictedTarget
 import base.utils.combat.getTarget
@@ -8,7 +7,6 @@ import base.utils.concurrent.threads.onMainThread
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils.isInWeb
 import base.utils.entity.EntityUtils.spoofSneak
-import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.hole.SurroundUtils
 import base.utils.hole.SurroundUtils.checkHole
 import base.utils.math.distanceSqTo
@@ -17,7 +15,7 @@ import base.utils.math.toBlockPos
 import base.utils.player.getTargetSpeed
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -25,6 +23,8 @@ import dev.dyzjct.kura.module.modules.combat.HolePush.doHolePush
 import dev.dyzjct.kura.module.modules.player.AntiMinePlace
 import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
+import dev.dyzjct.kura.utils.extension.fastPos
 import net.minecraft.block.CobwebBlock
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Items
@@ -104,7 +104,7 @@ object AutoWeb : Module(
                         ) {
                             if (timerDelay.tickAndReset(delay)) {
                                 if (spoofRotations.value) {
-                                    RotationManager.rotationTo(pos)
+                                    packetRotate(pos)
                                 }
                                 spoofHotbarWithSetting(Items.COBWEB) {
                                     player.spoofSneak {

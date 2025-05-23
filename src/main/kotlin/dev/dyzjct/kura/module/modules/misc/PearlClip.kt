@@ -1,13 +1,13 @@
 package dev.dyzjct.kura.module.modules.misc
 
 import base.utils.entity.EntityUtils.autoCenter
-import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoCheck
-import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.combat.PearlFucker
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import dev.dyzjct.kura.utils.rotation.RotationUtils.getPlayerDirection
 import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationToVec2f
 import net.minecraft.block.Blocks
@@ -82,10 +82,8 @@ object PearlClip : Module(
 
                 angle = if ((angle + fix) > 180.0f) angle - fix else angle + fix
 
-                RotationManager.rotationTo(angle, pitch)
-                RotationManager.stopRotation()
-                sendPlayerRotation(angle, pitch, player.onGround)
-                RotationManager.startRotation()
+                packetRotate(angle, pitch)
+//                sendPlayerRotation(angle, pitch, player.onGround)
                 if (player.mainHandStack.item == Items.ENDER_PEARL) {
                     sendSequencedPacket(world) {
                         PlayerInteractItemC2SPacket(

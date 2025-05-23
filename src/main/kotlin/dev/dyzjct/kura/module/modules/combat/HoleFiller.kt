@@ -7,7 +7,6 @@ import base.utils.entity.EntityUtils.eyePosition
 import base.utils.entity.EntityUtils.isFriend
 import base.utils.entity.EntityUtils.preventEntitySpawning
 import base.utils.entity.EntityUtils.spoofSneak
-import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.graphics.ESPRenderer
 import base.utils.hole.HoleType
 import base.utils.inventory.slot.firstBlock
@@ -18,9 +17,13 @@ import base.utils.math.isInSight
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.eventbus.listener
 import dev.dyzjct.kura.event.events.WorldEvent
-import dev.dyzjct.kura.manager.*
+import dev.dyzjct.kura.manager.CrystalManager
+import dev.dyzjct.kura.manager.EntityManager
+import dev.dyzjct.kura.manager.FriendManager
+import dev.dyzjct.kura.manager.HoleManager
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -28,6 +31,7 @@ import dev.dyzjct.kura.module.modules.player.AntiMinePlace
 import dev.dyzjct.kura.system.util.color.ColorRGB
 import dev.dyzjct.kura.utils.animations.Easing
 import dev.dyzjct.kura.utils.animations.sq
+import dev.dyzjct.kura.utils.extension.fastPos
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import dev.dyzjct.kura.utils.runIf
 import it.unimi.dsi.fastutil.longs.Long2LongMaps
@@ -381,7 +385,7 @@ object HoleFiller :
         onMainThread {
             if (rotation.value) {
                 (nextHole ?: getRotationPos(holeInfos))?.let {
-                    RotationManager.rotationTo(it)
+                    packetRotate(it)
                 }
             }
             player.spoofSneak {

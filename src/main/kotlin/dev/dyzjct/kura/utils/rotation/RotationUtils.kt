@@ -18,6 +18,7 @@ import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
+import net.minecraft.util.math.random.Random
 import kotlin.math.*
 
 object RotationUtils : AlwaysListening {
@@ -94,11 +95,6 @@ object RotationUtils : AlwaysListening {
         return Direction.EAST
     }
 
-    /**
-     * Get rotation from a player position to another position vector
-     *
-     * @param posTo Calculate rotation to this position vector
-     */
     fun SafeClientEvent.getRotationToVec2f(posTo: Vec3d, side: Boolean = false): Vec2f {
         var posToBetter: Vec3d? = null
         if (side) getMiningSide(posTo.toBlockPos())?.let { side ->
@@ -111,30 +107,6 @@ object RotationUtils : AlwaysListening {
         )
     }
 
-    fun SafeClientEvent.getRotationToRotation(posTo: Vec3d, side: Boolean = false): Rotation {
-        var posToBetter: Vec3d? = null
-        if (side) getMiningSide(posTo.toBlockPos())?.let { side ->
-            posToBetter = posTo.toBlockPos().offset(side).toCenterPos()
-                .add(Vec3d(side.opposite.vector.x * 0.5, side.opposite.vector.y * 0.5, side.opposite.vector.z * 0.5))
-        }
-        val rotation = getRotationToVec2f(
-            player.pos.add(0.0, player.getEyeHeight(player.pose).toDouble(), 0.0),
-            posToBetter ?: posTo
-        )
-        return Rotation(rotation.x, rotation.y)
-    }
-
-    fun SafeClientEvent.getYawTo(posTo: Vec3d): Float {
-        val vec = posTo.subtract(player.eyePosition)
-        return normalizeAngle((atan2(vec.z, vec.x).toDegree() - 90.0).toFloat())
-    }
-
-    /**
-     * Get rotation from a position vector to another position vector
-     *
-     * @param posFrom Calculate rotation from this position vector
-     * @param posTo Calculate rotation to this position vector
-     */
     fun getRotationToVec2f(posFrom: Vec3d, posTo: Vec3d): Vec2f {
         return getRotationFromVec(posTo.subtract(posFrom))
     }
@@ -143,6 +115,59 @@ object RotationUtils : AlwaysListening {
         val xz = hypot(vec.x, vec.z)
         val yaw = normalizeAngle(atan2(vec.z, vec.x).toDegree() - 90.0)
         val pitch = normalizeAngle(-atan2(vec.y, xz).toDegree())
+        return Vec2f(yaw, pitch)
+    }
+
+    fun getRotations(entity: Entity?, x: Double, y: Double, z: Double, maxJitter: Float): Vec2f {
+        // 防御性编程：检查所有输入有效性
+        if (entity == null ||
+            java.lang.Double.isNaN(x) || java.lang.Double.isNaN(y) || java.lang.Double.isNaN(z) || !java.lang.Double.isFinite(
+                x
+            ) || !java.lang.Double.isFinite(y) || !java.lang.Double.isFinite(z)
+        ) {
+            return Vec2f(0f, 0f)
+        }
+
+        // 获取精确眼部坐标（考虑潜行、游泳等姿态）
+        val eyePos = entity.eyePos
+
+        // 计算坐标差（使用final防止意外修改）
+        val deltaX = x - eyePos.x
+        val deltaY = (y - eyePos.y) * -1.0 // 正确转换为屏幕空间Y轴方向
+        val deltaZ = z - eyePos.z
+
+        // 计算水平距离并防止极小值
+        val horizontalSq = deltaX * deltaX + deltaZ * deltaZ
+        val horizontalDistance = if (horizontalSq < 1e-14) 1e-7 else sqrt(horizontalSq)
+
+        // 使用atan2计算角度（避免手动计算导致的象限错误）
+        var yaw = Math.toDegrees(atan2(deltaZ, deltaX)).toFloat() - 90.0f
+        var pitch = Math.toDegrees(atan2(deltaY, horizontalDistance)).toFloat()
+
+        // 角度规范化（使用Minecraft原生方法）
+        yaw = MathHelper.wrapDegrees(yaw)
+        pitch = MathHelper.wrapDegrees(pitch)
+
+        // 安全钳制pitch角度（保留0.1度缓冲防止万向节锁）
+        pitch = MathHelper.clamp(pitch, -89.9f, 89.9f)
+
+        // 受控抖动系统（使用实体随机数生成器保证同步）
+        if (maxJitter > 0) {
+            val rand: Random = entity.random
+            val effectiveJitter = min(maxJitter.toDouble(), 5.0).toFloat() // 安全限制最大抖动幅度
+
+            // 生成正态分布的抖动值（更自然的随机效果）
+            val yawJitter = (rand.nextFloat() - 0.5f) * 2 * effectiveJitter
+            val pitchJitter = (rand.nextFloat() - 0.5f) * 2 * effectiveJitter
+
+            yaw += yawJitter
+            pitch += pitchJitter
+
+            // 最终角度验证
+            yaw = MathHelper.wrapDegrees(yaw)
+            pitch = MathHelper.clamp(MathHelper.wrapDegrees(pitch), -89.9f, 89.9f)
+        }
+
         return Vec2f(yaw, pitch)
     }
 

@@ -176,3 +176,5 @@ accessible field net/minecraft/client/gl/ShaderProgram loadedUniforms Ljava/util
 mutable field net/minecraft/client/gl/ShaderProgram loadedUniforms Ljava/util/Map;
 
 accessible field net/minecraft/world/explosion/Explosion damageSource Lnet/minecraft/entity/damage/DamageSource;
+
+accessible field net/minecraft/entity/Entity random Lnet/minecraft/util/math/random/Random;

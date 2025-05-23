@@ -63,7 +63,7 @@ object ModuleManager : AlwaysListening {
         registerModule(LoadingMenu)
         registerModule(Sound)
         registerModule(CombatSystem)
-        registerModule(AntiCheat)
+        registerModule(Rotations)
     }
 
     private fun loadCategoryCombat() {
@@ -194,6 +194,7 @@ object ModuleManager : AlwaysListening {
         getModules().sortedWith(Comparator.comparing { it.moduleName })
     }
 
+    @Suppress("UNUSED")
     fun onKey(event: BindEvent) {
         moduleList.forEach {
             if (it.isEnabled) {

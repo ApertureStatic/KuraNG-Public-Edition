@@ -1,21 +1,21 @@
 package dev.dyzjct.kura.module.modules.misc
 
-import dev.dyzjct.kura.utils.block.BlockUtil.checkNearBlocksExtended
-import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
-import dev.dyzjct.kura.utils.block.isFullBox
 import base.utils.chat.ChatUtil
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils.boxCheck
-import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.math.toBox
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.block.BlockUtil.checkNearBlocksExtended
+import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
+import dev.dyzjct.kura.utils.block.isFullBox
+import dev.dyzjct.kura.utils.extension.fastPos
 import net.minecraft.item.Item
 import net.minecraft.item.Items
 import net.minecraft.util.math.BlockPos
@@ -47,7 +47,7 @@ object AutoDupe : Module(
                                 val stack = player.inventory.getStack(i)
                                 if (stack.item in SHULKER_BOXES) {
                                     player.inventory.selectedSlot = i
-                                    if (rotate) RotationManager.rotationTo(dupePos)
+                                    if (rotate) packetRotate(dupePos)
                                     connection.sendPacket(fastPos(dupePos, render = true))
                                     swing()
                                     break
@@ -64,7 +64,7 @@ object AutoDupe : Module(
                             }
                             fun doPlace(pos: BlockPos) {
                                 if (debug) ChatUtil.sendMessage("PlacePos:$pos.")
-                                if (rotate) RotationManager.rotationTo(pos)
+                                if (rotate) packetRotate(pos)
                                 spoofHotbarWithSetting(Items.OBSIDIAN) {
                                     connection.sendPacket(fastPos(pos, render = true))
                                 }

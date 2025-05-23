@@ -11,8 +11,6 @@ import base.utils.concurrent.threads.runSynchronized
 import base.utils.entity.EntityUtils
 import base.utils.entity.EntityUtils.preventEntitySpawning
 import base.utils.entity.EntityUtils.spoofSneak
-import dev.dyzjct.kura.utils.extension.fastPos
-import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.hole.HoleType
 import base.utils.hole.SurroundUtils.betterPosition
 import base.utils.inventory.slot.firstBlock
@@ -33,7 +31,7 @@ import dev.dyzjct.kura.manager.HoleManager
 import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -43,6 +41,8 @@ import dev.dyzjct.kura.module.modules.player.PacketMine
 import dev.dyzjct.kura.module.modules.render.PlaceRender
 import dev.dyzjct.kura.system.util.collections.EnumMap
 import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import dev.dyzjct.kura.utils.extension.sq
 import dev.dyzjct.kura.utils.extension.synchronized
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
@@ -291,12 +291,12 @@ object Surround : Module(
 
         val tempPosition: MutableMap<BlockPos, SurroundOffset> = HashMap()
 
-        for (surroundOffset in SurroundOffset.values()) {
+        for (surroundOffset in SurroundOffset.entries) {
             val offsetPos = playerPos.add(surroundOffset.offset)
             if (!world.getBlockState(offsetPos).isReplaceable) continue
 
             if (isEntityIntersecting(offsetPos)) {
-                for (offset in SurroundOffset.values()) {
+                for (offset in SurroundOffset.entries) {
                     val extendedOffset = offsetPos.add(offset.offset)
 
                     if (extendedOffset == playerPos) {
@@ -305,7 +305,7 @@ object Surround : Module(
                     if (!isEntityIntersecting(extendedOffset)) {
                         tempPosition[extendedOffset] = offset
                     } else {
-                        for (offsetTry in SurroundOffset.values()) {
+                        for (offsetTry in SurroundOffset.entries) {
                             val tryPos = extendedOffset.add(offsetTry.offset)
                             if (tryPos == playerPos) {
                                 continue
@@ -382,7 +382,7 @@ object Surround : Module(
     }
 
     private fun SafeClientEvent.getNeighbor(pos: BlockPos): PlaceInfo? {
-        for (side in Direction.values()) {
+        for (side in Direction.entries) {
             val offsetPos = pos.offset(side)
             val oppositeSide = side.opposite
 
@@ -417,7 +417,7 @@ object Surround : Module(
                 if (rotation.value) {
                     var eyeHeight = player.getEyeHeight(player.pose)
                     if (!player.isSneaking) eyeHeight -= 0.08f
-                    RotationManager.rotationTo(
+                    packetRotate(
                         getRotationToVec2f(
                             Vec3d(player.x, player.y + eyeHeight, player.z), placeInfo.hitVec
                         )

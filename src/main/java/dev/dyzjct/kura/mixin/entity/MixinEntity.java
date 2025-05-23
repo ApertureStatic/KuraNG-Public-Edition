@@ -1,5 +1,6 @@
 package dev.dyzjct.kura.mixin.entity;
 
+import dev.dyzjct.kura.event.events.player.UpdateVelocityEvent;
 import dev.dyzjct.kura.module.modules.movement.NoSlowDown;
 import dev.dyzjct.kura.module.modules.movement.Velocity;
 import net.minecraft.client.MinecraftClient;
@@ -15,8 +16,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
+
+import static dev.dyzjct.kura.module.AbstractModule.mc;
 
 @Mixin(Entity.class)
 public abstract class MixinEntity {
@@ -84,6 +88,18 @@ public abstract class MixinEntity {
                 MinecraftClient.getInstance().getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.Full(getX(), getY() - 1f, getZ(), getYaw(), getPitch(), true));
             }
             cir.setReturnValue(Vec3d.ZERO);
+        }
+    }
+
+    @Inject(method = "updateVelocity", at = @At("HEAD"), cancellable = true)
+    private void updateVelocity(float speed, Vec3d movementInput, CallbackInfo info) {
+        if ((Object) this != mc.player) return;
+
+        UpdateVelocityEvent event = new UpdateVelocityEvent(movementInput, speed,Vec3d.ZERO);
+        event.post();
+        if (event.getCancelled()) {
+            info.cancel();
+            mc.player.setVelocity(mc.player.getVelocity().add(event.getVelocity()));
         }
     }
 }

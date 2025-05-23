@@ -2,16 +2,16 @@ package dev.dyzjct.kura.module.modules.combat
 
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils.spoofSneak
-import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.inventory.slot.firstItem
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.world.isPlaceable
 import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.extension.fastPos
 import net.minecraft.entity.decoration.EndCrystalEntity
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket
@@ -44,7 +44,7 @@ object SelfTrap : Module(name = "SelfTrap", "自动裹自己", category = Catego
                     for (offset in offsetsDefault) {
                         val pos = player.blockPos.add(offset)
                         if (!world.isPlaceable(pos)) continue
-                        if (rotate.value) RotationManager.rotationTo(pos)
+                        if (rotate.value) packetRotate(pos)
                         var breakCrystal = false
                         if (attackTimer.passedMs(50L)) {
                             for (entity in EntityManager.entity) {

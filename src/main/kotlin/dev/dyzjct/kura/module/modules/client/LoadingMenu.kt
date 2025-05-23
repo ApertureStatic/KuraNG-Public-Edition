@@ -14,12 +14,9 @@ object LoadingMenu: Module(
     val mode = msetting("Mode", LoadingMenuMode.Kura)
 
     enum class LoadingMenuMode(override val displayName: CharSequence) : DisplayEnum {
-
-        XGP("XGP"),
         GENSHIN_IMPACT("Genshin"),
         Kura("kura"),
-        Nullpoint("nullpoint"),
-        Ayachinene("0721")
+        Nullpoint("nullpoint")
     }
 
 }

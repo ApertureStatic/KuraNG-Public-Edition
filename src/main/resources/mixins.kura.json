@@ -54,7 +54,8 @@
     "world.MixinBlockBreakingInfo",
     "world.MixinExplosion",
     "world.MixinRaycastContext",
-    "world.MixinWorld"
+    "world.MixinWorld",
+    "accessor.EntityAccessor"
   ],
   "mixinPriority": 100,
   "injectors": {

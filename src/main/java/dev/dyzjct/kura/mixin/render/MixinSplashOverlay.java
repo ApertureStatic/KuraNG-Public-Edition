@@ -25,15 +25,11 @@ import java.util.function.Consumer;
 @Mixin(SplashOverlay.class)
 public abstract class MixinSplashOverlay {
     @Unique
-    private static final Identifier XGP = new KuraIdentifier("textures/xgp.png");
-    @Unique
     private static final Identifier GENSHIN_IMPACT = new KuraIdentifier("textures/genshin.png");
     @Unique
     private static final Identifier Kura = new KuraIdentifier("textures/kura.png");
     @Unique
     private static final Identifier Nullpoint = new KuraIdentifier("textures/nullpoint.png");
-    @Unique
-    private static final Identifier Ayachinene = new KuraIdentifier("textures/0721.png");
 
     private static final MinecraftClient mc = Wrapper.getMinecraft();
     @Final
@@ -78,11 +74,9 @@ public abstract class MixinSplashOverlay {
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
         context.drawTexture(switch ((LoadingMenu.LoadingMenuMode) LoadingMenu.INSTANCE.getMode().getValue()) {
-            case XGP -> XGP;
             case Kura -> Kura;
             case Nullpoint -> Nullpoint;
             case GENSHIN_IMPACT -> GENSHIN_IMPACT;
-            case Ayachinene -> Ayachinene;
         }, 0, 0, 0, 0, width, height, width, height);
 
         float t = this.reload.getProgress();

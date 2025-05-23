@@ -1,13 +1,11 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
 import base.utils.chat.ChatUtil
 import base.utils.combat.getTarget
 import base.utils.concurrent.threads.runSafe
 import base.utils.entity.EntityUtils.boxCheck
 import base.utils.entity.EntityUtils.isInWeb
 import base.utils.entity.EntityUtils.spoofSneak
-import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.hole.SurroundUtils
 import base.utils.hole.SurroundUtils.checkHole
 import base.utils.math.distanceSqToCenter
@@ -15,7 +13,7 @@ import base.utils.math.sq
 import base.utils.world.noCollision
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -23,12 +21,13 @@ import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.module.modules.player.AntiMinePlace
 import dev.dyzjct.kura.module.modules.player.PacketMine.hookPos
 import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
+import dev.dyzjct.kura.utils.extension.fastPos
 import net.minecraft.block.Blocks
 import net.minecraft.block.PistonBlock
 import net.minecraft.block.RedstoneBlock
 import net.minecraft.entity.ItemEntity
 import net.minecraft.item.Items
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
@@ -40,7 +39,6 @@ object HolePush : Module(
     category = Category.COMBAT
 ) {
     private val rotate = bsetting("Rotation", false)
-    private val side by bsetting("Side", false).isTrue(rotate)
     private val checkDown by bsetting("CheckDown", false)
     private val delay by dsetting("Delay", 50.0, 0.0, 250.0)
     private val airPlace by bsetting("AirPlace", false)
@@ -164,7 +162,7 @@ object HolePush : Module(
                 } else if (!world.isAir(it.pos.down(2)) && checkDown && it.direction == Direction.DOWN) {
                     if (!test) {
                         if (timer.tickAndReset(delay)) {
-                            if (rotate.value) RotationManager.rotationTo(it.pos.down())
+                            if (rotate.value) packetRotate(it.pos.down())
                             player.spoofSneak {
                                 spoofHotbarWithSetting(Items.OBSIDIAN) {
                                     connection.sendPacket(fastPos(it.pos.down()))
@@ -187,24 +185,18 @@ object HolePush : Module(
         if (!timer.passedMs(delay.toLong())) return
         fun spoofPlace(stone: Boolean, doToggle: Boolean = false) {
             if (!stone) {
-                RotationManager.rotationTo(blockPos = blockPos, side = true)
-                RotationManager.stopRotation()
-                face.let {
-                    connection.sendPacket(
-                        PlayerMoveC2SPacket.LookAndOnGround(
-                            when (it) {
-                                Direction.EAST -> -90f
-                                Direction.NORTH -> 180f
-                                Direction.SOUTH -> 0f
-                                Direction.WEST -> 90f
-                                else -> 0f
-                            }, player.pitch, true
-                        )
-                    )
-                }
+                packetRotate(blockPos = blockPos)
+                packetRotate(
+                    when (face) {
+                        Direction.EAST -> -90f
+                        Direction.NORTH -> 180f
+                        Direction.SOUTH -> 0f
+                        Direction.WEST -> 90f
+                        else -> 0f
+                    }, player.pitch
+                )
             }
-            RotationManager.startRotation()
-            if (!stone) RotationManager.rotationTo(blockPos)
+            if (!stone) packetRotate(blockPos)
             if (!stone || world.isAir(stonePos)) {
                 player.spoofSneak {
                     spoofHotbarWithSetting(
@@ -219,7 +211,7 @@ object HolePush : Module(
                 }
                 swing()
             }
-            if (!stone) RotationManager.rotationTo(blockPos)
+            if (!stone) packetRotate(blockPos)
             stage++
             if (debug) ChatUtil.sendMessage(if (stone) "[HolePush] -> PlaceStone!" else "[HolePush] -> PlacePiston!")
             if (!world.isAir(stonePos) && doToggle) {
@@ -238,18 +230,18 @@ object HolePush : Module(
         if (getNeighbor(blockPos) != null || airPlace) {
             if (world.isAir(blockPos)) {
                 if (rotate.value) {
-                    RotationManager.rotationTo(blockPos, side = side)
+                    packetRotate(blockPos)
                 }
                 spoofPlace(stone = false, doToggle = true)
             } else {
                 if (rotate.value && world.isAir(stonePos)) {
-                    RotationManager.rotationTo(stonePos, side = side)
+                    packetRotate(stonePos)
                 }
                 spoofPlace(stone = true, doToggle = true)
             }
         } else {
             if (rotate.value && world.isAir(stonePos)) {
-                RotationManager.rotationTo(stonePos, side = side)
+                packetRotate(stonePos)
             }
             spoofPlace(stone = true, doToggle = false)
         }

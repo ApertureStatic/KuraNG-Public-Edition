@@ -11,6 +11,7 @@ import base.utils.world.isPlaceable
 import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -45,7 +46,7 @@ object AutoTrap : Module(name = "AutoTrap", "自动陷阱", category = Category.
                     }
                     if (placeTimer.tickAndReset(placeDelay)) {
                         player.spoofSneak {
-                            if (rotate) RotationManager.rotationTo(placePos)
+                            if (rotate) packetRotate(placePos)
                             spoofHotbar(hotbarSlot) {
                                 sendSequencedPacket(world) {
                                     fastPos(placePos, sequence = it)

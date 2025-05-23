@@ -6,7 +6,6 @@ import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.event.events.input.MouseClickEvent
 import dev.dyzjct.kura.manager.HotbarManager
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoCheck
-import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.combat.PearlFucker
@@ -31,9 +30,7 @@ object MCP : Module(
     }
 
     private fun SafeClientEvent.interactPearl() {
-        RotationManager.stopRotation()
         playerController.interactItem(player, Hand.MAIN_HAND)
         PearlFucker.ignoreTimer.reset()
-        RotationManager.startRotation()
     }
 }

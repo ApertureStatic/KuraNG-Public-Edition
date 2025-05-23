@@ -1,15 +1,11 @@
 package dev.dyzjct.kura.module.modules.combat
 
-import dev.dyzjct.kura.utils.block.BlockUtil.canSee
-import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
-import dev.dyzjct.kura.utils.block.getBlock
 import base.utils.chat.ChatUtil
-import dev.dyzjct.kura.utils.extension.fastPos
 import base.utils.math.distanceSqTo
 import base.utils.math.sq
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.manager.SphereCalculatorManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -17,6 +13,10 @@ import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.module.modules.crystal.CrystalDamageCalculator.calcDamage
 import dev.dyzjct.kura.utils.TimerUtils
+import dev.dyzjct.kura.utils.block.BlockUtil.canSee
+import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
+import dev.dyzjct.kura.utils.block.getBlock
+import dev.dyzjct.kura.utils.extension.fastPos
 import net.minecraft.block.Blocks
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
@@ -56,7 +56,7 @@ object PearlFucker : Module(
                 if (player.distanceSqTo(pearl) > CombatSystem.targetRange.sq) continue
                 if (mode == Mode.WEB) {
                     if (timer.tickAndReset(delay)) {
-                        if (rotate) RotationManager.rotationTo(pearl.blockPos)
+                        if (rotate) packetRotate(pearl.blockPos)
                         spoofHotbarWithSetting(Items.COBWEB) {
                             if (getNeighbor(pearl.blockPos) != null) {
                                 if (debug) ChatUtil.sendMessage("WebPlacing")
@@ -69,7 +69,7 @@ object PearlFucker : Module(
                     if (findTargetCrystal(pearl) != null) {
                         if (timer.tickAndReset(delay)) {
                             if (debug) ChatUtil.sendMessage("CrystalAttacking")
-                            if (rotate) RotationManager.rotationTo(findTargetCrystal(pearl)!!.blockPos)
+                            if (rotate) packetRotate(findTargetCrystal(pearl)!!.blockPos)
                             connection.sendPacket(
                                 PlayerInteractEntityC2SPacket.attack(
                                     findTargetCrystal(pearl),
@@ -82,7 +82,7 @@ object PearlFucker : Module(
                         findPlacePos(pearl)?.let { pos ->
                             if (timer.tickAndReset(delay)) {
                                 if (debug) ChatUtil.sendMessage("CrystalPlacing")
-                                if (rotate) RotationManager.rotationTo(pos)
+                                if (rotate) packetRotate(pos)
                                 spoofHotbarWithSetting(Items.END_CRYSTAL) {
                                     connection.sendPacket(fastPos(pos))
                                     swing()

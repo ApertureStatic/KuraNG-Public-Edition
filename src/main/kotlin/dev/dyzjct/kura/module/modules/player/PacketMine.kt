@@ -1,10 +1,6 @@
 package dev.dyzjct.kura.module.modules.player
 
-import dev.dyzjct.kura.utils.block.BlockUtil.calcBreakTime
-import dev.dyzjct.kura.utils.block.BlockUtil.canBreak
 import base.utils.entity.EntityUtils.eyePosition
-import dev.dyzjct.kura.utils.extension.minePacket
-import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.graphics.ESPRenderer
 import base.utils.inventory.slot.allSlots
 import base.utils.inventory.slot.firstItem
@@ -19,7 +15,7 @@ import dev.dyzjct.kura.event.events.block.BlockEvent
 import dev.dyzjct.kura.manager.HotbarManager.resetHotbar
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
-import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -31,6 +27,10 @@ import dev.dyzjct.kura.system.util.color.ColorUtils.toRGB
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
 import dev.dyzjct.kura.utils.animations.sq
+import dev.dyzjct.kura.utils.block.BlockUtil.calcBreakTime
+import dev.dyzjct.kura.utils.block.BlockUtil.canBreak
+import dev.dyzjct.kura.utils.extension.minePacket
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.findBestItem
 import net.minecraft.block.CobwebBlock
@@ -271,7 +271,7 @@ object PacketMine : Module(
         if (db) {
             if (doubleBreak) {
                 if (onDoubleBreak) {
-                    doubleData?.let { RotationManager.rotationTo(it.blockPos) }
+                    doubleData?.let { packetRotate(it.blockPos) }
                 }
                 if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime + backTime) && onDoubleBreak) {
                     onDoubleBreak = false
@@ -292,7 +292,7 @@ object PacketMine : Module(
                     blockData.blockPos
                 ) && action == Stop)) && !force
             ) return
-            if (rotate.value) RotationManager.rotationTo(blockData.blockPos)
+            if (rotate.value) packetRotate(blockData.blockPos)
             if (swing) connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
             if (switchMode0.spoof) {
                 if (!switchMode0.bypass) {

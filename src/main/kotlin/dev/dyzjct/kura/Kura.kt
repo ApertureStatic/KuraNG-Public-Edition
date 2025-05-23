@@ -9,7 +9,6 @@ import dev.dyzjct.kura.module.modules.client.ClickGui
 import dev.dyzjct.kura.module.modules.client.HUDEditor
 import dev.dyzjct.kura.setting.StringSetting
 import dev.dyzjct.kura.utils.math.LagCompensator
-import dev.skidderpollution.m7thh4ck.manager.impl.RotationManagerNew
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.io.path.Path
@@ -17,7 +16,7 @@ import kotlin.io.path.Path
 class Kura : AlwaysListening {
     companion object {
         const val MOD_NAME = "Kura"
-        const val VERSION = "Community Edition v1.0.5"
+        const val VERSION = "v1.0.5"
         var logger: Logger = LogManager.getLogger("Kura")
         var commandPrefix = StringSetting("CommandPrefix", null, ".")
         var DISPLAY_NAME = "$MOD_NAME-$VERSION | Have a nice day!"
@@ -41,8 +40,6 @@ class Kura : AlwaysListening {
             EventListenerManager.call()
             ModuleManager.init()
             CommandManager.onInit()
-            RotationManagerNew.call()
-            RotationManager.onInit()
             FileManager.onInit()
             FileManager.loadAll()
             InventoryTaskManager.onInit()
@@ -56,6 +53,7 @@ class Kura : AlwaysListening {
             BlockFinderManager.onInit()
             SphereCalculatorManager.onInit()
             DisablerManager.onInit()
+            RotationManager.onInit()
             ClickGui.disable()
             HUDEditor.disable()
 
