@@ -127,14 +127,14 @@ class MainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
             context.setShaderColor(1.0F, 1.0F, 1.0F, min(0.3f, animProgress))
             context.drawTexture(
                 KuraIdentifier("textures/button.png"),
-                (width / 2) - 60,
-                (height / 2) - 55,
+                (width / 2) - 140,
+                (height / 2) - 75,
                 0f,
                 0f,
-                240,
-                120,
-                240,
-                120
+                280,
+                140,
+                280,
+                140
             )
             context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F)
         }
