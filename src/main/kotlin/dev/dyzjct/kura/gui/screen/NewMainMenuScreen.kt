@@ -1,7 +1,9 @@
 package dev.dyzjct.kura.gui.screen
 
+import com.mojang.blaze3d.systems.RenderSystem
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.KuraIdentifier
+import dev.dyzjct.kura.module.modules.client.MainMenu
 import dev.dyzjct.kura.system.render.graphic.Render2DEngine
 import dev.dyzjct.kura.system.render.newfont.FontRenderers
 import dev.dyzjct.kura.utils.BlurRenderer
@@ -12,21 +14,19 @@ import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen
 import net.minecraft.client.gui.screen.option.OptionsScreen
 import net.minecraft.client.gui.screen.world.SelectWorldScreen
 import net.minecraft.text.Text
-import net.minecraft.util.Util
 import net.minecraft.util.math.MathHelper
 import java.awt.Color
-import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 
-class MainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
+class NewMainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
     private val mc = MinecraftClient.getInstance()
 
-    private val buttonWidth = 80
-    private val buttonHeight = 16
+    private var buttonWidth = 80
+    private var buttonHeight = 16
 
     private var lastCharTime: Long = 0
     private var pauseStartTime: Long = 0
@@ -57,18 +57,36 @@ class MainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
         lastCharTime = System.currentTimeMillis()
         pauseStartTime = System.currentTimeMillis()
 
+        buttonHeight = height / 9
+
         buttonAnimations["Singleplayer"] =
-            ButtonAnimation(width / 2f - buttonWidth - 2, height / 2f, -buttonWidth.toFloat(), height / 2f)
+            ButtonAnimation(
+                width * 0.235f,
+                (height / 2f - 1.5f * buttonHeight),
+                0f,
+                height.toFloat()
+            )
         buttonAnimations["Multiplayer"] =
-            ButtonAnimation(width / 2f, height / 2f, width / 2f, (height + buttonHeight).toFloat())
+            ButtonAnimation(
+                width * 0.235f,
+                (height / 2f - 0.5f * buttonHeight),
+                0f,
+                height.toFloat()
+            )
         buttonAnimations["Game Settings"] =
-            ButtonAnimation(width / 2f + buttonWidth + 2, height / 2f, (width + buttonWidth).toFloat(), height / 2f)
-        buttonAnimations["Quit Game"] = ButtonAnimation(
-            width - buttonWidth / 2f - 2,
-            (height - buttonHeight - 2).toFloat(),
-            (width + buttonWidth).toFloat(),
-            (height - buttonHeight - 2).toFloat()
-        )
+            ButtonAnimation(
+                width * 0.235f,
+                (height / 2f + 0.5f * buttonHeight),
+                0f,
+                height.toFloat()
+            )
+        buttonAnimations["Quit Game"] =
+            ButtonAnimation(
+                width * 0.235f,
+                (height / 2f + 1.5f * buttonHeight),
+                0f,
+                height.toFloat()
+            )
     }
 
     override fun shouldPause(): Boolean {
@@ -93,7 +111,11 @@ class MainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
         // 背景
         context.matrices.push()
         context.setShaderColor(1.0F, 1.0F, 1.0F, min(0.3f, animProgress))
-        context.drawTexture(KuraIdentifier("background/background.png"), 0, 0, 0f, 0f, width, height, width, height)
+        if (MainMenu.background.value == MainMenu.KuraBackground.Kura) {
+            context.drawTexture(KuraIdentifier("background/background.png"), 0, 0, 0f, 0f, width, height, width, height)
+        } else {
+            context.drawTexture(KuraIdentifier("background/shuna_bg.png"), 0, 0, 0f, 0f, width, height, width, height)
+        }
         context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F)
         context.matrices.pop()
 
@@ -107,50 +129,58 @@ class MainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
         context.matrices.push()
         fun draw() {
             context.setShaderColor(1.0F, 1.0F, 1.0F, min(0.3f, animProgress))
-            context.drawTexture(
-                KuraIdentifier("textures/button.png"),
-                (width / 2) - 140,
-                (height / 2) - 75,
-                0f,
-                0f,
-                280,
-                140,
-                280,
-                140
+            Render2DEngine.drawRound(
+                context.matrices,
+                width * 0.1f,
+                height * 0.15f,
+                width / 3.7f,
+                height.toFloat() * 0.67f,
+                10f,
+                Color(0, 0, 0, 160)
+            )
+            Render2DEngine.drawRectBlurredShadow(
+                context.matrices,
+                width * 0.1f,
+                height * 0.15f,
+                width / 3.7f,
+                height.toFloat() * 0.67f,
+                20,
+                Color(0, 0, 0, 200)
             )
             context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F)
         }
-//        blurRenderer.renderWithBlur { // HAVE A BUG
         draw()
-//        }
         context.matrices.pop()
-
+//TODO LOGO DRAWER
         context.matrices.push()
         context.setShaderColor(1.0F, 1.0F, 1.0F, min(0.3f, animProgress))
         context.drawTexture(
             KuraIdentifier("logo/logo.png"),
-            width / 2 - 52 - 2, height / 2 - 51,
+            (width * 0.143).toInt(), (height / 2f - 3.1f * buttonHeight).toInt(),
             0f, 0f,
-            50, 50,
-            50, 50
+            (width / 10), (width / 10),
+            (width / 10), (width / 10)
         )
         context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F)
         context.matrices.pop()
-        FontRenderers.jbMono.drawString(
-            context.matrices,
+
+        context.matrices.push()
+        drawTextEpsilon(
+            context,
             "ura",
-            width / 2f - FontRenderers.jbMono.getStringWidth("Kura") / 2 + 28 - 2,
-            height / 2f - FontRenderers.jbMono.getFontHeight("Kura") + 5,
-            titleColor.rgb
+            (width * 0.2256f),
+            (height / 2.0f - width * 0.1485f),
+            width * 0.0014f,
+            titleColor
         )
 
         val date = SimpleDateFormat("MM/dd/yy").format(Date()) + " " + SimpleDateFormat("hh:mm a", Locale.US).format(
             Date()
         )
-        val timeColor = Color(Color.GRAY.red, Color.GRAY.green, Color.GRAY.blue, (255 * textAlpha).toInt())
+        val timeColor = Color(Color.BLACK.red, Color.BLACK.green, Color.BLACK.blue, (255 * textAlpha).toInt())
         drawText(context, date, width / 2f - FontRenderers.default.getStringWidth(date) / 2f, 6f, 1f, timeColor)
 
-        val versionColor = Color(Color.GRAY.red, Color.GRAY.green, Color.GRAY.blue, (255 * textAlpha).toInt())
+        val versionColor = Color(Color.BLACK.red, Color.BLACK.green, Color.BLACK.blue, (255 * textAlpha).toInt())
         drawText(
             context,
             Kura.MOD_NAME + " " + Kura.VERSION + "-mc" + "1.20.4" + ".",
@@ -167,6 +197,26 @@ class MainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
 
         drawClientStatus(context, textAlpha)
         updateHoverStates(mouseX, mouseY)
+
+        if (MainMenu.rimuru) {
+            RenderSystem.disableBlend()
+            val imgWidth = width / 4
+            val imgHeight = imgWidth * 1.52
+            val animationX = (width) - (imgWidth * animProgress).toInt()
+            val animationY = (height) - (imgHeight * animProgress).toInt()
+            context.drawTexture(
+                rimuru,
+                animationX,
+                animationY,
+                0F,
+                0F,
+                (imgWidth * animProgress).toInt(),
+                (imgHeight * animProgress).toInt(),
+                (imgWidth * animProgress).toInt(),
+                (imgHeight * animProgress).toInt()
+            )
+            RenderSystem.enableBlend()
+        }
     }
 
     private val animationProgress: Float
@@ -192,13 +242,16 @@ class MainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
             anim.hoverAlpha = max(0.0, (anim.hoverAlpha - hoverDelta).toDouble()).toFloat()
         }
 
-        val bgColor = Color(0, 0, 0, 100 + (30 * anim.hoverAlpha).toInt())
+        val bgColor = Color(255, 255, 255, 100 + (100 * anim.hoverAlpha).toInt())
         val textColor = Color(
-            Color.GRAY.red + ((Color.WHITE.red - Color.GRAY.red) * anim.hoverAlpha).toInt(),
-            Color.GRAY.green + ((Color.WHITE.green - Color.GRAY.green) * anim.hoverAlpha).toInt(),
-            Color.GRAY.blue + ((Color.WHITE.blue - Color.GRAY.blue) * anim.hoverAlpha).toInt(),
-            255
+            0,
+            0,
+            0,
+            200 + (30 * anim.hoverAlpha).toInt()
         )
+
+        buttonWidth = width / 5
+        buttonHeight = height / 9
 
         Render2DEngine.renderQuad(
             context.matrices,
@@ -211,7 +264,14 @@ class MainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
             bgColor.rgb,
             bgColor.rgb
         )
-        drawText(context, text, currentX - FontRenderers.default.getStringWidth(text) / 2f, currentY + 6, 1f, textColor)
+        drawText(
+            context,
+            text,
+            currentX - FontRenderers.default.getStringWidth(text) / 2f,
+            currentY + buttonHeight / 2.1f,
+            width / mc.window.scaledWidth.toFloat(),
+            textColor
+        )
     }
 
     private fun updateHoverStates(mouseX: Int, mouseY: Int) {
@@ -227,19 +287,6 @@ class MainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
 
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
         if (button == 0) {
-            if (width / 2f - FontRenderers.default.getStringWidth("Kura") <= mouseX && height / 2f - FontRenderers.default.getFontHeight(
-                    "Kura"
-                ) * 2 - 5 <= mouseY && width / 2f + FontRenderers.default.getStringWidth(
-                    "Kura"
-                ) > mouseX && height / 2f - 5 > mouseY
-            ) {
-                try {
-                    Util.getOperatingSystem().open(URI("https://youtu.be/INE4RacaApQ?si=ShQU8VjfpgdxW8nb"))
-                } catch (ignored: Exception) {
-                }
-                playClickSound()
-            }
-
             val singleplayerAnim = buttonAnimations["Singleplayer"]
             if (singleplayerAnim != null && isHoveringButton(
                     singleplayerAnim.targetX.toDouble(),
@@ -331,6 +378,14 @@ class MainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
         context.matrices.pop()
     }
 
+    private fun drawTextEpsilon(context: DrawContext, text: String, x: Float, y: Float, scale: Float, color: Color) {
+        context.matrices.push()
+        context.matrices.translate(x, y, 0f)
+        context.matrices.scale(scale, scale, 0f)
+        FontRenderers.epsilon.drawString(context.matrices, text, 0.0, 0.0, color.rgb)
+        context.matrices.pop()
+    }
+
     private fun playClickSound() {
         blurRenderer.close()
 //        mc.getSoundManager().play(PositionedSoundInstance.master(SoundEvent.UI_BUTTON_CLICK, 1.0f))
@@ -357,4 +412,5 @@ class MainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
         return Color(color.red, color.green, color.blue, alpha)
     }
 
+    private val rimuru = KuraIdentifier("textures/rimuru.png")
 }

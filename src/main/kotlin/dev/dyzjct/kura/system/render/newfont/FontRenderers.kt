@@ -16,6 +16,7 @@ object FontRenderers {
     lateinit var big_default: FontAdapter
     lateinit var mid_icons: FontAdapter
     lateinit var big_icons: FontAdapter
+    lateinit var epsilon: FontAdapter
 
     @Throws(IOException::class, FontFormatException::class)
     fun createDefault(size: Float, name: String): RendererFontAdapter {

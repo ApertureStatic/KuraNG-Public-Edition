@@ -6,8 +6,10 @@ import dev.dyzjct.kura.event.events.RunGameLoopEvent;
 import dev.dyzjct.kura.event.events.TickEvent;
 import dev.dyzjct.kura.event.events.screen.GuiScreenEvent;
 import dev.dyzjct.kura.gui.screen.MainMenuScreen;
+import dev.dyzjct.kura.gui.screen.NewMainMenuScreen;
 import dev.dyzjct.kura.manager.FileManager;
 import dev.dyzjct.kura.module.AbstractModule;
+import dev.dyzjct.kura.module.modules.client.MainMenu;
 import dev.dyzjct.kura.system.render.newfont.FontRenderers;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
@@ -91,6 +93,7 @@ public abstract class MixinMinecraftClient {
                 FontRenderers.INSTANCE.setJbMono(FontRenderers.INSTANCE.createDefault(72f, "JetBrainsMono-Bold"));
                 FontRenderers.INSTANCE.setNever(FontRenderers.INSTANCE.createDefault(72f, "DancingScript-Medium"));
                 FontRenderers.INSTANCE.setBig_default(FontRenderers.INSTANCE.createDefault(72f, "comfortaa"));
+                FontRenderers.INSTANCE.setEpsilon(FontRenderers.INSTANCE.createDefault(72f, "OsakaChips"));
                 FontRenderers.INSTANCE.setIcons(FontRenderers.INSTANCE.createIcons(20));
                 FontRenderers.INSTANCE.setMid_icons(FontRenderers.INSTANCE.createIcons(46f));
                 FontRenderers.INSTANCE.setBig_icons(FontRenderers.INSTANCE.createIcons(72f));
@@ -179,7 +182,15 @@ public abstract class MixinMinecraftClient {
         AbstractModule.Companion.setLaoded(true);
 
         if (screen instanceof TitleScreen) {
-            this.setScreen(new MainMenuScreen());
+            if (MainMenu.INSTANCE.isEnabled()) {
+                if (MainMenu.INSTANCE.getMode().getValue() == MainMenu.MainMenuMode.Kura) {
+                    this.setScreen(new NewMainMenuScreen());
+                } else {
+                    this.setScreen(new MainMenuScreen());
+                }
+            }
+
+
         }
 //        if (screen != verScreen) { //&& Kura.Companion.getId().equals(SocketConnection.INSTANCE.getTaskID())) {
 //            setScreen(verScreen);

@@ -7,7 +7,7 @@ import dev.dyzjct.kura.module.Module
 object LoadingMenu: Module(
     name = "LoadingMenu",
     langName = "加载界面",
-    description = "Loading menu",
+    description = "Loading menu.",
     category = Category.CLIENT
 ) {
 
