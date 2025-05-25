@@ -1,17 +1,14 @@
 package dev.dyzjct.kura.manager
 
+import base.utils.math.toVec3dCenter
 import base.utils.math.vector.Vec2f
 import dev.dyzjct.kura.event.eventbus.AlwaysListening
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.event.events.PacketEvents
 import dev.dyzjct.kura.event.events.input.KeyboardTickEvent
-import dev.dyzjct.kura.event.events.player.JumpEvent
-import dev.dyzjct.kura.event.events.player.PlayerUpdateEvent
-import dev.dyzjct.kura.event.events.player.UpdateMovementEvent
-import dev.dyzjct.kura.event.events.player.UpdateVelocityEvent
+import dev.dyzjct.kura.event.events.player.*
 import dev.dyzjct.kura.mixin.accessor.EntityAccessor
-import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.Rotations
 import dev.dyzjct.kura.module.modules.player.FreeCam
 import dev.dyzjct.kura.utils.animations.Easing
@@ -34,6 +31,26 @@ import kotlin.math.*
 object RotationManager : AlwaysListening {
     var yaw: Float = 0f
     var pitch: Float = 0f
+
+    private var rotation: Rotation? = null
+
+    private var prevFixYaw = 0f
+
+    private var prevYaw = 0f
+    private var prevPitch = 0f
+
+    private var serverYaw = 0f
+
+    private var serverPitch = 0f
+
+    private var prevRenderYaw = 0f
+    private var prevRenderPitch = 0f
+    private var lastRenderTime = 0L
+
+    private var lastUpdate = System.currentTimeMillis()
+
+    private var currentYaw = 0f
+    private var currentPitch = 0f
 
     fun SafeClientEvent.updateRotations() {
         yaw = player.getYaw()
@@ -90,101 +107,9 @@ object RotationManager : AlwaysListening {
 
 
     private val queue: PriorityBlockingQueue<Rotation> = PriorityBlockingQueue<Rotation>(
-        11,
-        Comparator<Rotation> { target: Rotation, rotation: Rotation -> this.compareRotations(target, rotation) })
+        11
+    ) { target: Rotation, rotation: Rotation -> this.compareRotations(target, rotation) }
 
-    private var rotation: Rotation? = null
-
-    private var prevFixYaw = 0f
-
-    private var prevYaw = 0f
-    private var prevPitch = 0f
-
-    private var serverYaw = 0f
-
-    private var serverPitch = 0f
-
-    private var prevRenderYaw = 0f
-    private var prevRenderPitch = 0f
-    private var lastRenderTime = 0L
-
-    fun onInit() {
-        safeEventListener<PlayerUpdateEvent> {
-            queue.removeIf { rotation: Rotation -> System.currentTimeMillis() - rotation.time > 100 }
-            rotation = queue.peek()
-
-            if (rotation == null) return@safeEventListener
-            lastRenderTime = System.currentTimeMillis()
-        }
-
-        safeEventListener<UpdateMovementEvent.Pre> {
-            rotation?.let { rotation ->
-                prevYaw = player.getYaw()
-                prevPitch = player.getPitch()
-
-                player.setYaw(rotation.yaw)
-                player.setPitch(rotation.pitch)
-            }
-        }
-
-        safeEventListener<UpdateMovementEvent.Post> {
-            rotation?.let {
-                player.setYaw(prevYaw)
-                player.setPitch(prevPitch)
-            }
-        }
-
-        safeEventListener<UpdateVelocityEvent> { event ->
-            if (!Rotations.movement_fix) return@safeEventListener
-            if (FreeCam.isEnabled) FreeCam.disable()
-            rotation?.let { rotation ->
-                event.velocity = (
-                        EntityAccessor.invokeMovementInputToVelocity(
-                            event.movementInput,
-                            event.speed,
-                            rotation.yaw
-                        )
-                        )
-                event.cancel()
-            }
-        }
-
-        safeEventListener<KeyboardTickEvent> { event ->
-            if (player.isRiding) return@safeEventListener
-            if (!Rotations.movement_fix) return@safeEventListener
-            if (FreeCam.isEnabled) return@safeEventListener
-            rotation?.let { rotation ->
-                val movementForward: Float = event.movementForward
-                val movementSideways: Float = event.movementSideways
-
-                val delta: Float = (player.getYaw() - rotation.yaw) * MathHelper.RADIANS_PER_DEGREE
-
-                val cos = MathHelper.cos(delta)
-                val sin = MathHelper.sin(delta)
-
-                event.movementForward = Math.round(movementForward * cos + movementSideways * sin).toFloat()
-                event.movementSideways = Math.round(movementSideways * cos - movementForward * sin).toFloat()
-                event.cancel()
-            }
-        }
-        safeEventListener<JumpEvent.Post> {
-            if (player.isRiding) return@safeEventListener
-            if (!Rotations.movement_fix) return@safeEventListener
-            if (FreeCam.isEnabled) return@safeEventListener
-            rotation?.let { rotation ->
-                prevFixYaw = player.yaw
-                player.setYaw(rotation.yaw)
-            }
-        }
-        safeEventListener<PacketEvents.Send> { event ->
-            if (event.packet is PlayerMoveC2SPacket) {
-                if (!event.packet.changesLook()) return@safeEventListener
-
-                serverYaw = event.packet.getYaw(player.yaw)
-                serverPitch = event.packet.getPitch(player.pitch)
-            }
-        }
-    }
 
     //
     // 平滑设置旋转
@@ -221,28 +146,28 @@ object RotationManager : AlwaysListening {
     }
 
 
-    // 主逻辑调用
-    //
-    fun rotate(rotations: Vec2f, module: Module) {
-        rotate(rotations.x, rotations.y, module)
+    //  TODO 主逻辑调用
+    fun SafeClientEvent.rotate(rotations: Vec2f, priority: Int = 100) {
+        rotate(rotations.x, rotations.y, priority)
     }
 
-    fun rotate(yaw: Float, pitch: Float, module: Module) {
-        queue.removeIf { rotation: Rotation -> rotation.module === module }
-        queue.add(Rotation(yaw, pitch, module, getModulePriority(module)))
+    fun SafeClientEvent.rotate(pos: BlockPos, priority: Int = 100) {
+        val rotation = getRotation(pos.toVec3dCenter())
+        rotate(rotation.x, rotation.y, priority)
     }
 
-    fun pistonRotate(yaw: Float, pitch: Float, priority: Int) {
+    fun SafeClientEvent.rotate(pos: Vec3d, priority: Int = 100) {
+        val rotation = getRotation(pos)
+        queue.add(Rotation(rotation.x, rotation.y, priority, System.currentTimeMillis()))
+    }
+
+    fun SafeClientEvent.pistonRotate(yaw: Float, pitch: Float, priority: Int = 100) {
         rotate(yaw, pitch, priority)
     }
 
-    fun rotate(rotations: FloatArray, module: Module, priority: Int) {
-        rotate(rotations[0], rotations[1], module, priority)
-    }
-
-    fun rotate(yaw: Float, pitch: Float, module: Module, priority: Int) {
-        queue.removeIf { rotation: Rotation -> rotation.module === module }
-        queue.add(Rotation(yaw, pitch, module, priority))
+    fun SafeClientEvent.rotate(yaw: Float, pitch: Float, priority: Int = 100) {
+        queue.add(Rotation(yaw, pitch, priority))
+        lastUpdate = System.currentTimeMillis()
     }
 
     fun SafeClientEvent.packetRotate(rotations: Vec2f) {
@@ -259,26 +184,6 @@ object RotationManager : AlwaysListening {
         packetRotate(rotations.x, rotations.y)
     }
 
-//    @TODO ServerSide PLEASE!!
-//    fun SafeClientEvent.SNAPPacketRotate(yaw: Float, pitch: Float) {
-//        if (serverYaw == yaw && serverPitch == pitch) {
-//            connection.sendPacket(
-//                PlayerMoveC2SPacket.Full(
-//                    player.x,
-//                    player.y,
-//                    player.z,
-//                    yaw,
-//                    pitch,
-//                    player.onGround
-//                )
-//            )
-//        }
-//    }
-
-
-    // 新增平滑过渡相关成员变量
-    private var currentYaw = 0f
-    private var currentPitch = 0f
     fun SafeClientEvent.getRotation(vec: Vec3d): Vec2f {
         // 保持原有实现不变
         val eyesPos = player.eyePos
@@ -326,7 +231,6 @@ object RotationManager : AlwaysListening {
     }
 
     fun rotate(yaw: Float, pitch: Float, priority: Int) {
-        queue.removeIf { rotation: Rotation -> rotation.module == null && rotation.priority === priority }
         queue.add(Rotation(yaw, pitch, priority = priority))
     }
 
@@ -395,10 +299,11 @@ object RotationManager : AlwaysListening {
                 ))
             }
         }
+        lastUpdate = System.currentTimeMillis()
     }
 
     fun inRenderTime(): Boolean {
-        return System.currentTimeMillis() - lastRenderTime < 1000
+        return System.currentTimeMillis() - lastUpdate <= 500
     }
 
     val SafeClientEvent.renderRotations: Vec2f
@@ -420,10 +325,6 @@ object RotationManager : AlwaysListening {
 
             return Vec2f(yaw, pitch)
         }
-
-    fun getModulePriority(module: Module): Int {
-        return PRIORITIES.getOrDefault(module.moduleName, 0)
-    }
 
     private fun compareRotations(target: Rotation, rotation: Rotation): Int {
         if (target.priority === rotation.priority) return -java.lang.Long.compare(
@@ -682,5 +583,87 @@ object RotationManager : AlwaysListening {
             localBox.minY + dy * (0.5 + 0.5 * side.offsetY),
             localBox.minZ + dz * (0.5 + 0.5 * side.offsetZ)
         )
+    }
+
+    fun onInit() {
+        safeEventListener<PlayerUpdateEvent> {
+            queue.removeIf { rotation: Rotation -> System.currentTimeMillis() - rotation.time > 100 }
+            rotation = queue.peek()
+
+            if (rotation == null) return@safeEventListener
+            lastRenderTime = System.currentTimeMillis()
+        }
+
+        safeEventListener<UpdateMovementEvent.Pre> {
+            rotation?.let { rotation ->
+                prevYaw = player.getYaw()
+                prevPitch = player.getPitch()
+
+                player.setYaw(rotation.yaw)
+                player.setPitch(rotation.pitch)
+            }
+        }
+
+        safeEventListener<UpdateMovementEvent.Post> {
+            rotation?.let {
+                player.setYaw(prevYaw)
+                player.setPitch(prevPitch)
+            }
+        }
+
+        safeEventListener<UpdateVelocityEvent> { event ->
+            if (!Rotations.movement_fix) return@safeEventListener
+            if (FreeCam.isEnabled) FreeCam.disable()
+            rotation?.let { rotation ->
+                event.velocity = (
+                        EntityAccessor.invokeMovementInputToVelocity(
+                            event.movementInput,
+                            event.speed,
+                            rotation.yaw
+                        )
+                        )
+                event.cancel()
+            }
+        }
+
+        safeEventListener<KeyboardTickEvent> { event ->
+            if (player.isRiding) return@safeEventListener
+            if (!Rotations.movement_fix) return@safeEventListener
+            if (FreeCam.isEnabled) return@safeEventListener
+            rotation?.let { rotation ->
+                val movementForward: Float = event.movementForward
+                val movementSideways: Float = event.movementSideways
+
+                val delta: Float = (player.getYaw() - rotation.yaw) * MathHelper.RADIANS_PER_DEGREE
+
+                val cos = MathHelper.cos(delta)
+                val sin = MathHelper.sin(delta)
+
+                event.movementForward = Math.round(movementForward * cos + movementSideways * sin).toFloat()
+                event.movementSideways = Math.round(movementSideways * cos - movementForward * sin).toFloat()
+                event.cancel()
+            }
+        }
+        safeEventListener<JumpEvent.Post> {
+            if (player.isRiding) return@safeEventListener
+            if (!Rotations.movement_fix) return@safeEventListener
+            if (FreeCam.isEnabled) return@safeEventListener
+            rotation?.let { rotation ->
+                prevFixYaw = player.yaw
+                player.setYaw(rotation.yaw)
+            }
+        }
+        safeEventListener<PacketEvents.Send> { event ->
+            if (event.packet is PlayerMoveC2SPacket) {
+                if (!event.packet.changesLook()) return@safeEventListener
+
+                serverYaw = event.packet.getYaw(player.yaw)
+                serverPitch = event.packet.getPitch(player.pitch)
+            }
+        }
+
+        safeEventListener<PlayerMotionEvent> { event ->
+            if (inRenderTime()) event.setRenderRotation(currentYaw, currentPitch)
+        }
     }
 }

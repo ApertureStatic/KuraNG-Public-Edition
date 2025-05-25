@@ -83,8 +83,8 @@ object PearlClip : Module(
                 angle = if ((angle + fix) > 180.0f) angle - fix else angle + fix
 
                 packetRotate(angle, pitch)
-//                sendPlayerRotation(angle, pitch, player.onGround)
                 if (player.mainHandStack.item == Items.ENDER_PEARL) {
+                    packetRotate(angle, pitch)
                     sendSequencedPacket(world) {
                         PlayerInteractItemC2SPacket(
                             Hand.MAIN_HAND, it
@@ -92,6 +92,7 @@ object PearlClip : Module(
                     }
                 } else {
                     spoofHotbarNoCheck(Items.ENDER_PEARL) {
+                        packetRotate(angle, pitch)
                         PearlFucker.ignoreTimer.reset()
                         sendSequencedPacket(
                             world
@@ -106,10 +107,6 @@ object PearlClip : Module(
             }
             disable()
         }
-    }
-
-    private fun SafeClientEvent.sendPlayerRotation(yaw: Float, pitch: Float, onGround: Boolean) {
-        connection.sendPacket(PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, onGround))
     }
 
     enum class SafeMode {

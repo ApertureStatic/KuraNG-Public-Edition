@@ -185,16 +185,16 @@ object HolePush : Module(
         if (!timer.passedMs(delay.toLong())) return
         fun spoofPlace(stone: Boolean, doToggle: Boolean = false) {
             if (!stone) {
+//                packetRotate(
+//                    when (face) {
+//                        Direction.EAST -> -90f
+//                        Direction.NORTH -> 180f
+//                        Direction.SOUTH -> 0f
+//                        Direction.WEST -> 90f
+//                        else -> 0f
+//                    }, player.pitch
+//                )
                 packetRotate(blockPos = blockPos)
-                packetRotate(
-                    when (face) {
-                        Direction.EAST -> -90f
-                        Direction.NORTH -> 180f
-                        Direction.SOUTH -> 0f
-                        Direction.WEST -> 90f
-                        else -> 0f
-                    }, player.pitch
-                )
             }
             if (!stone) packetRotate(blockPos)
             if (!stone || world.isAir(stonePos)) {
@@ -211,7 +211,19 @@ object HolePush : Module(
                 }
                 swing()
             }
-            if (!stone) packetRotate(blockPos)
+            if (!stone) {
+                packetRotate(
+                    when (face) {
+                        Direction.EAST -> -90f
+                        Direction.NORTH -> 180f
+                        Direction.SOUTH -> 0f
+                        Direction.WEST -> 90f
+                        else -> 0f
+                    }, player.pitch
+                )
+//                packetRotate(blockPos = blockPos)
+            }
+//            if (!stone) packetRotate(blockPos)
             stage++
             if (debug) ChatUtil.sendMessage(if (stone) "[HolePush] -> PlaceStone!" else "[HolePush] -> PlacePiston!")
             if (!world.isAir(stonePos) && doToggle) {

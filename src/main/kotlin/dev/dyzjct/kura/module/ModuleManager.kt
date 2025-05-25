@@ -8,8 +8,6 @@ import dev.dyzjct.kura.event.eventbus.listener
 import dev.dyzjct.kura.event.events.TickEvent
 import dev.dyzjct.kura.event.events.input.BindEvent
 import dev.dyzjct.kura.module.hud.*
-import dev.dyzjct.kura.module.modules.aura.KillAura
-import dev.dyzjct.kura.module.modules.aura.KuraCrystal
 import dev.dyzjct.kura.module.modules.client.*
 import dev.dyzjct.kura.module.modules.combat.*
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
@@ -171,7 +169,6 @@ object ModuleManager : AlwaysListening {
         loadCategoryRender()
         loadCategoryPlayer()
         registerModule(AutoCrystal)
-        registerModule(KuraCrystal)
         DamageCalculator
         getModules().sortedWith(Comparator.comparing { it.moduleName })
     }

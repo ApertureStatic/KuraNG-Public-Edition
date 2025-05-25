@@ -1,7 +1,7 @@
 package dev.dyzjct.kura.event.events.player
 
 import dev.dyzjct.kura.event.eventbus.*
-import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.client.Rotations
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.math.BlockPos
 
@@ -35,7 +35,7 @@ class PlayerMotionEvent(
     }
 
     fun setRenderRotation(yaw: Float, pitch: Float) {
-        if (CombatSystem.renderRotate) MinecraftClient.getInstance().player?.let {
+        if (Rotations.render_rotate) MinecraftClient.getInstance().player?.let {
             it.headYaw = yaw
             it.bodyYaw = yaw
             it.renderPitch = pitch
@@ -67,7 +67,7 @@ class PlayerMotionEvent(
 
     fun setYaw(yaw: Double) {
         this.yaw = yaw.toFloat()
-        if (CombatSystem.renderRotate) MinecraftClient.getInstance().player?.let {
+        if (Rotations.render_rotate) MinecraftClient.getInstance().player?.let {
             it.headYaw = yaw.toFloat()
             it.bodyYaw = yaw.toFloat()
         }
@@ -75,7 +75,7 @@ class PlayerMotionEvent(
 
     fun setPitch(pitch: Double) {
         this.pitch = pitch.toFloat()
-        if (CombatSystem.renderRotate) MinecraftClient.getInstance().player?.let {
+        if (Rotations.render_rotate) MinecraftClient.getInstance().player?.let {
             it.renderPitch = pitch.toFloat()
         }
     }

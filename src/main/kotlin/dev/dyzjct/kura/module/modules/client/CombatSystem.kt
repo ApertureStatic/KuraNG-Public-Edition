@@ -3,7 +3,7 @@ package dev.dyzjct.kura.module.modules.client
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.aura.KillAura
+import dev.dyzjct.kura.module.modules.combat.KillAura
 import dev.dyzjct.kura.module.modules.combat.AnchorAura
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
 import dev.dyzjct.kura.utils.TimerUtils
@@ -43,7 +43,6 @@ object CombatSystem : Module(
     val positionDelay by isetting("PositionDelay", 500, 0, 2000).isTrue { packetControl && positionControl }
     val groundControl by bsetting("GroundControl", false).isTrue { packetControl }
     val groundDelay by isetting("GroundDelay", 500, 0, 2000).isTrue { packetControl && groundControl }
-    val renderRotate by bsetting("RenderRotate", true)
     private val swing by bsetting("Swing", true)
     private val packetSwing by bsetting("PacketSwing", true).isTrue { swing }
     private val swingHand by msetting("SwingHand", SwingHand.MainHand).isTrue { swing }

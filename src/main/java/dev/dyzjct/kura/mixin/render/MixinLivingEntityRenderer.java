@@ -34,5 +34,4 @@ public class MixinLivingEntityRenderer<T extends LivingEntity> {
         }
         entityModel.render(matrices, vertices, light, overlay, newColor.getRed() / 255F, newColor.getGreen() / 255F, newColor.getBlue() / 255F, newColor.getAlpha() / 255F);
     }
-
 }

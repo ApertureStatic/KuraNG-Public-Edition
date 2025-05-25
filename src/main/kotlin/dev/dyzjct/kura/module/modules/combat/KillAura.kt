@@ -1,4 +1,4 @@
-package dev.dyzjct.kura.module.modules.aura
+package dev.dyzjct.kura.module.modules.combat
 
 import base.utils.combat.getEntityTarget
 import base.utils.concurrent.threads.runSafe
@@ -8,14 +8,12 @@ import base.utils.inventory.slot.hotbarSlots
 import base.utils.item.attackDamage
 import base.utils.math.distanceSqTo
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
-import dev.dyzjct.kura.manager.RotationManager
 import dev.dyzjct.kura.manager.RotationManager.packetRotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
 import dev.dyzjct.kura.module.modules.client.UiSetting
-import dev.dyzjct.kura.module.modules.combat.AnchorAura
 import dev.dyzjct.kura.module.modules.crystal.AutoCrystal
 import dev.dyzjct.kura.utils.animations.sq
 import dev.dyzjct.kura.utils.inventory.HotbarSlot

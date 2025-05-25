@@ -12,10 +12,7 @@ import base.utils.graphics.ESPRenderer
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.item.duraPercentage
-import base.utils.math.distanceSq
-import base.utils.math.distanceSqTo
-import base.utils.math.distanceSqToCenter
-import base.utils.math.toVec3dCenter
+import base.utils.math.*
 import base.utils.math.vector.Vec2f
 import base.utils.world.getMiningSide
 import dev.dyzjct.kura.event.eventbus.*
@@ -57,7 +54,11 @@ import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.Easing
 import dev.dyzjct.kura.utils.animations.sq
 import dev.dyzjct.kura.utils.block.BlockUtil.canSee
-import dev.dyzjct.kura.utils.extension.*
+import dev.dyzjct.kura.utils.extension.ceilToInt
+import dev.dyzjct.kura.utils.extension.minePacket
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
+import dev.dyzjct.kura.utils.extension.synchronized
+import dev.dyzjct.kura.utils.extension.toDegree
 import dev.dyzjct.kura.utils.inventory.HotbarSlot
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.findItemInInventory
 import dev.dyzjct.kura.utils.inventory.InventoryUtil.getWeaponSlot
@@ -153,6 +154,11 @@ object AutoCrystal : Module(
 
     //Page Render
     private var renderDamage = bsetting("RenderDamage", true).enumIs(p, Page.RENDER)
+    private var render_break by bsetting("RenderBreak", false).enumIs(p, Page.RENDER)
+    private var break_alpha_fill by isetting("BreakAlpha", 50, 0, 255).enumIs(p, Page.RENDER)
+        .isTrue { render_break }
+    private var break_alpha_outline by isetting("BreakLine", 200, 0, 255).enumIs(p, Page.RENDER)
+        .isTrue { render_break }
     private var motionRender = bsetting("MotionRender", true).enumIs(p, Page.RENDER)
     private var fadeRender = bsetting("FadeRender", false).enumIs(p, Page.RENDER)
     private var fadeAlpha = isetting("FadeAlpha", 80, 0, 255, 1).isTrue(fadeRender).enumIs(p, Page.RENDER)
@@ -190,6 +196,8 @@ object AutoCrystal : Module(
     private var renderEnt: LivingEntity? = null
     var placeInfo: PlaceInfo? = null
     var cadamage = 0.0
+
+    private var attacking_position: BlockPos? = null
 
     private var lastBlockPos: BlockPos? = null
     private var lastRenderPos: Vec3d? = null
@@ -635,6 +643,7 @@ object AutoCrystal : Module(
 
         crystal?.let {
             if (!flagged && explodeTimer.tickAndReset(hitDelay.value)) {
+                attacking_position = it.blockPos.down()
                 breakDirect(it.x, it.y, it.z, it, event)
                 if (explodeMode.value == ExplodeMode.Sync) packetExplodeTimer.reset()
             }
@@ -754,6 +763,17 @@ object AutoCrystal : Module(
         val outline = outlineColor.value.alpha > 0
         val flag = filled || outline
 
+        val renderer = ESPRenderer()
+
+        if (render_break) {
+            attacking_position?.let { pos ->
+                renderer.aFilled = break_alpha_fill
+                renderer.aOutline = break_alpha_outline
+                renderer.add(pos.toBox(), fillColor.value, outlineColor.value)
+                renderer.render(event.matrices, false)
+            }
+        }
+
         if (!fadeRender.value) {
             if (flag) {
                 try {
@@ -773,7 +793,6 @@ object AutoCrystal : Module(
 
                             val finalPos = if (motionRender.value) motionRenderPos else staticRenderPos
                             val box = toRenderBox(finalPos, if (motionRender.value) scale else 1f)
-                            val renderer = ESPRenderer()
 
                             renderer.aFilled = (fillColor.value.alpha * scale).toInt()
                             renderer.aOutline = (outlineColor.value.alpha * scale).toInt()

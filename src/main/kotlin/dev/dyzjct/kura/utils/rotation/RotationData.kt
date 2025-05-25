@@ -7,7 +7,6 @@ import net.minecraft.util.math.Vec3d
 data class Rotation(
     var yaw: Float,
     var pitch: Float,
-    var module: Module = NullModule,
     var priority: Int = 114514,
     var time: Long = System.currentTimeMillis()
 ) {

@@ -11,7 +11,6 @@ enum class Category(
     PLAYER("Player", false),
     RENDER("Render", false),
     CLIENT("Client", false),
-    AURA("Aura", false),
     HUD("HUD", true),
     HIDDEN("Hidden", false, true);
 
