@@ -2,6 +2,7 @@ package dev.dyzjct.kura.gui.screen
 
 import dev.dyzjct.kura.Kura
 import dev.dyzjct.kura.KuraIdentifier
+import dev.dyzjct.kura.module.modules.client.MainMenu
 import dev.dyzjct.kura.system.render.graphic.Render2DEngine
 import dev.dyzjct.kura.system.render.newfont.FontRenderers
 import dev.dyzjct.kura.utils.BlurRenderer
@@ -93,7 +94,7 @@ class MainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
         // 背景
         context.matrices.push()
         context.setShaderColor(1.0F, 1.0F, 1.0F, min(0.3f, animProgress))
-        context.drawTexture(KuraIdentifier("background/background.png"), 0, 0, 0f, 0f, width, height, width, height)
+        context.drawTexture(MainMenu.getBackground(), 0, 0, 0f, 0f, width, height, width, height)
         context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F)
         context.matrices.pop()
 

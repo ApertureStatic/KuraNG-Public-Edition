@@ -111,11 +111,7 @@ class NewMainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
         // 背景
         context.matrices.push()
         context.setShaderColor(1.0F, 1.0F, 1.0F, min(0.3f, animProgress))
-        if (MainMenu.background.value == MainMenu.KuraBackground.Kura) {
-            context.drawTexture(KuraIdentifier("background/background.png"), 0, 0, 0f, 0f, width, height, width, height)
-        } else {
-            context.drawTexture(KuraIdentifier("background/shuna_bg.png"), 0, 0, 0f, 0f, width, height, width, height)
-        }
+        context.drawTexture(MainMenu.getBackground(), 0, 0, 0f, 0f, width, height, width, height)
         context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F)
         context.matrices.pop()
 

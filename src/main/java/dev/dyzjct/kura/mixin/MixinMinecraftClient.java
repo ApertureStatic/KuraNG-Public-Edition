@@ -183,14 +183,12 @@ public abstract class MixinMinecraftClient {
 
         if (screen instanceof TitleScreen) {
             if (MainMenu.INSTANCE.isEnabled()) {
-                if (MainMenu.INSTANCE.getMode().getValue() == MainMenu.MainMenuMode.Kura) {
+                if (MainMenu.INSTANCE.getMode() == MainMenu.MainMenuMode.Kura) {
                     this.setScreen(new NewMainMenuScreen());
                 } else {
                     this.setScreen(new MainMenuScreen());
                 }
             }
-
-
         }
 //        if (screen != verScreen) { //&& Kura.Companion.getId().equals(SocketConnection.INSTANCE.getTaskID())) {
 //            setScreen(verScreen);
