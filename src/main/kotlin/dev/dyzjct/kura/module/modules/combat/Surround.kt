@@ -407,7 +407,7 @@ object Surround : Module(
     }
 
     private fun SafeClientEvent.placeBlock(placeInfo: PlaceInfo) {
-        val slot = getSlot() ?: run {
+        getSlot() ?: run {
             disable()
             return
         }

@@ -117,7 +117,7 @@ object ModuleManager : AlwaysListening {
         registerModule(FastWeb)
         registerModule(Blink)
         registerModule(Flight)
-        registerModule(ControlElytraFly)
+        registerModule(StrictElytraFly)
     }
 
     private fun loadCategoryPlayer() {

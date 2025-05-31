@@ -19,6 +19,7 @@ object PacketLogger : Module(
     private var place by bsetting("Place", false)
     private var mine by bsetting("Mine", false)
     private var slot by bsetting("Slot", false)
+    private var rotate by bsetting("Rotate", false)
     private var jumped = false
     private var height = 0.0
 
@@ -53,6 +54,9 @@ object PacketLogger : Module(
                 jumped = true
                 height = player.y
                 ChatUtil.sendMessage("Check Enabled!")
+            }
+            if (rotate) {
+                ChatUtil.sendMessage("${ChatUtil.GREEN}PlayerYaw:${ChatUtil.AQUA} " + player.yaw + " ${ChatUtil.GREEN} PlayerPitch: ${ChatUtil.AQUA}" + player.pitch)
             }
         }
     }

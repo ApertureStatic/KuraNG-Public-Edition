@@ -1,7 +1,5 @@
 package dev.dyzjct.kura.utils.extension
 
-import dev.dyzjct.kura.utils.block.BlockUtil
-import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
 import base.utils.concurrent.threads.runSynchronized
 import base.utils.entity.EntityUtils.eyePosition
 import base.utils.math.toBlockPos
@@ -11,9 +9,13 @@ import base.utils.world.getMiningSide
 import com.google.common.collect.Lists
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.CrystalManager
+import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.module.modules.player.PacketMine.BlockData
 import dev.dyzjct.kura.module.modules.player.PacketMine.PacketType
 import dev.dyzjct.kura.module.modules.render.PlaceRender
+import dev.dyzjct.kura.utils.block.BlockUtil
+import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
+import dev.dyzjct.kura.utils.block.BlockUtil.getStrictFacing
 import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationToVec2f
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import net.minecraft.client.network.SequencedPacketCreator
@@ -59,20 +61,20 @@ fun fastPosDirectionDown(
 
 fun SafeClientEvent.fastPos(
     pos: BlockPos,
-    face: Direction = Direction.UP,
+    face: Direction? = null,
     hand: Hand = Hand.MAIN_HAND,
     inside: Boolean = false,
     sequence: Int = 0,
     render: Boolean = true
 ): PlayerInteractBlockC2SPacket {
-    val placePos = getNeighbor(pos) ?: BlockUtil.EasyBlock(pos, face)
+//    val placePos = getNeighbor(pos) ?: BlockUtil.EasyBlock(pos, face)
     if (render) PlaceRender.renderBlocks[pos] = System.currentTimeMillis()
     return PlayerInteractBlockC2SPacket(
         hand,
         BlockHitResult(
             pos.toCenterPos(),
-            placePos.face,
-            placePos.blockPos,
+            face ?: if (CombatSystem.strictDirection) getStrictFacing(pos) else Direction.UP,
+            pos,
             inside
         ),
         sequence

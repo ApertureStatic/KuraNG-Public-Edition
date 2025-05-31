@@ -14,6 +14,7 @@ import base.utils.world.noCollision
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
 import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager.rotate
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -23,6 +24,7 @@ import dev.dyzjct.kura.module.modules.player.PacketMine.hookPos
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.block.BlockUtil.getNeighbor
 import dev.dyzjct.kura.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import net.minecraft.block.Blocks
 import net.minecraft.block.PistonBlock
 import net.minecraft.block.RedstoneBlock
@@ -38,12 +40,12 @@ object HolePush : Module(
     description = "Push the target away from the hole.",
     category = Category.COMBAT
 ) {
-    private val rotate = bsetting("Rotation", false)
+    private val rotate by bsetting("Rotation", false)
     private val checkDown by bsetting("CheckDown", false)
     private val delay by dsetting("Delay", 50.0, 0.0, 250.0)
     private val airPlace by bsetting("AirPlace", false)
-    private val autoToggle = bsetting("AutoToggle", true)
-    private val pushDelay by dsetting("PushDelay", 250.0, 0.0, 1000.0).isFalse(autoToggle)
+    private val autoToggle by bsetting("AutoToggle", true)
+    private val pushDelay by dsetting("PushDelay", 250.0, 0.0, 1000.0).isFalse { autoToggle }
     private val debug by bsetting("Debug", false)
     private val timer = TimerUtils()
     private val pushTimer = TimerUtils()
@@ -70,16 +72,16 @@ object HolePush : Module(
                     Items.REDSTONE_BLOCK, true
                 ) {} || target == null
             ) {
-                if (autoToggle.value) {
+                if (autoToggle) {
                     toggle()
                 }
                 return@onMotion
             }
-            if (autoToggle.value && stage >= 4) {
+            if (autoToggle && stage >= 4) {
                 toggle()
                 return@onMotion
             }
-            if (!autoToggle.value) {
+            if (!autoToggle) {
                 if ((world.isAir(target.blockPos) && checkHole(target) == SurroundUtils.HoleType.NONE) || (player.usingItem && CombatSystem.eating))
                     return@onMotion
             }
@@ -162,7 +164,7 @@ object HolePush : Module(
                 } else if (!world.isAir(it.pos.down(2)) && checkDown && it.direction == Direction.DOWN) {
                     if (!test) {
                         if (timer.tickAndReset(delay)) {
-                            if (rotate.value) packetRotate(it.pos.down())
+                            if (rotate) packetRotate(it.pos.down())
                             player.spoofSneak {
                                 spoofHotbarWithSetting(Items.OBSIDIAN) {
                                     connection.sendPacket(fastPos(it.pos.down()))
@@ -185,18 +187,16 @@ object HolePush : Module(
         if (!timer.passedMs(delay.toLong())) return
         fun spoofPlace(stone: Boolean, doToggle: Boolean = false) {
             if (!stone) {
-//                packetRotate(
-//                    when (face) {
-//                        Direction.EAST -> -90f
-//                        Direction.NORTH -> 180f
-//                        Direction.SOUTH -> 0f
-//                        Direction.WEST -> 90f
-//                        else -> 0f
-//                    }, player.pitch
-//                )
-                packetRotate(blockPos = blockPos)
+                packetRotate(
+                    when (face) {
+                        Direction.EAST -> -90f
+                        Direction.NORTH -> 180f
+                        Direction.SOUTH -> 0f
+                        Direction.WEST -> 90f
+                        else -> 0f
+                    }, 0f
+                )
             }
-            if (!stone) packetRotate(blockPos)
             if (!stone || world.isAir(stonePos)) {
                 player.spoofSneak {
                     spoofHotbarWithSetting(
@@ -206,30 +206,33 @@ object HolePush : Module(
                             ) {}
                         ) Items.PISTON else Items.STICKY_PISTON) else Items.REDSTONE_BLOCK
                     ) {
-                        connection.sendPacket(fastPos(if (!stone) blockPos else stonePos))
+                        if (rotate) packetRotate(if (!stone) blockPos else stonePos)
+                        sendSequencedPacket(world) {
+                            fastPos(if (!stone) blockPos else stonePos)
+                        }
                     }
                 }
                 swing()
             }
-            if (!stone) {
-                packetRotate(
-                    when (face) {
-                        Direction.EAST -> -90f
-                        Direction.NORTH -> 180f
-                        Direction.SOUTH -> 0f
-                        Direction.WEST -> 90f
-                        else -> 0f
-                    }, player.pitch
-                )
+//            if (!stone) {
+//                pistonRotate(
+//                    when (face) {
+//                        Direction.EAST -> -90f
+//                        Direction.NORTH -> 180f
+//                        Direction.SOUTH -> 0f
+//                        Direction.WEST -> 90f
+//                        else -> 0f
+//                    }, player.pitch
+//                )
 //                packetRotate(blockPos = blockPos)
-            }
+//            }
 //            if (!stone) packetRotate(blockPos)
             stage++
             if (debug) ChatUtil.sendMessage(if (stone) "[HolePush] -> PlaceStone!" else "[HolePush] -> PlacePiston!")
             if (!world.isAir(stonePos) && doToggle) {
                 if (debug) ChatUtil.sendMessage("[HolePush] -> Doing Toggle!")
                 if (mine) hookPos(stonePos)
-                if (autoToggle.value) {
+                if (autoToggle) {
                     toggle()
                 } else {
                     pushTimer.reset()
@@ -241,20 +244,20 @@ object HolePush : Module(
         }
         if (getNeighbor(blockPos) != null || airPlace) {
             if (world.isAir(blockPos)) {
-                if (rotate.value) {
-                    packetRotate(blockPos)
-                }
+//                if (rotate.value) {
+//                    packetRotate(blockPos)
+//                }
                 spoofPlace(stone = false, doToggle = true)
             } else {
-                if (rotate.value && world.isAir(stonePos)) {
-                    packetRotate(stonePos)
-                }
+//                if (rotate.value && world.isAir(stonePos)) {
+//                    packetRotate(stonePos)
+//                }
                 spoofPlace(stone = true, doToggle = true)
             }
         } else {
-            if (rotate.value && world.isAir(stonePos)) {
-                packetRotate(stonePos)
-            }
+//            if (rotate.value && world.isAir(stonePos)) {
+//                packetRotate(stonePos)
+//            }
             spoofPlace(stone = true, doToggle = false)
         }
     }
