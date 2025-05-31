@@ -152,6 +152,7 @@ class NewMainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
         draw()
         context.matrices.pop()
 //TODO LOGO DRAWER
+        //todo 必须根据同意变量计算 防止出现偏移
         context.matrices.push()
         context.setShaderColor(1.0F, 1.0F, 1.0F, min(0.3f, animProgress))
         context.drawTexture(
@@ -169,7 +170,7 @@ class NewMainMenuScreen : Screen(Text.literal(Kura.MOD_NAME + "-menu")) {
             context,
             "ura",
             (width * 0.2256f),
-            (height / 2.0f - width * 0.1485f),
+            (width / 7.9f),
             width * 0.0014f,
             titleColor
         )
