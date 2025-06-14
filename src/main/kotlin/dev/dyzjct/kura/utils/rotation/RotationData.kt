@@ -1,7 +1,5 @@
 package dev.dyzjct.kura.utils.rotation
 
-import dev.dyzjct.kura.module.Module
-import dev.dyzjct.kura.module.modules.client.NullModule
 import net.minecraft.util.math.Vec3d
 
 data class Rotation(

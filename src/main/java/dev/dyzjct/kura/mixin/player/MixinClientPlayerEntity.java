@@ -118,8 +118,8 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
                 yaw = movementPacketsEvent.getYaw();
                 pitch = movementPacketsEvent.getPitch();
 
-                double g = yaw - RotationManager.INSTANCE.getYaw();//this.lastYaw;
-                double h = pitch - RotationManager.INSTANCE.getPitch();//this.lastPitch;
+                double g = yaw - RotationManager.INSTANCE.getYaw_value();//this.lastYaw;
+                double h = pitch - RotationManager.INSTANCE.getPitch_value();//this.lastPitch;
 
                 ++this.ticksSinceLastPositionPacketSent;
                 boolean bl2 = MathHelper.squaredMagnitude(d, e, f) > MathHelper.square(2.0E-4) || this.ticksSinceLastPositionPacketSent >= 20 || (CombatSystem.INSTANCE.getPacketControl() && CombatSystem.INSTANCE.getPositionControl() && CombatSystem.INSTANCE.getPosition_timer().passed(CombatSystem.INSTANCE.getPositionDelay()));

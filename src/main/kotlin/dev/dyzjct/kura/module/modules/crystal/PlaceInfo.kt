@@ -1,9 +1,11 @@
 package dev.dyzjct.kura.module.modules.crystal
 
-import dev.dyzjct.kura.module.modules.crystal.AutoCrystal.getPlaceSide
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import base.utils.Wrapper
+import base.utils.math.vector.Vec3f
 import base.utils.world.getHitVecOffset
+import dev.dyzjct.kura.event.eventbus.SafeClientEvent
+import dev.dyzjct.kura.module.modules.client.CombatSystem
+import dev.dyzjct.kura.module.modules.crystal.AutoCrystal.getPlaceSide
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.EquipmentSlot
@@ -13,7 +15,6 @@ import net.minecraft.util.Arm
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
-import base.utils.math.vector.Vec3f
 
 open class PlaceInfo(
     open val target: LivingEntity,
@@ -57,6 +58,10 @@ open class PlaceInfo(
             this.targetDamage = targetDamage
         }
 
+        fun clear(player: ClientPlayerEntity) {
+            update(player, BlockPos.ORIGIN, Double.MAX_VALUE, AutoCrystal.forcePlaceDmg.value)
+        }
+
         fun calcPlacement(event: SafeClientEvent) {
             event {
                 side = getPlaceSide(blockPos)
@@ -65,12 +70,14 @@ open class PlaceInfo(
                     (blockPos.x + hitVecOffset.x).toDouble(),
                     (blockPos.y + hitVecOffset.y).toDouble(), (blockPos.z + hitVecOffset.z).toDouble()
                 )
+                if (!CombatSystem.strictDirection) {
+                    hitVecOffset = Vec3f(0.5f, 1.0f, 0.5f)
+                    hitVec = Vec3d(blockPos.x + 0.5, blockPos.y + 1.0, blockPos.z + 0.5)
+                }
             }
         }
 
-        fun clear(player: ClientPlayerEntity) {
-            update(player, BlockPos.ORIGIN, Double.MAX_VALUE, AutoCrystal.forcePlaceDmg.value)
-        }
+
 
         fun takeValid(): Mutable? {
             return this.takeIf {

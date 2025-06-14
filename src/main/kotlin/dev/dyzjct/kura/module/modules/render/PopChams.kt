@@ -1,16 +1,11 @@
 package dev.dyzjct.kura.module.modules.render
 
 import com.mojang.authlib.GameProfile
-import com.mojang.blaze3d.platform.GlStateManager
 import com.mojang.blaze3d.systems.RenderSystem
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.animations.Easing
-import net.minecraft.client.render.GameRenderer
-import net.minecraft.client.render.Tessellator
-import net.minecraft.client.render.VertexFormat
-import net.minecraft.client.render.VertexFormats
-import net.minecraft.client.render.entity.EntityRendererFactory
+import net.minecraft.client.render.*
 import net.minecraft.client.render.entity.model.EntityModelLayers
 import net.minecraft.client.render.entity.model.PlayerEntityModel
 import net.minecraft.client.util.math.MatrixStack
@@ -19,7 +14,6 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.RotationAxis
-import org.joml.Vector3f
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
@@ -32,11 +26,7 @@ object PopChams : Module(
 ) {
     private val colorFill by csetting("ColorFill", Color(255, 255, 255, 200))
     private val fadeLength by isetting("FadeLength", 200, 0, 1000)
-    private val globalScale by fsetting("GlobalScale", 1f, 0.1f, 2f)
-    private val headScale by fsetting("HeadScale", 0f, 0f, 1f)
-    private val bodyScale by fsetting("BodyScale", 0f, 0f, 1f)
-    private val legArmScale by fsetting("LegArmScale", 0f, 0f, 1f)
-    private val putin by bsetting("Putin", false)
+    private val scale_setting by fsetting("Scale", 1f, 0.1f, 2f)
 
     private var renderPlayers = ConcurrentHashMap<PlayerEntity, Long>()
 
@@ -84,7 +74,7 @@ object PopChams : Module(
                     RenderSystem.disableDepthTest()
                     RenderSystem.enableBlend()
                     RenderSystem.blendFuncSeparate(770, 771, 0, 1)
-                    renderEntity(it.matrices, entity, colorFill.alpha * easing / 255f, easing)
+                    renderEntity(it.matrices, entity, colorFill, easing, scale_setting)
                     RenderSystem.disableBlend()
                     RenderSystem.depthMask(true)
                 }
@@ -92,100 +82,86 @@ object PopChams : Module(
         }
     }
 
-    private fun renderEntity(
+    fun renderEntity(
         matrices: MatrixStack,
         entity: PlayerEntity,
-        alpha: Float,
-        easing: Float
+        color: Color,
+        easing: Float,
+        scale: Float,
     ) {
-        val x = entity.x - mc.entityRenderDispatcher.camera.pos.getX()
-        val y = entity.y - mc.entityRenderDispatcher.camera.pos.getY()
-        val z = entity.z - mc.entityRenderDispatcher.camera.pos.getZ()
+        val cameraPos = mc.entityRenderDispatcher.camera.pos
+        val x = entity.x - cameraPos.x
+        val y = entity.y - cameraPos.y
+        val z = entity.z - cameraPos.z
 
-        PlayerEntityModel<PlayerEntity>(
-            EntityRendererFactory.Context(
-                mc.entityRenderDispatcher,
-                mc.itemRenderer,
-                mc.blockRenderManager,
-                mc.entityRenderDispatcher.heldItemRenderer,
-                mc.resourceManager,
-                mc.entityModelLoader,
-                mc.textRenderer
-            ).getPart(EntityModelLayers.PLAYER), false
-        ).let { modelBase ->
-            modelBase.head.scale(
-                Vector3f(
-                    (if (putin) if (headScale != 0f) headScale else 0.1f * 3f else headScale),
-                    (if (putin) if (headScale != 0f) headScale else 0.1f * 0.1f else headScale),
-                    headScale
-                )
-            )
-            modelBase.body.scale(
-                Vector3f(
-                    (if (putin) if (bodyScale != 0f) bodyScale else 0.1f * 5f else bodyScale),
-                    (if (putin) if (bodyScale != 0f) bodyScale else 0.1f * 0.1f else bodyScale),
-                    bodyScale
-                )
-            )
-            val lagArmVec = Vector3f(
-                (if (putin) if (legArmScale != 0f) legArmScale else 0.1f * 4f else legArmScale),
-                (if (putin) if (legArmScale != 0f) legArmScale else 0.1f * 0.1f else legArmScale),
-                legArmScale
-            )
-            modelBase.leftLeg.scale(lagArmVec)
-            modelBase.rightLeg.scale(lagArmVec)
-            modelBase.leftArm.scale(lagArmVec)
-            modelBase.rightArm.scale(lagArmVec)
-            matrices.push()
-            matrices.translate(x.toFloat(), y.toFloat(), z.toFloat())
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotation(rad(180 - entity.bodyYaw)))
+        val model = PlayerEntityModel<PlayerEntity>(
+            mc.entityModelLoader.getModelPart(EntityModelLayers.PLAYER),
+            false
+        )
 
-            matrices.scale(-1.0f, -1.0f, 1.0f)
-            matrices.scale(1.6f * easing * globalScale, 1.8f * easing * globalScale, 1.6f * easing * globalScale)
-            matrices.translate(0.0f, -1.501f, 0.0f)
+        // 设置动画参数
+        model.animateModel(entity, entity.limbAnimator.pos, entity.limbAnimator.speed, mc.tickDelta)
+        model.setAngles(
+            entity,
+            entity.limbAnimator.pos,
+            entity.limbAnimator.speed,
+            entity.age.toFloat(),
+            entity.headYaw - entity.bodyYaw,
+            entity.pitch
+        )
 
-            modelBase.animateModel(
-                entity,
-                entity.limbAnimator.pos,
-                entity.limbAnimator.speed,
-                mc.tickDelta
-            )
-            modelBase.setAngles(
-                entity,
-                entity.limbAnimator.pos,
-                entity.limbAnimator.speed,
-                entity.age.toFloat(),
-                entity.headYaw - entity.bodyYaw,
-                entity.getPitch()
-            )
+        val tessellator = Tessellator.getInstance()
+        val buffer = tessellator.buffer
 
-            RenderSystem.enableBlend()
-            val tessellator = Tessellator.getInstance()
-            val buffer = tessellator.buffer
-            RenderSystem.blendFuncSeparate(
-                GlStateManager.SrcFactor.SRC_ALPHA,
-                GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA,
-                GlStateManager.SrcFactor.ONE,
-                GlStateManager.DstFactor.ZERO
-            )
-            RenderSystem.setShader { GameRenderer.getPositionColorProgram() }
-            buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR)
+        RenderSystem.enableBlend()
+        RenderSystem.defaultBlendFunc()
+        RenderSystem.setShader { GameRenderer.getPositionColorProgram() }
 
-            modelBase.render(
-                matrices,
-                buffer,
-                10,
-                0,
-                colorFill.red / 255f,
-                colorFill.green / 255f,
-                colorFill.blue / 255f,
-                alpha
-            )
-            tessellator.draw()
-            RenderSystem.disableBlend()
-            matrices.pop()
-        }
+        // 🟡 第一次渲染：发光描边（稍微放大模型）
+        matrices.push()
+        matrices.translate(x.toFloat(), y.toFloat(), z.toFloat())
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180f - entity.bodyYaw))
+        matrices.scale(-1.1f * scale, -1.1f * scale, 1.1f * scale) // 略微放大用于描边
+        matrices.translate(0.0f, -1.501f, 0.0f)
+
+        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR)
+        model.render(
+            matrices,
+            buffer,
+            15728880, // full brightness
+            OverlayTexture.DEFAULT_UV,
+            color.red / 255f,
+            color.green / 255f,
+            color.blue / 255f,
+            (color.alpha / 255f) * easing
+        )
+        tessellator.draw()
+        matrices.pop()
+
+        // 可选：第二次渲染本体（标准尺寸，可使用透明色或略深颜色）
+        matrices.push()
+        matrices.translate(x.toFloat(), y.toFloat(), z.toFloat())
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180f - entity.bodyYaw))
+        matrices.scale(-1.0f * scale, -1.0f * scale, 1.0f * scale)
+        matrices.translate(0.0f, -1.501f, 0.0f)
+
+        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR)
+        model.render(
+            matrices,
+            buffer,
+            15728880,
+            OverlayTexture.DEFAULT_UV,
+            0f,
+            0f,
+            0f,
+            0f // 本体透明（或设为普通颜色）
+        )
+        tessellator.draw()
+        matrices.pop()
+
+        RenderSystem.disableBlend()
     }
+
 
     private fun rad(angle: Float): Float {
         return (angle * Math.PI / 180).toFloat()
