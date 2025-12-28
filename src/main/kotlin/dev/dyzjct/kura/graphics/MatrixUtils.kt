@@ -11,7 +11,9 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
 object MatrixUtils {
-    val matrixBuffer = GlAllocationUtils.allocateByteBuffer(16).asFloatBuffer()
+    // 修改第 15 行
+// 分配 16 * 4 = 64 字节，或者直接写 64
+    val matrixBuffer: FloatBuffer = GlAllocationUtils.allocateByteBuffer(16 * java.lang.Float.BYTES).asFloatBuffer()
 
     fun loadProjectionMatrix(): MatrixUtils {
         RenderSystem.assertOnRenderThread()
@@ -40,6 +42,7 @@ object MatrixUtils {
 
     fun getMatrix(matrix: Matrix4f): Matrix4f {
         RenderSystem.assertOnRenderThread()
+        (matrixBuffer as Buffer).rewind() // 确保从缓冲区开头开始读取
         matrix.set(matrixBuffer)
         return matrix
     }

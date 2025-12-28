@@ -34,21 +34,25 @@ object ProjectionUtils : MinecraftWrapper {
     }
 
     private fun transformVec3(vec3d: Vec3d): Vector4f {
-        val relativeX = (projectPos.x - vec3d.x).toFloat()
-        val relativeY = (projectPos.y - vec3d.y).toFloat()
-        val relativeZ = (projectPos.z - vec3d.z).toFloat()
+        // 计算相对于相机的相对坐标
+        val relativeX = (vec3d.x - projectPos.x).toFloat()
+        val relativeY = (vec3d.y - projectPos.y).toFloat()
+        val relativeZ = (vec3d.z - projectPos.z).toFloat()
+
         val vector4f = Vector4f(relativeX, relativeY, relativeZ, 1.0f)
 
-        transformVec4(vector4f, modelMatrix)
-        transformVec4(vector4f, projectionMatrix)
+        // 使用 JOML 内置方法替代 transformVec4
+        modelMatrix.transform(vector4f)
+        projectionMatrix.transform(vector4f)
 
-        if (vector4f.w > 0.0f) {
-            vector4f.x *= -100000.0f
-            vector4f.y *= -100000.0f
+        if (vector4f.w <= 0.0f) {
+            // 如果在相机背后，w 通常 <= 0 (取决于 OpenGL 坐标系习惯)
+            // 这里的逻辑可以根据你的需求调整，通常是设置一个标记位
         } else {
             val invert = 1.0f / vector4f.w
             vector4f.x *= invert
             vector4f.y *= invert
+            vector4f.z *= invert
         }
 
         return vector4f

@@ -14,7 +14,6 @@ import dev.dyzjct.kura.system.render.graphic.ProjectionUtils;
 import dev.dyzjct.kura.system.render.graphic.Render3DEngine;
 import dev.dyzjct.kura.system.render.graphic.RenderUtils3D;
 import dev.dyzjct.kura.system.render.shader.GlProgram;
-import dev.dyzjct.kura.system.render.shader.MSAAFramebuffer;
 import dev.dyzjct.kura.utils.math.FrameRateCounter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.ShaderProgram;
@@ -144,14 +143,14 @@ public class MixinGameRenderer {
         Render3DEngine.INSTANCE.getLastModMat().set(RenderSystem.getModelViewMatrix());
         Render3DEngine.INSTANCE.getLastWorldSpaceMatrix().set(matrix.peek().getPositionMatrix());
 
-        MSAAFramebuffer.Companion.use(() -> {
+//        MSAAFramebuffer.Companion.use(() -> {
             ProjectionUtils.INSTANCE.updateMatrix();
             RenderUtils3D.INSTANCE.prepareGL(matrix);
             Render3DEvent event = new Render3DEvent(matrix, tickDelta);
             event.post();
             RenderUtils3D.INSTANCE.releaseGL(matrix);
             GlStateManager._glUseProgram(0);
-        });
+//        });
         RenderSystem.applyModelViewMatrix();
         client.getProfiler().pop();
     }
