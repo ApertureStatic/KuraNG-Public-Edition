@@ -15,7 +15,7 @@ import net.minecraft.client.network.ServerAddress
 import net.minecraft.client.network.ServerInfo
 
 object AutoReconnect :
-    Module(name = "AutoReconnect", langName = "自动重连", description = "Auto reconnect", category = Category.MISC) {
+    Module(name = "AutoReconnect",  description = "Auto reconnect", category = Category.MISC) {
     private var serverInfo: ServerInfo? = null
     private var serverAddress: ServerAddress? = null
 

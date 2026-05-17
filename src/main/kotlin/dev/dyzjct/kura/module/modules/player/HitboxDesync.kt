@@ -7,7 +7,7 @@ import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
 import kotlin.math.abs
 
-object HitboxDesync : Module(name = "HitboxDesync", langName = "卡墙", category = Category.PLAYER) {
+object HitboxDesync : Module(name = "HitboxDesync", category = Category.PLAYER) {
     private const val MAGIC_OFFSET = 0.20000996883537
 
     init {

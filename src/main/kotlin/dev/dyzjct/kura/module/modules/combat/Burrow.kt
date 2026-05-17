@@ -7,7 +7,7 @@ import base.utils.math.toBlockPos
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoCheck
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
@@ -40,11 +40,11 @@ import kotlin.math.sqrt
 
 object Burrow : Module(
     name = "Burrow",
-    langName = "下体卡黑曜石",
     description = "HanLIngQI Bypass Burrow",
     category = Category.COMBAT
 ) {
     private var rotate by bsetting("Rotate", true)
+    private val rotationSpeed by dsetting("RotationSpeed", 10.0, 1.0, 10.0).isTrue { rotate }
     private var fakeJumpMode = msetting("FakeJumpMode", FakeJumpMode.Strict)
     private var packetMode = msetting("PacketMode", PacketMode.Normal)
     private var sneak by bsetting("Sneak", false)
@@ -82,14 +82,21 @@ object Burrow : Module(
             if (canPlace(player.blockPos.down())) {
                 val vec = player.pos.add(0.0, -1.0, 0.0)
                 sendPlayerRotation(player.yaw, 90f, false)
-                if (rotate) packetRotate(player.blockPos.down())
-                doSneak()
-                placeBlock(player.blockPos.down())
-                place(vec.add(0.3, 0.3, 0.3))
-                place(vec.add(-0.3, 0.3, -0.3))
-                place(vec.add(-0.3, 0.3, 0.3))
-                place(vec.add(0.3, 0.3, -0.3))
-                cancelSneak()
+                if (rotate) applyRotation(
+                    vec3d = player.blockPos.down().toCenterPos(),
+                    speed = rotationSpeed,
+                    callback = { record ->
+                        if (record.isActive) {
+                            doSneak()
+                            placeBlock(player.blockPos.down())
+                            place(vec.add(0.3, 0.3, 0.3))
+                            place(vec.add(-0.3, 0.3, -0.3))
+                            place(vec.add(-0.3, 0.3, 0.3))
+                            place(vec.add(0.3, 0.3, -0.3))
+                            cancelSneak()
+                        }
+                    }
+                )
             }
             val vec = player.pos
             if (player.onGround) {
@@ -238,16 +245,21 @@ object Burrow : Module(
         }
         val pos = vec3d.toBlockPos()
 
-        if (rotate) packetRotate(player.yaw, 90f)
+        if (rotate) applyRotation(
+            yaw = player.yaw,
+            pitch = 90f,
+            speed = rotationSpeed,
+            callback = { record ->
+                if (record.isActive) {
+                    placeBlock(pos.down())
+                }
+            }
+        )
 
-        placeBlock(pos.down())
         if (!canPlace(pos)) {
             return
         }
         if (getNeighbor(pos) == null) return
-        if (rotate) {
-            packetRotate(player.yaw, 90.0f)
-        }
         HotbarManager.onlyItem = Items.OBSIDIAN
         spoofHotbarNoCheck(Items.OBSIDIAN) {
             sendSequencedPacket(world) {
@@ -260,17 +272,24 @@ object Burrow : Module(
 
     private fun SafeClientEvent.placeBlock(pos: BlockPos) {
         if (!canPlace(pos)) return
-        if (rotate) {
-            packetRotate(player.yaw, 90.0f)
-        }
-        HotbarManager.onlyItem = Items.OBSIDIAN
-        spoofHotbarNoCheck(Items.OBSIDIAN) {
-            sendSequencedPacket(world) {
-                fastPos(pos, sequence = it)
+        if (rotate) applyRotation(
+            yaw = player.yaw,
+            pitch = 90f,
+            speed = rotationSpeed,
+            callback = { record ->
+                HotbarManager.onlyItem = Items.OBSIDIAN
+                if (record.isActive) {
+                    spoofHotbarNoCheck(Items.OBSIDIAN) {
+                        sendSequencedPacket(world) {
+                            fastPos(pos, sequence = it)
+                        }
+                    }
+                }
+                HotbarManager.onlyItem = Items.OBSIDIAN
+                swing()
             }
-        }
-        HotbarManager.onlyItem = Items.OBSIDIAN
-        swing()
+        )
+
     }
 
     private fun SafeClientEvent.breakCrystal() {
@@ -290,11 +309,18 @@ object Burrow : Module(
             ) || it.boundingBox.intersects(Box(player.pos.add(0.3, 0.0, -0.3).toBlockPos())))
         }) {
             if (entity is EndCrystalEntity) {
-                packetRotate(entity.blockPos)
-                connection.sendPacket(
-                    PlayerInteractEntityC2SPacket.attack(
-                        world.getEntityById(entity.id), player.isSneaking
-                    )
+                if (rotate) applyRotation(
+                    vec3d = entity.blockPos.toCenterPos(),
+                    speed = rotationSpeed,
+                    callback = { record ->
+                        if (record.isActive) {
+                            connection.sendPacket(
+                                PlayerInteractEntityC2SPacket.attack(
+                                    world.getEntityById(entity.id), player.isSneaking
+                                )
+                            )
+                        }
+                    }
                 )
                 connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
             }

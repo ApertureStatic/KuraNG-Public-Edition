@@ -10,7 +10,6 @@ import java.awt.Color
 
 object ChestESP : Module(
     name = "ChestESP",
-    langName = "箱子透视",
     description = "Displays the location of chests in the world",
     category = Category.RENDER
 ) {

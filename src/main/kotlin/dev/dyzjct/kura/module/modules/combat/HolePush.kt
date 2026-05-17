@@ -13,7 +13,7 @@ import base.utils.math.sq
 import base.utils.world.noCollision
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -35,11 +35,11 @@ import net.minecraft.util.math.Direction
 
 object HolePush : Module(
     name = "HolePush",
-    langName = "活塞推人",
     description = "Push the target away from the hole.",
     category = Category.COMBAT
 ) {
-    private val rotate by bsetting("Rotation", false)
+    //private val rotate by bsetting("Rotation", false)
+    private val rotationSpeed by dsetting("RotationSpeed", 10.0, 1.0, 10.0)//.isTrue { rotate }
     private val checkDown by bsetting("CheckDown", false)
     private val delay by dsetting("Delay", 50.0, 0.0, 250.0)
     private val airPlace by bsetting("AirPlace", false)
@@ -132,7 +132,7 @@ object HolePush : Module(
                 ).block !is RedstoneBlock)
             ) continue
             if (!world.entities.none {
-                    it !is ItemEntity;it.isAlive;it.boundingBox.intersects(
+                    it !is ItemEntity; it.isAlive; it.boundingBox.intersects(
                     Box(
                         targetPos.offset(
                             face
@@ -163,12 +163,20 @@ object HolePush : Module(
                 } else if (!world.isAir(it.pos.down(2)) && checkDown && it.direction == Direction.DOWN) {
                     if (!test) {
                         if (timer.tickAndReset(delay)) {
-                            if (rotate) packetRotate(it.pos.down())
-                            player.spoofSneak {
-                                spoofHotbarWithSetting(Items.OBSIDIAN) {
-                                    connection.sendPacket(fastPos(it.pos.down()))
+                            //if (rotate)
+                            applyRotation(
+                                it.pos.down().toCenterPos(),
+                                rotationSpeed,
+                                callback = { record ->
+                                    player.spoofSneak {
+                                        spoofHotbarWithSetting(Items.OBSIDIAN) {
+                                            if (record.isActive) {
+                                                connection.sendPacket(fastPos(it.pos.down()))
+                                            }
+                                        }
+                                    }
                                 }
-                            }
+                            )
                         }
                     }
                 }
@@ -186,14 +194,15 @@ object HolePush : Module(
         if (!timer.passedMs(delay.toLong())) return
         fun spoofPlace(stone: Boolean, doToggle: Boolean = false) {
             if (!stone) {
-                packetRotate(
+                applyRotation(
                     when (face) {
                         Direction.EAST -> -90f
                         Direction.NORTH -> 180f
                         Direction.SOUTH -> 0f
                         Direction.WEST -> 90f
                         else -> 0f
-                    }, 0f
+                    }, 0f,
+                    10.0
                 )
             }
             if (!stone || world.isAir(stonePos)) {
@@ -205,10 +214,18 @@ object HolePush : Module(
                             ) {}
                         ) Items.PISTON else Items.STICKY_PISTON) else Items.REDSTONE_BLOCK
                     ) {
-                        if (rotate) packetRotate(if (!stone) blockPos else stonePos)
-                        sendSequencedPacket(world) {
-                            fastPos(if (!stone) blockPos else stonePos)
-                        }
+                        //if (rotate)
+                        applyRotation(
+                            if (!stone) blockPos.toCenterPos() else stonePos.toCenterPos(),
+                            rotationSpeed,
+                            callback = { record ->
+                                if (record.isActive) {
+                                    sendSequencedPacket(world) {
+                                        fastPos(if (!stone) blockPos else stonePos)
+                                    }
+                                }
+                            }
+                        )
                     }
                 }
                 swing()

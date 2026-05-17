@@ -19,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap
 
 object TotemPopCounter : Module(
     name = "TotemPopCounter",
-    langName = "图腾爆炸提示",
     description = "Counts how many times players pop",
     category = Category.MISC
 ) {

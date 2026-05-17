@@ -13,7 +13,7 @@ import net.minecraft.item.Items
 import net.minecraft.util.Hand
 
 object MCP : Module(
-    name = "MCP", langName = "中键扔珍珠", description = "Middle pearl", category = Category.MISC
+    name = "MCP", description = "Middle pearl", category = Category.MISC
 ) {
 
     init {

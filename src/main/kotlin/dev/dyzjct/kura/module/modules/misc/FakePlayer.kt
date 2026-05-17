@@ -10,7 +10,6 @@ import java.util.*
 
 object FakePlayer : Module(
     name = "FakePlayer",
-    langName = "假人",
     description = "Spawns a fake Player",
     category = Category.MISC
 ) {

@@ -10,7 +10,6 @@ import java.awt.Color
 
 object Xray : Module(
     name = "Xray",
-    langName = "矿物透视",
     description = "AutoSearch For Ores!",
     category = Category.RENDER
 ) {

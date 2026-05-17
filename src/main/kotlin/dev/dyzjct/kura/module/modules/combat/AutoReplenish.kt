@@ -13,7 +13,6 @@ import net.minecraft.screen.slot.SlotActionType
 
 object AutoReplenish : Module(
     name = "AutoReplenish",
-    langName = "自动补充装备",
     description = "Refills items in your hotbar",
     category = Category.COMBAT
 ) {

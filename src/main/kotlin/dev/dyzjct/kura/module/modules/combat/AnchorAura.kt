@@ -18,7 +18,7 @@ import dev.dyzjct.kura.manager.CrystalManager
 import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.FriendManager
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.manager.SphereCalculatorManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -52,7 +52,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.stream.Collectors
 
 object AnchorAura : Module(
-    name = "AnchorAura", langName = "恶俗狗", description = "Auto using crystals for pvp.", category = Category.COMBAT
+    name = "AnchorAura", description = "Auto using crystals for pvp.", category = Category.COMBAT
 ) {
     private var minDamage by dsetting("MinDamage", 4.0, 0.0, 36.0)
     private var maxSelfDamage by isetting("MaxSelfDamage", 10, 0, 36)
@@ -62,7 +62,8 @@ object AnchorAura : Module(
     private val clickDelay by isetting("ClickDelay", 50, 0, 500)
     private val damageMode by msetting("DamageMode", DamageMode.Thunder)
     private var airPlace by bsetting("AirPlace", false)
-    private val rotate by bsetting("Rotation", false)
+    //private val rotate by bsetting("Rotation", false)
+    private val rotationSpeed by dsetting("RotationSpeed", 10.0, 1.0, 10.0)//.isTrue { rotate }
     private val fillColor by csetting("FillColor", Color(255, 255, 255, 50))
     private val lineColor by csetting("LineColor", Color(255, 255, 255, 255))
     private val movingLength by isetting("MovingLength", 400, 0, 1000)
@@ -143,13 +144,21 @@ object AnchorAura : Module(
             placeInfo = calcPlaceInfo()
             if (!CombatSystem.isBestAura(CombatSystem.AuraType.Anchor)) return@onMotion
             placeInfo?.let { placeInfo ->
-                if (rotate) packetRotate(placeInfo.blockPos)
-                globalPlace(placeInfo, true)
-                checkGlowPlaceable(placeInfo, Items.GLOWSTONE)
-                globalPlace(placeInfo, false)
-                if (getTargetSpeed(placeInfo.target) < 10) {
-                    globalPlace(placeInfo, true)
-                }
+                //if (rotate)
+                applyRotation(
+                    vec3d = placeInfo.hitVec,
+                    speed = rotationSpeed,
+                    callback = { record ->
+                        if (record.isActive) {
+                            globalPlace(placeInfo, true)
+                            checkGlowPlaceable(placeInfo, Items.GLOWSTONE)
+                            globalPlace(placeInfo, false)
+                            if (getTargetSpeed(placeInfo.target) < 10) {
+                                globalPlace(placeInfo, true)
+                            }
+                        }
+                    }
+                )
             }
         }
 
@@ -246,7 +255,7 @@ object AnchorAura : Module(
             val blockPos = pos.toCenterPos().add(0.0, 0.5, 0.0).toBlockPos()
             val placeBox = Box(blockPos)
             if (!world.entities.none {
-                    it !is ItemEntity;it.isAlive;it.boundingBox.intersects(
+                    it !is ItemEntity; it.isAlive; it.boundingBox.intersects(
                     placeBox
                 )
                 } && world.isAir(pos)) continue
@@ -279,7 +288,7 @@ object AnchorAura : Module(
                 val headPos = target.blockPos.up(2)
                 if (!isBurrowBlock(target.blockPos, target)) {
                     if (world.entities.none {
-                            it !is ItemEntity;it.isAlive;it.boundingBox.intersects(
+                            it !is ItemEntity; it.isAlive; it.boundingBox.intersects(
                             Box(headPos)
                         )
                         } && (world.isAir(
@@ -322,39 +331,54 @@ object AnchorAura : Module(
         if (explode) {
             if (anchorTimer.tickAndReset(anchorDelay) && world.isAir(placeInfo.blockPos)) {
 
-                if (rotate) packetRotate(placeInfo.blockPos)
-                player.spoofSneak {
-                    spoofHotbarWithSetting(Items.RESPAWN_ANCHOR) {
-                        sendSequencedPacket(world) {
-                            fastPos(
-                                placeInfo.blockPos,
-                                face = placeInfo.side,
-                                sequence = it,
-                                render = false
-                            )
+                //if (rotate)
+                applyRotation(
+                    vec3d = placeInfo.hitVec,
+                    speed = rotationSpeed,
+                    callback = { record ->
+                        if (record.isActive) {
+                            player.spoofSneak {
+                                spoofHotbarWithSetting(Items.RESPAWN_ANCHOR) {
+                                    sendSequencedPacket(world) {
+                                        fastPos(
+                                            placeInfo.blockPos,
+                                            face = placeInfo.side,
+                                            sequence = it,
+                                            render = false
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
-                }
+                )
+
                 swing()
 
             }
         } else {
             if (clickTimer.tickAndReset(clickDelay)) {
-
-                if (rotate) packetRotate(placeInfo.blockPos)
-                sendSequencedPacket(world) {
-                    PlayerInteractBlockC2SPacket(
-                        Hand.MAIN_HAND, BlockHitResult(
-                            placeInfo.blockPos.toCenterPos(),
-                            getAnchorBlock(placeInfo.blockPos, CombatSystem.strictDirection)?.clickFace
-                                ?: placeInfo.side,
-                            placeInfo.blockPos,
-                            true
-                        ), it
-                    )
-                }
+                //if (rotate)
+                applyRotation(
+                    vec3d = placeInfo.hitVec,
+                    speed = rotationSpeed,
+                    callback = { record ->
+                        if (record.isActive) {
+                            sendSequencedPacket(world) {
+                                PlayerInteractBlockC2SPacket(
+                                    Hand.MAIN_HAND, BlockHitResult(
+                                        placeInfo.blockPos.toCenterPos(),
+                                        getAnchorBlock(placeInfo.blockPos, CombatSystem.strictDirection)?.clickFace
+                                            ?: placeInfo.side,
+                                        placeInfo.blockPos,
+                                        true
+                                    ), it
+                                )
+                            }
+                        }
+                    }
+                )
                 swing()
-
             }
         }
     }
@@ -366,30 +390,37 @@ object AnchorAura : Module(
         if ((currentBlockState.block == Blocks.RESPAWN_ANCHOR && currentBlockState.get(Properties.CHARGES) < 1) || ignore) {
             if (glowTimer.tickAndReset(glowDelay)) {
 
-                if (rotate) packetRotate(placeInfo.blockPos)
-                spoofHotbarWithSetting(item) {
-                    sendSequencedPacket(world) {
-                        PlayerInteractBlockC2SPacket(
-                            Hand.MAIN_HAND, BlockHitResult(
-                                placeInfo.blockPos.toCenterPos(),
-                                getAnchorBlock(placeInfo.blockPos, CombatSystem.strictDirection)?.clickFace
-                                    ?: placeInfo.side,
-                                placeInfo.blockPos,
-                                true
-                            ), it
-                        )
+                //if (rotate)
+                applyRotation(
+                    vec3d = placeInfo.hitVec,
+                    speed = rotationSpeed,
+                    callback = { record ->
+                        if (record.isActive) {
+                            spoofHotbarWithSetting(item) {
+                                sendSequencedPacket(world) {
+                                    PlayerInteractBlockC2SPacket(
+                                        Hand.MAIN_HAND, BlockHitResult(
+                                            placeInfo.blockPos.toCenterPos(),
+                                            getAnchorBlock(placeInfo.blockPos, CombatSystem.strictDirection)?.clickFace
+                                                ?: placeInfo.side,
+                                            placeInfo.blockPos,
+                                            true
+                                        ), it
+                                    )
+                                }
+                                if (debug) ChatUtil.sendMessage(
+                                    "[ANCHOR -> glowSide = ${
+                                        getAnchorBlock(
+                                            placeInfo.blockPos,
+                                            CombatSystem.strictDirection
+                                        )?.clickFace ?: placeInfo.side
+                                    }"
+                                )
+                                swing()
+                            }
+                        }
                     }
-                    if (debug) ChatUtil.sendMessage(
-                        "[ANCHOR -> glowSide = ${
-                            getAnchorBlock(
-                                placeInfo.blockPos,
-                                CombatSystem.strictDirection
-                            )?.clickFace ?: placeInfo.side
-                        }"
-                    )
-                    swing()
-                }
-
+                )
             }
         }
     }

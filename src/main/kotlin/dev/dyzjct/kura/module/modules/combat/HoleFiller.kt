@@ -23,7 +23,7 @@ import dev.dyzjct.kura.manager.FriendManager
 import dev.dyzjct.kura.manager.HoleManager
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -51,7 +51,7 @@ import java.awt.Color
 import java.util.*
 
 object HoleFiller :
-    Module(name = "HoleFiller", langName = "自动填坑", description = "Auto Hole Filling.", category = Category.COMBAT) {
+    Module(name = "HoleFiller", description = "Auto Hole Filling.", category = Category.COMBAT) {
     private var bedrockHole = bsetting("BedrockHole", true)
     private var obbyHole = bsetting("ObbyHole", true)
     private var twoBlocksHole = bsetting("2BlocksHole", true)
@@ -63,6 +63,7 @@ object HoleFiller :
     private var fillDelay = isetting("FillDelay", 50, 0, 1000)
     private var fillTimeout = isetting("FillTimeout", 100, 0, 1000)
     private var rotation = bsetting("Rotation", true)
+    private val rotationSpeed by dsetting("RotationSpeed", 10.0, 1.0, 10.0)
     private var webFill = bsetting("WebFill", false)
     private var switchBypass = bsetting("SwitchBypass", false)
     private var targetColor = csetting("TargetColor", Color(32, 255, 32, 50))
@@ -385,7 +386,7 @@ object HoleFiller :
         onMainThread {
             if (rotation.value) {
                 (nextHole ?: getRotationPos(holeInfos))?.let {
-                    packetRotate(it)
+                    applyRotation(it.toCenterPos(), rotationSpeed)
                 }
             }
             player.spoofSneak {

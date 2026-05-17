@@ -8,7 +8,6 @@ import net.minecraft.util.Identifier
 
 object MainMenu : Module(
     name = "MainMenu",
-    langName = "游戏主界面",
     description = "Main menu.",
     category = Category.CLIENT
 ) {

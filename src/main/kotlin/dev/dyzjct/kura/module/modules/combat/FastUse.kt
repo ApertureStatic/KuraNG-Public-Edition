@@ -7,7 +7,7 @@ import net.minecraft.item.BlockItem
 import net.minecraft.item.Items
 
 object FastUse :
-    Module(name = "FastUse", langName = "快速使用物品", description = "Use items faster", category = Category.COMBAT) {
+    Module(name = "FastUse", description = "Use items faster", category = Category.COMBAT) {
     private val delay = isetting("Delay", 1, 0, 10)
     private val exp = bsetting("XP", true)
 

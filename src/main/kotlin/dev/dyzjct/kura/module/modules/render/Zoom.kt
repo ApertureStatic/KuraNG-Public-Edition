@@ -7,7 +7,6 @@ import base.utils.concurrent.threads.runSafe
 
 object Zoom : Module(
     name = "Zoom",
-    langName = "推进镜头",
     description = "change u fov.",
     category = Category.RENDER
 ) {

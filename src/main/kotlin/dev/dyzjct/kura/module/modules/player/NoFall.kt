@@ -8,7 +8,6 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 
 object NoFall: Module(
     name = "NoFall",
-    langName = "无摔落伤害",
     description = "Prevents fall damage",
     category = Category.PLAYER
 ) {

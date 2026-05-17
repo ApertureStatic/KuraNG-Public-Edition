@@ -15,7 +15,7 @@ import base.utils.math.toBlockPos
 import base.utils.player.getTargetSpeed
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -32,24 +32,24 @@ import net.minecraft.util.math.BlockPos
 
 object AutoWeb : Module(
     name = "AutoWeb",
-    langName = "自动蜘蛛网",
     description = "Auto Place Web to stick target.",
     category = Category.COMBAT
 ) {
-    private var spoofRotations = bsetting("Rotate", false)
-    private var holeCheck = bsetting("HoleCheck", true)
-    private var betterPush = bsetting("BetterPush", true)
-    private var betterAnchor = bsetting("BetterAnchor", true)
-    private var facePlace = bsetting("FacePlace", false)
-    private var multiPlace = bsetting("MultiPlace", true)
-    private var webCheck = bsetting("WebCheck", true)
-    private var ground = bsetting("OnlyGround", true)
-    private var inside = bsetting("Inside", false)
-    private var air = bsetting("AirPlace", false)
-    private var smartDelay = bsetting("SmartDelay", false)
-    private var delay = isetting("minDelay", 25, 0, 500)
-    private var maxDelay = isetting("MaxDelay", 400, 0, 1000).isTrue(smartDelay)
-    private var debug = bsetting("Debug", false)
+    private var spoofRotations by bsetting("Rotate", false)
+    private val rotationSpeed by dsetting("RotationSpeed", 10.0, 1.0, 10.0).isTrue { spoofRotations }
+    private var holeCheck by bsetting("HoleCheck", true)
+    private var betterPush by bsetting("BetterPush", true)
+    private var betterAnchor by bsetting("BetterAnchor", true)
+    private var facePlace by bsetting("FacePlace", false)
+    private var multiPlace by bsetting("MultiPlace", true)
+    private var webCheck by bsetting("WebCheck", true)
+    private var ground by bsetting("OnlyGround", true)
+    private var inside by bsetting("Inside", false)
+    private var air by bsetting("AirPlace", false)
+    private var smartDelay by bsetting("SmartDelay", false)
+    private var delay by isetting("minDelay", 25, 0, 500)
+    private var maxDelay by isetting("MaxDelay", 400, 0, 1000).isTrue { smartDelay }
+    private var debug by bsetting("Debug", false)
     var timerDelay = TimerUtils()
 
     var target: PlayerEntity? = null
@@ -68,7 +68,7 @@ object AutoWeb : Module(
 
     init {
         onLoop {
-            if (!player.isOnGround && ground.value) return@onLoop
+            if (!player.isOnGround && ground) return@onLoop
             if (CombatSystem.eating && player.isUsingItem) return@onLoop
             if (!spoofHotbarWithSetting(Items.COBWEB, true) {}) {
                 return@onLoop
@@ -76,14 +76,14 @@ object AutoWeb : Module(
             target = getTarget(CombatSystem.targetRange)
             if (AnchorAura.isEnabled && AnchorAura.placeInfo != null && (!CombatSystem.smartAura || CombatSystem.isBestAura(
                     CombatSystem.AuraType.Anchor
-                )) && betterAnchor.value
+                )) && betterAnchor
             ) return@onLoop
             target?.let {
                 val targetDistance = getPredictedTarget(it, CombatSystem.predictTicks).blockPos
                 if (doHolePush(
                         it.blockPos.up(),
                         check = true, test = true
-                    ) != null && betterPush.value && HolePush.isEnabled
+                    ) != null && betterPush && HolePush.isEnabled
                 ) return@onLoop
                 fun SafeClientEvent.place(delay: Long) {
                     onPacket@ fun packet(pos: BlockPos, checkDown: Boolean = false) {
@@ -96,36 +96,41 @@ object AutoWeb : Module(
                             if (System.currentTimeMillis() - mine.start >= mine.mine) return@onPacket
                         }
 
-                        if (isInWeb(it) && webCheck.value) return
+                        if (isInWeb(it) && webCheck) return
 
                         if (world.isAir(pos) && (getNeighbor(
                                 pos
-                            ) != null || air.value) && player.distanceSqTo(pos) < CombatSystem.placeRange.sq
+                            ) != null || air) && player.distanceSqTo(pos) < CombatSystem.placeRange.sq
                         ) {
                             if (timerDelay.tickAndReset(delay)) {
-                                if (spoofRotations.value) {
-                                    packetRotate(pos)
-                                }
-                                spoofHotbarWithSetting(Items.COBWEB) {
-                                    player.spoofSneak {
-                                        connection.sendPacket(
-                                            fastPos(pos)
-                                        )
+                                if (spoofRotations) applyRotation(
+                                    vec3d = pos.toCenterPos(),
+                                    speed = rotationSpeed,
+                                    callback = { record ->
+                                        if (record.isActive) {
+                                            spoofHotbarWithSetting(Items.COBWEB) {
+                                                player.spoofSneak {
+                                                    connection.sendPacket(
+                                                        fastPos(pos)
+                                                    )
+                                                }
+                                            }
+                                        }
                                     }
-                                }
-                                if (debug.value) ChatUtil.sendMessage("Placing")
+                                )
+                                if (debug) ChatUtil.sendMessage("Placing")
                             }
                         }
                     }
 
                     getNeighbor(targetDistance.up())?.let {
-                        if (facePlace.value) {
+                        if (facePlace) {
                             packet(targetDistance.up(), true)
                         }
                     }
 
                     getNeighbor(targetDistance)?.let {
-                        if (inside.value) {
+                        if (inside) {
                             packet(targetDistance)
                         }
                     }
@@ -134,7 +139,7 @@ object AutoWeb : Module(
                         packet(targetDistance.down())
                     }
 
-                    if (multiPlace.value) {
+                    if (multiPlace) {
                         packet(it.pos.add(0.3, 0.3, 0.3).toBlockPos())
                         packet(it.pos.add(-0.3, 0.3, -0.3).toBlockPos())
                         packet(it.pos.add(-0.3, 0.3, 0.3).toBlockPos())
@@ -143,7 +148,7 @@ object AutoWeb : Module(
                         packet(it.pos.add(-0.3, 0.3, -0.3).toBlockPos().down())
                         packet(it.pos.add(-0.3, 0.3, 0.3).toBlockPos().down())
                         packet(it.pos.add(0.3, 0.3, -0.3).toBlockPos().down())
-                        if (facePlace.value) {
+                        if (facePlace) {
                             packet(it.pos.add(0.3, 0.3, 0.3).toBlockPos().up(), true)
                             packet(it.pos.add(-0.3, 0.3, -0.3).toBlockPos().up(), true)
                             packet(it.pos.add(-0.3, 0.3, 0.3).toBlockPos().up(), true)
@@ -152,7 +157,7 @@ object AutoWeb : Module(
                     }
                 }
 
-                if (checkHole(it) != SurroundUtils.HoleType.NONE && it.onGround && holeCheck.value) return@onLoop
+                if (checkHole(it) != SurroundUtils.HoleType.NONE && it.onGround && holeCheck) return@onLoop
 
                 onMainThread {
                     place(getWebDelay(it).toLong())
@@ -162,10 +167,10 @@ object AutoWeb : Module(
     }
 
     fun SafeClientEvent.getWebDelay(target: PlayerEntity): Int {
-        return if (smartDelay.value) {
-            if (getTargetSpeed(target) < 20.0) maxDelay.value else delay.value
+        return if (smartDelay) {
+            if (getTargetSpeed(target) < 20.0) maxDelay else delay
         } else {
-            delay.value
+            delay
         }
     }
 }

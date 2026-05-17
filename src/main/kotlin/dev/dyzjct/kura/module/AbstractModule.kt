@@ -31,7 +31,6 @@ import java.util.*
 abstract class AbstractModule : ListenerOwner() {
     val settingList = ArrayList<Setting<*>>()
     var moduleName = ""
-    var moduleCName = ""
     var moduleCategory = Category.HIDDEN
     var alwaysEnable = false
     var isEnabled = false
@@ -67,7 +66,7 @@ abstract class AbstractModule : ListenerOwner() {
                 11451
             )
             if (NotificationHUD.isEnabled) NotificationManager.addNotification(
-                (NotificationHUD.defaultFontColor() + "[ " + ChatUtil.RED + if (ClickGui.chinese.value) moduleCName else moduleName) + NotificationHUD.defaultFontColor() + " ] " + "has been " + ChatUtil.GREEN + "Enable!"
+                (NotificationHUD.defaultFontColor() + "[ " + ChatUtil.RED + moduleName) + NotificationHUD.defaultFontColor() + " ] " + "has been " + ChatUtil.GREEN + "Enable!"
             )
             if (Sound.isEnabled) {
                 Kura::class.java.getResourceAsStream("/assets/kura/sounds/NeverEnable.wav")?.let { never ->
@@ -108,7 +107,7 @@ abstract class AbstractModule : ListenerOwner() {
         if (laoded) {
             if (ClickGui.chat.value) ChatUtil.sendMessageWithID(moduleName + " is " + ChatUtil.RED + "Disabled!", 11451)
             if (NotificationHUD.isEnabled) NotificationManager.addNotification(
-                (NotificationHUD.defaultFontColor() + "[ " + ChatUtil.RED + if (ClickGui.chinese.value) moduleCName else moduleName) + NotificationHUD.defaultFontColor() + " ] " + "has been " + ChatUtil.RED + "Disable!"
+                (NotificationHUD.defaultFontColor() + "[ " + ChatUtil.RED + moduleName) + NotificationHUD.defaultFontColor() + " ] " + "has been " + ChatUtil.RED + "Disable!"
             )
             if (Sound.isEnabled) {
                 runCatching {
@@ -312,12 +311,8 @@ abstract class AbstractModule : ListenerOwner() {
     open fun onLogout() {}
     open fun onRender(context: DrawContext) {}
 
-    open fun getCName(): String {
-        return moduleCName
-    }
-
     open fun getName(): String {
-        return if (ClickGui.chinese.value) moduleCName else moduleName
+        return moduleName
     }
 
     fun toggle() {
@@ -342,7 +337,7 @@ abstract class AbstractModule : ListenerOwner() {
     }
 
     fun getArrayList(): String {
-        return if (ClickGui.chinese.value) moduleCName else moduleName + if (getHudInfo() == null || getHudInfo() == "") "" else " " + ChatUtil.SECTIONSIGN + "7" + (if (getHudInfo() == "" || getHudInfo() == null) "" else "[") + ChatUtil.SECTIONSIGN + "f" + getHudInfo() + '\u00a7' + "7" + if (getHudInfo() == "") "" else "]"
+        return moduleName + if (getHudInfo() == null || getHudInfo() == "") "" else " " + ChatUtil.SECTIONSIGN + "7" + (if (getHudInfo() == "" || getHudInfo() == null) "" else "[") + ChatUtil.SECTIONSIGN + "f" + getHudInfo() + '\u00a7' + "7" + if (getHudInfo() == "") "" else "]"
     }
 
     companion object {

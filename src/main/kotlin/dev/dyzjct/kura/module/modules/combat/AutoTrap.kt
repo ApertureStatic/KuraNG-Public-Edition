@@ -2,21 +2,20 @@ package dev.dyzjct.kura.module.modules.combat
 
 import base.utils.combat.getTarget
 import base.utils.entity.EntityUtils.spoofSneak
-import dev.dyzjct.kura.utils.extension.fastPos
-import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import base.utils.inventory.slot.firstBlock
 import base.utils.inventory.slot.hotbarSlots
 import base.utils.math.distanceSqToCenter
 import base.utils.world.isPlaceable
 import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.RotationManager
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
 import dev.dyzjct.kura.utils.TimerUtils
 import dev.dyzjct.kura.utils.animations.sq
+import dev.dyzjct.kura.utils.extension.fastPos
+import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import net.minecraft.block.Blocks
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
@@ -26,7 +25,8 @@ object AutoTrap : Module(name = "AutoTrap", "自动陷阱", category = Category.
     private var placeMode = msetting("Mode", Mode.Normal)
     private var placeRange by isetting("PlaceRange", 4, 0, 6)
     private var placeDelay by isetting("PlaceDelay", 10, 0, 1000)
-    private var rotate by bsetting("Rotate", false)
+//    private var rotate by bsetting("Rotate", false)
+    private val rotationSpeed by dsetting("RotationSpeed", 10.0, 1.0, 10.0)//.isTrue { rotate }
     private var placeTimer = TimerUtils()
 
     override fun onEnable() {
@@ -46,12 +46,20 @@ object AutoTrap : Module(name = "AutoTrap", "自动陷阱", category = Category.
                     }
                     if (placeTimer.tickAndReset(placeDelay)) {
                         player.spoofSneak {
-                            if (rotate) packetRotate(placePos)
-                            spoofHotbar(hotbarSlot) {
-                                sendSequencedPacket(world) {
-                                    fastPos(placePos, sequence = it)
+                            //if (rotate)
+                            applyRotation(
+                                vec3d = placePos.toCenterPos(),
+                                speed = rotationSpeed,
+                                callback = { record ->
+                                    if (record.isActive) {
+                                        spoofHotbar(hotbarSlot) {
+                                            sendSequencedPacket(world) {
+                                                fastPos(placePos, sequence = it)
+                                            }
+                                        }
+                                    }
                                 }
-                            }
+                            )
                         }
                     }
                 }

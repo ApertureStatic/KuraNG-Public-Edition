@@ -25,7 +25,7 @@ import dev.dyzjct.kura.manager.*
 import dev.dyzjct.kura.manager.FriendManager.isFriend
 import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.hud.TargetHUD
@@ -98,7 +98,7 @@ import java.util.stream.Collectors
 import kotlin.math.*
 
 object AutoCrystal : Module(
-    name = "AutoCrystal", langName = "自动水晶", description = "Help u play crystal pvp.", category = Category.COMBAT
+    name = "AutoCrystal", description = "Help u play crystal pvp.", category = Category.COMBAT
 ) {
     private var p = msetting("Page", Page.GENERAL)
 
@@ -108,7 +108,7 @@ object AutoCrystal : Module(
     private val autoSwitch by bsetting("AutoSwitch", false)
     private var ghostHand = bsetting("GhostHand", true).enumIs(p, Page.GENERAL)
     private var rotate = bsetting("Rotate", false).enumIs(p, Page.GENERAL)
-    private var yawSpeed = fsetting("YawSpeed", 30.0f, 5.0f, 180f, 1f).isTrue(rotate).enumIs(p, Page.GENERAL)
+    private var rotationSpeed = dsetting("RotationSpeed", 10.0, 1.0, 10.0).isTrue(rotate).enumIs(p, Page.GENERAL)
     private var rotateDiff = fsetting("RotationDiff", 1f, 0f, 2f).isTrue(rotate).enumIs(p, Page.GENERAL)
 
     //Page Place
@@ -390,13 +390,7 @@ object AutoCrystal : Module(
             val diff = RotationUtils.calcAngleDiff(it.x, CrystalManager.rotation.x)
             if (rotate.value) {
                 rotationInfo.update(rotation)
-                if (abs(diff) <= yawSpeed.value) {
-                    packetRotate(it)
-                } else {
-                    val clamped = diff.coerceIn(-yawSpeed.value, yawSpeed.value)
-                    val newYaw = normalizeAngle(CrystalManager.rotation.x + clamped)
-                    packetRotate(newYaw, it.y)
-                }
+                applyRotation(it,rotationSpeed.value, RotationManager.Priority.High)
                 flagged = rotateDiff.value > 0 && abs(diff) > rotateDiff.value
             }
         }

@@ -7,8 +7,9 @@ import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket
 import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket
+import java.util.*
 
-object Velocity : Module(name = "Velocity", langName = "防击退", category = Category.MOVEMENT) {
+object Velocity : Module(name = "Velocity", category = Category.MOVEMENT) {
     private val mode = msetting("Mode", Mode.Vanilla)
     var noPush = bsetting("NoPush", true)
     private var horizontal = fsetting("Horizontal", 0f, 0f, 100f).enumIs(mode, Mode.Vanilla)
@@ -16,6 +17,11 @@ object Velocity : Module(name = "Velocity", langName = "防击退", category = C
 
     init {
         safeEventListener<PacketEvents.Receive> { event ->
+            if (mode.value == Mode.Cancel) {
+                if(event.packet is ExplosionS2CPacket){
+                    event.cancelled = true
+                }
+            }
             var h = horizontal.value
             var v = vertical.value
             if (mode.value == Mode.Wall) {
@@ -52,6 +58,6 @@ object Velocity : Module(name = "Velocity", langName = "防击退", category = C
     }
 
     enum class Mode {
-        Vanilla, Wall
+        Vanilla, Wall,Cancel
     }
 }

@@ -63,6 +63,7 @@ object ModuleManager : AlwaysListening {
         registerModule(CombatSystem)
         registerModule(Rotations)
         registerModule(MainMenu)
+        registerModule(MovementFix)
     }
 
     private fun loadCategoryCombat() {
@@ -77,7 +78,7 @@ object ModuleManager : AlwaysListening {
         registerModule(SelfTrap)
         registerModule(AutoEXP)
         registerModule(KillAura)
-        registerModule(BedAura)
+//        registerModule(BedAura)
         registerModule(ManualCev)
         registerModule(AutoWeb)
         registerModule(HolePush)

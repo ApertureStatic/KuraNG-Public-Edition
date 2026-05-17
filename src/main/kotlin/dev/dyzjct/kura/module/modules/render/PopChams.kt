@@ -20,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap
 
 object PopChams : Module(
     name = "PopChams",
-    langName = "图腾爆炸渲染",
     description = "Rendering on totem pop.",
     category = Category.RENDER
 ) {

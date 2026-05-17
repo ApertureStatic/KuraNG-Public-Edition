@@ -5,7 +5,6 @@ import dev.dyzjct.kura.module.Module
 
 object CustomFov : Module(
     name = "CustomFov",
-    langName = "自定义Fov",
     description = "Custom Minecraft Fov",
     category = Category.RENDER
 ) {

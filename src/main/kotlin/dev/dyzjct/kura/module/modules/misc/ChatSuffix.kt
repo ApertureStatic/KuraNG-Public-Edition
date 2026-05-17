@@ -6,7 +6,7 @@ import dev.dyzjct.kura.event.events.chat.MessageSentEvent
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 
-object ChatSuffix : Module(name = "ChatSuffix", langName = "后缀", category = Category.MISC) {
+object ChatSuffix : Module(name = "ChatSuffix", category = Category.MISC) {
     private val chat by msetting("Chat", Chat.Custom)
     private val text by ssetting("Text", "Kura-v1.0.4").enumIs(chat, Chat.Custom)
     val debug = bsetting("Debug", false)

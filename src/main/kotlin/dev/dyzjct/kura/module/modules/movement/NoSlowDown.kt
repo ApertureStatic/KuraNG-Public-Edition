@@ -10,7 +10,6 @@ import net.minecraft.util.Hand
 
 object NoSlowDown : Module(
     name = "NoSlowDown",
-    langName = "取消减速",
     description = "Prevents being slowed down when using an item or going through cobwebs",
     category = Category.MOVEMENT
 ) {

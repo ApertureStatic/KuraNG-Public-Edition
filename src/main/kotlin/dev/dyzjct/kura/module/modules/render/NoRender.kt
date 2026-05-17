@@ -5,7 +5,6 @@ import dev.dyzjct.kura.module.Module
 
 object NoRender : Module(
     name = "NoRender",
-    langName = "移除渲染",
     description = "Ignore Some Effects",
     category = Category.RENDER
 ) {

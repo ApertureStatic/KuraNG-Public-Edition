@@ -16,7 +16,6 @@ import kotlin.math.floor
 //Thanks For asphyxia1337(Alpha432)
 object Clip : Module(
     name = "Clip",
-    langName = "卡墙",
     category = Category.MISC,
     description = "Phases into blocks nearby to prevent crystal damage."
 ) {

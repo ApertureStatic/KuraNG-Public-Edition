@@ -36,7 +36,6 @@ abstract class HUDModule(
 
     init {
         moduleName = name
-        moduleCName = langName
         moduleCategory = category
         this.description = description
         this.isVisible = visible

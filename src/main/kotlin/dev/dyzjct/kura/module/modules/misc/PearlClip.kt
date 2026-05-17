@@ -1,9 +1,9 @@
 package dev.dyzjct.kura.module.modules.misc
 
 import base.utils.entity.EntityUtils.autoCenter
-import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarNoCheck
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.combat.PearlFucker
@@ -13,12 +13,11 @@ import dev.dyzjct.kura.utils.rotation.RotationUtils.getRotationToVec2f
 import net.minecraft.block.Blocks
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.util.Hand
 import net.minecraft.util.math.Direction
 
 object PearlClip : Module(
-    name = "PearlClip", langName = "珍珠卡墙", description = "PearlClip Ez", category = Category.MISC
+    name = "PearlClip", description = "PearlClip Ez", category = Category.MISC
 ) {
     private val better by bsetting("LookBetter", true)
     private val bedRock by bsetting("BedRock", false)
@@ -82,27 +81,33 @@ object PearlClip : Module(
 
                 angle = if ((angle + fix) > 180.0f) angle - fix else angle + fix
 
-                packetRotate(angle, pitch)
-                if (player.mainHandStack.item == Items.ENDER_PEARL) {
-                    packetRotate(angle, pitch)
-                    sendSequencedPacket(world) {
-                        PlayerInteractItemC2SPacket(
-                            Hand.MAIN_HAND, it
-                        )
-                    }
-                } else {
-                    spoofHotbarNoCheck(Items.ENDER_PEARL) {
-                        packetRotate(angle, pitch)
-                        PearlFucker.ignoreTimer.reset()
-                        sendSequencedPacket(
-                            world
-                        ) {
-                            PlayerInteractItemC2SPacket(
-                                Hand.MAIN_HAND, it
-                            )
+                applyRotation(
+                    angle,
+                    pitch,
+                    10.0,
+                    priorityValue = RotationManager.Priority.Highest.priority,
+                    callback = { record ->
+                        if (record.isActive) {
+                            if (player.mainHandStack.item == Items.ENDER_PEARL) {
+                                sendSequencedPacket(world) {
+                                    PlayerInteractItemC2SPacket(
+                                        Hand.MAIN_HAND, it
+                                    )
+                                }
+                            } else {
+                                spoofHotbarNoCheck(Items.ENDER_PEARL) {
+                                    PearlFucker.ignoreTimer.reset()
+                                    sendSequencedPacket(
+                                        world
+                                    ) {
+                                        PlayerInteractItemC2SPacket(
+                                            Hand.MAIN_HAND, it
+                                        )
+                                    }
+                                }
+                            }
                         }
-                    }
-                }
+                    })
                 break
             }
             disable()

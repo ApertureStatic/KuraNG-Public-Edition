@@ -17,7 +17,6 @@ import java.awt.Color
 
 object UiSetting : Module(
     "NewUISetting",
-    langName = "界面设置",
     description = "Color settings",
     category = Category.CLIENT,
     alwaysEnable = true

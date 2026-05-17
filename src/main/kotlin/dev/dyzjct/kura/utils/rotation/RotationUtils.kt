@@ -19,6 +19,7 @@ import net.minecraft.util.math.Direction
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.random.Random
+import org.joml.Vector2f
 import kotlin.math.*
 
 object RotationUtils : AlwaysListening {
@@ -93,6 +94,24 @@ object RotationUtils : AlwaysListening {
             return Direction.NORTH
         }
         return Direction.EAST
+    }
+
+    fun SafeClientEvent.resetRotation(rotation: Vec2f?): Vec2f? {
+        if (rotation == null) return null
+        val yaw: Float = rotation.x + MathHelper.wrapDegrees(player.yaw - rotation.x)
+        val pitch: Float = player.pitch
+        return Vec2f(yaw, pitch)
+    }
+
+    fun SafeClientEvent.applySensitivityPatch(rotation: Vec2f, previousRotation: Vec2f): Vec2f {
+        val mouseSensitivity =
+            (mc.options.mouseSensitivity.value * (1 + Math.random() / 10000000) * 0.6f + 0.2f)
+        val multiplier = mouseSensitivity * mouseSensitivity * mouseSensitivity * 8.0f * 0.15
+        val yaw =
+            previousRotation.x + (((rotation.x - previousRotation.x) / multiplier).roundToInt() * multiplier).toFloat()
+        val pitch =
+            previousRotation.y + (((rotation.y - previousRotation.y) / multiplier).roundToInt() * multiplier).toFloat()
+        return Vec2f(yaw, MathHelper.clamp(pitch, -90f, 90f))
     }
 
     fun SafeClientEvent.getRotationToVec2f(posTo: Vec3d, side: Boolean = false): Vec2f {

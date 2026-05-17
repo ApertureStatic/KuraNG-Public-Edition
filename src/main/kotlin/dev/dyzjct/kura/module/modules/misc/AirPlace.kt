@@ -11,7 +11,6 @@ import net.minecraft.util.math.BlockPos
 
 object AirPlace : Module(
     name = "AirPlace",
-    langName = "空放",
     description = "Place Block on the AirBlock.",
     category = Category.MISC
 ) {

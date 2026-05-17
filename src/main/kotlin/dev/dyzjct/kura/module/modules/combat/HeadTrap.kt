@@ -9,7 +9,7 @@ import base.utils.math.toBox
 import base.utils.player.getTargetSpeed
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -20,11 +20,12 @@ import dev.dyzjct.kura.utils.extension.sendSequencedPacket
 import dev.dyzjct.kura.utils.extension.sq
 import net.minecraft.block.Blocks
 
-object HeadTrap : Module(name = "HeadTrap", "盖头", description = "1!5!", category = Category.COMBAT) {
+object HeadTrap : Module(name = "HeadTrap", description = "1!5!", category = Category.COMBAT) {
 
     private var placeDelay = isetting("PlaceDelay", 10, 0, 1000)
     private var airPlace = bsetting("AirPlace", false)
-    private var rotate = bsetting("Rotate", false)
+    //private var rotate by bsetting("Rotate", false)
+    private val rotationSpeed by dsetting("RotationSpeed", 10.0, 1.0, 10.0)//.isTrue { rotate }
     private var bypass = bsetting("SpoofBypass", true)
     private var topBlock = msetting("TopBlock", TopBlock.Obi)
     private var maxSpeed = dsetting("MaxSpeed", 2.0, 0.0, 20.0)
@@ -53,41 +54,58 @@ object HeadTrap : Module(name = "HeadTrap", "盖头", description = "1!5!", cate
                         return@onMotion
                     }
                     if (airPlace.value) {
-                        if (rotate.value) packetRotate(target.blockPos.up(2))
                         if (placeTimer.tickAndReset(placeDelay.value)) {
-                            if (bypass.value) swapSpoof(slot) {
-                                sendSequencedPacket(world) { seq ->
-                                    fastPos(pos = target.blockPos.up(2), sequence = seq)
-                                }
-                            } else {
-                                spoofHotbar(slot) {
-                                    sendSequencedPacket(world) { seq ->
-                                        fastPos(pos = target.blockPos.up(2), sequence = seq)
+                            //if (rotate)
+                             applyRotation(
+                                vec3d = target.blockPos.up(2).toCenterPos(),
+                                speed = rotationSpeed,
+                                callback = { record ->
+
+                                    if (record.isActive) {
+                                        if (bypass.value) swapSpoof(slot) {
+                                            sendSequencedPacket(world) { seq ->
+                                                fastPos(pos = target.blockPos.up(2), sequence = seq)
+                                            }
+                                        } else {
+                                            spoofHotbar(slot) {
+                                                sendSequencedPacket(world) { seq ->
+                                                    fastPos(pos = target.blockPos.up(2), sequence = seq)
+                                                }
+                                            }
+                                        }
                                     }
-                                }
-                            }
+                                })
                         }
+
                     } else if (boxCheck(target.blockPos.up(2).toBox(), true)) {
                         checkNearBlocksExtended(target.blockPos.up(2))?.let { block ->
                             if (player.distanceSqToCenter(block.position.offset(block.facing)) <= CombatSystem.placeRange.sq) {
                                 if (!world.isAir(block.position.offset(block.facing))) return@onMotion
-                                if (rotate.value) packetRotate(
-                                    block.position.offset(block.facing)
-                                )
                                 if (placeTimer.tickAndReset(placeDelay.value)) {
-                                    if (bypass.value) {
-                                        swapSpoof(slot) {
-                                            sendSequencedPacket(world) {
-                                                fastPos(block.position.offset(block.facing))
+                                    //if (rotate)
+                                    applyRotation(
+                                        vec3d = block.position.offset(block.facing).toCenterPos(),
+                                        speed = rotationSpeed,
+                                        callback = { record ->
+
+                                            if (record.isActive) {
+                                                if (bypass.value) {
+                                                    swapSpoof(slot) {
+                                                        sendSequencedPacket(world) {
+                                                            fastPos(block.position.offset(block.facing))
+                                                        }
+                                                    }
+                                                } else {
+                                                    spoofHotbar(slot) {
+                                                        sendSequencedPacket(world) {
+                                                            fastPos(block.position.offset(block.facing))
+                                                        }
+                                                    }
+                                                }
                                             }
+
                                         }
-                                    } else {
-                                        spoofHotbar(slot) {
-                                            sendSequencedPacket(world) {
-                                                fastPos(block.position.offset(block.facing))
-                                            }
-                                        }
-                                    }
+                                    )
                                 }
                             }
                         }

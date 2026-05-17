@@ -12,7 +12,6 @@ import net.minecraft.client.util.InputUtil
 
 object ClickGui : Module(
     name = "ClickGUI",
-    langName = "ClickGUI",
     keyCode = InputUtil.GLFW_KEY_RIGHT_SHIFT,
     category = Category.CLIENT,
     visible = true

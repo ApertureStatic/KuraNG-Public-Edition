@@ -13,7 +13,7 @@ import dev.dyzjct.kura.event.eventbus.safeParallelListener
 import dev.dyzjct.kura.event.events.RunGameLoopEvent
 import dev.dyzjct.kura.event.events.TickEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.manager.SphereCalculatorManager
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
@@ -41,7 +41,7 @@ import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.stream.Collectors
 
-object AutoCraftBed : Module(name = "AutoCraftBed", langName = "自动合成床", category = Category.MISC) {
+object AutoCraftBed : Module(name = "AutoCraftBed", category = Category.MISC) {
     private val craftDelay = isetting("CraftDelay", 5, 0, 1000)
     private var autoBedPVP = bsetting("AutoBedPVP", true)
     private var prioReady = bsetting("PrioReady", true)
@@ -142,7 +142,7 @@ object AutoCraftBed : Module(name = "AutoCraftBed", langName = "自动合成床"
                         if (world.getBlockState(pos).block != Blocks.CRAFTING_TABLE && player.distanceSqToCenter(pos) <= placeRange.value.sq) {
                             player.hotbarSlots.firstBlock(Blocks.CRAFTING_TABLE)?.let { slot ->
                                 spoofHotbar(slot) {
-                                    packetRotate(pos)
+                                    applyRotation(pos.toCenterPos(), 10.0)
                                     connection.sendPacket(fastPos(pos))
                                 }
                                 if (!craftTask.contains(pos)) {

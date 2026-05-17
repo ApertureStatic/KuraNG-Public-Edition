@@ -31,8 +31,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity {
+
     @Unique
-    public PlayerMotionEvent motionEvent;
+    private PlayerMotionEvent motionEvent;
 
     public MixinClientPlayerEntity(ClientWorld world, GameProfile profile) {
         super(world, profile);
@@ -63,16 +64,6 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
         }
     }
 
-    @Inject(method = "sendMovementPackets", at = @At("HEAD"), cancellable = true)
-    private void onTickMovementHead(CallbackInfo callbackInfo) {
-        motionEvent = new PlayerMotionEvent(StageType.START, this.getX(), getY(), this.getZ(), this.yaw, this.pitch, this.onGround);
-        motionEvent.post();
-        EventAccessManager.INSTANCE.setData(motionEvent);
-        if (motionEvent.getCancelled()) {
-            callbackInfo.cancel();
-        }
-    }
-
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;tick()V", shift = At.Shift.AFTER))
     private void tick$AFTER(CallbackInfo info) {
         UpdateMovementEvent.Pre event = new UpdateMovementEvent.Pre();
@@ -85,162 +76,127 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
         event.post();
     }
 
-
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;tick()V", shift = At.Shift.BEFORE))
     private void tick$BEFORE(CallbackInfo info) {
         PlayerUpdateEvent event = new PlayerUpdateEvent();
         event.post();
     }
 
-    @Inject(method = "sendMovementPackets", at = {@At("HEAD")}, cancellable = true)
+    /**
+     * 合并并重写原版系统的发包核心
+     */
+    @Inject(method = "sendMovementPackets", at = @At("HEAD"), cancellable = true)
     private void sendMovementPacketsHook(CallbackInfo ci) {
-        ci.cancel();
+        ci.cancel(); // 挂起原版发包
         if (Wrapper.getPlayer() == null) return;
+
         try {
+            // 1. 触发第一阶段的物理移动前置事件
+            motionEvent = new PlayerMotionEvent(StageType.START, this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), this.isOnGround());
+            motionEvent.post();
+            EventAccessManager.INSTANCE.setData(motionEvent);
+            if (motionEvent.getCancelled()) return;
+
             UpdateWalkingPlayerEvent.Pre.INSTANCE.post();
             this.sendSprintingPacket();
-            boolean bl = this.isSneaking();
-            if (bl != this.lastSneaking) {
-                ClientCommandC2SPacket.Mode mode = bl ? ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY : ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY;
+
+            boolean sneaking = this.isSneaking();
+            if (sneaking != this.lastSneaking) {
+                ClientCommandC2SPacket.Mode mode = sneaking ? ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY : ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY;
                 this.networkHandler.sendPacket(new ClientCommandC2SPacket(this, mode));
-                this.lastSneaking = bl;
+                this.lastSneaking = sneaking;
             }
 
             if (this.isCamera()) {
-                double d = this.getX() - this.lastX;
-                double e = this.getY() - this.lastBaseY;
-                double f = this.getZ() - this.lastZ;
+                // 使用 motionEvent 中安全代理后的位置计算位移增量
+                double deltaX = motionEvent.getX() - this.lastX;
+                double deltaY = motionEvent.getY() - this.lastBaseY;
+                double deltaZ = motionEvent.getZ() - this.lastZ;
 
-                float yaw = this.getYaw();
-                float pitch = this.getPitch();
-                MovementPacketsEvent movementPacketsEvent = new MovementPacketsEvent(yaw, pitch);
+                // 2. 提取玩家实体的原生朝向（绕过 Redirect 污染）
+                float currentYaw = super.getYaw();
+                float currentPitch = super.getPitch();
+
+                // 3. 触发角度修改管道，派发给 RotationManager 计算平滑旋转
+                MovementPacketsEvent movementPacketsEvent = new MovementPacketsEvent(currentYaw, currentPitch);
                 movementPacketsEvent.post();
-                yaw = movementPacketsEvent.getYaw();
-                pitch = movementPacketsEvent.getPitch();
 
-                double g = yaw - RotationManager.INSTANCE.getYaw_value();//this.lastYaw;
-                double h = pitch - RotationManager.INSTANCE.getPitch_value();//this.lastPitch;
+                // 得到最终要发往服务器的角度（如果是模块在转，这里就是平滑算出来的假角度）
+                float finalYaw = movementPacketsEvent.getYaw();
+                float finalPitch = movementPacketsEvent.getPitch();
 
-                ++this.ticksSinceLastPositionPacketSent;
-                boolean bl2 = MathHelper.squaredMagnitude(d, e, f) > MathHelper.square(2.0E-4) || this.ticksSinceLastPositionPacketSent >= 20 || (CombatSystem.INSTANCE.getPacketControl() && CombatSystem.INSTANCE.getPositionControl() && CombatSystem.INSTANCE.getPosition_timer().passed(CombatSystem.INSTANCE.getPositionDelay()));
-                boolean bl3 = (g != 0.0 || h != 0.0 || (CombatSystem.INSTANCE.getPacketControl() && CombatSystem.INSTANCE.getRotateControl() && CombatSystem.INSTANCE.getRotation_timer().passed(CombatSystem.INSTANCE.getRotationDelay())));
+                // 4. 【核心修复】使用 目标发送角 减去 上一次发送给服务器的角，来计算精确的视线裁决剪刀差！
+                double deltaYaw = finalYaw - this.lastYaw;
+                double deltaPitch = finalPitch - this.lastPitch;
+
+                this.ticksSinceLastPositionPacketSent++;
+
+                // 判定位置是否改变
+                boolean positionChanged = MathHelper.squaredMagnitude(deltaX, deltaY, deltaZ) > MathHelper.square(2.0E-4)
+                        || this.ticksSinceLastPositionPacketSent >= 20
+                        || (CombatSystem.INSTANCE.getPacketControl() && CombatSystem.INSTANCE.getPositionControl() && CombatSystem.INSTANCE.getPosition_timer().passed(CombatSystem.INSTANCE.getPositionDelay()));
+
+                // 判定角度是否改变
+                boolean rotationChanged = (deltaYaw != 0.0 || deltaPitch != 0.0
+                        || (CombatSystem.INSTANCE.getPacketControl() && CombatSystem.INSTANCE.getRotateControl() && CombatSystem.INSTANCE.getRotation_timer().passed(CombatSystem.INSTANCE.getRotationDelay())));
+
+                // 5. 根据裁决结果，组装正确的 C03 数据包发往服务器
                 if (this.hasVehicle()) {
                     Vec3d vec3d = this.getVelocity();
-                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.Full(vec3d.x, -999.0, vec3d.z, yaw, pitch, this.isOnGround()));
-                    bl2 = false;
-                } else if (bl2 && bl3) {
-                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.Full(this.getX(), this.getY(), this.getZ(), yaw, pitch, this.isOnGround()));
-                } else if (bl2) {
-                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(this.getX(), this.getY(), this.getZ(), this.isOnGround()));
-                } else if (bl3) {
-                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, this.isOnGround()));
-                } else if (this.lastOnGround != this.isOnGround() || CombatSystem.INSTANCE.getPacketControl() && CombatSystem.INSTANCE.getGroundControl() && CombatSystem.INSTANCE.getGround_timer().passed(CombatSystem.INSTANCE.getGroundDelay())) {
-                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(this.isOnGround()));
+                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.Full(vec3d.x, -999.0, vec3d.z, finalYaw, finalPitch, motionEvent.isOnGround()));
+                    positionChanged = false;
+                } else if (positionChanged && rotationChanged) {
+                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.Full(motionEvent.getX(), motionEvent.getY(), motionEvent.getZ(), finalYaw, finalPitch, motionEvent.isOnGround()));
+                } else if (positionChanged) {
+                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(motionEvent.getX(), motionEvent.getY(), motionEvent.getZ(), motionEvent.isOnGround()));
+                } else if (rotationChanged) {
+                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(finalYaw, finalPitch, motionEvent.isOnGround()));
+                } else if (this.lastOnGround != motionEvent.isOnGround() || (CombatSystem.INSTANCE.getPacketControl() && CombatSystem.INSTANCE.getGroundControl() && CombatSystem.INSTANCE.getGround_timer().passed(CombatSystem.INSTANCE.getGroundDelay()))) {
+                    this.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(motionEvent.isOnGround()));
                 }
 
-                if (bl2) {
-                    this.lastX = this.getX();
-                    this.lastBaseY = this.getY();
-                    this.lastZ = this.getZ();
+                // 更新历史状态缓存
+                if (positionChanged) {
+                    this.lastX = motionEvent.getX();
+                    this.lastBaseY = motionEvent.getY();
+                    this.lastZ = motionEvent.getZ();
                     this.ticksSinceLastPositionPacketSent = 0;
                 }
 
-                if (bl3) {
-                    this.lastYaw = yaw;
-                    this.lastPitch = pitch;
+                if (rotationChanged) {
+                    this.lastYaw = finalYaw;
+                    this.lastPitch = finalPitch;
                 }
 
-                this.lastOnGround = this.isOnGround();
+                this.lastOnGround = motionEvent.isOnGround();
                 this.autoJumpEnabled = this.client.options.getAutoJump().getValue();
             }
+
             UpdateWalkingPlayerEvent.Post.INSTANCE.post();
+
+            // 6. 触发末尾发包返回事件
+            PlayerMotionEvent oldEvent = new PlayerMotionEvent(StageType.END, motionEvent);
+            oldEvent.post();
+            EventAccessManager.INSTANCE.setData(oldEvent);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @Shadow
-    private void sendSprintingPacket() {
-    }
-
-    @Shadow
-    public abstract boolean isSneaking();
-
-    @Shadow
-    public boolean lastSneaking;
-
-    @Shadow
-    @Final
-    public ClientPlayNetworkHandler networkHandler;
-
-    @Shadow
-    protected abstract boolean isCamera();
-
-    @Shadow
-    public double lastX;
-
-    @Shadow
-    public double lastBaseY;
-
-    @Shadow
-    public double lastZ;
-
-    @Shadow
-    public int ticksSinceLastPositionPacketSent;
-
-    @Shadow
-    public float lastYaw;
-
-    @Shadow
-    public float lastPitch;
-
-    @Shadow
-    public boolean lastOnGround;
-
-    @Shadow
-    private boolean autoJumpEnabled;
-
-    @Shadow
-    @Final
-    protected MinecraftClient client;
-
-    @Shadow
-    public abstract float getYaw(float tickDelta);
-
-    @Redirect(method = "sendMovementPackets", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getX()D"))
-    private double posXHook(ClientPlayerEntity instance) {
-        return motionEvent.getX();
-    }
-
-    @Redirect(method = "sendMovementPackets", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getY()D"))
-    private double posYHook(ClientPlayerEntity instance) {
-        return motionEvent.getY();
-    }
-
-    @Redirect(method = "sendMovementPackets", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getZ()D"))
-    private double posZHook(ClientPlayerEntity instance) {
-        return motionEvent.getZ();
-    }
-
-    @Redirect(method = "sendMovementPackets", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getYaw()F"))
-    private float yawHook(ClientPlayerEntity instance) {
-        return motionEvent.getYaw();
-    }
-
-    @Redirect(method = "sendMovementPackets", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getPitch()F"))
-    private float pitchHook(ClientPlayerEntity instance) {
-        return motionEvent.getPitch();
-    }
-
-    @Redirect(method = "sendMovementPackets", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isOnGround()Z"))
-    private boolean groundHook(ClientPlayerEntity instance) {
-        return motionEvent.isOnGround();
-    }
-
-    @Inject(method = "sendMovementPackets", at = @At(value = "RETURN"))
-    private void sendMovementPackets_Return(CallbackInfo callbackInfo) {
-        PlayerMotionEvent oldEvent = new PlayerMotionEvent(StageType.END, motionEvent);
-        oldEvent.post();
-        EventAccessManager.INSTANCE.setData(oldEvent);
-    }
+    // ==================== 影子注入与影子映射字段 ====================
+    @Shadow private void sendSprintingPacket() {}
+    @Shadow public abstract boolean isSneaking();
+    @Shadow public boolean lastSneaking;
+    @Shadow @Final public ClientPlayNetworkHandler networkHandler;
+    @Shadow protected abstract boolean isCamera();
+    @Shadow public double lastX;
+    @Shadow public double lastBaseY;
+    @Shadow public double lastZ;
+    @Shadow public int ticksSinceLastPositionPacketSent;
+    @Shadow public float lastYaw;
+    @Shadow public float lastPitch;
+    @Shadow public boolean lastOnGround;
+    @Shadow private boolean autoJumpEnabled;
+    @Shadow @Final protected MinecraftClient client;
 }

@@ -13,7 +13,7 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket
 import kotlin.math.*
 
-object ElytraFly : Module(name = "ElytraFly", langName = "鞘翅平飞", category = Category.MOVEMENT) {
+object ElytraFly : Module(name = "ElytraFly", category = Category.MOVEMENT) {
     private var speedControl by fsetting("Speed", 1.81f, 0.1f, 10f)
     private var upSpeed by fsetting("UpSpeed", 1.2f, 0.1f, 5f)
     private var downSpeed by fsetting("DownSpeed", 1f, 0.1f, 5f)

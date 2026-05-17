@@ -156,25 +156,15 @@ class ModuleButton(val module: dev.dyzjct.kura.module.AbstractModule, width: Dou
             return
         }
 
-        if (ClickGui.chinese.value && module.getCName() != "Undefined") {
-            FontRenderers.default.drawString(
-                context.matrices,
-                module.moduleCName,
-                (ix + 2f),
-                (iy + 2f + if (hovered) -1f else 0f),
-                if (module.isEnabled || module.alwaysEnable) color else fontColor,
-                false
-            )
-        } else {
-            FontRenderers.default.drawString(
-                context.matrices,
-                module.getName(),
-                (ix + 2f),
-                (iy + if (hovered) -0.25f else 1f),
-                if (module.isEnabled || module.alwaysEnable) color else fontColor,
-                false
-            )
-        }
+        FontRenderers.default.drawString(
+            context.matrices,
+            module.getName(),
+            (ix + 2f),
+            (iy + if (hovered) -0.25f else 1f),
+            if (module.isEnabled || module.alwaysEnable) color else fontColor,
+            false
+        )
+
         Render2DEngine.drawRectBlurredShadow(
             context.matrices,
             (x + 2).toFloat(),

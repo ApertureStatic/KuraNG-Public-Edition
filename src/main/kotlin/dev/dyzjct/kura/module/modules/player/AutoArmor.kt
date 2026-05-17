@@ -18,7 +18,6 @@ import java.util.*
 
 object AutoArmor : Module(
     name = "AutoArmor",
-    langName = "自动穿甲",
     description = "Automatically equips armour",
     category = Category.PLAYER
 ) {

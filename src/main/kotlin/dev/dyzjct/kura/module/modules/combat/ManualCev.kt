@@ -5,7 +5,7 @@ import base.utils.math.distanceSqToCenter
 import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.event.events.player.PlayerMotionEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
@@ -21,13 +21,13 @@ import net.minecraft.util.Hand
 
 object ManualCev : Module(
     name = "ManualCev",
-    langName = "手动炸头",
     description = "Place and attack crystal to MinePos.",
     category = Category.COMBAT
 ) {
     private val delay by isetting("Delay", 50, 0, 500)
     private val range by isetting("range", 5, 0, 10)
     private val rotation by bsetting("Rotation", false)
+    private val rotationSpeed by dsetting("RotationSpeed", 10.0, 1.0, 10.0).isTrue { rotation }
     private val debug by bsetting("Debug", false)
 
     private val timer = TimerUtils()
@@ -50,7 +50,7 @@ object ManualCev : Module(
                 if (!canBreak(blockData.blockPos, true))
                     if (debug) ChatUtil.sendNoSpamMessage("DEBUG >> ${stage.name}")
                 if (rotation) {
-                    packetRotate(blockData.blockPos)
+                    applyRotation(blockData.blockPos.toCenterPos(),rotationSpeed)
                 }
                 when (stage) {
                     CevStage.Block -> {

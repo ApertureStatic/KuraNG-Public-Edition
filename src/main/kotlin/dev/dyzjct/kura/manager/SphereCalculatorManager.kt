@@ -6,7 +6,7 @@ import dev.dyzjct.kura.event.eventbus.safeBackGroundTaskListener
 import base.utils.combat.CrystalUtils
 import base.utils.math.toVec3dCenter
 import dev.dyzjct.kura.module.modules.client.CombatSystem
-import dev.dyzjct.kura.module.modules.combat.BedAura
+//import dev.dyzjct.kura.module.modules.combat.BedAura
 import dev.dyzjct.kura.module.modules.misc.AutoCraftBed
 import net.minecraft.util.math.BlockPos
 import java.util.concurrent.CopyOnWriteArrayList
@@ -18,8 +18,8 @@ object SphereCalculatorManager : AlwaysListening {
     fun onInit() {
         safeBackGroundTaskListener<RunGameLoopEvent.Render>(true) {
             val firstRange = max(
-                if (AutoCraftBed.isEnabled) AutoCraftBed.placeRange.value else 0.0,
-                if (BedAura.isEnabled) BedAura.range.value.toDouble() else 0.0
+                if (AutoCraftBed.isEnabled) AutoCraftBed.placeRange.value else 0.0,0.0
+//                if (BedAura.isEnabled) BedAura.range.value.toDouble() else 0.0
             )
 
             val maxRange = max(firstRange, CombatSystem.placeRange)

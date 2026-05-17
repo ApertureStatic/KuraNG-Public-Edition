@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger
 
 object AutoOffHand : Module(
     name = "AutoOffHand",
-    langName = "自动副手",
     description = "auto swap item to offhand",
     category = Category.COMBAT
 ) {

@@ -8,7 +8,7 @@ import base.utils.inventory.slot.hotbarSlots
 import base.utils.item.attackDamage
 import base.utils.math.distanceSqTo
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -25,12 +25,13 @@ import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket
 import net.minecraft.util.Hand
 import kotlin.math.max
 
-object KillAura : Module(name = "KillAura", langName = "杀戮", category = Category.COMBAT) {
+object KillAura : Module(name = "KillAura", category = Category.COMBAT) {
     private var animals by bsetting("Animals", false)
     private var mobs by bsetting("Mobs", false)
     private var swapWeapon by bsetting("SwapWeapon", false)
     private var onlySword by bsetting("OnlySword", true)
     private var pauseIfCA by bsetting("PauseIfCA", true)
+    private val rotationSpeed by dsetting("RotationSpeed", 10.0, 1.0, 10.0)
     private var autoBlock = bsetting("AutoBlock", false)
     private var abRange by dsetting("ABRange", 3.5, 1.0, 10.0)
     private var pauseInHit by bsetting("ABPauseInHit", false).isTrue(autoBlock)
@@ -65,11 +66,16 @@ object KillAura : Module(name = "KillAura", langName = "杀戮", category = Cate
                         }
                     }
                 }
-                packetRotate(target.blockPos.up().toCenterPos())
                 if (autoBlock.value && player.distanceSqTo(target.pos) <= abRange.sq) {
                     if (player.offHandStack.item is ShieldItem) {
                         if (player.offHandStack.item is ShieldItem) {
-                            playerController.interactItem(player, Hand.OFF_HAND)
+                            applyRotation(
+                                target.blockPos.up().toCenterPos(),
+                                rotationSpeed,
+                                callback = { record ->
+                                    if (record.isActive) playerController.interactItem(player, Hand.OFF_HAND)
+                                }
+                            )
                         }
                     }
                 }

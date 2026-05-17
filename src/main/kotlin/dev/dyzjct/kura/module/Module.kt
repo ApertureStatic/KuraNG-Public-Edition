@@ -2,7 +2,6 @@ package dev.dyzjct.kura.module
 
 abstract class Module(
     name: String,
-    langName: String = name,
     description: String = "",
     keyCode: Int = 0,
     category: Category,
@@ -12,7 +11,6 @@ abstract class Module(
 
     init {
         moduleName = name
-        moduleCName = langName
         moduleCategory = category
         bind = keyCode
         this.isVisible = visible

@@ -6,7 +6,6 @@ import base.utils.concurrent.threads.runSafe
 
 object AutoWalk: Module(
     name = "AutoWalk",
-    langName = "自动行走",
     description = "Automatic walking",
     category = Category.MOVEMENT
 ) {

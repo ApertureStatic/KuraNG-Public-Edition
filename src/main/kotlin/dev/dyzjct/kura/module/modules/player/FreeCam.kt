@@ -3,7 +3,7 @@ package dev.dyzjct.kura.module.modules.player
 import base.utils.concurrent.threads.runSafe
 import dev.dyzjct.kura.event.eventbus.safeEventListener
 import dev.dyzjct.kura.event.events.input.KeyboardInputEvent
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.math.MathUtil
@@ -13,7 +13,6 @@ import kotlin.math.sin
 
 object FreeCam : Module(
     name = "FreeCam",
-    langName = "灵魂出窍",
     description = "Free Camera.",
     category = Category.PLAYER
 ) {
@@ -60,7 +59,7 @@ object FreeCam : Module(
     init {
         onMotion {
             if (rotate && mc.crosshairTarget != null && mc.crosshairTarget!!.pos != null) {
-                packetRotate(mc.crosshairTarget!!.pos)
+                applyRotation(mc.crosshairTarget!!.pos,10.0)
             }
         }
 

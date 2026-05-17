@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap
 
 object PlaceRender : Module(
     name = "PlaceRender",
-    langName = "放置渲染",
     description = "Draw Module's PlacePacket.",
     category = Category.RENDER
 ) {

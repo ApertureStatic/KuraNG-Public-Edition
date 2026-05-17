@@ -8,7 +8,6 @@ import base.utils.entity.EntityUtils
 
 object Sprint : Module(
     name = "Sprint",
-    langName = "强制疾跑",
     description = "Automatically makes the player sprint",
     category = Category.MOVEMENT
 ) {

@@ -13,7 +13,7 @@ import net.minecraft.network.packet.Packet
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 import java.util.*
 
-object Blink : Module(name = "Blink", langName = "瞬移", category = Category.MOVEMENT) {
+object Blink : Module(name = "Blink", category = Category.MOVEMENT) {
     private val healthCheck by bsetting("HealthCheck", false)
     private val health by isetting("Health", 5, 1, 32).isTrue { healthCheck }
 

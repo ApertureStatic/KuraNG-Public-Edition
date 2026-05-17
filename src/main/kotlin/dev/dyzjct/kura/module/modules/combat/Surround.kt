@@ -31,7 +31,8 @@ import dev.dyzjct.kura.manager.HoleManager
 import dev.dyzjct.kura.manager.HotbarManager.serverSideItem
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -68,7 +69,6 @@ import net.minecraft.util.math.Vec3d
 
 object Surround : Module(
     name = "Surround",
-    langName = "自动围脚",
     description = "Continually places obsidian around your feet",
     category = Category.COMBAT
 ) {
@@ -77,6 +77,7 @@ object Surround : Module(
     private var groundCheck = bsetting("GroundCheck", true)
     private var autoCenter = bsetting("AutoCenter", true)
     private var rotation = bsetting("Rotation", false)
+    private var rotationSpeed = dsetting("RotationSpeed", 10.0, 1.0, 10.0).isTrue(rotation)
     private var checkRotation = bsetting("CheckRotation", false)
     private var enableInHole = bsetting("EnableInHole", false)
     private var inHoleTimeout = isetting("InHoleTimeOut", 50, 1, 100).isTrue(enableInHole)
@@ -417,10 +418,10 @@ object Surround : Module(
                 if (rotation.value) {
                     var eyeHeight = player.getEyeHeight(player.pose)
                     if (!player.isSneaking) eyeHeight -= 0.08f
-                    packetRotate(
+                    applyRotation(
                         getRotationToVec2f(
                             Vec3d(player.x, player.y + eyeHeight, player.z), placeInfo.hitVec
-                        )
+                        ), rotationSpeed.value, RotationManager.Priority.Highest
                     )
                 }
 

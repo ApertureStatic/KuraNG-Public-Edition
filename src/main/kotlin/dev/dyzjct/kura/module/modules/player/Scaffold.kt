@@ -28,7 +28,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import java.awt.Color
 
-object Scaffold : Module(name = "Scaffold", langName = "自动搭路", category = Category.PLAYER) {
+object Scaffold : Module(name = "Scaffold", category = Category.PLAYER) {
     private var color by csetting("Color", Color(-0x77ff0100))
     private var rotate = bsetting("Rotate", true)
     private var strictRotate by bsetting("StrictRotate", false).isTrue(rotate)

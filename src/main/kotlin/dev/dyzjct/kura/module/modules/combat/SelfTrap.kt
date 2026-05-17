@@ -7,7 +7,8 @@ import base.utils.inventory.slot.hotbarSlots
 import base.utils.world.isPlaceable
 import dev.dyzjct.kura.manager.EntityManager
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.utils.TimerUtils
@@ -44,7 +45,7 @@ object SelfTrap : Module(name = "SelfTrap", "自动裹自己", category = Catego
                     for (offset in offsetsDefault) {
                         val pos = player.blockPos.add(offset)
                         if (!world.isPlaceable(pos)) continue
-                        if (rotate.value) packetRotate(pos)
+                        if (rotate.value) applyRotation(pos.toCenterPos(), 10.0, RotationManager.Priority.High)
                         var breakCrystal = false
                         if (attackTimer.passedMs(50L)) {
                             for (entity in EntityManager.entity) {

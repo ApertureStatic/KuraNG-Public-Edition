@@ -10,7 +10,6 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 
 object PacketLogger : Module(
     "PacketLogger",
-    langName = "抓包",
     description = "Draw Packet Name in Chat.",
     category = Category.MISC
 ) {

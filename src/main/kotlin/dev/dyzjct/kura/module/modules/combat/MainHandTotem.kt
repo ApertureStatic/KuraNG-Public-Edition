@@ -8,7 +8,7 @@ import net.minecraft.item.Items
 import net.minecraft.screen.slot.SlotActionType
 
 object MainHandTotem :
-    Module(name = "MainHandTotem", langName = "主手图腾", description = "null", category = Category.COMBAT) {
+    Module(name = "MainHandTotem", description = "null", category = Category.COMBAT) {
     private val autoSwitch by bsetting("AutoSwitch", true)
     private val slot by isetting("Slot", 0, 0, 9)
     private val health by dsetting("SwitchHealth", 15.0, 0.0, 36.0)

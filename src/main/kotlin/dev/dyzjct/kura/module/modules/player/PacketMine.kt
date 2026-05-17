@@ -15,7 +15,8 @@ import dev.dyzjct.kura.event.events.block.BlockEvent
 import dev.dyzjct.kura.manager.HotbarManager.resetHotbar
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbar
 import dev.dyzjct.kura.manager.HotbarManager.swapSpoof
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem
@@ -48,7 +49,7 @@ import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
 
 object PacketMine : Module(
-    name = "PacketMine", langName = "发包挖掘", description = "Better Mine.", category = Category.PLAYER
+    name = "PacketMine", description = "Better Mine.", category = Category.PLAYER
 ) {
     private var mode = msetting("Mode", PacketMode.Instant)
     private var mode0 = mode.value as PacketMode
@@ -271,7 +272,7 @@ object PacketMine : Module(
         if (db) {
             if (doubleBreak) {
                 if (onDoubleBreak) {
-                    doubleData?.let { packetRotate(it.blockPos) }
+                    doubleData?.let { applyRotation(it.blockPos.toCenterPos(),10.0) }
                 }
                 if ((System.currentTimeMillis() - blockData.startTime) >= (blockData.breakTime + startTime + backTime) && onDoubleBreak) {
                     onDoubleBreak = false
@@ -292,7 +293,7 @@ object PacketMine : Module(
                     blockData.blockPos
                 ) && action == Stop)) && !force
             ) return
-            if (rotate.value) packetRotate(blockData.blockPos)
+            if (rotate.value) applyRotation(blockData.blockPos.toCenterPos(), 10.0, RotationManager.Priority.Highest)
             if (swing) connection.sendPacket(HandSwingC2SPacket(Hand.MAIN_HAND))
             if (switchMode0.spoof) {
                 if (!switchMode0.bypass) {

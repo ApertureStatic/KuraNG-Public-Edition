@@ -11,7 +11,6 @@ import net.minecraft.client.util.InputUtil
 
 object HUDEditor : Module(
     name = "HUDEditor",
-    langName = "HUD编辑器",
     keyCode = InputUtil.GLFW_KEY_GRAVE_ACCENT,
     category = Category.CLIENT,
     visible = false

@@ -5,7 +5,6 @@ import dev.dyzjct.kura.module.Module
 
 object Sound : Module(
     name = "Sound",
-    langName = "播放音频",
     description = "Play Sound.",
     category = Category.CLIENT
 ) {

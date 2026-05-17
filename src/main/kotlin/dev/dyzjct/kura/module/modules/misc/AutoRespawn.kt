@@ -9,7 +9,6 @@ import net.minecraft.client.gui.screen.DeathScreen
 
 object AutoRespawn : Module(
     name = "AutoRespawn",
-    langName = "自动重生",
     description = "Automatic respawn",
     category = Category.MISC
 ) {

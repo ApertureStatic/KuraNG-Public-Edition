@@ -9,7 +9,6 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket
 object AntiHunger :
     Module(
         name = "AntiHunger",
-        langName = "防饥饿",
         description = "Anti Hunger.",
         category = Category.PLAYER
     ) {

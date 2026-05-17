@@ -15,7 +15,6 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 object CombatSystem : Module(
     name = "CombatSystem",
-    langName = "战斗系统",
     category = Category.CLIENT,
     alwaysEnable = true
 ) {

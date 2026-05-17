@@ -9,7 +9,6 @@ import java.awt.Color
 
 object PortalESP : Module(
     name = "PortalESP",
-    langName = "地狱门透视",
     description = "AutoSearch For Portal Blocks!",
     category = Category.RENDER
 ) {

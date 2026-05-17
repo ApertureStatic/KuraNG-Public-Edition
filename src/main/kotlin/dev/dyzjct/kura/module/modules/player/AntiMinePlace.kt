@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap
 
 object AntiMinePlace : Module(
     name = "AntiMinePlace",
-    langName = "不在挖掘位置放置",
     description = "Other Module's PlaceBlock not place in player mineBlock. ",
     category = Category.PLAYER
 ) {

@@ -8,7 +8,6 @@ import net.minecraft.client.util.InputUtil
 
 object GUIMove : Module(
     name = "GUIMove",
-    langName = "背包移动",
     description = "Moving when Gui is open.",
     category = Category.MOVEMENT
 ) {

@@ -19,7 +19,6 @@ import net.minecraft.util.math.BlockPos
 
 object HoleMiner : Module(
     name = "HoleMiner",
-    langName = "自动挖角",
     description = "auto mine target feet.",
     category = Category.COMBAT
 ) {

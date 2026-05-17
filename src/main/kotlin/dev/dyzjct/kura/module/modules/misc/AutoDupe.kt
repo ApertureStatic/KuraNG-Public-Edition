@@ -6,7 +6,7 @@ import base.utils.entity.EntityUtils.boxCheck
 import base.utils.math.toBox
 import dev.dyzjct.kura.event.eventbus.SafeClientEvent
 import dev.dyzjct.kura.manager.HotbarManager.spoofHotbarWithSetting
-import dev.dyzjct.kura.manager.RotationManager.packetRotate
+import dev.dyzjct.kura.manager.RotationManager.applyRotation
 import dev.dyzjct.kura.module.Category
 import dev.dyzjct.kura.module.Module
 import dev.dyzjct.kura.module.modules.client.CombatSystem.swing
@@ -24,7 +24,6 @@ import net.minecraft.util.math.Direction
 
 object AutoDupe : Module(
     name = "AutoDupe",
-    langName = "自动复制潜影盒",
     category = Category.MISC
 ) {
     private val delay by isetting("Delay", 50, 0, 150)
@@ -47,7 +46,7 @@ object AutoDupe : Module(
                                 val stack = player.inventory.getStack(i)
                                 if (stack.item in SHULKER_BOXES) {
                                     player.inventory.selectedSlot = i
-                                    if (rotate) packetRotate(dupePos)
+                                    if (rotate) applyRotation(dupePos.toCenterPos(),10.0)
                                     connection.sendPacket(fastPos(dupePos, render = true))
                                     swing()
                                     break
@@ -64,7 +63,7 @@ object AutoDupe : Module(
                             }
                             fun doPlace(pos: BlockPos) {
                                 if (debug) ChatUtil.sendMessage("PlacePos:$pos.")
-                                if (rotate) packetRotate(pos)
+                                if (rotate) applyRotation(pos.toCenterPos(), 10.0)
                                 spoofHotbarWithSetting(Items.OBSIDIAN) {
                                     connection.sendPacket(fastPos(pos, render = true))
                                 }
