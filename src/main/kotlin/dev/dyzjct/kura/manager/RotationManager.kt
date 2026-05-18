@@ -36,7 +36,6 @@ object RotationManager : AlwaysListening {
     private var lastYaw = 0f
     private var lastPitch = 0f
 
-    // 标志当前是否有辅助模块在使用转向功能
     var active = false
         private set
 
@@ -50,8 +49,19 @@ object RotationManager : AlwaysListening {
     private val lock = Any()
     private val tickRequests = CopyOnWriteArrayList<RotationRequest>()
 
+    /**
+     * 🌟【自定义独立判断开关】
+     * 只有这里返回 true 时，才会允许执行 MovementFix 输入重组。
+     */
+    fun SafeClientEvent.shouldFixInputIfNecessary(): Boolean {
+        val isSystemReady = active && (System.currentTimeMillis() - lastUpdate <= 500L) && lastUpdate != 0L
+        if (!isSystemReady) return false
+
+        return MovementFix.isEnabled
+    }
+
     fun onInit() {
-        // 1. START 物理阶段：计算平滑角度并控制 active 状态
+        // 1. START 阶段：100% 保持你原本的所有平滑和逻辑计算次序
         safeEventListener<PlayerMotionEvent> { event ->
             if (event.stageType == dev.dyzjct.kura.event.eventbus.StageType.START) {
                 if (isExpired) {
@@ -63,7 +73,7 @@ object RotationManager : AlwaysListening {
 
                 val requestsSnapshot = ArrayList<RotationRequest>()
                 synchronized(lock) {
-                    requestsSnapshot.addAll(tickRequests.toList())
+                    requestsSnapshot.addAll(tickRequests.filterNotNull())
                     tickRequests.clear()
                 }
 
@@ -72,7 +82,7 @@ object RotationManager : AlwaysListening {
                     if (selected != null) {
                         rotationSpeed = selected.reqSpeed
                         raycast = selected.reqRaycast
-                        active = true // 激活状态
+                        active = true
                         smoothed = false
 
                         smooth(selected.targetRotation.x, selected.targetRotation.y)
@@ -95,7 +105,7 @@ object RotationManager : AlwaysListening {
                     event.pitch = pitch_value
 
                     if (abs(yaw_value - player.yaw) < 1f && abs(pitch_value - player.pitch) < 1f) {
-                        active = false // 逼近完成，关闭状态
+                        active = false
                         correctDisabledRotations()
                     }
                 } else {
@@ -105,7 +115,7 @@ object RotationManager : AlwaysListening {
             }
         }
 
-        // 2. 发包阶段更新
+        // 2. 发包阶段更新：保持不变
         safeEventListener<MovementPacketsEvent> { event ->
             if (active && !isExpired) {
                 event.yaw = yaw_value
@@ -113,18 +123,14 @@ object RotationManager : AlwaysListening {
             }
         }
 
-        // 3. 【核心改动】：建立网关。只有此时满足旋转的全部开始条件时，MovementFix 才开始执行
+        // 3. 🛠️【移动修复执行点】：传入计算好的假角度进行输入对齐
         safeEventListener<KeyboardTickEvent> { event ->
-            // 这里是系统基础状态判定
-            val isSystemReady = active && !isExpired && lastUpdate != 0L
-
-            // 当系统基础就绪 且 满足你自己的判定条件时，才执行修复
-            if (isSystemReady && MovementFix.isEnabled) {
+            if (shouldFixInputIfNecessary()) {
                 MovementFix.fixMovement(event, yaw_value)
             }
         }
 
-        // 4. 纯消费渲染层
+        // 4. 渲染层保持不变
         safeEventListener<Render3DEvent> { event ->
             if (isExpired || lastUpdate == 0L || !active) return@safeEventListener
             if (mc.options.perspective.isFirstPerson || Rotations.override_model) return@safeEventListener
@@ -179,7 +185,7 @@ object RotationManager : AlwaysListening {
         }
     }
 
-    // ==================== API 接口 ====================
+    // ==================== 100% 保持你所有的对外调用接口不变 ====================
 
     fun SafeClientEvent.applyRotation(rotations: Vec2f, speed: Double, priority: Priority = Priority.Lowest, callback: ((RotationApplyRecord) -> Unit)? = null) =
         applyRotation(rotations.x, rotations.y, speed, null, priority.priority, callback)

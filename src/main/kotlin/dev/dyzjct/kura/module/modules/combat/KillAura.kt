@@ -71,11 +71,9 @@ object KillAura : Module(name = "KillAura", category = Category.COMBAT) {
                         if (player.offHandStack.item is ShieldItem) {
                             applyRotation(
                                 target.blockPos.up().toCenterPos(),
-                                rotationSpeed,
-                                callback = { record ->
-                                    if (record.isActive) playerController.interactItem(player, Hand.OFF_HAND)
-                                }
+                                rotationSpeed
                             )
+                            playerController.interactItem(player, Hand.OFF_HAND)
                         }
                     }
                 }
